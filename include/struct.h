@@ -51,6 +51,7 @@ typedef struct	s_object
 	int			triangle_count;
 	t_vec3		position;
 	t_vec3		rotation;
+	char		*name;
 }	t_object;
 
 #endif
