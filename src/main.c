@@ -10,35 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "libft.h"
 
-static void	parse_blend(char *file_name);
+static int	fill_str(char *file_name);
 
 int	main(int argc, char **argv)
 {
 	if (argc < 2)
 		return (1);
-	parse_blend(argv[1]);
+	if (fill_str(argv[1]) == -1)
+		return (2);
 	(void) argc;
 	(void) argv;
 	return (0);
 }
 
-static void	parse_blend(char *file_name)
+static int	fill_str(char *file_name)
 {
-	size_t	i;
-	char	*str;
+	char	str[100000];
 	int		fd;
 
+	ft_bzero(str, 99999);
 	fd = open(file_name, O_RDONLY);
-	str = get_next_line(fd);
-	i = 0;
-	while (i < 10)
-	{
-		str = get_next_line(fd);
-		++i;
-	}
+	if (fd == -1)
+		return (-1);
+	read(fd, str, 99999);
+	write(1, str, 99999);
+	return (0);
 }
