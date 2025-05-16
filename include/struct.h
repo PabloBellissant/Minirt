@@ -27,7 +27,7 @@ typedef union u_color
 	uint32_t	argb;
 }	t_color;
 
-typedef struct	s_vec3
+typedef struct s_vec3
 {
 	double	x;
 	double	y;
@@ -45,12 +45,13 @@ typedef struct s_triangle
 	double	metallic;
 }	t_triangle;
 
-typedef struct	s_object
+typedef struct s_object
 {
 	t_triangle	*triangles;
 	int			triangle_count;
-	t_vec3		position;
+	t_vec3		translation;
 	t_vec3		rotation;
+	t_vec3		scale;
 	char		*name;
 }	t_object;
 
