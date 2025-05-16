@@ -14,7 +14,7 @@
 
 /**
  * @brief Convert integer to is absolute value.
- * @param n the integer to get absolute value from.
+ * @param value the integer to get absolute value from.
  * @return the absolute value of n.
  * @author Bellissant Pablo
  */

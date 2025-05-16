@@ -23,19 +23,12 @@
 char	*ft_strdup(const char *s)
 {
 	char			*newtab;
-	size_t			i;
 	size_t			slen;
 
 	slen = ft_strlen(s);
 	newtab = malloc(sizeof(char) * (slen + 1));
 	if (!newtab)
 		return (NULL);
-	i = 0;
-	while (i < slen)
-	{
-		newtab[i] = s[i];
-		i += 1;
-	}
-	newtab[i] = 0;
+	ft_memcpy(newtab, s, slen + 1);
 	return (newtab);
 }

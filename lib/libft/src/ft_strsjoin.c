@@ -6,44 +6,43 @@
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 03:25:34 by pabellis          #+#    #+#             */
-/*   Updated: 2025/02/28 03:25:37 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/04/12 03:34:06 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdarg.h>
-#include <stddef.h>
 #include <stdlib.h>
 #include "libft.h"
 
-static void	ft_strcat_va(char *output, va_list list, size_t *total_len);
-
-char	*ft_strsjoin(char *first, ...)
+/**
+ * @brief Joins multiple strings into a single one.
+ * @param str The first string to join.
+ * @param ... Additionals strings to join.
+ * @return The new allocated string, or NULL if alloc fail.
+ * @warning The returned array must be freed to avoid memory leaks.
+ * @author Bellissant Pablo
+ */
+char	*ft_strsjoin(char *str, ...)
 {
-	va_list	list;
-	size_t	total_len;
-	char	*output;
+	va_list		list;
+	t_vector	vec;
+	size_t		len_str;
 
-	total_len = ft_strlen(first);
-	va_start(list, first);
-	output = malloc(sizeof(char) * (total_len + 1));
-	if (!output)
-		return (NULL);
-	output[0] = '\0';
-	ft_strlcat(output, first, total_len + 1);
-	ft_strcat_va(output, list, &total_len);
-	va_end(list);
-	return (output);
-}
-
-static void	ft_strcat_va(char *output, va_list list, size_t *total_len)
-{
-	char	*str;
-
-	str = va_arg(list, char *);
+	vector_init(&vec, sizeof(char));
+	va_start(list, str);
 	while (str != NULL)
 	{
-		ft_strlcat(output, str, *total_len + ft_strlen(str) + 1);
-		*total_len += ft_strlen(str);
+		len_str = ft_strlen(str);
+		if (vector_add(&vec, str, len_str) == -1)
+		{
+			va_end(list);
+			free_vector(&vec);
+			return (NULL);
+		}
 		str = va_arg(list, char *);
 	}
+	va_end(list);
+	if (vector_add(&vec, "\0", 1) == -1)
+		free_vector(&vec);
+	return (vec.data);
 }

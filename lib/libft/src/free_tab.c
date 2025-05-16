@@ -15,15 +15,14 @@
 /**
  * @brief This function is used to free an array of strings.
  * @param tab A pointer to the array of strings.
- * @return 0 if the list not exist, 1 otherwise.
  * @author Bellissant Pablo
  */
-int	free_tab(char **tab)
+void	free_tab(char **tab)
 {
 	int	i;
 
 	if (!tab)
-		return (0);
+		return ;
 	i = 0;
 	while (tab[i])
 	{
@@ -31,5 +30,4 @@ int	free_tab(char **tab)
 		++i;
 	}
 	free(tab);
-	return (1);
 }

@@ -26,8 +26,7 @@ char	*get_next_line(int fd)
 	ssize_t		i;
 	t_vector	vec;
 
-	if (vector_init(&vec, sizeof(char)) == -1)
-		return (NULL);
+	vector_init(&vec, sizeof(char));
 	i = BUFFER_SIZE;
 	while (i > 0)
 	{
@@ -51,9 +50,9 @@ char	*get_next_line(int fd)
 
 static int	set_size(t_vector *vec)
 {
-	while (vec->max_elements - vec->num_elements <= BUFFER_SIZE)
+	if (vec->max_elements - vec->num_elements <= BUFFER_SIZE)
 	{
-		if (vector_realloc(vec) == -1)
+		if (set_vector_size(vec, BUFFER_SIZE + vec->num_elements) == -1)
 			return (-1);
 	}
 	return (0);

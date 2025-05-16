@@ -19,4 +19,5 @@ void	free_vector(t_vector *vector)
 	vector->num_elements = 0;
 	vector->element_size = 0;
 	free(vector->data);
+	vector->data = NULL;
 }
