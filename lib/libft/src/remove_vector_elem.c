@@ -1,21 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vector_init.c                                      :+:      :+:    :+:   */
+/*   remove_vector_elem.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/12 03:38:00 by pabellis          #+#    #+#             */
-/*   Updated: 2025/03/25 00:23:15 by pabellis         ###   ########lyon.fr   */
+/*   Created: 2025/04/22 01:00:01 by pabellis          #+#    #+#             */
+/*   Updated: 2025/04/22 01:00:24 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	vector_init(t_vector *vector, size_t element_size)
+void	remove_vector_elem(t_vector *vector, size_t i)
 {
-	vector->element_size = element_size;
-	vector->max_elements = 0;
-	vector->num_elements = 0;
-	vector->data = NULL;
+	void	*pointer;
+
+	pointer = get_vector_value(vector, i);
+	if (i + 1 == vector->num_elements)
+		ft_bzero(pointer, vector->element_size);
+	else
+	{
+		ft_memmove(pointer, pointer + vector->element_size,
+			vector->element_size * (vector->num_elements - i - 1));
+	}
+	--vector->num_elements;
 }

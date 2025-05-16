@@ -10,35 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include "libft.h"
 
-int	vector_add(t_vector *vector, void *element)
+int	vector_add(t_vector *vector, void *element, size_t elem_count)
 {
-	if (!vector || !element)
-		return (-1);
-	if (vector->num_elements + 1 == vector->max_elements)
+	void	*actual;
+
+	if (vector->num_elements + elem_count >= vector->max_elements)
 	{
-		if (vector_realloc(vector) == -1)
+		if (set_vector_size(vector, vector->num_elements + elem_count) == -1)
 			return (-1);
 	}
-	ft_memcpy(vector->data + (vector->element_size * vector->num_elements),
-		element, vector->element_size);
-	vector->num_elements++;
-	return (0);
-}
-
-int	vector_realloc(t_vector *vector)
-{
-	void	*new_data;
-
-	new_data = malloc(vector->element_size * vector->max_elements * 2 + 1);
-	if (new_data == NULL)
-		return (-1);
-	ft_memcpy(new_data, vector->data,
-		vector->element_size * vector->num_elements);
-	free(vector->data);
-	vector->data = new_data;
-	vector->max_elements *= 2;
+	actual = vector->data + (vector->element_size * vector->num_elements);
+	ft_memcpy(actual, element, vector->element_size * elem_count);
+	vector->num_elements += elem_count;
 	return (0);
 }

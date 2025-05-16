@@ -18,7 +18,8 @@ SRCS = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
        vector_add.c vector_init.c ft_tab_len.c ft_getintlen.c is_above_int.c \
        get_vector_value.c ft_abs.c ft_gap.c ft_min.c ft_strsjoin.c \
        get_next_line.c av.c ft_fabs.c ft_swap_float.c free_vector.c \
-       ft_strtok.c
+       ft_strtok.c ft_strtok_r.c vector_realloc.c ft_strrncmp.c \
+       set_vector_size.c remove_vector_elem.c \
 
 OBJS = $(addprefix $(OBJDIR)/,$(SRCS:.c=.o))
 
