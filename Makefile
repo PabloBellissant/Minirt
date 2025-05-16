@@ -8,6 +8,7 @@ LIBFTINC = $(LIBFTDIR)/include
 MLX_DIR = lib/minilibx-linux
 
 SRCS =	$(addprefix $(SRCDIR)/, \
+		glb_parser/glb_parser.c \
 		main.c)
 
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
