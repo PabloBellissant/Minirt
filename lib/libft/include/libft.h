@@ -119,4 +119,6 @@ void	remove_vector_elem(t_vector *vector, size_t i);
 
 bool	is_above_int(char *value_in_str);
 
+double	ft_atod(char *str);
+
 #endif
