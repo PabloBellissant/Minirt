@@ -9,6 +9,8 @@ MLX_DIR = lib/minilibx-linux
 
 SRCS =	$(addprefix $(SRCDIR)/, \
 		glb_parser/glb_parser.c \
+		glb_parser/json_parser.c \
+		glb_parser/data/get_object_data.c \
 		main.c)
 
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))

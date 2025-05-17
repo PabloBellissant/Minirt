@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "libft.h"
+#include "glb.h"
 
 static int	fill_str(char *file_name);
 
@@ -21,7 +22,7 @@ int	main(int argc, char **argv)
 {
 	if (argc < 2)
 		return (1);
-	if (fill_str(argv[1]) == -1)
+	if (fill_str(argv[1]) != 0)
 		return (2);
 	(void) argc;
 	(void) argv;
@@ -37,7 +38,13 @@ static int	fill_str(char *file_name)
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
 		return (-1);
-	read(fd, str, 99999);
+	if (read(fd, str, 99999) == -1)
+	{
+		close(fd);
+		return (-2);
+	}
 	write(1, str, 99999);
+	dprintf(2, "\n\n\n\n");
+	glb_parser(str + 20);
 	return (0);
 }
