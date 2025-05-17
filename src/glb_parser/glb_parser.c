@@ -13,6 +13,7 @@
 #include "libft.h"
 #include "struct.h"
 #include "glb.h"
+#include "json.h"
 
 static void	print_json(t_json *json, int depth);
 
@@ -32,7 +33,6 @@ t_object	*glb_parser(char *str)
 	i = 0;
 	while (i < object_count)
 	{
-		//object = get_object_data(i, str);
 		if (vector_add(&object_vector, &object, 1) == -1)
 			return (NULL);
 		++i;
