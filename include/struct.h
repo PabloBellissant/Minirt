@@ -15,8 +15,6 @@
 
 # include <stdint.h>
 
-typedef struct s_json	t_json;
-
 typedef union u_color
 {
 	struct
@@ -56,29 +54,5 @@ typedef struct s_object
 	t_vec3		scale;
 	char		*name;
 }	t_object;
-
-typedef enum e_json_type
-{
-	JSON_NULL,
-	JSON_BOOL,
-	JSON_NUMBER,
-	JSON_ARRAY,
-	JSON_OBJECT,
-	JSON_STRING
-}	t_json_type;
-
-typedef struct s_json
-{
-	char		*key;
-	t_json_type	type;
-	union
-	{
-		bool	boolean;
-		double	number;
-		char	*string;
-		t_json	*child;
-	};
-	t_json		*next;
-}	t_json;
 
 #endif

@@ -17,6 +17,5 @@
 
 t_object	*glb_parser(char *str);
 t_object	get_object_data(int elem, char *str);
-t_json		*json_parser(char *json_text);
 
 #endif
