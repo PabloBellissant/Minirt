@@ -43,10 +43,12 @@ typedef struct s_json
 }	t_json;
 
 t_json		*json_parser(char *json_text);
+t_json		*recursive_parse(char *json_text);
 char		*get_end_brackets(char *json_text);
 char		*get_next_data(char *json_text);
 size_t		extract_len(char *json_text);
 t_json_type	get_type(char *json_text);
 int			fill_json_data(t_json *json, char *json_text);
+t_json		*fill_array(char *json_str);
 
 #endif
