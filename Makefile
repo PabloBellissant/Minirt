@@ -11,11 +11,13 @@ SRCS =	$(addprefix $(SRCDIR)/, \
 		glb_parser/glb_parser.c \
 		glb_parser/data/get_object_data.c \
 		json_parser/json_parser.c \
+		json_parser/recursive_parse.c \
 		json_parser/extract_len.c \
 		json_parser/fill_json_data.c \
 		json_parser/get_end_brackets.c \
 		json_parser/get_next_data.c \
 		json_parser/get_type.c \
+		json_parser/fill_array.c \
 		main.c)
 
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
