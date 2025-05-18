@@ -45,6 +45,6 @@ static int	fill_str(char *file_name)
 	}
 	write(1, str, 99999);
 	dprintf(2, "\n\n\n\n");
-	glb_parser(ft_memchr(str, '{', 100));
+	glb_parser(str);
 	return (0);
 }
