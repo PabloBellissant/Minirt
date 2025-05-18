@@ -1,40 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   extract_len.c                                      :+:      :+:    :+:   */
+/*   fill_array.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/17 19:17:30 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/17 19:17:32 by pabellis         ###   ########.fr       */
+/*   Created: 2025/05/18 00:35:39 by pabellis          #+#    #+#             */
+/*   Updated: 2025/05/18 00:35:42 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include "libft.h"
 #include "json.h"
 
-size_t	extract_len(char *json_text)
+t_json	*fill_array(char *json_str)
 {
-	size_t	i;
-	char	*temp;
+	t_json	*json;
+	size_t	len;
 
-	i = 0;
-	if (*json_text == '"')
+	json = malloc(sizeof(t_json));
+	if (!json)
+		return (NULL);
+	ft_bzero(json, sizeof(t_json));
+	if (*json_str == '[')
+		++json_str;
+	fill_json_data(json, json_str);
+	len = extract_len(json_str);
+	if (json_str[len] == ',')
 	{
-		temp = ft_strchr(json_text + 1, '"') + 1;
-		if (!temp)
-			return (0);
-		i = temp - json_text;
+		json->next = fill_array(json_str + len + 1);
+		if (!json->next)
+		{
+			free(json);
+			return (NULL);
+		}
 	}
-	else if (*json_text == '{' || *json_text == '[')
-	{
-		temp = get_end_brackets(json_text) + 1;
-		i = temp - json_text;
-	}
-	while (json_text[i] && json_text[i] != ':'
-		&& json_text[i] != ',' && json_text[i] != '}' && json_text[i] != ']')
-	{
-		++i;
-	}
-	return (i);
+	return (json);
 }

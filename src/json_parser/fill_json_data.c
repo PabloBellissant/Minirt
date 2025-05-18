@@ -25,10 +25,10 @@ int	fill_json_data(t_json *json, char *json_text)
 	else if (json->type == JSON_NUMBER)
 		json->number = ft_atod(json_text);
 	else if (json->type == JSON_ARRAY)
-		json->child = NULL;//fill_array(json_text);
+		json->child = fill_array(json_text);
 	else if (json->type == JSON_OBJECT)
 	{
-		json->child = json_parser(json_text);
+		json->child = recursive_parse(json_text);
 		if (json->child == NULL)
 			return (-1);
 	}
