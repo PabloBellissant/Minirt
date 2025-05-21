@@ -15,36 +15,21 @@
 #include <unistd.h>
 #include "libft.h"
 #include "glb.h"
-
-static int	fill_str(char *file_name);
+#include "parsing.h"
+#include "init.h"
 
 int	main(int argc, char **argv)
 {
+	t_scene	scene;
+	t_data	mlx_data;
+
 	if (argc < 2)
 		return (1);
-	if (fill_str(argv[1]) != 0)
+	if (parse_map(argv[1], &scene) != 0)
 		return (2);
-	(void) argc;
+	if (init_graphics(&mlx_data) == -1)
+		return (-1); // free
 	(void) argv;
 	return (0);
 }
 
-static int	fill_str(char *file_name)
-{
-	char	str[100000];
-	int		fd;
-
-	ft_bzero(str, 99999);
-	fd = open(file_name, O_RDONLY);
-	if (fd == -1)
-		return (-1);
-	if (read(fd, str, 99999) == -1)
-	{
-		close(fd);
-		return (-2);
-	}
-	write(1, str, 99999);
-	dprintf(2, "\n\n\n\n");
-	glb_parser(str);
-	return (0);
-}
