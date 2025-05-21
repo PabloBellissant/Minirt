@@ -14,6 +14,7 @@
 # define STRUCT_H
 
 # include <stdint.h>
+# include "mlx_int.h"
 
 typedef union u_color
 {
@@ -40,19 +41,44 @@ typedef struct s_triangle
 	t_vec3	p1;
 	t_vec3	p2;
 	t_vec3	normal;
-	t_color	color;
 	double	roughness;
 	double	metallic;
+	t_color	color;
 }	t_triangle;
 
 typedef struct s_object
 {
-	t_triangle	*triangles;
-	int			triangle_count;
 	t_vec3		translation;
 	t_vec3		rotation;
 	t_vec3		scale;
 	char		*name;
+	t_triangle	*triangles;
+	int			triangle_count;
 }	t_object;
+
+typedef struct	s_scene
+{
+	char		*name;
+	int			object_count;
+	t_object	*objects;
+}	t_scene;
+
+typedef struct	s_screen
+{
+	int	dim_x;
+	int	dim_y;
+}	t_screen;
+
+typedef struct s_data
+{
+	t_xvar		*mlx;
+	t_win_list	*win;
+	t_img		*img;
+	char		*addr;
+	int			bits;
+	int			line_len;
+	int			endian;
+	t_screen	screen;
+}	t_data;
 
 #endif
