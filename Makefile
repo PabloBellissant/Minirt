@@ -8,16 +8,18 @@ LIBFTINC = $(LIBFTDIR)/include
 MLX_DIR = lib/minilibx-linux
 
 SRCS =	$(addprefix $(SRCDIR)/, \
-		glb_parser/glb_parser.c \
-		glb_parser/data/get_object_data.c \
-		json_parser/json_parser.c \
-		json_parser/recursive_parse.c \
-		json_parser/extract_len.c \
-		json_parser/fill_json_data.c \
-		json_parser/get_end_brackets.c \
-		json_parser/get_next_data.c \
-		json_parser/get_type.c \
-		json_parser/fill_array.c \
+		parsing/glb_parser/glb_parser.c \
+		parsing/glb_parser/data/get_object_data.c \
+		parsing/json_parser/json_parser.c \
+		parsing/json_parser/recursive_parse.c \
+		parsing/json_parser/extract_len.c \
+		parsing/json_parser/fill_json_data.c \
+		parsing/json_parser/get_end_brackets.c \
+		parsing/json_parser/get_next_data.c \
+		parsing/json_parser/get_type.c \
+		parsing/json_parser/fill_array.c \
+		parsing/map/parse_map.c \
+		init/init_graphics.c \
 		main.c)
 
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
