@@ -21,8 +21,10 @@ void	remove_vector_elem(t_vector *vector, size_t i)
 		ft_bzero(pointer, vector->element_size);
 	else
 	{
-		ft_memmove(pointer, pointer + vector->element_size,
+		ft_memmove(pointer,
+			(char *)pointer + vector->element_size,
 			vector->element_size * (vector->num_elements - i - 1));
 	}
 	--vector->num_elements;
 }
+

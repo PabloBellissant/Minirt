@@ -21,7 +21,8 @@ int	vector_add(t_vector *vector, void *element, size_t elem_count)
 		if (set_vector_size(vector, vector->num_elements + elem_count) == -1)
 			return (-1);
 	}
-	actual = vector->data + (vector->element_size * vector->num_elements);
+	actual = (char *)vector->data
+		+ (vector->element_size * vector->num_elements);
 	ft_memcpy(actual, element, vector->element_size * elem_count);
 	vector->num_elements += elem_count;
 	return (0);
