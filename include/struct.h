@@ -15,17 +15,17 @@
 
 # include <stdint.h>
 # include "mlx_int.h"
+#include <threads.h>
 
 typedef union u_color
 {
 	struct
 	{
-		uint8_t	a;
 		uint8_t	b;
 		uint8_t	g;
 		uint8_t	r;
 	};
-	uint32_t	argb;
+	uint32_t	rgb;
 }	t_color;
 
 typedef struct s_vec3
@@ -35,15 +35,22 @@ typedef struct s_vec3
 	double	z;
 }	t_vec3;
 
+typedef struct s_vertex
+{
+	t_vec3	pos;
+	float	u;
+	float	v;
+}	t_vertex;
+
 typedef struct s_triangle
 {
-	t_vec3	p0;
-	t_vec3	p1;
-	t_vec3	p2;
-	t_vec3	normal;
-	double	roughness;
-	double	metallic;
-	t_color	color;
+	t_vertex	p0;
+	t_vertex	p1;
+	t_vertex	p2;
+	t_vec3		normal;
+	double		roughness;
+	double		metallic;
+	t_color		color;
 }	t_triangle;
 
 typedef struct s_object
@@ -63,22 +70,28 @@ typedef struct	s_scene
 	t_object	*objects;
 }	t_scene;
 
-typedef struct	s_screen
+typedef struct	s_ray
+{
+	t_vec3	pos;
+	t_vec3	dir;
+}	t_ray;
+
+typedef struct	s_pos2
 {
 	int	dim_x;
 	int	dim_y;
-}	t_screen;
+}	t_pos2;
 
 typedef struct s_data
 {
 	t_xvar		*mlx;
 	t_win_list	*win;
 	t_img		*img;
-	char		*addr;
+	int			*addr;
 	int			bits;
 	int			line_len;
 	int			endian;
-	t_screen	screen;
+	t_pos2		screen;
 }	t_data;
 
 #endif
