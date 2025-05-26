@@ -11,16 +11,38 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "string.h"
+#include "define.h"
 #include "mlx.h"
 #include "struct.h"
 
+typedef struct {
+	unsigned long flags;
+	unsigned long functions;
+	unsigned long decorations;
+	long input_mode;
+	unsigned long status;
+} MotifWmHints;
+
+void	disable_decorations(Display *d, Window w)
+{
+	MotifWmHints hints;
+	Atom prop;
+
+	hints.flags = (1L << 1);
+	hints.decorations = 0;
+
+	prop = XInternAtom(d, "_MOTIF_WM_HINTS", False);
+	XChangeProperty(d, w, prop, prop, 32, PropModeReplace, (unsigned char *)&hints, 5);
+}
+
+int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
+
 int	init_graphics(t_data *data)
 {
-	t_screen	screen;
+	t_pos2	screen;
 
-	data->screen.dim_x = 1920;
-	data->screen.dim_y = 1080;
+	data->screen.dim_x = SCREEN_WIDTH;
+	data->screen.dim_y = SCREEN_HEIGHT;
 	data->mlx = mlx_init();
 	if (!data->mlx)
 		return (-1);
@@ -32,6 +54,8 @@ int	init_graphics(t_data *data)
 		free(data->mlx);
 		return (-1);
 	}
+	//disable_decorations(data->mlx->display, data->win->window);
+	//mlx_ext_fullscreen(data->mlx, data->win, 1);
 	data->img = mlx_new_image(data->mlx, screen.dim_x, screen.dim_y);
 	if (data->img == NULL)
 	{
@@ -40,6 +64,6 @@ int	init_graphics(t_data *data)
 		free(data->mlx);
 		return (-1);
 	}
-	data->addr = mlx_get_data_addr(data->img, &data->bits, &data->line_len, &data->endian);
+	data->addr = (int *)mlx_get_data_addr(data->img, &data->bits, &data->line_len, &data->endian);
 	return (0);
 }
