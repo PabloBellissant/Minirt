@@ -14,6 +14,8 @@
 #include "vec3.h"
 #include "struct.h"
 
+double	vec3_length(const t_vec3 *v);
+
 inline double	vec3_length(const t_vec3 *v)
 {
 	return (sqrt(vec3_length_squared(v)));

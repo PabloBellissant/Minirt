@@ -12,7 +12,9 @@
 
 #include "struct.h"
 
-inline t_vec3*	vec3_add(const t_vec3 *vec1, const t_vec3 *vec2, t_vec3 *out)
+t_vec3	*vec3_add(const t_vec3 *vec1, const t_vec3 *vec2, t_vec3 *out);
+
+inline t_vec3	*vec3_add(const t_vec3 *vec1, const t_vec3 *vec2, t_vec3 *out)
 {
 	out->x = vec1->x + vec2->x;
 	out->y = vec1->y + vec2->y;

@@ -12,6 +12,8 @@
 
 #include "struct.h"
 
+t_vec3*	vec3_scale(t_vec3 *vec, const double t);
+
 inline t_vec3*	vec3_scale(t_vec3 *vec, const double t)
 {
 	vec->x *= t;

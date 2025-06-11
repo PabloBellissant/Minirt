@@ -1,20 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vec3_length_squared.c                              :+:      :+:    :+:   */
+/*   vec3_random.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 06:41:22 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/02 06:41:24 by pabellis         ###   ########.fr       */
+/*   Created: 2025/06/10 05:11:05 by pabellis          #+#    #+#             */
+/*   Updated: 2025/06/10 05:11:08 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "struct.h"
 
-double	vec3_length_squared(const t_vec3 *v);
+t_vec3	*vec3_random(t_vec3 *vec);
 
-inline double	vec3_length_squared(const t_vec3 *v)
+inline t_vec3	*vec3_random(t_vec3 *vec)
 {
-	return (v->x * v->x + v->y * v->y + v->z * v->z);
+	vec->x = (float) rand() / (float) RAND_MAX;
+	vec->y = (float) rand() / (float) RAND_MAX;
+	vec->z = (float) rand() / (float) RAND_MAX;
+	return (vec);
 }

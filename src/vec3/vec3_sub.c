@@ -12,6 +12,8 @@
 
 #include "struct.h"
 
+t_vec3	*vec3_sub(const t_vec3 *vec1, const t_vec3 *vec2, t_vec3 *out);
+
 inline t_vec3*	vec3_sub(const t_vec3 *vec1, const t_vec3 *vec2, t_vec3 *out)
 {
 	out->x = vec1->x - vec2->x;

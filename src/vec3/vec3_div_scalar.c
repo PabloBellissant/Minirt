@@ -1,20 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vec3_length_squared.c                              :+:      :+:    :+:   */
+/*   vec3_add_scalar.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 06:41:22 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/02 06:41:24 by pabellis         ###   ########.fr       */
+/*   Created: 2025/06/02 05:31:47 by pabellis          #+#    #+#             */
+/*   Updated: 2025/06/02 05:31:49 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "struct.h"
 
-double	vec3_length_squared(const t_vec3 *v);
+t_vec3	*vec3_div_scalar(t_vec3 *vec, const double x);
 
-inline double	vec3_length_squared(const t_vec3 *v)
+inline t_vec3	*vec3_div_scalar(t_vec3 *vec, const double x)
 {
-	return (v->x * v->x + v->y * v->y + v->z * v->z);
+	vec->x /= x;
+	vec->y /= x;
+	vec->z /= x;
+	return (vec);
 }
