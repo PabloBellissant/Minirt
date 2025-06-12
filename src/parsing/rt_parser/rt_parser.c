@@ -14,27 +14,33 @@
 #include <errno.h>
 #include "libft.h"
 #include "struct.h"
+#include "init.h"
+#include "parsing.h"
 
 int	rt_parser(int fd, t_scene *scene)
 {
 	char	*line;
 	int		return_val;
+	int		line_num;
 
 	errno = 0;
 	return_val = 0;
+	line_num = 1;
 	line = get_next_line(fd);
 	while (line)
 	{
-		// if (set_on_scene(scene, line) != 0)
-		// 	return_val = -1;
+		if (parse_line(scene, line, line_num) != 0)
+			return_val = -1;
 		line = get_next_line(fd);
+		++line_num;
 	}
-	if (!line && errno != 0)
+	if (errno != 0)
 	{
 		return_val = -1;
 		perror("Minirt");
 	}
+	exit(1);
 	if (return_val != 0)
-		// clear_scene(scene);
+		clear_scene(scene);
 	return (return_val);
 }
