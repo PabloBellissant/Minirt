@@ -13,7 +13,7 @@
 #include "libft.h"
 #include "json.h"
 
-t_json_type	get_type(char *json_text)
+t_json_type	get_json_type(char *json_text)
 {
 	if (ft_strncmp(json_text, "null", 4) == 0)
 		return (JSON_NULL);
