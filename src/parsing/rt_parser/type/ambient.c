@@ -10,51 +10,59 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <math.h>
 #include "libft.h"
 #include "struct.h"
+#include "parsing.h"
 
-static void	print_bad_ratio_length(int actual_line);
-static void	print_bad_ratio_size(int actual_line);
+static void	bad_ambient(int line_num);
 
 int	ambient(char *line, int actual_line, t_scene *scene)
 {
-	int	len;
+	char	*arg;
 
-	while (*line == ' ' || *line == '\t')
-		++line;
-	++line;
-	if (line[0] == '\0')
-		return (-1);
-	while (*line == ' ' || *line == '\t')
-		++line;
-	if (line[0] == '\0')
-		return (-1);
-	len = 0;
-	while (line[len] && line[len] != ' ' && line[len] != '\t')
-		++len;
-	if (len > 8)
+	arg = ft_strtok(line, " ");
+	arg = ft_strtok(NULL, " ");
+	if (arg == NULL)
 	{
-		print_bad_ratio_length(actual_line);
+		bad_ambient(actual_line);
 		return (-1);
 	}
-	scene->ambient.ratio = (float) ft_atod(line);
-	if (scene->ambient.ratio > 1 || scene->ambient.ratio < 0)
-		print_bad_ratio_size(actual_line);
-	else
-		return (0);
-	return (-1);
+	scene->ambient.ratio = parse_float(arg, actual_line, 0, 1);
+	if (scene->ambient.ratio == NAN)
+		return (-1);
+	arg = ft_strtok(NULL, " ");
+	if (arg == NULL)
+	{
+		bad_ambient(actual_line);
+		return (-1);
+	}
+	if (parse_color(arg, actual_line, &scene->ambient.color) == -1)
+		return (-1);
+	return (0);
 }
 
-static void	print_bad_ratio_length(int actual_line)
+static void	bad_ambient(int line_num)
 {
-	ft_putstr_fd("Error\nRatio value cannot exceed 10 length, line : '", 2);
-	ft_putnbr_fd(actual_line, 2);
+	ft_putstr_fd("Error\nAmbient must be defined by 'A ratio R,G,B', ", 2);
+	ft_putstr_fd("line : '", 2);
+	ft_putnbr_fd(line_num, 2);
 	ft_putstr_fd("'\n", 2);
 }
 
-static void	print_bad_ratio_size(int actual_line)
-{
-	ft_putstr_fd("Error\nRatio value must be in range [0.0:1.0], line : '", 2);
-	ft_putnbr_fd(actual_line, 2);
-	ft_putstr_fd("'\n", 2);
-}
+// int	ambient(char *line, int actual_line, t_scene *scene)
+// {
+// 	while (*line == ' ' || *line == '\t')
+// 		++line;
+// 	++line;
+// 	if (line[0] == '\0')
+// 		return (-1);
+// 	while (*line == ' ' || *line == '\t')
+// 		++line;
+// 	if (line[0] == '\0')
+// 		return (-1);
+// 	scene->ambient.ratio = parse_float(line, actual_line, 0, 1);
+// 	if (scene->ambient.ratio == NAN)
+// 		return (-1);
+// 	return (0);
+// }
