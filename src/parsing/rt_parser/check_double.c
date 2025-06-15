@@ -10,45 +10,44 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
 #include "libft.h"
 #include "parsing.h"
 
-static void	print_already_camera(int actual_line);
-static void	print_already_ambient(int actual_line);
+static void	print_already_type(t_object_type type, int actual_line);
 
 int	check_double(t_object_type type, int actual_line)
 {
-	static bool		have_camera = false;
-	static bool		have_ambient = false;
+	static t_object_type	forbidden_double[] = {AMBIENT, CAMERA, LIGHT};
+	static int				elem_count[OBJ_ENUM_SIZE];
+	unsigned long			i;
 
-	if (type == CAMERA && have_camera)
+	i = 0;
+	while (i < sizeof(forbidden_double))
 	{
-		print_already_camera(actual_line);
-		return (-1);
+		if (type == forbidden_double[i])
+		{
+			if (elem_count[type] == 1)
+			{
+				print_already_type(actual_line, type);
+				return (-1);
+			}
+			elem_count[type] = 1;
+			return (0);
+		}
+		++i;
 	}
-	if (type == AMBIENT && have_ambient)
-	{
-		print_already_ambient(actual_line);
-		return (-1);
-	}
-	if (type == CAMERA)
-		have_camera = true;
-	else if (type == AMBIENT)
-		have_ambient = true;
 	return (0);
 }
 
-static void	print_already_camera(int actual_line)
+static void	print_already_type(t_object_type type, int actual_line)
 {
-	ft_putstr_fd("Error\nCamera double initialization, line : '", 2);
-	ft_putnbr_fd(actual_line, 2);
-	ft_putstr_fd("'\n", 2);
-}
+	static char	*type_name[] = {"undefined",
+		"ambient", "camera", "light", "sphere", "plane", "cylinder",
+		"OBJ"};
 
-static void	print_already_ambient(int actual_line)
-{
-	ft_putstr_fd("Error\nAmbient lightning double initialization, line : '", 2);
+	ft_putstr_fd("Error\nMultiple assignation for type '", 2);
+	ft_putstr_fd(type_name[type], 2);
+	ft_putstr_fd("' is forbidden, line : '", 2);
 	ft_putnbr_fd(actual_line, 2);
 	ft_putstr_fd("'\n", 2);
 }
