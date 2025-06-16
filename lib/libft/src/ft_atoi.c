@@ -12,8 +12,6 @@
 
 #include "libft.h"
 
-static bool	is_white_space(char c);
-
 /**
  * @brief Convert a string to an integer.
  * @param nptr The string to convert.
@@ -22,27 +20,5 @@ static bool	is_white_space(char c);
  */
 int	ft_atoi(const char *nptr)
 {
-	size_t	result;
-	int		negative_multiple;
-
-	while (is_white_space(*nptr))
-		++nptr;
-	negative_multiple = 1;
-	if (*nptr == '-')
-		negative_multiple = -1;
-	if (*nptr == '-' || *nptr == '+')
-		++nptr;
-	result = 0;
-	while (ft_isdigit(*nptr))
-	{
-		result *= 10;
-		result += (*nptr - '0');
-		++nptr;
-	}
-	return ((int) result * negative_multiple);
-}
-
-static bool	is_white_space(char c)
-{
-	return (c == 32 || (c >= 9 && c <= 13));
+	return ((int) ft_atol(nptr));
 }
