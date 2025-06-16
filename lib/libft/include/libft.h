@@ -102,7 +102,7 @@ t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)
 			(void *), void (*del)(void *));
 
-typedef struct s_vector
+typedef struct	s_vector
 {
 	size_t	element_size;
 	size_t	num_elements;
@@ -122,8 +122,16 @@ bool	is_above_int(char *value_in_str);
 bool	ft_isspace(const char c);
 
 double	ft_atod(char *str);
+
+
+typedef struct	s_limits
+{
+	int	min;
+	int	max;
+}	t_limits;
+
 int		ft_scan(int line_num, char *format, char *line, ...);
-float	parse_float(char *line, int line_number, int min, int max);
-int		parse_int(char *line, int line_number, int min, int max);
+float	parse_float(char *line, int line_number, t_limits limits);
+int		parse_int(char *line, int line_number, t_limits limits);
 
 #endif
