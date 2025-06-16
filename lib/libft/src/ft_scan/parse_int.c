@@ -18,7 +18,7 @@ static bool	str_is_integer(char *line);
 static void	print_val_not_range(int actual_line);
 static void	print_exceed_size(int actual_line, int min, int max);
 
-int	parse_int(char *line, int line_number, int min, int max)
+int	parse_int(char *line, int line_number, t_limits limits)
 {
 	int	result;
 
@@ -30,10 +30,10 @@ int	parse_int(char *line, int line_number, int min, int max)
 		return (0);
 	}
 	result = ft_atoi(line);
-	if (result > max || result < min)
+	if (result > limits.max || result < limits.min)
 	{
 		errno = EINVAL;
-		print_exceed_size(line_number, min, max);
+		print_exceed_size(line_number, limits.min, limits.max);
 		return (0);
 	}
 	return (result);

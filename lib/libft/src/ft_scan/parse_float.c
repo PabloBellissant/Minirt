@@ -17,7 +17,7 @@ static bool	str_is_float(char *line);
 static void	print_exceed_size(int actual_line, int min, int max);
 static void	print_not_a_float(int actual_line);
 
-float	parse_float(char *line, int line_number, int min, int max)
+float	parse_float(char *line, int line_number, t_limits limits)
 {
 	float	result;
 
@@ -29,9 +29,9 @@ float	parse_float(char *line, int line_number, int min, int max)
 	if (*line == '+')
 		++line;
 	result = ft_atod(line);
-	if (result > max || result < min)
+	if (result > limits.max || result < limits.min)
 	{
-		print_exceed_size(line_number, min, max);
+		print_exceed_size(line_number, limits.min, limits.max);
 		return (NAN);
 	}
 	return (result);
