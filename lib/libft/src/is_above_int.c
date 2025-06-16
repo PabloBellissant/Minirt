@@ -10,13 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
 #include "libft.h"
 
 bool	is_above_int(char *value_in_str)
 {
-	size_t	value_len;
-	int		int_value;
+	long	long_value;
+	int		count;
 
 	if (!value_in_str || !*value_in_str)
 		return (false);
@@ -27,9 +26,15 @@ bool	is_above_int(char *value_in_str)
 	}
 	while (value_in_str[0] == '0' && value_in_str[1])
 		++value_in_str;
-	value_len = ft_strlen(value_in_str);
-	int_value = ft_atoi(value_in_str);
-	if (ft_getintlen(int_value) + 1 != value_len)
+	count = 0;
+	while (ft_isdigit(value_in_str[count]))
+	{
+		++count;
+		if (count > 10)
+			return (true);
+	}
+	long_value = ft_atol(value_in_str);
+	if (long_value > 2147483647 || long_value < -2147483648)
 		return (true);
 	return (false);
 }
