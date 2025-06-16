@@ -34,6 +34,7 @@ int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_strrncmp(const char *s1, const char *s2, size_t n);
 int		ft_atoi(const char *nptr);
+long	ft_atol(const char *nptr);
 int		ft_memcmp(const void *s1, const void *s2, size_t n);
 int		av(const int val_a, const int val_b);
 int		ft_putchar_fd(char c, int fd);
@@ -118,7 +119,11 @@ int		set_vector_size(t_vector *vector, size_t size);
 void	remove_vector_elem(t_vector *vector, size_t i);
 
 bool	is_above_int(char *value_in_str);
+bool	ft_isspace(const char c);
 
 double	ft_atod(char *str);
+int		ft_scan(int line_num, char *format, char *line, ...);
+float	parse_float(char *line, int line_number, int min, int max);
+int		parse_int(char *line, int line_number, int min, int max);
 
 #endif
