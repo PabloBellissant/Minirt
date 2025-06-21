@@ -16,8 +16,8 @@ t_vec3	*vec3_random(t_vec3 *vec);
 
 inline t_vec3	*vec3_random(t_vec3 *vec)
 {
-	vec->x = (float) rand() / (float) RAND_MAX;
-	vec->y = (float) rand() / (float) RAND_MAX;
-	vec->z = (float) rand() / (float) RAND_MAX;
+	vec->x = ((float) rand() / (float) RAND_MAX) * 2.0f - 1.0f;
+	vec->y = ((float) rand() / (float) RAND_MAX) * 2.0f - 1.0f;
+	vec->z = ((float) rand() / (float) RAND_MAX) * 2.0f - 1.0f;
 	return (vec);
 }
