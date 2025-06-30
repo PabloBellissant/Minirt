@@ -19,19 +19,20 @@ static void	print_unrecognized_identifier(char *token, int actual_line);
 t_object_type	get_type(char *line, int actual_line)
 {
 	static char	*elem[] = {"A", "C", "L", "sp", "pl", "cy", NULL};
-	int	i;
+	int			i;
 
 	while (*line == ' ' || *line == '\t')
 		++line;
 	i = 0;
 	while (elem[i])
 	{
-		if (ft_strncmp(elem[i], line, ft_strlen(elem[i])) == 0)
-			return (i);
+		if (ft_strncmp(elem[i], line, ft_strlen(elem[i])) == 0
+			&& *(line + ft_strlen(elem[i])) == ' ')
+			return (i + 1);
 		++i;
 	}
 	print_unrecognized_identifier(line, actual_line);
-	return (-1);
+	return (UNDEFINED);
 }
 
 static void	print_unrecognized_identifier(char *token, int actual_line)
