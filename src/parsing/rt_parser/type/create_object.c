@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ambient.c                                          :+:      :+:    :+:   */
+/*   create_object.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/13 04:36:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/13 04:36:49 by pabellis         ###   ########.fr       */
+/*   Created: 2025/06/17 02:26:50 by pabellis          #+#    #+#             */
+/*   Updated: 2025/06/17 02:26:52 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "struct.h"
-#include "parsing.h"
 
-#define AMBIENT_FORMAT " *A +%f[1] +%8[255] *, *%8[255] *, *%8[255] *\n"
-
-int	ambient(char *line, int line_num, t_scene *scene)
+t_object	*create_object(t_scene *scene, t_object_type type)
 {
-	t_ambient	*ambient;
-	t_color		*color;
+	t_object	object;
 
-	ambient = &scene->ambient;
-	color = &ambient->color;
-	ft_scan(line_num, AMBIENT_FORMAT, line, &ambient->ratio,
-		&color->r, &color->g, &color->b);
-	return (0);
+	if (scene->objects.max_elements == 0)
+		vector_init(&scene->objects, sizeof(t_object));
+	ft_bzero(&object, sizeof(t_object));
+	object.type = type;
+	if (vector_add(&scene->objects, &object, 1) == -1)
+		return (NULL);
+	return (get_vector_value(&scene->objects, scene->objects.num_elements - 1));
 }
