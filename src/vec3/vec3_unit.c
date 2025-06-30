@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vec3_add_scalar.c                                  :+:      :+:    :+:   */
+/*   vec3_unit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 05:31:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/02 05:31:49 by pabellis         ###   ########.fr       */
+/*   Created: 2025/06/20 04:28:50 by pabellis          #+#    #+#             */
+/*   Updated: 2025/06/20 04:28:51 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "vec3.h"
 
-t_vec3	*vec3_div_scalar(t_vec3 *vec, float x);
-
-inline t_vec3	*vec3_div_scalar(t_vec3 *vec, const float x)
+inline t_vec3*	vec3_unit(t_vec3 *v)
 {
-	vec->x /= x;
-	vec->y /= x;
-	vec->z /= x;
-	return (vec);
+	float	len;
+
+	len = vec3_length(v);
+	return (vec3_div_scalar(v, len));
 }

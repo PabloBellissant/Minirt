@@ -12,9 +12,9 @@
 
 #include "struct.h"
 
-t_vec3*	vec3_scale(t_vec3 *vec, const double t);
+t_vec3*	vec3_scale(t_vec3 *vec, float t);
 
-inline t_vec3*	vec3_scale(t_vec3 *vec, const double t)
+inline t_vec3*	vec3_scale(t_vec3 *vec, const float t)
 {
 	vec->x *= t;
 	vec->y *= t;

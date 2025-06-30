@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vec3_add_scalar.c                                  :+:      :+:    :+:   */
+/*   vec3_lerp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 05:31:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/02 05:31:49 by pabellis         ###   ########.fr       */
+/*   Created: 2025/06/21 03:37:56 by pabellis          #+#    #+#             */
+/*   Updated: 2025/06/21 03:37:58 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "vec3.h"
 
-t_vec3	*vec3_div_scalar(t_vec3 *vec, float x);
-
-inline t_vec3	*vec3_div_scalar(t_vec3 *vec, const float x)
+inline t_vec3*	vec3_lerp(t_vec3 *a, t_vec3 *b, float t, t_vec3 *result)
 {
-	vec->x /= x;
-	vec->y /= x;
-	vec->z /= x;
-	return (vec);
+	result->x = (1 - t) * a->x + t * b->x;
+	result->y = (1 - t) * a->y + t * b->y;
+	result->z = (1 - t) * a->z + t * b->z;
+	return (result);
 }
