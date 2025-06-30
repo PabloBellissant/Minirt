@@ -41,7 +41,7 @@ int	parse_int(char *line, int line_number, t_limits limits)
 
 static void	print_val_not_range(int actual_line)
 {
-	ft_putstr_fd("Error\nInvalid integer format on line : '", 2);
+	ft_putstr_fd("Error\nInvalid integer on line : '", 2);
 	ft_putnbr_fd(actual_line, 2);
 	ft_putstr_fd("'\n", 2);
 }
@@ -61,7 +61,9 @@ static bool	str_is_integer(char *line)
 {
 	if (*line == '+' || *line == '-')
 		++line;
-	if (ft_isdigit(*line))
+	while (ft_isdigit(*line))
+		++line;
+	if (!*line || *line == ' ' || *line == ',' || *line == '\n')
 		return (true);
 	return (false);
 }

@@ -44,7 +44,7 @@ static bool	str_is_float(char *line)
 	i = 0;
 	if (line[i] == '+' || line[i] == '-')
 		++i;
-	if (line[i] == '.' && line[i + 1] == '\0')
+	if (line[i] == '.' && !ft_isdigit(line[i + 1]))
 		return (false);
 	while (ft_isdigit(line[i]))
 		++i;
@@ -52,7 +52,7 @@ static bool	str_is_float(char *line)
 		++i;
 	while (ft_isdigit(line[i]))
 		++i;
-	if (line[i] != '\0' && line[i] != ' ')
+	if (*line && line[i] != '\0' && line[i] != ' ' && line[i] != ',')
 		return (false);
 	return (true);
 }
