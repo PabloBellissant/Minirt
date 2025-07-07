@@ -15,7 +15,6 @@
 
 static void	remove_whitespace(char *json_text);
 static bool	is_whitespace(char c);
-static void	fix_json(t_json *json);
 
 t_json	*json_parser(char *json_text)
 {
@@ -29,24 +28,22 @@ t_json	*json_parser(char *json_text)
 	json = recursive_parse(json_text + i);
 	if (!json)
 		return (NULL);
-	fix_json(json);
+	fix_json_str(json);
 	return (json);
-}
-
-static void	fix_json(t_json *json)
-{
-	if (json->next)
-		fix_json(json->next);
-	if (json->type == JSON_OBJECT || json->type == JSON_ARRAY)
-		fix_json(json->child);
-	if (json->type == JSON_STRING)
-		json->string[extract_len(json->string)] = '\0';
 }
 
 static void	remove_whitespace(char *json_text)
 {
-	while (*json_text)
+	int	brace_count;
+
+	++json_text;
+	brace_count = 1;
+	while (*json_text && brace_count != 0)
 	{
+		if (*json_text == '{')
+			++brace_count;
+		else if (*json_text == '}')
+			--brace_count;
 		if (*json_text == '"')
 			json_text = ft_strchr(json_text + 1, '"') + 1;
 		if (is_whitespace(*json_text))
