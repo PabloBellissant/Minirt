@@ -15,6 +15,7 @@
 
 # include "struct.h"
 
-int	init_graphics(t_data *data);
+int		init_graphics(t_data *data);
+void	clear_scene(t_scene *scene);
 
 #endif
