@@ -12,9 +12,9 @@
 
 #include "libft.h"
 
-double	ft_atod(char *str)
+float	ft_atod(char *str)
 {
-	double		result;
+	float		result;
 	long long	depth;
 	int			sign;
 
@@ -31,7 +31,7 @@ double	ft_atod(char *str)
 		if (depth == 1 && *str != '.')
 			result *= 10;
 		if (ft_isdigit(*str))
-			result += (double)((*str) - '0') / depth;
+			result += (float)((*str) - '0') / depth;
 		if (*str == '.')
 			depth = 10;
 		else if (depth > 1)
