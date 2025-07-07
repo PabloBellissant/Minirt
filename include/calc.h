@@ -13,10 +13,13 @@
 #ifndef CALC_H
 # define CALC_H
 
-# include <stdbool.h>
 # include "struct.h"
 
-bool	hit_register(t_ray *ray, t_scene *scene);
+float	hit_register(t_ray *ray, t_vector *obj_vec, t_color *color, t_vec3 *normal);
 t_color	ray_path(t_ray *ray, t_scene *scene);
+int		hit_plane(t_ray *ray, t_object *o, float *t);
+int		hit_sphere(t_ray *ray, t_object *o, float *t);
+int		hit_triangle(t_ray *ray, t_object *oe, float *t);
+int		hit_cylinder(t_ray *ray, t_object *o, float *t);
 
 #endif
