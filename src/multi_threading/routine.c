@@ -29,4 +29,3 @@ void	*routine(void *args)
 	}
 	return (NULL);
 }
-
