@@ -15,7 +15,7 @@
 
 int	fill_json_data(t_json *json, char *json_text)
 {
-	json->type = get_type(json_text);
+	json->type = get_json_type(json_text);
 	if (json->type == JSON_BOOL)
 	{
 		json->boolean = false;
