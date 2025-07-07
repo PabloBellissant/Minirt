@@ -6,7 +6,7 @@
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/16 01:19:02 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/06/14 06:13:42 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 # include <stdint.h>
 # include "mlx_int.h"
-#include <threads.h>
+# include "libft.h"
+# include "parsing.h"
 
 typedef union u_color
 {
@@ -24,16 +25,29 @@ typedef union u_color
 		uint8_t	b;
 		uint8_t	g;
 		uint8_t	r;
+		uint8_t	a;
 	};
 	uint32_t	rgb;
 }	t_color;
 
 typedef struct s_vec3
 {
-	double	x;
-	double	y;
-	double	z;
+	float	x;
+	float	y;
+	float	z;
 }	t_vec3;
+
+typedef union s_vec4
+{
+	struct
+	{
+		float	x;
+		float	y;
+		float	z;
+		float	w;
+	};
+	float	global[4];
+}	t_vec4;
 
 typedef struct s_vertex
 {
@@ -44,31 +58,67 @@ typedef struct s_vertex
 
 typedef struct s_triangle
 {
+	t_color		color;
 	t_vertex	p0;
 	t_vertex	p1;
 	t_vertex	p2;
 	t_vec3		normal;
-	double		roughness;
-	double		metallic;
-	t_color		color;
 }	t_triangle;
 
-typedef struct s_object
+typedef struct	s_ambient
 {
-	t_vec3		translation;
-	t_vec3		rotation;
-	t_vec3		scale;
-	char		*name;
-	t_triangle	*triangles;
-	int			triangle_count;
-}	t_object;
+	float	ratio;
+	t_color	color;
+}	t_ambient;
 
-typedef struct	s_scene
+typedef struct	s_camera
 {
-	char		*name;
-	int			object_count;
-	t_object	*objects;
-}	t_scene;
+	t_vec3	pos;
+	t_vec3	rot;
+	int		fov;
+}	t_camera;
+
+typedef struct	s_light
+{
+	t_color	color;
+	t_vec3	pos;
+	float	brightness;
+}	t_light;
+
+typedef struct	s_sphere
+{
+	t_color	color;
+	t_vec3	pos;
+	float	diameter;
+	float	radius_squared;
+}	t_sphere;
+
+typedef struct	s_plane
+{
+	t_color	color;
+	t_vec3	pos;
+	t_vec3	normal;
+}	t_plane;
+
+typedef struct	s_cylinder
+{
+	t_color	color;
+	t_vec3	pos;
+	t_vec3	rot;
+	float	diameter;
+	float	height;
+}	t_cylinder;
+
+typedef struct	s_obj
+{
+	t_vec3		pos;
+	t_vec4		rot;
+	t_vec3		scale;
+	int			vertex_count;
+	t_vertex	*vertex;
+	// int			triangle_count;
+	// t_triangle	*triangles;
+}	t_obj;
 
 typedef struct	s_ray
 {
@@ -76,11 +126,37 @@ typedef struct	s_ray
 	t_vec3	dir;
 }	t_ray;
 
-typedef struct	s_pos2
+typedef struct	s_object
 {
-	int	dim_x;
-	int	dim_y;
-}	t_pos2;
+	char			*name;
+	t_object_type	type;
+	int				(*f)(t_ray *, t_object *, float *);
+	union
+	{
+		t_light		light;
+		t_sphere	sphere;
+		t_plane		plane;
+		t_cylinder	cylinder;
+		t_triangle	triangle;
+	};
+}	t_object;
+
+typedef struct s_bvh	t_bvh;
+
+typedef struct	s_scene
+{
+	t_ambient	ambient;
+	t_camera	camera;
+	char		*name;
+	t_vector	objects;
+	t_bvh		*bvh;
+}	t_scene;
+
+typedef struct	s_vec2i
+{
+	int	x;
+	int	y;
+}	t_vec2i;
 
 typedef struct s_data
 {
@@ -91,7 +167,12 @@ typedef struct s_data
 	int			bits;
 	int			line_len;
 	int			endian;
-	t_pos2		screen;
+	t_vec2i		screen;
+	t_scene		scene;
 }	t_data;
 
 #endif
+
+
+// 2317332
+//
