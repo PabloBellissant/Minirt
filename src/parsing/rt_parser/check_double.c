@@ -15,6 +15,8 @@
 
 static void	print_already_type(t_object_type type, int actual_line);
 
+#define FORBIDEN_COUNT 3
+
 int	check_float(t_object_type type, int actual_line)
 {
 	static t_object_type	forbidden_float[] = {AMBIENT, CAMERA, LIGHT};
@@ -22,7 +24,7 @@ int	check_float(t_object_type type, int actual_line)
 	unsigned long			i;
 
 	i = 0;
-	while (i < sizeof(forbidden_float))
+	while (i < FORBIDEN_COUNT)
 	{
 		if (type == forbidden_float[i])
 		{
