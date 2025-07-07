@@ -11,8 +11,18 @@
 /* ************************************************************************** */
 
 #include "define.h"
+#include "draw.h"
 
 inline void	put_pixel(int *addr, const int x, const int y, const int color)
 {
 	addr[y * SCREEN_WIDTH + x] = color;
+}
+
+inline void	safe_put_pixel(int *addr, const int x, const int y, const int color)
+{
+	if (x < 0 || x > SCREEN_WIDTH)
+		return ;
+	if (y < 0 || y > SCREEN_HEIGHT)
+		return ;
+	put_pixel(addr, x, y, color);
 }
