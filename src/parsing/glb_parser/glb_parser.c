@@ -17,31 +17,14 @@
 
 static void	print_json(t_json *json, int depth);
 
-int	get_object_count(t_json *json)
-{
-	int	i;
-
-	while (ft_strncmp(json->key, "\"nodes\"", 5) != 0)
-		json = json->next;
-	i = 0;
-	json = json->child;
-	while (json)
-	{
-		++i;
-		json = json->next;
-	}
-	return (i);
-}
-
-t_object	*glb_parser(char *str)
+t_obj	*glb_parser(char *str)
 {
 	t_vector	object_vector;
 	t_json		*json;
 
-	vector_init(&object_vector, sizeof(t_object));
+	vector_init(&object_vector, sizeof(t_obj));
 	json = json_parser(str);
 	print_json(json, 0);
-	dprintf(2, "object count : %d\n", get_object_count(json));
 	return (0);
 }
 
