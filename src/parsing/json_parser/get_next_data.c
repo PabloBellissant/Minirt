@@ -15,9 +15,6 @@
 
 char	*get_next_data(char *json_text)
 {
-	char	*old;
-
-	old = json_text;
 	while (*json_text
 		&& *json_text != ',' && *json_text != '}' && *json_text != ']')
 	{
