@@ -27,4 +27,3 @@ void	remove_vector_elem(t_vector *vector, size_t i)
 	}
 	--vector->num_elements;
 }
-
