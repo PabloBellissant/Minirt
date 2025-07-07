@@ -3,25 +3,69 @@
 /*                                                        :::      ::::::::   */
 /*   hit_register.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:42:26 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/25 17:42:29 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/07 03:02:33 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
+#include <float.h>
 #include "struct.h"
+#include "vec3.h"
+#include "calc.h"
 
-bool	hit_register(t_ray *ray, t_scene *scene)
+#define OFFSET 0.001f
+
+float	hit_register(t_ray *restrict ray, t_vector *restrict obj_vec, t_color *restrict color, t_vec3 *restrict normal)
 {
-	int	i;
+	int			i;
+	int			i_min;
+	t_object	*objects;
+	float		t;
+	float		t_min;
+	t_vec3		hit_point;
 
-	(void) ray;
+	objects = obj_vec->data;
+	i_min = 0;
 	i = 0;
-	while (i < scene->object_count)
+	t_min = FLT_MAX;
+	while (i < (int) obj_vec->num_elements)
 	{
+		if (objects[i].f(ray, &objects[i], &t))
+		{
+			if (t < t_min)
+			{
+				i_min = i;
+				t_min = t;
+			}
+		}
 		++i;
 	}
-	return (false);
+	objects = &objects[i_min];
+	if (t == FLT_MAX)
+		return (0);
+	if (objects->type == SPHERE)
+	{
+		vec3_scale(&ray->dir, t_min - OFFSET);
+		vec3_add(&ray->pos, &ray->dir, &hit_point);
+		vec3_sub(&hit_point, &objects->sphere.pos, normal);
+		*color = objects->sphere.color;
+	}
+	else if (objects->type == PLANE || objects->type == TRIANGLE)
+	{
+		vec3_scale(&ray->dir, t_min - OFFSET);
+		vec3_add(&ray->pos, &ray->dir, &hit_point);
+		*normal = objects->plane.normal;
+		*color = objects->plane.color;
+	}
+	else
+	{
+		vec3_scale(&ray->dir, t_min - OFFSET);
+		vec3_add(&ray->pos, &ray->dir, &hit_point);
+		vec3_sub(&hit_point, &objects->cylinder.pos, normal);
+		*color = objects->cylinder.color;
+	}
+	ray->pos = hit_point;
+	return (t);
 }
