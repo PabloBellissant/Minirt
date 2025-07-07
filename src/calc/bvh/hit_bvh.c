@@ -26,7 +26,12 @@ inline t_object	*hit_bvh(t_ray *ray, t_bvh *bvh)
 	float		object_b_t;
 
 	if (bvh->depth == 0)
+	{
+		get_t(ray, bvh->object, &object_a_t);
+		if (isnan(object_a_t))
+			return (NULL);
 		return (bvh->object);
+	}
 	object_a_t = NAN;
 	object_b_t = NAN;
 	if (hit_box(ray, bvh->next_a) == true)
@@ -54,25 +59,25 @@ void	get_t(t_ray *ray, t_object *object, float *t)
 {
 	if (object->type == PLANE)
 	{
-		if (hit_plane(ray, &object->plane, t) == 0)
+		if (hit_plane(ray, object, t) == 0)
 			*t = NAN;
 		return ;
 	}
 	if (object->type == SPHERE)
 	{
-		if (hit_sphere(ray, &object->sphere, t) == 0)
+		if (hit_sphere(ray, object, t) == 0)
 			*t = NAN;
 		return ;
 	}
 	if (object->type == TRIANGLE)
 	{
-		if (hit_triangle(ray, &object->triangle, t) == 0)
+		if (hit_triangle(ray, object, t) == 0)
 			*t = NAN;
 		return ;
 	}
 	if (object->type == CYLINDER)
 	{
-		if (hit_cylinder(ray, &object->cylinder, t) == 0)
+		if (hit_cylinder(ray, object, t) == 0)
 			*t = NAN;
 		return ;
 	}
