@@ -13,9 +13,37 @@
 #ifndef PARSING_H
 # define PARSING_H
 
-# include "json.h"
-# include "struct.h"
+typedef struct	s_scene t_scene;
+typedef struct	s_object t_object;
+typedef union	u_color t_color;
 
-int parse_map(char *file_name, t_scene *scene);
+typedef enum	e_object_type
+{
+	UNDEFINED,
+	AMBIENT,
+	CAMERA,
+	LIGHT,
+	SPHERE,
+	PLANE,
+	CYLINDER,
+	TRIANGLE,
+	OBJ,
+	OBJ_ENUM_SIZE
+}	t_object_type;
+
+int				parse_map(char *file_name, t_scene *scene);
+int				rt_parser(int fd, t_scene *scene);
+int				parse_line(t_scene *scene, char *line, int actual_line);
+t_object_type	get_type(char *line, int actual_line);
+int				check_float(t_object_type type, int actual_line);
+t_object		*create_object(t_scene *scene, t_object_type type);
+
+int				ambient(char *line, int line_num, t_scene *scene);
+int				camera(char *line, int line_num, t_scene *scene);
+int				light(char *line, int line_num, t_scene *scene);
+int				sphere(char *line, int line_num, t_scene *scene);
+int				plane(char *line, int line_num, t_scene *scene);
+int				cylinder(char *line, int line_num, t_scene *scene);
+int				obj(char *line, int line_num, t_scene *scene);
 
 #endif
