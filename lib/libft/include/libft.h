@@ -16,6 +16,7 @@
 # include <stddef.h>
 # include <stdbool.h>
 # include <stdio.h>
+# include <stdint.h>
 
 # define VECTOR_BASE_SIZE 128
 # define LOWER_UPPER_VAL 32
@@ -102,7 +103,7 @@ t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)
 			(void *), void (*del)(void *));
 
-typedef struct	s_vector
+typedef struct s_vector
 {
 	size_t	element_size;
 	size_t	num_elements;
@@ -121,17 +122,23 @@ void	remove_vector_elem(t_vector *vector, size_t i);
 bool	is_above_int(char *value_in_str);
 bool	ft_isspace(const char c);
 
-double	ft_atod(char *str);
+float	ft_atod(char *str);
 
-
-typedef struct	s_limits
+typedef struct s_limits
 {
 	int	min;
 	int	max;
 }	t_limits;
 
+typedef union u_result
+{
+	float	*float_t;
+	int		*int_t;
+	uint8_t	*uint8_t;
+}	t_result;
+
 int		ft_scan(int line_num, char *format, char *line, ...);
-float	parse_float(char *line, int line_number, t_limits limits);
-int		parse_int(char *line, int line_number, t_limits limits);
+float   ft_minf(const float val1, const float val2);
+float   ft_maxf(const float val1, const float val2);
 
 #endif
