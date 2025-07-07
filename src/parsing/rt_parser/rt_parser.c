@@ -12,62 +12,11 @@
 
 #include <fcntl.h>
 #include <errno.h>
-#include <math.h>
 #include "libft.h"
 #include "struct.h"
-#include "init.h"
 #include "parsing.h"
 #include "vec3.h"
 
-// #define X 0.525731112119133606f
-// #define Z 0.850650808352039932f
-//
-// void	create_icosphere(t_scene *scene, t_vec3 center)
-// {
-// 	static const t_vec3 base_vertices[12] = {
-// 		{-X, 0, Z}, {X, 0, Z}, {-X, 0, -Z}, {X, 0, -Z},
-// 		{0, Z, X}, {0, Z, -X}, {0, -Z, X}, {0, -Z, -X},
-// 		{Z, X, 0}, {-Z, X, 0}, {Z, -X, 0}, {-Z, -X, 0}
-// 	};
-// 	static const int faces[20][3] = {
-// 		{0, 4, 1}, {0, 9, 4}, {9, 5, 4}, {4, 5, 8}, {4, 8, 1},
-// 		{8, 10, 1}, {8, 3, 10}, {5, 3, 8}, {5, 2, 3}, {2, 7, 3},
-// 		{7, 10, 3}, {7, 6, 10}, {7, 11, 6}, {11, 0, 6}, {0, 1, 6},
-// 		{6, 1, 10}, {9, 0, 11}, {9, 11, 2}, {9, 2, 5}, {7, 2, 11}
-// 	};
-// 	t_vec3	vertices[12];
-// 	int		i;
-// 	float	scale;
-// 	t_object *object;
-// 	t_triangle *triangle;
-//
-// 	scale = 1.0f; // rayon de la sphère unité
-// 	i = 0;
-// 	while (i < 12)
-// 	{
-// 		float	len = sqrtf(
-// 			base_vertices[i].x * base_vertices[i].x +
-// 			base_vertices[i].y * base_vertices[i].y +
-// 			base_vertices[i].z * base_vertices[i].z
-// 		);
-// 		vertices[i].x = (base_vertices[i].x / len) * scale + center.x;
-// 		vertices[i].y = (base_vertices[i].y / len) * scale + center.y;
-// 		vertices[i].z = (base_vertices[i].z / len) * scale + center.z;
-// 		i++;
-// 	}
-// 	i = 0;
-// 	while (i < 20)
-// 	{
-// 		object = create_object(scene, TRIANGLE);
-// 		triangle = &object->triangle;
-// 		triangle->color = (t_color){{.r = 255, .g = 255, .b = 0}};
-// 		triangle->p0.pos = vertices[faces[i][0]];
-// 		triangle->p1.pos = vertices[faces[i][1]];
-// 		triangle->p2.pos = vertices[faces[i][2]];
-//
-// 		i++;
-// 	}
-// }
 
 void	set_triangle_normal(t_triangle *triangle)
 {
