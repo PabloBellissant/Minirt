@@ -12,6 +12,7 @@
 
 #include "libft.h"
 #include "struct.h"
+#include "calc.h"
 
 #define SPHERE_FORMAT " *sp +%f *, *%f *, *%f +%f +%8[255] *\
 , *%8[255] *, *%8[255] *\n"
@@ -32,5 +33,6 @@ int	sphere(char *line, int line_num, t_scene *scene)
 		&sphere->diameter, &color->r, &color->g, &color->b);
 	radius = sphere->diameter / 2.0f;
 	sphere->radius_squared = radius * radius;
+	object->f = hit_sphere;
 	return (0);
 }

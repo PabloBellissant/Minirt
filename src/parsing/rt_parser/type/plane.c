@@ -12,6 +12,7 @@
 
 #include "libft.h"
 #include "struct.h"
+#include "calc.h"
 
 #define PLANE_FORMAT " *pl +%f *, *%f *, *%f +%f[-1,1] *, *%f[-1,1] *\
 , *%f[-1,1] +%8[255] *, *%8[255] *, *%8[255] *\n"
@@ -31,5 +32,6 @@ int	plane(char *line, int line_num, t_scene *scene)
 	norm = &plane->normal;
 	ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z, &norm->x,
 		&norm->y, &norm->z, &color->r, &color->g, &color->b);
+	object->f = hit_plane;
 	return (0);
 }
