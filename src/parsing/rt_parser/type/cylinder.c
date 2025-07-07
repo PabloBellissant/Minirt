@@ -12,6 +12,7 @@
 
 #include "libft.h"
 #include "struct.h"
+#include "calc.h"
 
 #define CYLINDER_FORMAT " *cy +%f *, *%f *, *%f +%f[-1,1] *, *%f[-1,1] *, *\
 %f[-1,1] +%f +%f +%8[255] *, *%8[255] *, *%8[255] *\n"
@@ -32,5 +33,6 @@ int	cylinder(char *line, int line_num, t_scene *scene)
 	ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
 		&rot->x, &rot->y, &rot->z, &cylinder->diameter, &cylinder->height,
 		&color->r, &color->g, &color->b);
+	object->f = hit_cylinder;
 	return (0);
 }
