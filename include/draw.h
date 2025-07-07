@@ -13,6 +13,11 @@
 #ifndef DRAW_H
 # define DRAW_H
 
-inline void	put_pixel(int *addr, const int x, const int y, const int color);
+# include <struct.h>
+
+void	put_pixel(int *addr, const int x, const int y, const int color);
+void	safe_put_pixel(int *addr, const int x, const int y, const int color);
+void	draw_line(t_data *data, t_vec2i point_a, t_vec2i point_b);
+void	rasterization(t_data *mlx);
 
 #endif
