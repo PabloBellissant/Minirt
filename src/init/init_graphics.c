@@ -39,15 +39,15 @@ int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
 
 int	init_graphics(t_data *data)
 {
-	t_pos2	screen;
+	t_vec2i	screen;
 
-	data->screen.dim_x = SCREEN_WIDTH;
-	data->screen.dim_y = SCREEN_HEIGHT;
+	data->screen.x = SCREEN_WIDTH;
+	data->screen.y = SCREEN_HEIGHT;
 	data->mlx = mlx_init();
 	if (!data->mlx)
 		return (-1);
 	screen = data->screen;
-	data->win = mlx_new_window(data->mlx, screen.dim_x, screen.dim_y, TITLE);
+	data->win = mlx_new_window(data->mlx, screen.x, screen.y, TITLE);
 	if (!data->win)
 	{
 		mlx_destroy_display(data->mlx);
@@ -56,7 +56,7 @@ int	init_graphics(t_data *data)
 	}
 	//disable_decorations(data->mlx->display, data->win->window);
 	//mlx_ext_fullscreen(data->mlx, data->win, 1);
-	data->img = mlx_new_image(data->mlx, screen.dim_x, screen.dim_y);
+	data->img = mlx_new_image(data->mlx, screen.x, screen.y);
 	if (data->img == NULL)
 	{
 		mlx_destroy_window(data->mlx, data->win);
