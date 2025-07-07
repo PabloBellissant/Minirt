@@ -14,8 +14,5 @@
 
 inline t_vec3*	vec3_unit(t_vec3 *v)
 {
-	float	len;
-
-	len = vec3_length(v);
-	return (vec3_div_scalar(v, len));
+	return (vec3_div_scalar(v, vec3_length(v)));
 }
