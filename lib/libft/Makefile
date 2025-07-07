@@ -20,11 +20,12 @@ SRCS = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
        get_next_line.c av.c ft_fabs.c ft_swap_float.c free_vector.c \
        ft_strtok.c ft_strtok_r.c vector_realloc.c ft_strrncmp.c \
        set_vector_size.c remove_vector_elem.c ft_atod.c ft_isspace.c \
-       ft_scan/ft_scan.c ft_scan/parse_float.c ft_scan/parse_int.c ft_atol.c
+       ft_scan/ft_scan.c ft_scan/parse_float.c ft_scan/parse_int.c ft_atol.c \
+       ft_scan/parse_type.c ft_minf.c ft_maxf.c
 
 OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 
-CFLAGS = -Werror -Wextra -Wall -MD -MP -I $(INCDIR) -g -Ofast
+CFLAGS = -Werror -Wextra -Wall -MD -MP -I $(INCDIR) -g# -Ofast -march=native -mtune=native -ffast-math -funroll-loops
 AR = ar -rcs
 DEPFLAGS = -MMD -MP
 

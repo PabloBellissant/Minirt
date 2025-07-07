@@ -32,13 +32,33 @@ SRCS =	$(addprefix $(SRCDIR)/, \
 		parsing/rt_parser/parse_line.c \
 		parsing/rt_parser/get_type.c \
 		parsing/rt_parser/check_double.c \
+		parsing/rt_parser/type/create_object.c \
+		parsing/rt_parser/type/ambient.c \
+		parsing/rt_parser/type/camera.c \
+		parsing/rt_parser/type/light.c \
+		parsing/rt_parser/type/sphere.c \
+		parsing/rt_parser/type/plane.c \
+		parsing/rt_parser/type/cylinder.c \
+		parsing/obj_parser/obj_parser.c \
 		init/init_graphics.c \
 		draw/put_pixel.c \
 		draw/draw_line.c \
+		draw/draw_bvh.c \
+		draw/rasterization.c \
 		loop_hook.c \
 		loop.c \
 		calc/ray_path.c \
 		calc/hit_register.c \
+		calc/objects/hit_plane.c \
+		calc/objects/hit_sphere.c \
+		calc/objects/hit_triangle.c \
+		calc/objects/hit_cylinder.c \
+		calc/bvh/hit_bvh.c \
+		calc/bvh/get_bvh_area.c \
+		calc/bvh/get_next_bvh_area.c \
+		calc/bvh/create_bvh.c \
+		calc/bvh/merge_bvh.c \
+		calc/bvh/merge_nearest_bvh.c \
 		multi_threading/init_threads.c \
 		multi_threading/routine.c \
 		multi_threading/task_stack/enqueue.c \
@@ -51,6 +71,10 @@ SRCS =	$(addprefix $(SRCDIR)/, \
 		vec3/vec3_div_scalar.c \
 		vec3/vec3_length.c \
 		vec3/vec3_length_squared.c \
+		vec3/vec3_unit.c \
+		vec3/vec3_dot.c \
+		vec3/vec3_lerp.c \
+		vec3/vec3_cross.c \
 		vec3/vec3_random.c \
 		clear_scene.c \
 		main.c)
@@ -61,15 +85,14 @@ DEPS = $(OBJS:.o=.d)
 LIBFT = $(LIBFTDIR)/libft.a
 MLX = $(MLX_DIR)/libmlx.a
 
-CFLAGS = -Wall -Wextra -Werror -I $(INCDIR) -I $(LIBFTINC) -I $(MLX_DIR) -g -march=native
+CFLAGS = -Wall -Werror -Wextra -I $(INCDIR) -I $(LIBFTINC) -I $(MLX_DIR) -g -march=native -msse3
 LDFLAGS = -L$(MLX_DIR) -lmlx -lX11 -lXext -lm -lz -lXrandr
 DEPFLAGS = -MMD -MP
 MAKEFLAGS = --no-print-directory
-# -flto -fvectorize
 
 all: $(NAME)
 
-fast: CFLAGS += -Ofast
+fast: CFLAGS += -Ofast -march=native -mtune=native -flto -funroll-loops
 fast: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT) $(MLX)
