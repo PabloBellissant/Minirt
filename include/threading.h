@@ -13,8 +13,8 @@
 #ifndef THREADING_H
 # define THREADING_H
 
-# define THREADS_COUNT 1
-# define TASK_MAX 512
+# define THREADS_COUNT 12
+# define TASK_MAX 2048
 
 # include "struct.h"
 
