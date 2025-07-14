@@ -85,7 +85,7 @@ DEPS = $(OBJS:.o=.d)
 LIBFT = $(LIBFTDIR)/libft.a
 MLX = $(MLX_DIR)/libmlx.a
 
-CFLAGS = -Wall -Werror -Wextra -I $(INCDIR) -I $(LIBFTINC) -I $(MLX_DIR) -g -march=native -msse3
+CFLAGS = -Wall -Werror -Wextra -I $(INCDIR) -I $(LIBFTINC) -I $(MLX_DIR) -g -march=native -msse3 -Rpass-missed=.*
 LDFLAGS = -L$(MLX_DIR) -lmlx -lX11 -lXext -lm -lz -lXrandr
 DEPFLAGS = -MMD -MP
 MAKEFLAGS = --no-print-directory
