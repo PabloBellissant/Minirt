@@ -6,7 +6,7 @@
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 09:34:43 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/28 09:34:48 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/22 22:47:33 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ static void	bresenham_v(t_data *data, t_vec2i p1, t_vec2i p2, int color);
 
 void	draw_line(t_data *data, t_vec2i point_a, t_vec2i point_b)
 {
-	if (ft_abs(point_b.y - point_a.y)
-		<= ft_abs(point_b.x - point_a.x))
+	if (abs(point_b.y - point_a.y)
+		<= abs(point_b.x - point_a.x))
 	{
 		if (point_b.x < point_a.x)
 			bresenham_h(data, point_b, point_a, 0xFFFFFF);

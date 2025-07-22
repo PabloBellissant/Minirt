@@ -6,13 +6,14 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 06:31:17 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/30 06:31:41 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/22 22:49:41 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "bvh.h"
 #include "struct.h"
+#include <math.h>
 
 static int		create_object_bvh(t_scene *scene, t_vector *bvh_vec);
 static void		set_bvh_size(t_object *object, t_vec3 *pos, t_vec3 *size);
@@ -107,11 +108,11 @@ static void	set_bvh_size(t_object *object, t_vec3 *pos, t_vec3 *size)
 	if (object->type == TRIANGLE)
 	{
 		t = object->triangle;
-		pos->x = ft_minf(ft_minf(t.p0.pos.x, t.p1.pos.x), t.p2.pos.x);
-		pos->y = ft_minf(ft_minf(t.p0.pos.y, t.p1.pos.y), t.p2.pos.y);
-		pos->z = ft_minf(ft_minf(t.p0.pos.z, t.p1.pos.z), t.p2.pos.z);
-		size->x = ft_maxf(ft_maxf(t.p0.pos.x, t.p1.pos.x), t.p2.pos.x);
-		size->y = ft_maxf(ft_maxf(t.p0.pos.y, t.p1.pos.y), t.p2.pos.y);
-		size->z = ft_maxf(ft_maxf(t.p0.pos.z, t.p1.pos.z), t.p2.pos.z);
+		pos->x = fminf(fminf(t.p0.pos.x, t.p1.pos.x), t.p2.pos.x);
+		pos->y = fminf(fminf(t.p0.pos.y, t.p1.pos.y), t.p2.pos.y);
+		pos->z = fminf(fminf(t.p0.pos.z, t.p1.pos.z), t.p2.pos.z);
+		size->x = fmaxf(fmaxf(t.p0.pos.x, t.p1.pos.x), t.p2.pos.x);
+		size->y = fmaxf(fmaxf(t.p0.pos.y, t.p1.pos.y), t.p2.pos.y);
+		size->z = fmaxf(fmaxf(t.p0.pos.z, t.p1.pos.z), t.p2.pos.z);
 	}
 }

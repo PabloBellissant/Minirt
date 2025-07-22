@@ -1,7 +1,9 @@
 .vscode/
+.idea/
 .obj/
 .dep/
 *.o
 *.d
 *.a
 Minirt
+*.out
