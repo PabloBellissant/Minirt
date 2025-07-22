@@ -6,7 +6,7 @@
 #    By: jaubry-- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/22 22:03:28 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/07/22 23:21:21 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ CFLAGS		= -Wall -Werror -Wextra \
 			  $(if $(filter 1,$(DEBUG)),$(DEBUG_FLAGS)) \
 			  -D DEBUG=$(DEBUG) \
 			  -D WIDTH=$(WIDTH) \
-			  -D HEIGHT=$(WIEGHT) \
+			  -D HEIGHT=$(HEIGHT) \
 			  -march=native -msse3
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(MLXDIR)
