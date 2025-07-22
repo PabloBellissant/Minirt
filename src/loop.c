@@ -1,1 +1,139 @@
-/* ************************************************************************** *//*                                                                            *//*                                                        :::      ::::::::   *//*   loop.c                                             :+:      :+:    :+:   *//*                                                    +:+ +:+         +:+     *//*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        *//*                                                +#+#+#+#+#+   +#+           *//*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             *//*   Updated: 2025/05/23 05:22:08 by pabellis         ###   ########.fr       *//*                                                                            *//* ************************************************************************** */#include "mlx.h"#include "libft.h"#include "struct.h"#include "define.h"#include "draw.h"#include <math.h>#include "vec3.h"#include "calc.h"#include <sys/time.h>int loop(t_data *mlx){    t_scene *scene = &mlx->scene;    t_camera *camera = &mlx->scene.camera;    static int generation = 0;    static size_t total_time = 0;    struct timeval start, stop;    int    x;    int    y;    gettimeofday(&start, NULL);    float focal_length = 1.0f;    float theta = (camera->fov * M_PI) / 180.0f;    float viewport_height = 2.0f * tan(theta / 2.0f) * focal_length;    float aspect_ratio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;    float viewport_width = viewport_height * aspect_ratio;    t_vec3 u = {viewport_width, 0, 0};    t_vec3 v = {0, -viewport_height, 0};    t_vec3 pixel_delta_u = u;    t_vec3 pixel_delta_v = v;    vec3_div_scalar(&pixel_delta_u, SCREEN_WIDTH);    vec3_div_scalar(&pixel_delta_v, SCREEN_HEIGHT);    t_vec3 focal_vec = {0, 0, focal_length};    t_vec3 viewport_upper_left;    vec3_sub(&camera->pos, &focal_vec, &viewport_upper_left);    vec3_sub(&viewport_upper_left, vec3_div_scalar(&u, 2.0f), &viewport_upper_left);    vec3_sub(&viewport_upper_left, vec3_div_scalar(&v, 2.0f), &viewport_upper_left);    t_vec3 half_pixel_offset;    vec3_add(&pixel_delta_u, &pixel_delta_v, &half_pixel_offset);    vec3_scale(&half_pixel_offset, 0.5f);    t_vec3 pixel00_loc;    vec3_add(&viewport_upper_left, &half_pixel_offset, &pixel00_loc);    y = 0;    while (y < SCREEN_HEIGHT)    {       x = 0;       while (x < SCREEN_WIDTH)       {          t_vec3 pixel_center = pixel00_loc;          t_vec3 x_offset = pixel_delta_u;          vec3_scale(&x_offset, (float)x);          vec3_add(&pixel_center, &x_offset, &pixel_center);          t_vec3 y_offset = pixel_delta_v;          vec3_scale(&y_offset, (float)y);          vec3_add(&pixel_center, &y_offset, &pixel_center);          t_ray ray;          ray.pos = camera->pos;          vec3_sub(&pixel_center, &camera->pos, &ray.dir);          vec3_unit(&ray.dir);          t_color color = ray_path(&ray, scene);          put_pixel(mlx->addr, x, y, color.rgb);          ++x;       }       ++y;    }    gettimeofday(&stop, NULL);    size_t frame_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;    total_time += frame_time;    generation++;    dprintf(2, "Frame time: %zu μs\n", frame_time);    dprintf(2, "Average: %zu μs (frame: %d)\n", total_time / generation, generation);    mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);    return 0;	//	// static float x;	// static float y;	// static float z;	// t_data *data;	// t_scene scene;	//	// data = mlx;	// scene = data->scene;	// (void) draw_line;	// ft_bzero(mlx->addr, SCREEN_WIDTH * SCREEN_HEIGHT * 4);	// x += to_rad(0.1f);	// y += to_rad(0.01f);	// z += to_rad(0.2f);	// t_mat3	rot = rotation_matrix(x, y, z);	// int	t;	// int	i = 0;	// while (i < scene.object_count)	// {	// 	t = 0;	// 	t_vertex *tab = scene.objects[i].vertex;	// 	t_object obj = scene.objects[i];	// 	while (t < scene.objects[i].vertex_count)	// 	{	// 		t_vec3	temp;	// 		temp.x = tab[t].pos.x + obj.translation.x;	// 		temp.y = tab[t].pos.y + obj.translation.y;	// 		temp.z = tab[t].pos.z + obj.translation.z;	// 		t_vec3 p = mat3_apply(rot, temp);	// 		p.z += 1.5;	// 		p.y *= -1;	// 		float	x_proj = (p.x / p.z) * 800;	// 		float	y_proj = (p.y / p.z) * 800;	// 		int x_screen = x_proj + SCREEN_WIDTH / 2;	// 		int y_screen = y_proj + SCREEN_HEIGHT / 2;	// 		safe_put_pixel(mlx->addr, x_screen, y_screen, 0x00FFFF);	// 		++t;	// 	}	// 	++i;	// }	// return (0);}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   loop.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
+/*   Updated: 2025/05/23 05:22:08 by pabellis         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mlx.h"
+#include "libft.h"
+#include "struct.h"
+#include "define.h"
+#include "draw.h"
+#include <math.h>
+
+#include "vec3.h"
+#include "calc.h"
+#include <sys/time.h>
+
+int loop(t_data *mlx)
+{
+    t_scene *scene = &mlx->scene;
+    t_camera *camera = &mlx->scene.camera;
+    static int generation = 0;
+    static size_t total_time = 0;
+    struct timeval start, stop;
+    int    x;
+    int    y;
+
+    gettimeofday(&start, NULL);
+
+    float focal_length = 1.0f;
+    float theta = (camera->fov * M_PI) / 180.0f;
+    float viewport_height = 2.0f * tan(theta / 2.0f) * focal_length;
+    float aspect_ratio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
+    float viewport_width = viewport_height * aspect_ratio;
+
+    t_vec3 u = {viewport_width, 0, 0};
+    t_vec3 v = {0, -viewport_height, 0};
+
+    t_vec3 pixel_delta_u = u;
+    t_vec3 pixel_delta_v = v;
+    vec3_div_scalar(&pixel_delta_u, SCREEN_WIDTH);
+    vec3_div_scalar(&pixel_delta_v, SCREEN_HEIGHT);
+
+    t_vec3 focal_vec = {0, 0, focal_length};
+    t_vec3 viewport_upper_left;
+    vec3_sub(&camera->pos, &focal_vec, &viewport_upper_left);
+    vec3_sub(&viewport_upper_left, vec3_div_scalar(&u, 2.0f), &viewport_upper_left);
+    vec3_sub(&viewport_upper_left, vec3_div_scalar(&v, 2.0f), &viewport_upper_left);
+
+    t_vec3	half_pixel_offset;
+    vec3_add(&pixel_delta_u, &pixel_delta_v, &half_pixel_offset);
+    vec3_scale(&half_pixel_offset, 0.5f);
+    t_vec3 pixel00_loc;
+    vec3_add(&viewport_upper_left, &half_pixel_offset, &pixel00_loc);
+
+    y = 0;
+    while (y < SCREEN_HEIGHT)
+    {
+       x = 0;
+       while (x < SCREEN_WIDTH)
+       {
+          t_vec3 pixel_center = pixel00_loc;
+
+          t_vec3 x_offset = pixel_delta_u;
+          vec3_scale(&x_offset, (float)x);
+          vec3_add(&pixel_center, &x_offset, &pixel_center);
+
+          t_vec3 y_offset = pixel_delta_v;
+          vec3_scale(&y_offset, (float)y);
+          vec3_add(&pixel_center, &y_offset, &pixel_center);
+
+          t_ray ray;
+          ray.pos = camera->pos;
+          vec3_sub(&pixel_center, &camera->pos, &ray.dir);
+          vec3_unit(&ray.dir);
+
+          t_color color = ray_path(&ray, scene);
+          put_pixel(mlx->addr, x, y, color.rgb);
+          ++x;
+       }
+       ++y;
+    }
+	camera->pos.x += 0.1f;
+    gettimeofday(&stop, NULL);
+    size_t frame_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+    total_time += frame_time;
+    generation++;
+    dprintf(2, "Frame time: %zu μs\n", frame_time);
+    dprintf(2, "Average: %zu μs (frame: %d)\n", total_time / generation, generation);
+    mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
+    return 0;
+	//
+	// static float x;
+	// static float y;
+	// static float z;
+	// t_data *data;
+	// t_scene scene;
+	//
+	// data = mlx;
+	// scene = data->scene;
+	// (void) draw_line;
+	// ft_bzero(mlx->addr, SCREEN_WIDTH * SCREEN_HEIGHT * 4);
+	// x += to_rad(0.1f);
+	// y += to_rad(0.01f);
+	// z += to_rad(0.2f);
+	// t_mat3	rot = rotation_matrix(x, y, z);
+	// int	t;
+	// int	i = 0;
+	// while (i < scene.object_count)
+	// {
+	// 	t = 0;
+	// 	t_vertex *tab = scene.objects[i].vertex;
+	// 	t_object obj = scene.objects[i];
+	// 	while (t < scene.objects[i].vertex_count)
+	// 	{
+	// 		t_vec3	temp;
+	// 		temp.x = tab[t].pos.x + obj.translation.x;
+	// 		temp.y = tab[t].pos.y + obj.translation.y;
+	// 		temp.z = tab[t].pos.z + obj.translation.z;
+	// 		t_vec3 p = mat3_apply(rot, temp);
+	// 		p.z += 1.5;
+	// 		p.y *= -1;
+	// 		float	x_proj = (p.x / p.z) * 800;
+	// 		float	y_proj = (p.y / p.z) * 800;
+	// 		int x_screen = x_proj + SCREEN_WIDTH / 2;
+	// 		int y_screen = y_proj + SCREEN_HEIGHT / 2;
+	// 		safe_put_pixel(mlx->addr, x_screen, y_screen, 0x00FFFF);
+	// 		++t;
+	// 	}
+	// 	++i;
+	// }
+	// return (0);
+}
