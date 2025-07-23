@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/14 06:13:42 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:36:13 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,12 +143,21 @@ typedef struct	s_object
 
 typedef struct s_bvh	t_bvh;
 
+typedef struct s_phong
+{
+	t_vec3	*l;//LIGHTS
+	t_vec3	*r;//LIGHTS
+	t_vec3	v;
+}	t_phong;
+
 typedef struct	s_scene
 {
 	t_ambient	ambient;
 	t_camera	camera;
 	char		*name;
 	t_vector	objects;
+	t_vector	lights;
+	t_phong		phong;
 	t_bvh		*bvh;
 }	t_scene;
 

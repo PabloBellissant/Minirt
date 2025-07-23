@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hit_register.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:42:26 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/07 03:02:33 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 07:38:27 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,18 @@
 
 float	hit_register(t_ray *restrict ray, t_vector *restrict obj_vec, t_color *restrict color, t_vec3 *restrict normal)
 {
-	int			i;
-	int			i_min;
-	t_object	*objects;
-	float		t;
-	float		t_min;
 	t_vec3		hit_point;
+	t_object	*objects;
+	float		t_min;
+	int			i_min;
+	float		t;
+	int			i;
 
 	objects = obj_vec->data;
 	i_min = 0;
 	i = 0;
 	t_min = FLT_MAX;
-	while (i < (int) obj_vec->num_elements)
+	while (i < (int)obj_vec->num_elements)
 	{
 		if (objects[i].f(ray, &objects[i], &t))
 		{
@@ -52,7 +52,7 @@ float	hit_register(t_ray *restrict ray, t_vector *restrict obj_vec, t_color *res
 		vec3_sub(&hit_point, &objects->sphere.pos, normal);
 		*color = objects->sphere.color;
 	}
-	else if (objects->type == PLANE || objects->type == TRIANGLE)
+	else if ((objects->type == PLANE) || (objects->type == TRIANGLE))
 	{
 		vec3_scale(&ray->dir, t_min - OFFSET);
 		vec3_add(&ray->pos, &ray->dir, &hit_point);

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    vec3.mk                                            :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jaubry-- <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:26:12 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/22 21:53:50 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/07/23 22:48:59 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,10 @@ VEC3_SRCS	= vec3_add.c \
 			  vec3_random.c \
 			  vec3_scale.c \
 			  vec3_sub.c \
-			  vec3_unit.c
+			  vec3_unit.c \
+			  vec3_magnitude.c \
+			  vec3_normalize.c \
+			  vec3_mult.c
 SRCS		+= $(addprefix $(VEC3_DIR)/, $(VEC3_SRCS))
 
 # VPATH

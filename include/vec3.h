@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vec3.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 04:28:42 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/01 04:28:47 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:21:46 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,9 @@ t_vec3	*vec3_cross(t_vec3 *a, t_vec3 *b, t_vec3 *out);
 //t_vec3*    vec3_negate(const t_vec3 v);
 //t_vec3*    vec3_init(float x, float y, float z);
 t_vec3	*vec3_random(t_vec3 *vec);
+
+t_vec3	*vec3_normalize(t_vec3 *vec);
+float	vec3_magnitude(const t_vec3 *v);
+t_vec3	*vec3_mult(const t_vec3 *vec1, const t_vec3 *vec2, t_vec3 *out);
 
 #endif
