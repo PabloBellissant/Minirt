@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 06:07:52 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/11 06:07:54 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:37:24 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,21 +52,17 @@ int	rt_parser(int fd, t_scene *scene)
 		return_val = -1;
 		perror("Minirt");
 	}
-	// t_object	*object = create_object(scene, TRIANGLE);
-	// t_triangle	*triangle;
-	//
-	// triangle = &object->triangle;
-	// triangle->color = (t_color) {{0,255,255,0}};
-	// triangle->p0.pos.x = 1.5f;
-	// triangle->p0.pos.y = -1;
-	// triangle->p0.pos.z = -5;
-	// triangle->p1.pos.x = 2.2f;
-	// triangle->p1.pos.y = 2.5f;
-	// triangle->p1.pos.z = -5;
-	// triangle->p2.pos.x = -2.f;
-	// triangle->p2.pos.y = -1.5f;
-	// triangle->p2.pos.z = -5;
-	// dprintf(2, "%f %f %f\n", ((t_object *)scene->objects.data)[0].sphere.pos.x, ((t_object *)scene->objects.data)[0].sphere.pos.y, ((t_object *)scene->objects.data)[0].sphere.pos.z);
-	// set_triangle_normal(triangle);
+	scene->phong.l = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
+	if (errno != 0)
+	{
+		return_val = -1;
+		perror("Minirt");
+	}
+	scene->phong.r = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
+	if (errno != 0)
+	{
+		return_val = -1;
+		perror("Minirt");
+	}
 	return (return_val);
 }

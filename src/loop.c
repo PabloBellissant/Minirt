@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/23 01:48:40 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/23 23:37:35 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	compute(t_data *mlx)
           vec3_unit(&ray.dir);
 
           t_color color = ray_path(&ray, scene);
-          put_pixel(mlx->addr, x, y, color.rgb);
+          put_pixel(mlx->addr, x, y, color.rgb);		  
           ++x;
        }
        ++y;
