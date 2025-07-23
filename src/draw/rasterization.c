@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rasterization.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:21:27 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/04 00:23:34 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 01:30:35 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ void	rasterization(t_data *mlx)
 		temp = sphere->pos;
 		float	x_proj = (temp.x / temp.z) * 565;
 		float	y_proj = (temp.y / temp.z) * 565;
-		t_vec2i vec1 = (t_vec2i) {x_proj + SCREEN_WIDTH / 2, y_proj + SCREEN_HEIGHT / 2};
+		t_vec2i vec1 = (t_vec2i) {x_proj + WIDTH / 2, y_proj + HEIGHT / 2};
 		temp2 = sphere->pos;
 		temp2.x += sphere->diameter / 2;
 		float x_proj2 = (temp2.x / temp2.z) * 570;
 		float y_proj2 = (temp2.y / temp2.z) * 570;
-		t_vec2i vec2 = (t_vec2i) {x_proj2 + SCREEN_WIDTH / 2, y_proj2 + SCREEN_HEIGHT / 2};
+		t_vec2i vec2 = (t_vec2i) {x_proj2 + WIDTH / 2, y_proj2 + HEIGHT / 2};
 		draw_line(mlx, vec1, vec2);
 		++i;
 	}
@@ -57,6 +57,6 @@ void	rasterization(t_data *mlx)
 // 		p.y *= -1;
 // 		float	x_proj = (p.x / p.z) * 800;
 // 		float	y_proj = (p.y / p.z) * 800;
-// 		int x_screen = x_proj + SCREEN_WIDTH / 2;
-// 		int y_screen = y_proj + SCREEN_HEIGHT / 2;
+// 		int x_screen = x_proj + WIDTH / 2;
+// 		int y_screen = y_proj + HEIGHT / 2;
 // 		safe_put_pixel(mlx->addr, x_screen, y_screen, 0x00FFFF);

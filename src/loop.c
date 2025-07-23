@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/23 05:22:08 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 01:48:40 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,35 @@
 #include "calc.h"
 #include <sys/time.h>
 
-int loop(t_data *mlx)
+void	frame_gen(void compute(t_data *), t_data *mlx)
 {
-    t_scene *scene = &mlx->scene;
-    t_camera *camera = &mlx->scene.camera;
-    static int generation = 0;
-    static size_t total_time = 0;
-    struct timeval start, stop;
-    int    x;
-    int    y;
+	static struct timeval	start;
+	static struct timeval	stop;
+	static size_t			total_time = 0;
+	static size_t			generation = 0;
+	size_t					frame_time;
 
-    gettimeofday(&start, NULL);
+	gettimeofday(&start, NULL);
+	compute(mlx);
+	gettimeofday(&stop, NULL);
+    frame_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+    total_time += frame_time;
+    generation++;
+    printf("Frame time: %zu μs\n", frame_time);
+	printf("Average: %zu μs (frame: %zu)\n", total_time / generation, generation);
+}
 
-    float focal_length = 1.0f;
+void	compute(t_data *mlx)
+{
+    t_camera	*camera = &mlx->scene.camera;
+    t_scene		*scene = &mlx->scene;
+	int			x;
+	int			y;
+
+	float focal_length = 1.0f;
     float theta = (camera->fov * M_PI) / 180.0f;
     float viewport_height = 2.0f * tan(theta / 2.0f) * focal_length;
-    float aspect_ratio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
+    float aspect_ratio = (float)WIDTH / (float)HEIGHT;
     float viewport_width = viewport_height * aspect_ratio;
 
     t_vec3 u = {viewport_width, 0, 0};
@@ -44,8 +57,8 @@ int loop(t_data *mlx)
 
     t_vec3 pixel_delta_u = u;
     t_vec3 pixel_delta_v = v;
-    vec3_div_scalar(&pixel_delta_u, SCREEN_WIDTH);
-    vec3_div_scalar(&pixel_delta_v, SCREEN_HEIGHT);
+    vec3_div_scalar(&pixel_delta_u, WIDTH);
+    vec3_div_scalar(&pixel_delta_v, HEIGHT);
 
     t_vec3 focal_vec = {0, 0, focal_length};
     t_vec3 viewport_upper_left;
@@ -60,10 +73,10 @@ int loop(t_data *mlx)
     vec3_add(&viewport_upper_left, &half_pixel_offset, &pixel00_loc);
 
     y = 0;
-    while (y < SCREEN_HEIGHT)
+    while (y < HEIGHT)
     {
        x = 0;
-       while (x < SCREEN_WIDTH)
+       while (x < WIDTH)
        {
           t_vec3 pixel_center = pixel00_loc;
 
@@ -87,14 +100,25 @@ int loop(t_data *mlx)
        ++y;
     }
 	camera->pos.x += 0.1f;
-    gettimeofday(&stop, NULL);
-    size_t frame_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
-    total_time += frame_time;
-    generation++;
-    dprintf(2, "Frame time: %zu μs\n", frame_time);
-    dprintf(2, "Average: %zu μs (frame: %d)\n", total_time / generation, generation);
+}
+
+int loop(t_data *mlx)
+{
+	if (DEBUG || PERF)
+		frame_gen(&compute, mlx);
+	else
+		compute(mlx);
     mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
-    return 0;
+    return (0);
+}
+
+
+
+
+
+
+
+
 	//
 	// static float x;
 	// static float y;
@@ -105,7 +129,7 @@ int loop(t_data *mlx)
 	// data = mlx;
 	// scene = data->scene;
 	// (void) draw_line;
-	// ft_bzero(mlx->addr, SCREEN_WIDTH * SCREEN_HEIGHT * 4);
+	// ft_bzero(mlx->addr, WIDTH * HEIGHT * 4);
 	// x += to_rad(0.1f);
 	// y += to_rad(0.01f);
 	// z += to_rad(0.2f);
@@ -128,12 +152,12 @@ int loop(t_data *mlx)
 	// 		p.y *= -1;
 	// 		float	x_proj = (p.x / p.z) * 800;
 	// 		float	y_proj = (p.y / p.z) * 800;
-	// 		int x_screen = x_proj + SCREEN_WIDTH / 2;
-	// 		int y_screen = y_proj + SCREEN_HEIGHT / 2;
+	// 		int x_screen = x_proj + WIDTH / 2;
+	// 		int y_screen = y_proj + HEIGHT / 2;
 	// 		safe_put_pixel(mlx->addr, x_screen, y_screen, 0x00FFFF);
 	// 		++t;
 	// 	}
 	// 	++i;
 	// }
 	// return (0);
-}
+//}
