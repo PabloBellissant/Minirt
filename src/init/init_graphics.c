@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_graphics.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/21 02:01:34 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 01:30:35 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ int	init_graphics(t_data *data)
 {
 	t_vec2i	screen;
 
-	data->screen.x = SCREEN_WIDTH;
-	data->screen.y = SCREEN_HEIGHT;
+	data->screen.x = WIDTH;
+	data->screen.y = HEIGHT;
 	data->mlx = mlx_init();
 	if (!data->mlx)
 		return (-1);

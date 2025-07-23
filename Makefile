@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jaubry-- <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/22 23:21:21 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/07/23 01:48:22 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ include colors.mk
 DEBUG		= $(if $(filter debug,$(MAKECMDGOALS)),1,0)
 WIDTH		= 500
 HEIGHT		= 500
+PERF		= 0
 
 # Directories
 SRCDIR		= src
@@ -44,6 +45,7 @@ CFLAGS		= -Wall -Werror -Wextra \
 			  -D DEBUG=$(DEBUG) \
 			  -D WIDTH=$(WIDTH) \
 			  -D HEIGHT=$(HEIGHT) \
+			  -D PERF=$(PERF) \
 			  -march=native -msse3
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(MLXDIR)

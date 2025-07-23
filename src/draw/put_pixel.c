@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   put_pixel.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:25:24 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/23 05:25:26 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/23 01:30:35 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 
 inline void	put_pixel(int *addr, const int x, const int y, const int color)
 {
-	addr[y * SCREEN_WIDTH + x] = color;
+	addr[y * WIDTH + x] = color;
 }
 
 inline void	safe_put_pixel(int *addr, const int x, const int y, const int color)
 {
-	if (x < 0 || x > SCREEN_WIDTH)
+	if (x < 0 || x > WIDTH)
 		return ;
-	if (y < 0 || y > SCREEN_HEIGHT)
+	if (y < 0 || y > HEIGHT)
 		return ;
 	put_pixel(addr, x, y, color);
 }
