@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_scan.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 00:11:43 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/16 00:11:46 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/30 20:54:16 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static int	skip_wildcard(char **line, char char_to_skip, int minimum, int num)
 	{
 		ft_putstr_fd("Error\nNeed at least ", 2);
 		ft_putnbr_fd(minimum, 2);
-		if (char_to_skip != ' ')
+		if (!ft_isspace(char_to_skip))
 		{
 			ft_putstr_fd(" '", 2);
 			write(2, &char_to_skip, 1);

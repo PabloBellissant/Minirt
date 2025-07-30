@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 04:44:01 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/23 00:51:33 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 20:54:56 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static t_limits	limits(char type, char *format)
 
 static char	*get_end_token(char *line)
 {
-	while (*line && *line != ' ' && *line != '\n' && *line != ',')
+	while (*line && !ft_isspace(*line) && *line != '\n' && *line != ',')
 		++line;
 	return (line);
 }

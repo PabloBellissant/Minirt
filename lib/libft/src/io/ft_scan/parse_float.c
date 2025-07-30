@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_float.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 19:12:07 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/16 05:24:14 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/30 20:54:33 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static bool	str_is_float(char *line)
 		++i;
 	while (ft_isdigit(line[i]))
 		++i;
-	if (*line && line[i] != '\0' && line[i] != ' ' && line[i] != ',')
+	if (*line && line[i] != '\0' && !ft_isspace(line[i]) && line[i] != ',')
 		return (false);
 	return (true);
 }
