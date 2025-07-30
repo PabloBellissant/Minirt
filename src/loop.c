@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 05:20:23 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/30 08:43:18 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,9 @@ void	compute(t_data *mlx)
        }
        ++y;
     }
-	camera->pos.x += 0.01f;
+	((t_object *)(scene->lights.data))[0].light.pos.x -= 0.1;
+	//(((t_object *)(scene->objects.data))[0]).sphere.pos.x += 0.1;
+	camera->pos.y += 0.01f;
 }
 
 int loop(t_data *mlx)
