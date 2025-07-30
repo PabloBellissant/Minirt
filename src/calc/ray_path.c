@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:37:35 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/24 00:42:25 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 05:19:33 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,47 +32,90 @@ t_color	*add_colors(t_color *acc, t_color *newc, float lerp)
 t_vec3	*phong_path(t_scene *scene, t_vec3 *normal, t_vec3 *col, t_vec3 *i_p);
 void	fill_phong(t_ray *ray, t_scene *scene, t_vec3 *normal);
 
-t_color	ray_path(t_ray *restrict ray, t_scene *scene)
+t_vec3	*vec3_clamp(t_vec3 *vec, float min, float max)
 {
-	t_color		hit_color;
-	//t_vec3		random_dir;
-	t_ray		current_ray;
-	t_color		result_color = (t_color){.rgb = 0};
-	int			bounce = 0;
-	t_vec3		normal;
-	float		temp;
-	float		addition;
+	float	*xyz[3];
+	size_t	i;
 
-
-	current_ray = *ray;
-	addition = 1;
-	while (bounce < BOUNCE_MAX)
+	xyz[0] = &(vec->x);
+	xyz[1] = &(vec->y);
+	xyz[2] = &(vec->z);
+	i = 0;
+	while (i < 3)
 	{
-		temp = hit_register(&current_ray, &scene->objects, &hit_color, &normal);
-		if (temp == 0)
-			return (result_color);
-		if (addition < REFLECT_LIMIT)
-			return (result_color);
-		fill_phong(&current_ray, scene, &normal);
-		t_vec3	feur  = (t_vec3){hit_color.r * 255, hit_color.g * 255, hit_color.b * 255};
-		t_vec3	color = (t_vec3){0, 0, 0};
-		phong_path(scene, &normal, &feur, &color);
-		//printf("ray (%f, %f, %f) color: R:%f G:%f B:%f\n", current_ray.pos.x, current_ray.pos.y, current_ray.pos.z, color.x, color.y, color.z);
-		hit_color = (t_color){.r=color.x *255, .g=color.y *255, .b=color.z *255};
-		add_colors(&result_color, &hit_color, 1 * addition);
-		//vec3_random(&random_dir);
-		//vec3_lerp(&current_ray.dir, &random_dir, 0.01f, &current_ray.dir);
-		addition *= REFLECT;
-		vec3_dot(&current_ray.dir, &normal, &temp);
-		vec3_scale(&normal, 2 * temp);
-		vec3_sub(&current_ray.dir, &normal, &current_ray.dir);
-		vec3_unit(&current_ray.dir);
-		/*
-		*/
-		bounce++;
+		if (*(xyz[i]) < min)
+			*(xyz[i]) = min;
+		else if (*(xyz[i]) > max)
+			*(xyz[i]) = max;
+		i++;
 	}
-	return (result_color);
+	return (vec);
 }
+
+t_color	*vec3_to_color(const t_vec3 *vec, t_color *col)
+{
+	int	temp;
+
+	temp = vec->x * 255;
+	if (temp > 255)
+		col->r = 255;
+	else if (temp < 0)
+		col->r = 0;
+	else
+		col->r = temp;
+	temp = vec->y * 255;
+	if (temp > 255)
+		col->g = 255;
+	else if (temp < 0)
+		col->g = 0;
+	else
+		col->g = temp;
+	temp = vec->z * 255;
+	if (temp > 255)
+		col->b = 255;
+	else if (temp < 0)
+		col->b = 0;
+	else
+		col->b = temp;
+	return (col);
+}
+
+
+t_color ray_path(t_ray *ray, t_scene *scene)
+{
+	t_color	hit_color;
+	t_vec3	normal;
+	float	hit_result;
+
+	hit_result = hit_register(ray, &scene->objects, &hit_color, &normal);
+	if (hit_result == 0)
+		return ((t_color){.rgb=0}); // Background color
+
+	fill_phong(ray, scene, &normal);
+	// Convert hit_color to [0,1] vector
+	t_vec3	bounce_color_vec = {
+		(float)hit_color.r / 255.0f,
+		(float)hit_color.g / 255.0f,
+		(float)hit_color.b / 255.0f
+	};
+	t_vec3	color_accumulator = {0, 0, 0};
+	phong_path(scene, &normal, &bounce_color_vec, &color_accumulator);
+	vec3_clamp(&color_accumulator, 0.0f, 1.0f);
+
+	t_color	final_color;
+	vec3_to_color(&color_accumulator, &final_color);
+	return (final_color);
+}
+
+
+static t_vec3	*get_real_ratio(const t_color *color, const float ratio, t_vec3 *rgb)
+{
+	rgb->x = (float)color->r / 255.0f;
+	rgb->y = (float)color->g / 255.0f;
+	rgb->z = (float)color->b / 255.0f;
+	return (vec3_scale(rgb, ratio));
+}
+
 
 /*
 	Will return the reflection direction
@@ -81,24 +124,28 @@ t_color	ray_path(t_ray *restrict ray, t_scene *scene)
 static t_vec3	*reflection(const t_vec3 *normal, const t_vec3 *light_dir, t_vec3 *out)
 {
 	float	r;
+	t_vec3	temp;
 
 	vec3_dot(light_dir, normal, &r);
 	r *= 2;
-	vec3_sub(normal, light_dir, out);
-	return (vec3_scale(out, r));
+	temp = *normal;
+	vec3_scale(&temp, r);
+	return (vec3_sub(&temp, light_dir, out));
 }
 
 void	fill_phong(t_ray *ray, t_scene *scene, t_vec3 *normal)
 {
 	size_t	m;
+	t_object	*lights;
 
 	vec3_sub(&scene->camera.pos, &ray->pos, &scene->phong.v);// get direction from hit to camera
 	vec3_normalize(&scene->phong.v);// normalize vector
-
 	m = 0;
+	lights = (t_object *)scene->lights.data;
 	while (m < scene->lights.num_elements)
 	{
-		vec3_sub(&(((t_object *)scene->lights.data)[m].light.pos), &ray->pos, scene->phong.l + m);// direction to light
+		get_real_ratio(&(lights[m].light.color), lights[m].light.brightness, scene->phong.d + m);
+		vec3_sub(&(lights[m].light.pos), &ray->pos, scene->phong.l + m);// direction to light
 		vec3_normalize(scene->phong.l + m);// normalized direction to light
 
 		reflection(normal, scene->phong.l + m, scene->phong.r + m);
@@ -107,12 +154,12 @@ void	fill_phong(t_ray *ray, t_scene *scene, t_vec3 *normal)
 	}
 }
 
-//const t_vec3	k_a = (t_vec3){0.247f, 0.2f, 0.075f};
-const t_vec3	k_d = (t_vec3){0.752f, 0.606f, 0.226f};
-const t_vec3	k_s = (t_vec3){0.628f, 0.556f, 0.366f};
+//const t_vec3	k_aa = (t_vec3){0.247f, 0.2f, 0.075f}; // object reflection
+const t_vec3	k_d = (t_vec3){0.752f, 0.606f, 0.226f};// object diffuse
+const t_vec3	k_s = (t_vec3){0.628f, 0.556f, 0.366f};// object specular
 	
-const t_vec3	i_a = (t_vec3){0.2f, 0.2f, 0.2f};
-const t_vec3	i_d = (t_vec3){1.0f, 1.0f, 1.0f};
+//const t_vec3	i_a = (t_vec3){0.2f, 0.2f, 0.2f}; // ambient light (RGB(uint8_t) * ratio(float))
+//const t_vec3	i_d = (t_vec3){1.0f, 1.0f, 1.0f}; // lights color
 const t_vec3	i_s = (t_vec3){1.0f, 1.0f, 1.0f};
 
 const float		alpha = 51.2f;
@@ -122,17 +169,17 @@ static t_vec3	*get_ambient(const t_vec3 *k_a, const t_vec3 *i_a, t_vec3 *out)
 	return (vec3_mult(k_a, i_a, out));
 }
 
-static t_vec3	*get_diffuse(const t_vec3 *l_m, const t_vec3 *n, t_vec3 *out)
+static t_vec3	*get_diffuse(const t_vec3 *l_m, const t_vec3 *i_d, const t_vec3 *n, t_vec3 *out)
 {
 	float 	surface_faces_light;
 
 	vec3_dot(l_m, n, &surface_faces_light);
-	if (surface_faces_light > 0)
+	if (surface_faces_light <= 0)
 	{
 		*out = (t_vec3){0, 0, 0};
 		return (out);
 	}
-	vec3_mult(&k_d, &i_d, out);
+	vec3_mult(&k_d, i_d, out);
 	return(vec3_scale(out, surface_faces_light));
 }
 
@@ -141,7 +188,7 @@ static t_vec3	*get_specular(const t_vec3 *r_m, const t_vec3 *v, t_vec3 *out)
 	float 	surface_faces_camera;
 
 	vec3_dot(r_m, v, &surface_faces_camera);
-	if (surface_faces_camera > 0)
+	if (surface_faces_camera <= 0)
 	{
 		*out = (t_vec3){0, 0, 0};
 		return (out);
@@ -156,16 +203,20 @@ t_vec3	*phong_path(t_scene *scene, t_vec3 *normal, t_vec3 *col, t_vec3 *i_p)
 	t_vec3	ambient;
 	t_vec3	diffuse_m;
 	t_vec3	specular_m;
+	t_vec3	i_a;
+	t_vec3	temp;
 	size_t	m;
 
+	get_real_ratio(&(scene->ambient.color), scene->ambient.ratio, &i_a);
 	get_ambient(col, &i_a, &ambient);
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
-		get_diffuse(scene->phong.l + m, normal, &diffuse_m);
+		get_diffuse(scene->phong.l + m, scene->phong.d + m, normal, &diffuse_m);
 		get_specular(scene->phong.r + m, &(scene->phong.v), &specular_m);
-		vec3_add(&diffuse_m, &specular_m, i_p);
+		vec3_add(&diffuse_m, &specular_m, &temp);
+		vec3_add(i_p, &temp, i_p);
 		m++;
 	}
-	return (vec3_add(&ambient, i_p, i_p));
+	return (vec3_add(i_p, &ambient, i_p));
 }
