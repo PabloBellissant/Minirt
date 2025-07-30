@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   light.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 00:40:54 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/23 18:23:06 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:51:47 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,6 @@ int	light(char *line, int line_num, t_scene *scene)
 	color = &light->color;
 	ft_scan(line_num, LIGHT_FORMAT, line, &pos->x, &pos->y, &pos->z,
 		&light->brightness, &color->r, &color->g, &color->b);
+	get_real_ratio(color, light->brightness, &light->col);
 	return (0);
 }

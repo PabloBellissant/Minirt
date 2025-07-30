@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 08:43:18 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 20:42:52 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,34 +39,112 @@ void	frame_gen(void compute(t_data *), t_data *mlx)
 	printf("Average: %zu μs (frame: %zu)\n", total_time / generation, generation);
 }
 
+void handle_keys(t_camera *camera, t_keys keys)
+{
+    const float move_speed = 0.1f;
+    
+    float cos_yaw = cos(camera->rot.y);
+    float sin_yaw = sin(camera->rot.y);
+
+    // Movement aligned with your camera's coordinate system
+    t_vec3 camera_forward = {
+        -sin_yaw,
+        0,          // Keep movement level
+        -cos_yaw     // Positive Z forward (matches scene orientation)
+    };
+
+    t_vec3 camera_right = {
+        cos_yaw,
+        0,
+        -sin_yaw
+    };
+
+    if (keys.forward) {
+        camera->pos.x += camera_forward.x * move_speed;
+        camera->pos.z += camera_forward.z * move_speed;
+    }
+    if (keys.backward) {
+        camera->pos.x -= camera_forward.x * move_speed;
+        camera->pos.z -= camera_forward.z * move_speed;
+    }
+    if (keys.right) {
+        camera->pos.x += camera_right.x * move_speed;
+        camera->pos.z += camera_right.z * move_speed;
+    }
+    if (keys.left) {
+        camera->pos.x -= camera_right.x * move_speed;
+        camera->pos.z -= camera_right.z * move_speed;
+    }
+    if (keys.upward) {
+        camera->pos.y += move_speed;
+    }
+    if (keys.downward) {
+        camera->pos.y -= move_speed;
+    }
+}
+
+
+
+
 void	compute(t_data *mlx)
 {
-    t_camera	*camera = &mlx->scene.camera;
-    t_scene		*scene = &mlx->scene;
-	int			x;
-	int			y;
+    t_camera    *camera = &mlx->scene.camera;
+    t_scene     *scene = &mlx->scene;
+    int         x;
+    int         y;
 
-	float focal_length = 1.0f;
+    float focal_length = 1.0f;
     float theta = (camera->fov * M_PI) / 180.0f;
     float viewport_height = 2.0f * tan(theta / 2.0f) * focal_length;
     float aspect_ratio = (float)WIDTH / (float)HEIGHT;
     float viewport_width = viewport_height * aspect_ratio;
 
-    t_vec3 u = {viewport_width, 0, 0};
-    t_vec3 v = {0, -viewport_height, 0};
+    // Apply rotations to the base orientation
+    float cos_pitch = cos(camera->rot.x);
+    float sin_pitch = sin(camera->rot.x);
+    float cos_yaw = cos(camera->rot.y);
+    float sin_yaw = sin(camera->rot.y);
+
+    // Apply yaw and pitch to your base forward vector
+    t_vec3 camera_forward = {
+        sin_yaw * cos_pitch,
+        sin_pitch,
+        cos_yaw * cos_pitch
+    };
+
+    t_vec3 camera_right = {
+        cos_yaw,
+        0,
+        -sin_yaw
+    };
+
+    t_vec3 camera_up = {
+        -sin_yaw * sin_pitch,
+        cos_pitch,
+        cos_yaw * -sin_pitch
+    };
+
+    // Create viewport vectors
+    t_vec3 u = camera_right;
+    t_vec3 v = camera_up;
+    vec3_scale(&u, viewport_width);
+    vec3_scale(&v, -viewport_height);
 
     t_vec3 pixel_delta_u = u;
     t_vec3 pixel_delta_v = v;
     vec3_div_scalar(&pixel_delta_u, WIDTH);
     vec3_div_scalar(&pixel_delta_v, HEIGHT);
 
-    t_vec3 focal_vec = {0, 0, focal_length};
+    // Use forward vector for focal distance
+    t_vec3 focal_vec = camera_forward;
+    vec3_scale(&focal_vec, focal_length);
+
     t_vec3 viewport_upper_left;
     vec3_sub(&camera->pos, &focal_vec, &viewport_upper_left);
     vec3_sub(&viewport_upper_left, vec3_div_scalar(&u, 2.0f), &viewport_upper_left);
     vec3_sub(&viewport_upper_left, vec3_div_scalar(&v, 2.0f), &viewport_upper_left);
 
-    t_vec3	half_pixel_offset;
+    t_vec3 half_pixel_offset;
     vec3_add(&pixel_delta_u, &pixel_delta_v, &half_pixel_offset);
     vec3_scale(&half_pixel_offset, 0.5f);
     t_vec3 pixel00_loc;
@@ -101,11 +179,14 @@ void	compute(t_data *mlx)
     }
 	((t_object *)(scene->lights.data))[0].light.pos.x -= 0.1;
 	//(((t_object *)(scene->objects.data))[0]).sphere.pos.x += 0.1;
-	camera->pos.y += 0.01f;
+	//camera->pos.y += 0.01f;
 }
+
+
 
 int loop(t_data *mlx)
 {
+	handle_keys(&mlx->scene.camera, mlx->keys);
 	if (DEBUG || PERF)
 		frame_gen(&compute, mlx);
 	else
