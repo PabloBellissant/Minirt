@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:37:35 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 05:19:33 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/30 08:39:54 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_color	*add_colors(t_color *acc, t_color *newc, float lerp)
 #define REFLECT_LIMIT 0.00390625f
 #include <math.h>
 
-t_vec3	*phong_path(t_scene *scene, t_vec3 *normal, t_vec3 *col, t_vec3 *i_p);
+t_vec3	*phong_path(t_scene *scene, t_ray *ray, t_vec3 *normal, t_vec3 *col, t_vec3 *i_p);
 void	fill_phong(t_ray *ray, t_scene *scene, t_vec3 *normal);
 
 t_vec3	*vec3_clamp(t_vec3 *vec, float min, float max)
@@ -99,7 +99,7 @@ t_color ray_path(t_ray *ray, t_scene *scene)
 		(float)hit_color.b / 255.0f
 	};
 	t_vec3	color_accumulator = {0, 0, 0};
-	phong_path(scene, &normal, &bounce_color_vec, &color_accumulator);
+	phong_path(scene, ray, &normal, &bounce_color_vec, &color_accumulator);
 	vec3_clamp(&color_accumulator, 0.0f, 1.0f);
 
 	t_color	final_color;
@@ -145,11 +145,12 @@ void	fill_phong(t_ray *ray, t_scene *scene, t_vec3 *normal)
 	while (m < scene->lights.num_elements)
 	{
 		get_real_ratio(&(lights[m].light.color), lights[m].light.brightness, scene->phong.d + m);
+
 		vec3_sub(&(lights[m].light.pos), &ray->pos, scene->phong.l + m);// direction to light
 		vec3_normalize(scene->phong.l + m);// normalized direction to light
 
 		reflection(normal, scene->phong.l + m, scene->phong.r + m);
-		//vec3_normalize(scene->phong.r + m);// normalized reflection //maybe already normalized
+		vec3_normalize(scene->phong.r + m);// normalized reflection //maybe already normalized
 		m++;
 	}
 }
@@ -162,7 +163,7 @@ const t_vec3	k_s = (t_vec3){0.628f, 0.556f, 0.366f};// object specular
 //const t_vec3	i_d = (t_vec3){1.0f, 1.0f, 1.0f}; // lights color
 const t_vec3	i_s = (t_vec3){1.0f, 1.0f, 1.0f};
 
-const float		alpha = 51.2f;
+const float		alpha = 55.2f;
 
 static t_vec3	*get_ambient(const t_vec3 *k_a, const t_vec3 *i_a, t_vec3 *out)
 {
@@ -198,7 +199,39 @@ static t_vec3	*get_specular(const t_vec3 *r_m, const t_vec3 *v, t_vec3 *out)
 	return(vec3_scale(out, surface_faces_camera));
 }
 
-t_vec3	*phong_path(t_scene *scene, t_vec3 *normal, t_vec3 *col, t_vec3 *i_p)
+// Add this function to test if light is blocked
+int is_light_blocked(t_scene *scene, t_vec3 *hit_point, t_vec3 *light_pos, t_vec3 *normal)
+{
+    t_ray shadow_ray;
+    t_color dummy_color;
+    t_vec3 dummy_normal;
+    t_vec3 to_light;
+    t_vec3 offset_point;
+    float light_distance;
+    float hit_distance;
+    
+    // Add shadow bias - offset the ray origin along the normal
+    const float SHADOW_BIAS = 0.001f;  // Adjust this value as needed
+    offset_point = *normal;
+    vec3_scale(&offset_point, SHADOW_BIAS);
+    vec3_add(hit_point, &offset_point, &offset_point);
+    
+    // Create ray from offset point to light
+    shadow_ray.pos = offset_point;  // Use offset point instead of hit_point
+    vec3_sub(light_pos, &offset_point, &to_light);
+    light_distance = vec3_length(&to_light);
+    vec3_normalize(&to_light);
+    shadow_ray.dir = to_light;
+    
+    // Check if anything blocks the light
+    hit_distance = hit_register(&shadow_ray, &scene->objects, &dummy_color, &dummy_normal);
+    
+    // If we hit something before reaching the light, it's blocked
+    return (hit_distance > 0 && hit_distance < light_distance);
+}
+
+
+t_vec3	*phong_path(t_scene *scene, t_ray *ray, t_vec3 *normal, t_vec3 *col, t_vec3 *i_p)
 {
 	t_vec3	ambient;
 	t_vec3	diffuse_m;
@@ -212,6 +245,11 @@ t_vec3	*phong_path(t_scene *scene, t_vec3 *normal, t_vec3 *col, t_vec3 *i_p)
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
+		if (is_light_blocked(scene, &ray->pos, &(((t_object *)(scene->lights.data))[m].light.pos), normal))
+		{
+			m++;
+			continue; // Skip this light if blocked
+		}
 		get_diffuse(scene->phong.l + m, scene->phong.d + m, normal, &diffuse_m);
 		get_specular(scene->phong.r + m, &(scene->phong.v), &specular_m);
 		vec3_add(&diffuse_m, &specular_m, &temp);
