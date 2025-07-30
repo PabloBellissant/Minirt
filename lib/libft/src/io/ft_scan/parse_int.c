@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_int.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 06:16:39 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/16 06:17:41 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/30 20:54:45 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static bool	str_is_integer(char *line)
 		++line;
 	while (ft_isdigit(*line))
 		++line;
-	if (!*line || *line == ' ' || *line == ',' || *line == '\n')
+	if (!*line || !ft_isspace(*line) || *line == ',' || *line == '\n')
 		return (true);
 	return (false);
 }
