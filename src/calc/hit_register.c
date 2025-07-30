@@ -52,19 +52,19 @@ float hit_register(t_ray *restrict ray, t_vector *restrict obj_vec, t_color *res
 	if (objects->type == SPHERE)
 	{
 		vec3_sub(&hit_point, &objects->sphere.pos, normal);
-		vec3_normalize(normal);  // Proper normalization
+		vec3_normalize(normal);
 		*color = objects->sphere.color;
 	}
 	else if ((objects->type == PLANE) || (objects->type == TRIANGLE))
 	{
 		*normal = objects->plane.normal;
-		vec3_normalize(normal);  // Ensure plane normals are normalized too
+		vec3_normalize(normal);
 		*color = objects->plane.color;
 	}
 	else  // cylinder
 	{
 		vec3_sub(&hit_point, &objects->cylinder.pos, normal);
-		vec3_normalize(normal);  // This is still incomplete for cylinders
+		vec3_normalize(normal);
 		*color = objects->cylinder.color;
 	}
 	ray->pos = hit_point;

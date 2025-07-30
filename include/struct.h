@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 05:31:28 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 18:50:34 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,26 @@
 # include "mlx_int.h"
 # include "libft.h"
 # include "parsing.h"
+
+typedef struct s_keys
+{
+	bool	forward;
+	bool	left;
+	bool	right;
+	bool	backward;
+	bool	upward;
+	bool	downward;
+}	t_keys;
+
+typedef struct s_mouse
+{
+	int		last_x;
+	int		last_y;
+	float target_yaw;
+    float target_pitch;
+    float current_yaw;
+    float current_pitch;
+}	t_mouse;
 
 typedef union u_color
 {
@@ -36,6 +56,8 @@ typedef struct s_vec3
 	float	y;
 	float	z;
 }	t_vec3;
+
+t_vec3	*get_real_ratio(const t_color *color, const float ratio, t_vec3 *rgb);
 
 typedef union s_vec4
 {
@@ -69,6 +91,7 @@ typedef struct	s_ambient
 {
 	float	ratio;
 	t_color	color;
+	t_vec3	col;
 }	t_ambient;
 
 typedef struct	s_camera
@@ -82,6 +105,7 @@ typedef struct	s_light
 {
 	float	brightness;
 	t_color	color;
+	t_vec3	col;
 	t_vec3	pos;
 }	t_light;
 
@@ -174,6 +198,8 @@ typedef struct s_data
 	t_win_list	*win;
 	t_img		*img;
 	int			*addr;
+	t_keys		keys;
+	t_mouse		mouse;
 	int			bits;
 	int			line_len;
 	int			endian;

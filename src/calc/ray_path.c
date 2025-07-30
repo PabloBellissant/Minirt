@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:37:35 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 08:39:54 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 16:11:14 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,14 @@
 #include "calc.h"
 #include "vec3.h"
 #include "bvh.h"
+
+t_vec3	*get_real_ratio(const t_color *color, const float ratio, t_vec3 *rgb)
+{
+	rgb->x = (float)color->r / 255.0f;
+	rgb->y = (float)color->g / 255.0f;
+	rgb->z = (float)color->b / 255.0f;
+	return (vec3_scale(rgb, ratio));
+}
 
 t_color	*add_colors(t_color *acc, t_color *newc, float lerp)
 {
@@ -108,15 +116,6 @@ t_color ray_path(t_ray *ray, t_scene *scene)
 }
 
 
-static t_vec3	*get_real_ratio(const t_color *color, const float ratio, t_vec3 *rgb)
-{
-	rgb->x = (float)color->r / 255.0f;
-	rgb->y = (float)color->g / 255.0f;
-	rgb->z = (float)color->b / 255.0f;
-	return (vec3_scale(rgb, ratio));
-}
-
-
 /*
 	Will return the reflection direction
 	needs the normalized normal and normalized direction to light
@@ -144,13 +143,13 @@ void	fill_phong(t_ray *ray, t_scene *scene, t_vec3 *normal)
 	lights = (t_object *)scene->lights.data;
 	while (m < scene->lights.num_elements)
 	{
-		get_real_ratio(&(lights[m].light.color), lights[m].light.brightness, scene->phong.d + m);
+		scene->phong.d[m] = lights[m].light.col;
 
 		vec3_sub(&(lights[m].light.pos), &ray->pos, scene->phong.l + m);// direction to light
 		vec3_normalize(scene->phong.l + m);// normalized direction to light
 
 		reflection(normal, scene->phong.l + m, scene->phong.r + m);
-		vec3_normalize(scene->phong.r + m);// normalized reflection //maybe already normalized
+		//vec3_normalize(scene->phong.r + m);// normalized reflection //maybe already normalized
 		m++;
 	}
 }
@@ -236,12 +235,10 @@ t_vec3	*phong_path(t_scene *scene, t_ray *ray, t_vec3 *normal, t_vec3 *col, t_ve
 	t_vec3	ambient;
 	t_vec3	diffuse_m;
 	t_vec3	specular_m;
-	t_vec3	i_a;
 	t_vec3	temp;
 	size_t	m;
 
-	get_real_ratio(&(scene->ambient.color), scene->ambient.ratio, &i_a);
-	get_ambient(col, &i_a, &ambient);
+	get_ambient(col, &(scene->ambient.col), &ambient);
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
