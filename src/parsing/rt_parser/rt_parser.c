@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 06:07:52 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/23 20:37:24 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 05:36:32 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,12 @@ int	rt_parser(int fd, t_scene *scene)
 		perror("Minirt");
 	}
 	scene->phong.r = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
+	if (errno != 0)
+	{
+		return_val = -1;
+		perror("Minirt");
+	}
+	scene->phong.d = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
 	if (errno != 0)
 	{
 		return_val = -1;

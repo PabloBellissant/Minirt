@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/23 20:36:13 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 05:31:28 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ typedef struct	s_camera
 
 typedef struct	s_light
 {
+	float	brightness;
 	t_color	color;
 	t_vec3	pos;
-	float	brightness;
 }	t_light;
 
 typedef struct	s_sphere
@@ -147,6 +147,7 @@ typedef struct s_phong
 {
 	t_vec3	*l;//LIGHTS
 	t_vec3	*r;//LIGHTS
+	t_vec3	*d;//LIGHTS color
 	t_vec3	v;
 }	t_phong;
 

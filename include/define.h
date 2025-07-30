@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:08:03 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/23 01:48:33 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 05:05:12 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #  define PERF 0
 # endif//PERF
 
-# define BOUNCE_MAX 1000
+# define BOUNCE_MAX 10
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
 
