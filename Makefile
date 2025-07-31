@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/23 01:48:22 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/07/31 19:32:01 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,15 @@ include colors.mk
 
 # Variables
 DEBUG		= $(if $(filter debug,$(MAKECMDGOALS)),1,0)
+WINDOWLESS	= 0
+FULLSCREEN	= 0
+ifeq ($(FULLSCREEN), 1)
+WIDTH		= 1920
+HEIGHT		= 1080
+else
 WIDTH		= 500
 HEIGHT		= 500
+endif
 PERF		= 0
 
 # Directories
@@ -46,14 +53,22 @@ CFLAGS		= -Wall -Werror -Wextra \
 			  -D WIDTH=$(WIDTH) \
 			  -D HEIGHT=$(HEIGHT) \
 			  -D PERF=$(PERF) \
+			  -D FULLSCREEN=$(FULLSCREEN) \
+			  -D WINDOWLESS=$(WINDOWLESS) \
 			  -march=native -msse3
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(MLXDIR)
-LFLAGS		= -L$(MLXDIR) -L$(LIBFTDIR) -lXext -lX11 -lm -lmlx -lft
+LFLAGS		= -L$(MLXDIR) -L$(LIBFTDIR) -lXext -lX11 -lXrandr -lm -lmlx -lft
 CF			= $(CC) $(CFLAGS) $(IFLAGS)
 
 # SRCS
 include $(SRCDIR)/srcs.mk
+
+ifeq ($(FULLSCREEN), 1)
+	SRCS += $(MLXDIR)/mlx_ext_randr.c
+	CFLAGS += -Wno-error=sign-compare -Wno-error=return-type
+	vpath %.c $(MLXDIR)
+endif
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))

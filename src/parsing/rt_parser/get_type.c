@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_type.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 22:29:40 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 14:52:39 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/31 20:39:47 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_object_type	get_type(char *line, int actual_line)
 		if (ft_strncmp(elem[i], line, ft_strlen(elem[i])) == 0)
 		{
 			if ((*(line + ft_strlen(elem[i])) == ' ')
-					|| (*(line + ft_strlen(elem[i])) == '\t'))
+				|| (*(line + ft_strlen(elem[i])) == '\t'))
 				return (i + 1);
 		}
 		++i;

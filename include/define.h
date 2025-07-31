@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:08:03 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 05:05:12 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/31 19:31:16 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define STRING_H
 
 # ifndef DEBUG
-#  define DEBUG 0
+#   define DEBUG 0
 # endif//DEBUG
 
 # ifndef WIDTH
@@ -28,6 +28,14 @@
 # ifndef PERF
 #  define PERF 0
 # endif//PERF
+
+# ifndef FULLSCREEN
+#  define FULLSCREEN 0
+# endif//FULLSCREEN
+
+# ifndef WINDOWLESS
+#  define WINDOWLESS 0
+# endif//WINDOWLESS
 
 # define BOUNCE_MAX 10
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"

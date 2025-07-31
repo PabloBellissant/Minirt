@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cylinder.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 06:03:36 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 16:37:12 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/31 20:40:29 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ int	cylinder(char *line, int line_num, t_scene *scene)
 	rot = &cylinder->rot;
 	object->f = hit_cylinder;
 	return (ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
-		&rot->x, &rot->y, &rot->z, &cylinder->diameter, &cylinder->height,
-		&color->r, &color->g, &color->b));
+			&rot->x, &rot->y, &rot->z, &cylinder->diameter, &cylinder->height,
+			&color->r, &color->g, &color->b));
 }

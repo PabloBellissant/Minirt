@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   merge_nearest_bvh.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 03:11:49 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/01 03:11:54 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 21:12:31 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <float.h>
 #include "struct.h"
 #include "bvh.h"
+#include <float.h>
 
 size_t	get_next_no_parent(ssize_t actual, t_bvh *bvh, ssize_t max);
 
@@ -51,7 +51,7 @@ int	merge_nearest_bvh(t_vector *bvh_vec)
 size_t	get_next_no_parent(ssize_t actual, t_bvh *bvh, ssize_t max)
 {
 	++actual;
-	while (actual < max && bvh[actual].parent != NULL)
+	while ((actual < max) && (bvh[actual].parent != NULL))
 		++actual;
 	return (actual);
 }

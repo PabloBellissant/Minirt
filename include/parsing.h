@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:44:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/21 01:44:55 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 20:34:06 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,10 @@ typedef enum	e_object_type
 	SPHERE,
 	PLANE,
 	CYLINDER,
-	TRIANGLE,
-	OBJ,
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
-int				parse_map(char *file_name, t_scene *scene);
+int				parse_scene(char *file_name, t_scene *scene);
 int				rt_parser(int fd, t_scene *scene);
 int				parse_line(t_scene *scene, char *line, int actual_line);
 t_object_type	get_type(char *line, int actual_line);
@@ -44,6 +42,5 @@ int				light(char *line, int line_num, t_scene *scene);
 int				sphere(char *line, int line_num, t_scene *scene);
 int				plane(char *line, int line_num, t_scene *scene);
 int				cylinder(char *line, int line_num, t_scene *scene);
-int				obj(char *line, int line_num, t_scene *scene);
 
 #endif

@@ -6,15 +6,15 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 05:29:12 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/02 05:29:14 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:44:55 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "struct.h"
 
-t_vec3*	vec3_scale(t_vec3 *vec, float t);
+t_vec3	*vec3_scale(t_vec3 *vec, float t);
 
-inline t_vec3*	vec3_scale(t_vec3 *vec, const float t)
+inline t_vec3	*vec3_scale(t_vec3 *vec, const float t)
 {
 	vec->x *= t;
 	vec->y *= t;

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 06:07:52 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 16:42:43 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/31 20:35:33 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,6 @@
 #include "struct.h"
 #include "parsing.h"
 #include "vec3.h"
-
-
-void	set_triangle_normal(t_triangle *triangle)
-{
-	t_vec3	edge1;
-	t_vec3	edge2;
-
-	vec3_sub(&triangle->p1.pos, &triangle->p0.pos, &edge1);
-	vec3_sub(&triangle->p2.pos, &triangle->p0.pos, &edge2);
-	vec3_cross(&edge1, &edge2, &triangle->normal);
-	vec3_unit(&triangle->normal);
-}
 
 int	init_phong(t_scene *scene)
 {
