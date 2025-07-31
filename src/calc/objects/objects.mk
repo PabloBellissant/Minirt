@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    objects.mk                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jaubry-- <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:43:32 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/22 18:45:06 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/07/31 21:14:17 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,7 @@ OBJECTS_DIR		= $(CALC_DIR)/objects
 # Source files
 OBJECTS_SRCS	= hit_cylinder.c \
 				  hit_plane.c \
-				  hit_sphere.c \
-				  hit_triangle.c
+				  hit_sphere.c
 SRCS			+= $(addprefix $(OBJECTS_DIR)/, $(OBJECTS_SRCS))
 
 # VPATH

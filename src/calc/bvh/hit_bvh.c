@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hit_bvh.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 04:48:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/29 04:48:58 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 21:14:13 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,6 @@ void	get_t(t_ray *ray, t_object *object, float *t)
 	if (object->type == SPHERE)
 	{
 		if (hit_sphere(ray, object, t) == 0)
-			*t = NAN;
-		return ;
-	}
-	if (object->type == TRIANGLE)
-	{
-		if (hit_triangle(ray, object, t) == 0)
 			*t = NAN;
 		return ;
 	}
