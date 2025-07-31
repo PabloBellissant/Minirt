@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 08:02:03 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/15 08:02:04 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:36:24 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,13 @@ int	camera(char *line, int line_num, t_scene *scene)
 	t_camera	*camera;
 	t_vec3		*pos;
 	t_vec3		*rot;
+	int			ret;
 
+	ret = 0;
 	camera = &scene->camera;
 	pos = &camera->pos;
 	rot = &camera->rot;
-	ft_scan(line_num, CAMERA_FORMAT, line, &pos->x, &pos->y, &pos->z,
+	ret = ft_scan(line_num, CAMERA_FORMAT, line, &pos->x, &pos->y, &pos->z,
 		&rot->x, &rot->y, &rot->z, &camera->fov);
-	return (0);
+	return (ret);
 }

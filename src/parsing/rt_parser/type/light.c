@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 00:40:54 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 15:51:47 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/31 16:37:27 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,15 @@ int	light(char *line, int line_num, t_scene *scene)
 	t_vec3		*pos;
 	t_color		*color;
 	t_object	*object;
+	int			ret;
 
+	ret = 0;
 	object = create_light(scene, LIGHT);
 	light = &object->light;
 	pos = &light->pos;
 	color = &light->color;
-	ft_scan(line_num, LIGHT_FORMAT, line, &pos->x, &pos->y, &pos->z,
+	ret = ft_scan(line_num, LIGHT_FORMAT, line, &pos->x, &pos->y, &pos->z,
 		&light->brightness, &color->r, &color->g, &color->b);
 	get_real_ratio(color, light->brightness, &light->col);
-	return (0);
+	return (ret);
 }

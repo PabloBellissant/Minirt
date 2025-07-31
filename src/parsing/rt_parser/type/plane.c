@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 05:50:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/17 05:50:49 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:37:38 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ int	plane(char *line, int line_num, t_scene *scene)
 	pos = &plane->pos;
 	color = &plane->color;
 	norm = &plane->normal;
-	ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z, &norm->x,
-		&norm->y, &norm->z, &color->r, &color->g, &color->b);
 	object->f = hit_plane;
-	return (0);
+	return (ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z, &norm->x,
+		&norm->y, &norm->z, &color->r, &color->g, &color->b));
 }

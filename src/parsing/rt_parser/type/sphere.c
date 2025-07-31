@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 02:44:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/17 02:44:48 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:38:38 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,9 @@ int	sphere(char *line, int line_num, t_scene *scene)
 	sphere = &object->sphere;
 	pos = &sphere->pos;
 	color = &sphere->color;
-	ft_scan(line_num, SPHERE_FORMAT, line, &pos->x, &pos->y, &pos->z,
-		&sphere->diameter, &color->r, &color->g, &color->b);
+	if (ft_scan(line_num, SPHERE_FORMAT, line, &pos->x, &pos->y, &pos->z,
+		&sphere->diameter, &color->r, &color->g, &color->b))
+		return (-1);
 	radius = sphere->diameter / 2.0f;
 	sphere->radius_squared = radius * radius;
 	object->f = hit_sphere;

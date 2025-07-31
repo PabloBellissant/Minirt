@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 22:00:39 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/11 22:00:40 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:35:21 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,5 @@ int	parse_line(t_scene *scene, char *line, int actual_line)
 	type = get_type(line, actual_line);
 	if (type == UNDEFINED || check_float(type, actual_line) == -1)
 		return (-1);
-	f[type - 1](line, actual_line, scene);
-	return (0);
+	return (f[type - 1](line, actual_line, scene));
 }

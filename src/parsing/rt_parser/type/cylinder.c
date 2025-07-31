@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 06:03:36 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/17 06:03:38 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:37:12 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,8 @@ int	cylinder(char *line, int line_num, t_scene *scene)
 	pos = &cylinder->pos;
 	color = &cylinder->color;
 	rot = &cylinder->rot;
-	ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
-		&rot->x, &rot->y, &rot->z, &cylinder->diameter, &cylinder->height,
-		&color->r, &color->g, &color->b);
 	object->f = hit_cylinder;
-	return (0);
+	return (ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
+		&rot->x, &rot->y, &rot->z, &cylinder->diameter, &cylinder->height,
+		&color->r, &color->g, &color->b));
 }
