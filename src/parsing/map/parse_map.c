@@ -6,7 +6,7 @@
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:03:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/05/21 01:04:01 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:42:06 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ int parse_map(char *file_name, t_scene *scene)
 	fd = open(file_name, O_RDONLY);
 	if (!fd)
 		return (-1);
-	rt_parser(fd, scene);
+	if (rt_parser(fd, scene) == -1)
+		return (-1);
 	if (create_bvh(scene) == -1)
 		return (-1);
 	return (0);

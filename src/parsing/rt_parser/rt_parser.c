@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 06:07:52 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 05:36:32 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/31 16:42:43 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,32 @@ void	set_triangle_normal(t_triangle *triangle)
 	vec3_sub(&triangle->p2.pos, &triangle->p0.pos, &edge2);
 	vec3_cross(&edge1, &edge2, &triangle->normal);
 	vec3_unit(&triangle->normal);
+}
+
+int	init_phong(t_scene *scene)
+{
+	int	return_val;
+
+	return_val = 0;
+	scene->phong.l = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
+	if (errno != 0)
+	{
+		return_val = -1;
+		perror("Minirt");
+	}
+	scene->phong.r = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
+	if (errno != 0)
+	{
+		return_val = -1;
+		perror("Minirt");
+	}
+	scene->phong.d = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
+	if (errno != 0)
+	{
+		return_val = -1;
+		perror("Minirt");
+	}
+	return (return_val);
 }
 
 int	rt_parser(int fd, t_scene *scene)
@@ -52,23 +78,7 @@ int	rt_parser(int fd, t_scene *scene)
 		return_val = -1;
 		perror("Minirt");
 	}
-	scene->phong.l = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
-	if (errno != 0)
-	{
-		return_val = -1;
-		perror("Minirt");
-	}
-	scene->phong.r = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
-	if (errno != 0)
-	{
-		return_val = -1;
-		perror("Minirt");
-	}
-	scene->phong.d = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
-	if (errno != 0)
-	{
-		return_val = -1;
-		perror("Minirt");
-	}
+	else if (return_val == 0)
+		return_val = init_phong(scene);
 	return (return_val);
 }

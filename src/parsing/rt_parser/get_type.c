@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 22:29:40 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/11 22:29:42 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:52:39 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,12 @@ t_object_type	get_type(char *line, int actual_line)
 	i = 0;
 	while (elem[i])
 	{
-		if (ft_strncmp(elem[i], line, ft_strlen(elem[i])) == 0
-			&& *(line + ft_strlen(elem[i])) == ' ')
-			return (i + 1);
+		if (ft_strncmp(elem[i], line, ft_strlen(elem[i])) == 0)
+		{
+			if ((*(line + ft_strlen(elem[i])) == ' ')
+					|| (*(line + ft_strlen(elem[i])) == '\t'))
+				return (i + 1);
+		}
 		++i;
 	}
 	print_unrecognized_identifier(line, actual_line);
