@@ -55,7 +55,7 @@ float hit_register(t_ray *restrict ray, t_vector *restrict obj_vec, t_color *res
 		vec3_normalize(normal);
 		*color = objects->sphere.color;
 	}
-	else if ((objects->type == PLANE) || (objects->type == TRIANGLE))
+	else if (objects->type == PLANE)
 	{
 		*normal = objects->plane.normal;
 		vec3_normalize(normal);
