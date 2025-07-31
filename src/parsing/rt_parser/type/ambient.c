@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 04:36:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 16:36:10 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/31 20:40:15 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	ambient(char *line, int line_num, t_scene *scene)
 	ambient = &scene->ambient;
 	color = &ambient->color;
 	ret = ft_scan(line_num, AMBIENT_FORMAT, line, &ambient->ratio,
-		&color->r, &color->g, &color->b);
+			&color->r, &color->g, &color->b);
 	get_real_ratio(color, ambient->ratio, &ambient->col);
 	return (ret);
 }

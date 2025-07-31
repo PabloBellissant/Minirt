@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   camera.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 08:02:03 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 16:36:24 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/31 20:40:17 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,6 @@ int	camera(char *line, int line_num, t_scene *scene)
 	pos = &camera->pos;
 	rot = &camera->rot;
 	ret = ft_scan(line_num, CAMERA_FORMAT, line, &pos->x, &pos->y, &pos->z,
-		&rot->x, &rot->y, &rot->z, &camera->fov);
+			&rot->x, &rot->y, &rot->z, &camera->fov);
 	return (ret);
 }

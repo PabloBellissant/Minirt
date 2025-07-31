@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 18:50:34 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/31 20:32:34 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,22 +71,6 @@ typedef union s_vec4
 	float	global[4];
 }	t_vec4;
 
-typedef struct s_vertex
-{
-	t_vec3	pos;
-	float	u;
-	float	v;
-}	t_vertex;
-
-typedef struct s_triangle
-{
-	t_color		color;
-	t_vertex	p0;
-	t_vertex	p1;
-	t_vertex	p2;
-	t_vec3		normal;
-}	t_triangle;
-
 typedef struct	s_ambient
 {
 	float	ratio;
@@ -133,17 +117,6 @@ typedef struct	s_cylinder
 	float	height;
 }	t_cylinder;
 
-typedef struct	s_obj
-{
-	t_vec3		pos;
-	t_vec4		rot;
-	t_vec3		scale;
-	int			vertex_count;
-	t_vertex	*vertex;
-	// int			triangle_count;
-	// t_triangle	*triangles;
-}	t_obj;
-
 typedef struct	s_ray
 {
 	t_vec3	pos;
@@ -161,7 +134,6 @@ typedef struct	s_object
 		t_sphere	sphere;
 		t_plane		plane;
 		t_cylinder	cylinder;
-		t_triangle	triangle;
 	};
 }	t_object;
 
@@ -206,6 +178,14 @@ typedef struct s_data
 	t_vec2i		screen;
 	t_scene		scene;
 }	t_data;
+
+typedef struct {
+	unsigned long flags;
+	unsigned long functions;
+	unsigned long decorations;
+	long input_mode;
+	unsigned long status;
+} MotifWmHints;
 
 #endif
 

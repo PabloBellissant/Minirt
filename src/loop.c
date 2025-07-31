@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 14:41:08 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/31 19:00:15 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,53 +194,3 @@ int loop(t_data *mlx)
     mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
     return (0);
 }
-
-
-
-
-
-
-
-
-	//
-	// static float x;
-	// static float y;
-	// static float z;
-	// t_data *data;
-	// t_scene scene;
-	//
-	// data = mlx;
-	// scene = data->scene;
-	// (void) draw_line;
-	// ft_bzero(mlx->addr, WIDTH * HEIGHT * 4);
-	// x += to_rad(0.1f);
-	// y += to_rad(0.01f);
-	// z += to_rad(0.2f);
-	// t_mat3	rot = rotation_matrix(x, y, z);
-	// int	t;
-	// int	i = 0;
-	// while (i < scene.object_count)
-	// {
-	// 	t = 0;
-	// 	t_vertex *tab = scene.objects[i].vertex;
-	// 	t_object obj = scene.objects[i];
-	// 	while (t < scene.objects[i].vertex_count)
-	// 	{
-	// 		t_vec3	temp;
-	// 		temp.x = tab[t].pos.x + obj.translation.x;
-	// 		temp.y = tab[t].pos.y + obj.translation.y;
-	// 		temp.z = tab[t].pos.z + obj.translation.z;
-	// 		t_vec3 p = mat3_apply(rot, temp);
-	// 		p.z += 1.5;
-	// 		p.y *= -1;
-	// 		float	x_proj = (p.x / p.z) * 800;
-	// 		float	y_proj = (p.y / p.z) * 800;
-	// 		int x_screen = x_proj + WIDTH / 2;
-	// 		int y_screen = y_proj + HEIGHT / 2;
-	// 		safe_put_pixel(mlx->addr, x_screen, y_screen, 0x00FFFF);
-	// 		++t;
-	// 	}
-	// 	++i;
-	// }
-	// return (0);
-//}

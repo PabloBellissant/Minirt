@@ -6,13 +6,13 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 04:28:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/20 04:28:51 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:46:38 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vec3.h"
 
-inline t_vec3*	vec3_unit(t_vec3 *v)
+inline t_vec3	*vec3_unit(t_vec3 *v)
 {
 	return (vec3_div_scalar(v, vec3_length(v)));
 }

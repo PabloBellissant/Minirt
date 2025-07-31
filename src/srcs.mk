@@ -23,7 +23,6 @@ SRCS		+= $(addprefix $(SRCDIR)/, $(MINIRT_SRCS)) \
 # MKs
 MKS			= vec3/vec3.mk \
 			  parsing/parsing.mk \
-			  multi_threading/multi_threading.mk \
 			  draw/draw.mk \
 			  calc/calc.mk
 

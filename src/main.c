@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 18:43:59 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/07/31 20:26:02 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	main(int argc, char **argv)
 	ft_bzero(&mlx, sizeof(t_data));
 	if (init_graphics(&mlx) == -1)
 		return (2);
-	if (parse_map(argv[1], &mlx.scene) != 0)
+	if (parse_scene(argv[1], &mlx.scene) != 0)
 		return (3); //free mlx;
 	loop_hook(&mlx);
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   plane.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 05:50:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 16:37:38 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/07/31 20:40:47 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@ int	plane(char *line, int line_num, t_scene *scene)
 	color = &plane->color;
 	norm = &plane->normal;
 	object->f = hit_plane;
-	return (ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z, &norm->x,
-		&norm->y, &norm->z, &color->r, &color->g, &color->b));
+	return (ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z,
+			&norm->x, &norm->y, &norm->z, &color->r, &color->g, &color->b));
 }
