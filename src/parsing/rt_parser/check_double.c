@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_float.c                                     :+:      :+:    :+:   */
+/*   check_double.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 03:26:31 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/12 03:26:32 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/05 04:07:46 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	print_already_type(t_object_type type, int actual_line);
 
 int	check_float(t_object_type type, int actual_line)
 {
-	static t_object_type	forbidden_float[] = {AMBIENT, CAMERA, LIGHT};
+	static t_object_type	forbidden_float[] = {AMBIENT, CAMERA};
 	static int				elem_count[OBJ_ENUM_SIZE];
 	unsigned long			i;
 

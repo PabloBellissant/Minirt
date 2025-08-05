@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:02:17 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 04:49:33 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 
 void	disable_decorations(Display *d, Window w)
 {
-	MotifWmHints	hints;
-	Atom			prop;
+	struct MotifWmHints	hints;
+	Atom				prop;
 
 	hints.flags = (1L << 1);//find define
 	hints.decorations = 0;
