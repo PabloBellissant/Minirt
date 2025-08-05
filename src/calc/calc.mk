@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    calc.mk                                            :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jaubry-- <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:39:51 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/22 21:47:02 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/08/05 01:52:31 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,8 @@ CALC_DIR	= $(SRCDIR)/calc
 
 # Source files
 CALC_SRCS	= hit_register.c \
-			  ray_path.c
+			  ray_path.c \
+			  phong_reflection.c
 SRCS		+= $(addprefix $(CALC_DIR)/, $(CALC_SRCS))
 
 CALC_MKS	= bvh/bvh.mk \

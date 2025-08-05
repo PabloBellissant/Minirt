@@ -6,12 +6,12 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 01:57:20 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:56:40 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:10:01 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
 #include "bvh.h"
+#include "object.h"
 
 int	get_object_count(t_bvh *bvh)
 {

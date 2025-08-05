@@ -6,12 +6,12 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 08:02:03 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:40:17 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:06:22 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "struct.h"
+#include "render.h"
 
 #define CAMERA_FORMAT " *C +%f *, *%f *, *%f +%f[-1,1] *, *%f[-1,1] *\
 , *%f[-1,1] +%d[180]\n"

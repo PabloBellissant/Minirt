@@ -6,11 +6,11 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 03:38:37 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:55:13 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:11:18 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "render.h"
 
 int	hit_plane(t_ray *ray, t_object *o, float *t);
 

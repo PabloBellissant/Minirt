@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   vec3_length_squared.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 06:41:22 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/02 06:41:24 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:03:24 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "vec3.h"
 
 float	vec3_length_squared(const t_vec3 *v);
 

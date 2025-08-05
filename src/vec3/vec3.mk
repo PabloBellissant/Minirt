@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:26:12 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/23 22:48:59 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/05 01:46:25 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ VEC3_SRCS	= vec3_add.c \
 			  vec3_unit.c \
 			  vec3_magnitude.c \
 			  vec3_normalize.c \
-			  vec3_mult.c
+			  vec3_mult.c \
+			  rgb_utils.c			  
 SRCS		+= $(addprefix $(VEC3_DIR)/, $(VEC3_SRCS))
 
 # VPATH

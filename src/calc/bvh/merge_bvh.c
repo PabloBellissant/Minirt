@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   merge_bvh.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 02:43:30 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/22 22:50:43 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:13:30 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
 #include "bvh.h"
 #include <math.h>
 

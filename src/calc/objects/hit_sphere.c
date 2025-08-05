@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   hit_sphere.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 03:38:30 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/07 02:43:28 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:11:22 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
-#include "struct.h"
+#include "render.h"
 
 int	hit_sphere(t_ray *ray, t_object *o, float *t);
 

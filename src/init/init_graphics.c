@@ -6,14 +6,13 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:22:46 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:02:17 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "define.h"
 #include "mlx.h"
-#include "struct.h"
+#include "minirt.h"
 
 void	disable_decorations(Display *d, Window w)
 {
@@ -62,5 +61,6 @@ int	init_graphics(t_data *data)
 		disable_decorations(data->mlx->display, data->win->window);
 	if (FULLSCREEN)
 		mlx_ext_fullscreen(data->mlx, data->win, 1);
+	data->fullscreen = FULLSCREEN;
 	return (init_img(data));
 }

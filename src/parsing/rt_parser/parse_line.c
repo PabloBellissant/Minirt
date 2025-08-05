@@ -6,11 +6,10 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 22:00:39 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:40:05 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:14:00 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
 #include "parsing.h"
 
 int	parse_line(t_scene *scene, char *line, int actual_line)

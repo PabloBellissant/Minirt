@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   vec3_cross.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 07:27:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/24 07:27:58 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:03:14 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "vec3.h"
 
 t_vec3	*vec3_cross(t_vec3 *a, t_vec3 *b, t_vec3 *out);
 

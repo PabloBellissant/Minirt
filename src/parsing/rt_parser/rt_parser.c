@@ -6,14 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 06:07:52 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:35:33 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:05:53 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
 #include <errno.h>
 #include "libft.h"
-#include "struct.h"
+#include "render.h"
 #include "parsing.h"
 #include "vec3.h"
 

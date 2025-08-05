@@ -6,13 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:03:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:37:17 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 04:50:37 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "struct.h"
+#include "parsing.h"
 #include "bvh.h"
+#include <fcntl.h>
 
 int	parse_scene(char *file_name, t_scene *scene)
 {

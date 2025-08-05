@@ -3,20 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   bvh.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 03:56:25 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/29 03:56:31 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:09:48 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BVH_H
 # define BVH_H
+# include "vec3.h"
+# include "libft.h"
 
-# include "struct.h"
+typedef struct s_scene	t_scene;
+typedef struct s_object	t_object;
+typedef struct s_ray	t_ray;
+typedef struct s_hit_box_bvh
+{
+	float	ray_origin;
+	float	ray_dir;
+	float	box_min;
+	float	box_max;
+	float	t_min;
+	float	t_max;
+}	t_hit_box_bvh;
 
 typedef struct s_bvh	t_bvh;
-
 typedef struct s_bvh
 {
 	t_vec3	pos;

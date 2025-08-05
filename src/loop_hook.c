@@ -6,19 +6,23 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 19:21:03 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:01:36 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <math.h>
 #include "mlx.h"
-#include "struct.h"
-#include "loop.h"
+#include "minirt.h"
 
 int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
 
 int	key_press(int key_code, t_data *mlx)
 {
-	//mlx_ext_fullscreen(mlx->mlx, mlx->win, 0);
+	if (key_code == XK_F11)
+	{
+		mlx->fullscreen = !mlx->fullscreen;
+		mlx_ext_fullscreen(mlx->mlx, mlx->win, mlx->fullscreen);
+	}
 	if (key_code == XK_Escape)
 		exit(1);
 	if ((key_code == XK_a) || (key_code == XK_Left))
@@ -53,47 +57,47 @@ int	key_release(int key_code, t_data *mlx)
 	return (0);
 }
 
-#include <math.h>
-int mouse_move(int x, int y, t_data *mlx)
+static bool	first_mouse_move(t_data *mlx,
+	const int center_x, const int center_y)
 {
-    static bool         first_move = true;
-    static const int    center_x = WIDTH / 2;
-    static const int    center_y = HEIGHT / 2;
-    static const float  sensitivity = 0.002f;
+	static bool	first_move = true;
 
-    if (first_move)
-    {
-        mlx->mouse.last_x = center_x;
-        mlx->mouse.last_y = center_y;
-        first_move = false;
-        mlx_mouse_move(mlx->mlx, mlx->win, center_x, center_y);
-        return (0);
-    }
-    
-    int delta_x = x - center_x;
-    int delta_y = y - center_y;
-    
-    // Account for screen coordinate system (Y increases downward)
-    mlx->scene.camera.rot.y -= delta_x * sensitivity;  // Yaw: negative for correct left/right
-    mlx->scene.camera.rot.x += delta_y * sensitivity;  // Pitch: positive because screen Y is inverted
-    mlx->scene.camera.rot.z = 0.0f;                    // No roll
-    
-    // Clamp pitch
-    const float max_pitch = M_PI * 0.49f;
-    if (mlx->scene.camera.rot.x > max_pitch)
-        mlx->scene.camera.rot.x = max_pitch;
-    else if (mlx->scene.camera.rot.x < -max_pitch)
-        mlx->scene.camera.rot.x = -max_pitch;
-    
-    mlx_mouse_move(mlx->mlx, mlx->win, center_x, center_y);
-    mlx->mouse.last_x = center_x;
-    mlx->mouse.last_y = center_y;
-    
-    return (0);
+	if (first_move)
+	{
+		mlx->mouse.last_x = center_x;
+		mlx->mouse.last_y = center_y;
+		first_move = false;
+		mlx_mouse_move(mlx->mlx, mlx->win, center_x, center_y);
+		return (1);
+	}
+	return (0);
 }
 
+#define SENSITIVITY 0.002f
+#define MAX_PITCH 1.53938043117523193F
 
+int	mouse_move(int x, int y, t_data *mlx)
+{
+	static const int	center_x = WIDTH / 2;
+	static const int	center_y = HEIGHT / 2;
+	int					delta_x;
+	int					delta_y;
 
+	if (first_mouse_move(mlx, center_x, center_y))
+		return (0);
+	delta_x = x - center_x;
+	delta_y = y - center_y;
+	mlx->scene.camera.rot.y -= delta_x * SENSITIVITY;
+	mlx->scene.camera.rot.x += delta_y * SENSITIVITY;
+	if (mlx->scene.camera.rot.x > MAX_PITCH)
+		mlx->scene.camera.rot.x = MAX_PITCH;
+	else if (mlx->scene.camera.rot.x < -MAX_PITCH)
+		mlx->scene.camera.rot.x = -MAX_PITCH;
+	mlx_mouse_move(mlx->mlx, mlx->win, center_x, center_y);
+	mlx->mouse.last_x = center_x;
+	mlx->mouse.last_y = center_y;
+	return (0);
+}
 
 int	loop_hook(t_data *mlx)
 {
@@ -104,9 +108,7 @@ int	loop_hook(t_data *mlx)
 	mlx_hook(win, MotionNotify, PointerMotionMask, mouse_move, mlx);
 	mlx_hook(win, KeyPress, KeyPressMask, key_press, mlx);
 	mlx_hook(win, KeyRelease, KeyReleaseMask, key_release, mlx);
-	//mlx_hook(win, ButtonPress, ButtonPressMask, mouse_press, mlx);
-	//mlx_hook(win, ButtonRelease, ButtonReleaseMask, mouse_release, mlx);
-	//mlx_hook(win, DestroyNotify, StructureNotifyMask, mlx_loop_end, mlx->mlx);
+	mlx_hook(win, DestroyNotify, StructureNotifyMask, mlx_loop_end, mlx->mlx);
 	mlx_loop_hook(mlx->mlx, loop, mlx);
 	mlx_loop(mlx->mlx);
 	return (0);

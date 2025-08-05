@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   vec3_random.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 05:11:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/10 05:11:08 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:04:06 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "vec3.h"
 
 t_vec3	*vec3_random(t_vec3 *vec);
 

@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   create_object.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 02:26:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/17 02:26:52 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:06:31 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "struct.h"
+#include "render.h"
 
 t_object	*create_object(t_scene *scene, t_object_type type)
 {

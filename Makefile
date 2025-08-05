@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/31 19:32:01 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/05 02:08:31 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,11 +64,11 @@ CF			= $(CC) $(CFLAGS) $(IFLAGS)
 # SRCS
 include $(SRCDIR)/srcs.mk
 
-ifeq ($(FULLSCREEN), 1)
+ifeq ($(FULLSCREEN), 0) #potentiellement a remettre
+endif
 	SRCS += $(MLXDIR)/mlx_ext_randr.c
 	CFLAGS += -Wno-error=sign-compare -Wno-error=return-type
 	vpath %.c $(MLXDIR)
-endif
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))
