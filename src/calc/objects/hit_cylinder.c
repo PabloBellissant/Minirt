@@ -6,12 +6,12 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 06:55:38 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:50:13 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:10:16 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
-#include "struct.h"
+#include "render.h"
 
 int	hit_cylinder(t_ray *ray, t_object *o, float *t);
 

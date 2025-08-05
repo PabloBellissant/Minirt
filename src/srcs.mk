@@ -15,7 +15,9 @@ INIT_DIR	= $(SRCDIR)/init
 
 # Source files
 MINIRT_SRCS	= main.c \
-			  loop.c loop_hook.c clear_scene.c
+			  loop.c loop_hook.c \
+			  camera_utils.c camera_move.c \
+			  clear_scene.c
 INIT_SRCS	= init_graphics.c
 SRCS		+= $(addprefix $(SRCDIR)/, $(MINIRT_SRCS)) \
 			   $(addprefix $(INIT_DIR)/, $(INIT_SRCS))

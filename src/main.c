@@ -6,13 +6,12 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:26:02 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:11:52 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
-#include "init.h"
-#include "loop.h"
+#include "minirt.h"
 #include "time.h"
 
 int	main(int argc, char **argv)
@@ -35,4 +34,3 @@ int	main(int argc, char **argv)
 	loop_hook(&mlx);
 	return (0);
 }
-

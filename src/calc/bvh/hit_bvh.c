@@ -6,17 +6,26 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 04:48:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 21:14:13 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:13:28 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
-#include "struct.h"
 #include "bvh.h"
 #include "calc.h"
 
 bool	hit_box(t_ray *ray, t_bvh *bvh);
 void	get_t(t_ray *ray, t_object *object, float *t);
+
+static inline void	check_hit(t_ray *ray, t_object **obj,
+	float *obj_t, t_bvh *next)
+{
+	if (hit_box(ray, next) == true)
+	{
+		*obj = hit_bvh(ray, next);
+		get_t(ray, *obj, obj_t);
+	}
+}
 
 inline t_object	*hit_bvh(t_ray *ray, t_bvh *bvh)
 {
@@ -34,16 +43,8 @@ inline t_object	*hit_bvh(t_ray *ray, t_bvh *bvh)
 	}
 	object_a_t = NAN;
 	object_b_t = NAN;
-	if (hit_box(ray, bvh->next_a) == true)
-	{
-		object_a = hit_bvh(ray, bvh->next_a);
-		get_t(ray, object_a, &object_a_t);
-	}
-	if (hit_box(ray, bvh->next_b) == true)
-	{
-		object_b = hit_bvh(ray, bvh->next_b);
-		get_t(ray, object_b, &object_b_t);
-	}
+	check_hit(ray, &object_a, &object_a_t, bvh->next_a);
+	check_hit(ray, &object_b, &object_b_t, bvh->next_b);
 	if (isnan(object_a_t))
 	{
 		if (isnan(object_b_t))
@@ -77,53 +78,3 @@ void	get_t(t_ray *ray, t_object *object, float *t)
 	}
 	*t = NAN;
 }
-
-// inline void	swap_float(float *a, float *b)
-// {
-// 	float	temp;
-//
-// 	temp = *a;
-// 	*a = *b;
-// 	*b = temp;
-// }
-
-inline bool hit_box(t_ray *ray, t_bvh *bvh)
-{
-	float t_min = -INFINITY;
-	float t_max = INFINITY;
-	int i = 0;
-
-	while (i < 3)
-	{
-		float ray_origin = ((float *)&ray->pos)[i];
-		float ray_dir = ((float *)&ray->dir)[i];
-		float box_min = ((float *)&bvh->pos)[i];
-		float box_max = box_min + ((float *)&bvh->size)[i];
-
-		if (fabsf(ray_dir) < 1e-8f)
-		{
-			if (ray_origin < box_min || ray_origin > box_max)
-				return false;
-		}
-		else
-		{
-			float t1 = (box_min - ray_origin) / ray_dir;
-			float t2 = (box_max - ray_origin) / ray_dir;
-			if (t1 > t2)
-			{
-				float temp = t1;
-				t1 = t2;
-				t2 = temp;
-			}
-			if (t1 > t_min)
-				t_min = t1;
-			if (t2 < t_max)
-				t_max = t2;
-			if (t_min > t_max)
-				return false;
-		}
-		i++;
-	}
-	return (t_max >= 0);
-}
-

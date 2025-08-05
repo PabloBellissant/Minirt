@@ -6,14 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 06:31:17 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:55:44 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:08:17 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "bvh.h"
-#include "struct.h"
 #include <math.h>
+#include "bvh.h"
+#include "render.h"
 
 static int		create_object_bvh(t_scene *scene, t_vector *bvh_vec);
 static void		set_bvh_size(t_object *object, t_vec3 *pos, t_vec3 *size);
@@ -80,7 +80,8 @@ static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 	single_bvh.depth = 0;
 	while (bvh_vec->num_elements < scene->objects.num_elements)
 	{
-		actual_object = get_vector_value(&scene->objects, bvh_vec->num_elements);
+		actual_object = get_vector_value(&scene->objects,
+				bvh_vec->num_elements);
 		set_bvh_size(actual_object, &single_bvh.pos, &single_bvh.size);
 		single_bvh.object = actual_object;
 		if (vector_add(bvh_vec, &single_bvh, 1) == -1)

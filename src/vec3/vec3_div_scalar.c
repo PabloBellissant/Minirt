@@ -6,11 +6,11 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 05:31:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 05:49:22 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:03:19 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "vec3.h"
 
 t_vec3	*vec3_div_scalar(t_vec3 *vec, float x);
 

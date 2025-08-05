@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   vec3_sub.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 05:08:16 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 16:45:06 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:03:59 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
+#include "vec3.h"
 
 t_vec3	*vec3_sub(const t_vec3 *vec1, const t_vec3 *vec2, t_vec3 *out);
 

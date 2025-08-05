@@ -6,13 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 06:03:36 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:40:29 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/05 05:06:43 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "struct.h"
+#include "render.h"
 #include "calc.h"
+#include "vec3.h"
 
 #define CYLINDER_FORMAT " *cy +%f *, *%f *, *%f +%f[-1,1] *, *%f[-1,1] *, *\
 %f[-1,1] +%f +%f +%8[255] *, *%8[255] *, *%8[255] *\n"
@@ -22,16 +23,18 @@ int	cylinder(char *line, int line_num, t_scene *scene)
 	t_cylinder	*cylinder;
 	t_vec3		*pos;
 	t_vec3		*rot;
-	t_color		*color;
+	t_color		color;
 	t_object	*object;
 
 	object = create_object(scene, CYLINDER);
 	cylinder = &object->cylinder;
 	pos = &cylinder->pos;
-	color = &cylinder->color;
 	rot = &cylinder->rot;
 	object->f = hit_cylinder;
-	return (ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
+	if (ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&rot->x, &rot->y, &rot->z, &cylinder->diameter, &cylinder->height,
-			&color->r, &color->g, &color->b));
+			&color.r, &color.g, &color.b))
+		return (-1);
+	get_real_ratio(&color, 1, &cylinder->rgb);
+	return (0);
 }

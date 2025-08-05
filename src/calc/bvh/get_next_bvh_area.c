@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_bvh_area.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 03:15:55 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/22 22:50:07 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/05 05:13:17 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
 #include "bvh.h"
 #include <math.h>
 
