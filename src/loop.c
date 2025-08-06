@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 04:52:10 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/06 09:36:34 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "mlx.h"
 #include "libft.h"
 #include "draw.h"
-#include "vec3.h"
+#include "vectors.h"
 #include "calc.h"
 #include "minirt.h"
 
@@ -45,15 +45,13 @@ static void	frame_gen(void compute(t_data *), t_data *mlx)
 static void	compute_offsets(t_camera *cam, int x, int y)
 {
 	cam->pixel_center = cam->pixel00_loc;
-	cam->x_offset = cam->pixel_delta_u;
-	cam->y_offset = cam->pixel_delta_v;
-	vec3_scale(&cam->x_offset, (float)x);
-	vec3_scale(&cam->y_offset, (float)y);
-	vec3_add(&cam->pixel_center, &cam->x_offset, &cam->pixel_center);
-	vec3_add(&cam->pixel_center, &cam->y_offset, &cam->pixel_center);
+	cam->x_offset = vec3_scale(cam->pixel_delta_u, (float)x);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, (float)y);
+	cam->pixel_center = vec3_add(cam->pixel_center, cam->x_offset);
+	cam->pixel_center = vec3_add(cam->pixel_center, cam->y_offset);
 }
 
-void	compute(t_data *mlx)
+void	compute(t_data *data)
 {
 	t_camera	*cam;
 	t_scene		*scene;
@@ -61,8 +59,8 @@ void	compute(t_data *mlx)
 	int			x;
 	int			y;
 
-	scene = &mlx->scene;
-	cam = &mlx->scene.camera;
+	scene = &data->scene;
+	cam = &data->scene.camera;
 	fill_camera(cam);
 	y = 0;
 	while (y < HEIGHT)
@@ -72,9 +70,8 @@ void	compute(t_data *mlx)
 		{
 			compute_offsets(cam, x, y);
 			ray.pos = cam->pos;
-			vec3_sub(&cam->pixel_center, &cam->pos, &ray.dir);
-			vec3_unit(&ray.dir);
-			put_pixel(mlx->addr, x, y, ray_path(&ray, scene).rgb);
+			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
+			put_pixel(data->addr, x, y, ray_path(&ray, scene).rgb);
 			++x;
 		}
 		++y;
@@ -82,13 +79,18 @@ void	compute(t_data *mlx)
 	((t_object *)(scene->lights.data))[0].light.pos.x -= 0.1;
 }
 
-int	loop(t_data *mlx)
+void	update_fps(t_rast_env *env);
+void	draw_text(t_text *text);
+
+int	loop(t_data *data)
 {
-	handle_camera_move(&mlx->scene.camera, mlx->keys);
+	update_fps(data->font_env);
+	handle_camera_move(&data->scene.camera, data->keys);
 	if (DEBUG || PERF)
-		frame_gen(&compute, mlx);
+		frame_gen(&compute, data);
 	else
-		compute(mlx);
-	mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
+		compute(data);
+	draw_text(data->font_env->fps);
+	mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
 	return (0);
 }

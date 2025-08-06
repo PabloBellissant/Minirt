@@ -6,12 +6,12 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:24:03 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/05 05:04:15 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:28:27 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "draw.h"
-#include "vec3.h"
+#include "vectors.h"
 #include <math.h>
 #include "minirt.h"
 

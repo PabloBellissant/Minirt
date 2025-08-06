@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 23:23:39 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/05 04:49:25 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 03:50:43 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static inline void	fill_hb(t_hit_box_bvh *hb, t_ray *ray,
 	hb->box_max = hb->box_min + ((float *)&bvh->size)[i];
 }
 
-inline bool	hit_box(t_ray *ray, t_bvh *bvh)
+bool	hit_box(t_ray *ray, t_bvh *bvh)
 {
 	t_hit_box_bvh	hb;
 	uint8_t			i;

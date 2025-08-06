@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:17:40 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:18:35 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,9 @@
 # include "mlx_int.h"
 # include "libft.h"
 # include "parsing.h"
-# include "vec3.h"
+# include "vectors.h"
 # include "render.h"
+# include "font_renderer.h"
 
 typedef struct s_keys
 {
@@ -82,6 +83,7 @@ typedef struct s_data
 	int			endian;
 	t_vec2i		screen;
 	t_scene		scene;
+	t_rast_env	*font_env;
 }				t_data;
 
 typedef struct MotifWmHints

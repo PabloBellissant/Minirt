@@ -6,13 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:43:56 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/05 05:15:28 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:22:08 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef OBJECT_H
 # define OBJECT_H
-# include "vec3.h"
+# include "vectors.h"
+# include "colors.h"
 # include "parsing.h"
 
 typedef struct s_ambient

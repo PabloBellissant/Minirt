@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:44:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 04:41:36 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:23:11 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 typedef struct s_scene	t_scene;
 typedef struct s_object	t_object;
-typedef union u_color	t_color;
 
 typedef enum e_object_type
 {

@@ -6,14 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 02:44:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:06:55 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:53:37 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "render.h"
 #include "calc.h"
-#include "vec3.h"
+#include "vectors.h"
 
 #define SPHERE_FORMAT " *sp +%f *, *%f *, *%f +%f +%8[255] *\
 , *%8[255] *, *%8[255] *\n"
@@ -22,7 +22,7 @@ int	sphere(char *line, int line_num, t_scene *scene)
 {
 	t_sphere	*sphere;
 	t_vec3		*pos;
-	t_color		color;
+	t_rgb_int		color;
 	t_object	*object;
 	float		radius;
 
@@ -35,6 +35,6 @@ int	sphere(char *line, int line_num, t_scene *scene)
 	radius = sphere->diameter / 2.0f;
 	sphere->radius_squared = radius * radius;
 	object->f = hit_sphere;
-	get_real_ratio(&color, 1, &sphere->rgb);
+	sphere->rgb = rgb_itof(color);
 	return (0);
 }

@@ -6,13 +6,13 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 03:56:25 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:09:48 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:18:37 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BVH_H
 # define BVH_H
-# include "vec3.h"
+# include "vectors.h"
 # include "libft.h"
 
 typedef struct s_scene	t_scene;
