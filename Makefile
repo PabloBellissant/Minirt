@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 01:02:42 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/07 01:08:23 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -92,7 +92,7 @@ fast: CFLAGS += $(FFLAGS)
 fast: $(NAME)
 
 $(NAME): $(MLX) $(LIBFT) $(OBJS)
-	@$(MAKE) $(FONT_RENDER)
+	@$(MAKE) -s $(FONT_RENDER) DEBUG=$(DEBUG) FAST=$(FAST)
 	@$(CF) $^ $(LFLAGS) -o $@ $(FONT_RENDER)
 ifeq ($(DEBUG),1)
 	$(call color,$(ORANGE)$(BOLD),"✓ Debug build %UL%$@%NUL% complete")
@@ -147,9 +147,7 @@ clean:
 	$(call color,$(RED),"Cleaning %UL%$(NAME)%NUL% object files from %UL%$(OBJDIR)%NUL% and %UL%$(DEPDIR)")
 	@rm -rf $(OBJDIR) $(DEPDIR)
 
-fclean: clean
-	@$(MAKE) -s -C $(MLXDIR) clean
-	@$(MAKE) -s -C $(LIBFTDIR) fclean
+fclean:
 	@$(MAKE) -s -C $(FONT_RENDIR) fclean
 	$(call color,$(RED),"Cleaning %UL%$(NAME)%NUL% object files from %UL%$(OBJDIR)%NUL% and %UL%$(DEPDIR)")
 	@rm -rf $(OBJDIR) $(DEPDIR)
