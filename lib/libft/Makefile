@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/27 01:19:17 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 00:16:44 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/07 01:22:05 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,9 @@ DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 IFLAGS		= -I$(INCDIR)
 CF			= $(CC) $(CFLAGS) $(IFLAGS) $(DFLAGS)
 
-AR          = $(if $(findstring -flto,$(CC)),llvm-ar-12,ar)
-RANLIB      = $(if $(findstring -flto,$(CC)),llvm-ranlib-12,ranlib)
+AR          = $(if $(findstring -flto,$(CC)),llvm-ar-12,ar) $(SILENCE)
+ARFLAGS		= rcs
+RANLIB      = $(if $(findstring -flto,$(CC)),llvm-ranlib-12,ranlib) $(SILENCE)
 
 # VPATH
 vpath %.h $(INCDIR)
@@ -62,8 +63,8 @@ all: $(NAME)
 debug: $(NAME)
 
 $(NAME): $(OBJS)
-	@$(AR) $(ARFLAGS) $@ $^ $(SILENCE)
-	@$(if $(findstring -flto,$(CC)),@$(RANLIB) $@ $(SILENCE),)
+	@$(AR) $(ARFLAGS) $@ $^
+	@$(if $(findstring -flto,$(CC)),@$(RANLIB) $@,)
 ifeq ($(DEBUG), 1)
 	$(call color,$(ORANGE)$(BOLD),"✓ %UL%$(NAME)%NUL% debug build complete")
 else
