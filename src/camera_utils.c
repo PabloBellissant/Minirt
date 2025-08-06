@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:21:16 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 09:43:31 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 22:19:26 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void	create_focal_distance_viewport(t_camera *cam)
 	cam->v = vec3_div_scalar(cam->v, 2.0f);
 	cam->viewport_upper_left = vec3_sub(cam->viewport_upper_left, cam->v);
 
-	cam->half_pixel_offset = vec3_scale(vec3_add(cam->pixel_delta_u, cam->pixel_delta_v), 0.5);
+	cam->half_pixel_offset = vec3_scale(vec3_add(cam->pixel_delta_u, cam->pixel_delta_v), 0.5f);
 	cam->pixel00_loc = vec3_add(cam->viewport_upper_left, cam->half_pixel_offset);
 }
 
