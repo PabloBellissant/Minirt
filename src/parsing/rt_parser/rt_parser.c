@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 06:07:52 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:05:53 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:28:27 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "libft.h"
 #include "render.h"
 #include "parsing.h"
-#include "vec3.h"
+#include "vectors.h"
 
 int	init_phong(t_scene *scene)
 {

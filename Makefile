@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/05 02:08:31 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/06 06:41:26 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,12 +37,16 @@ DEPDIR		= .dep
 LIBDIR		= lib
 LIBFTDIR	= $(LIBDIR)/libft
 MLXDIR		= $(LIBDIR)/minilibx-linux
+FONT_RENDIR	= $(LIBDIR)/font_renderer
 
 # Output
 NAME		= MiniRT
 LIBFT		= $(LIBFTDIR)/libft.a
 MLX			= $(MLXDIR)/libmlx.a
+FONT_RENDER	= $(FONT_RENDIR)/libfont_renderer.a
 
+# AGRESSIVE FLAGS
+# -03 -ffast-math -funroll-loops -march=native -mtune=native -flto -fuse-ld=gold
 # Flags
 CC			= cc
 DEBUG_FLAGS	= -g3 -pg -Rpass-missed=.*
@@ -57,8 +61,8 @@ CFLAGS		= -Wall -Werror -Wextra \
 			  -D WINDOWLESS=$(WINDOWLESS) \
 			  -march=native -msse3
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
-IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(MLXDIR)
-LFLAGS		= -L$(MLXDIR) -L$(LIBFTDIR) -lXext -lX11 -lXrandr -lm -lmlx -lft
+IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(FONT_RENDIR)/include -I$(MLXDIR)
+LFLAGS		= -L$(MLXDIR) -L$(LIBFTDIR) -L$(FONT_RENDIR) -lXext -lX11 -lXrandr -lm -lmlx -lfont_renderer -lft
 CF			= $(CC) $(CFLAGS) $(IFLAGS)
 
 # SRCS
@@ -84,13 +88,16 @@ debug: $(NAME)
 fast: CFLAGS += -Ofast -march=native -mtune=native -flto -funroll-loops
 fast: $(NAME)
 
-$(NAME): $(MLX) $(LIBFT) $(OBJS)
+$(NAME): $(MLX) $(LIBFT) $(FONT_RENDER) $(OBJS)
 	@$(CF) $^ $(LFLAGS) -o $@
 ifeq ($(DEBUG),1)
 	$(call color,$(ORANGE)$(BOLD),"✓ Debug build %UL%$@%NUL% complete")
 else
 	$(call color,$(GREEN)$(BOLD),"✓ Program %UL%$@%NUL% successfully created!")
 endif
+
+$(FONT_RENDER):
+	@$(MAKE) -s -C $(FONT_RENDIR)
 
 $(LIBFT):
 	@$(MAKE) -s -C $(LIBFTDIR) $(if $(filter 1,$(DEBUG)),debug)
@@ -139,6 +146,7 @@ clean:
 fclean: clean
 	@$(MAKE) -s -C $(MLXDIR) clean
 	@$(MAKE) -s -C $(LIBFTDIR) fclean
+	@$(MAKE) -s -C $(FONT_RENDIR) fclean
 	$(call color,$(RED),"Cleaning %UL%$(NAME)%NUL% object files from %UL%$(OBJDIR)%NUL% and %UL%$(DEPDIR)")
 	@rm -rf $(OBJDIR) $(DEPDIR)
 	$(call color,$(RED),"Removing program %UL%$(NAME)")

@@ -6,14 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/05 05:16:00 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:18:35 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RENDER_H
 # define RENDER_H
 # include "libft.h"
-# include "vec3.h"
+# include "vectors.h"
 # include "object.h"
 # include "bvh.h"
 

@@ -6,12 +6,12 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:21:16 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/05 05:04:18 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 09:43:31 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "draw.h"
-#include "vec3.h"
+#include "vectors.h"
 #include <math.h>
 #include "minirt.h"
 
@@ -47,30 +47,25 @@ static void	apply_yaw_and_pitch(t_camera *cam)
 // Create viewport vectors
 static void	create_viewport_vectors(t_camera *cam)
 {
-	cam->u = cam->camera_right;
-	cam->v = cam->camera_up;
-	vec3_scale(&cam->u, cam->viewport_width);
-	vec3_scale(&cam->v, -cam->viewport_height);
-	cam->pixel_delta_u = cam->u;
-	cam->pixel_delta_v = cam->v;
-	vec3_div_scalar(&cam->pixel_delta_u, WIDTH);
-	vec3_div_scalar(&cam->pixel_delta_v, HEIGHT);
+	cam->u = vec3_scale(cam->camera_right, cam->viewport_width);
+	cam->v = vec3_scale(cam->camera_up, -cam->viewport_height);
+	cam->pixel_delta_u = vec3_div_scalar(cam->u, WIDTH);
+	cam->pixel_delta_v = vec3_div_scalar(cam->v, HEIGHT);
 }
 
 // Use forward vector for focal distance
 static void	create_focal_distance_viewport(t_camera *cam)
 {
-	cam->focal_vec = cam->camera_forward;
-	vec3_scale(&cam->focal_vec, cam->focal_length);
-	vec3_sub(&cam->pos, &cam->focal_vec, &cam->viewport_upper_left);
-	vec3_sub(&cam->viewport_upper_left,
-		vec3_div_scalar(&cam->u, 2.0f), &cam->viewport_upper_left);
-	vec3_sub(&cam->viewport_upper_left,
-		vec3_div_scalar(&cam->v, 2.0f), &cam->viewport_upper_left);
-	vec3_add(&cam->pixel_delta_u, &cam->pixel_delta_v, &cam->half_pixel_offset);
-	vec3_scale(&cam->half_pixel_offset, 0.5f);
-	vec3_add(&cam->viewport_upper_left,
-		&cam->half_pixel_offset, &cam->pixel00_loc);
+	cam->focal_vec = vec3_scale(cam->camera_forward, cam->focal_length);
+	cam->viewport_upper_left = vec3_sub(cam->pos, cam->focal_vec);
+	cam->u = vec3_div_scalar(cam->u , 2.0f);
+	cam->viewport_upper_left = vec3_sub(cam->viewport_upper_left, cam->u);
+
+	cam->v = vec3_div_scalar(cam->v, 2.0f);
+	cam->viewport_upper_left = vec3_sub(cam->viewport_upper_left, cam->v);
+
+	cam->half_pixel_offset = vec3_scale(vec3_add(cam->pixel_delta_u, cam->pixel_delta_v), 0.5);
+	cam->pixel00_loc = vec3_add(cam->viewport_upper_left, cam->half_pixel_offset);
 }
 
 void	fill_camera(t_camera *cam)

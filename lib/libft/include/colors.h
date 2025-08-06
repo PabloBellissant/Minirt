@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   calc.h                                             :+:      :+:    :+:   */
+/*   colors.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/25 17:50:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:22:38 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/08/06 08:30:28 by jaubry--          #+#    #+#             */
+/*   Updated: 2025/08/06 08:31:30 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CALC_H
-# define CALC_H
+#ifndef COLORS_H
+# define COLORS_H
 
-# include "object.h"
-# include "render.h"
-
-float	hit_register(t_ray *ray, t_vector *obj_vec);
-t_rgb_int	ray_path(t_ray *ray, t_scene *scene);
-int		hit_plane(t_ray *ray, t_object *o, float *t);
-int		hit_sphere(t_ray *ray, t_object *o, float *t);
-int		hit_cylinder(t_ray *ray, t_object *o, float *t);
+# include "colors_types.h"
+# include "rgb_operations.h"
+# include "rgb_scalar.h"
+# include "rgb_special1.h"
+# include "rgb_special2.h"
 
 #endif

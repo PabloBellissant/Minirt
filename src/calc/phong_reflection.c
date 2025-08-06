@@ -6,13 +6,13 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 01:49:47 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/05 05:13:04 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 10:17:18 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
 #include "calc.h"
-#include "vec3.h"
+#include "vectors.h"
 
 #define SHADOW_BIAS 0.001f
 
@@ -31,58 +31,39 @@ const t_vec3	k_s = (t_vec3){{{0.628f, 0.556f, 0.366f}}};
 const t_vec3	i_s = (t_vec3){{{1.0f, 1.0f, 1.0f}}};
 const float		alpha = 55.2f;
 
-static t_rgb	*get_ambient(const t_rgb *k_a, const t_rgb *i_a, t_rgb *out)
+static t_rgb	get_diffuse(const t_vec3 l_m, const t_rgb i_d, const t_vec3 n)
 {
-	return (vec3_mult(k_a, i_a, out));
-}
+	const float	surface_faces_light = vec3_dot(l_m, n);
 
-static t_rgb	*get_diffuse(const t_vec3 *l_m, const t_rgb *i_d,
-	const t_vec3 *n, t_rgb *out)
-{
-	float	surface_faces_light;
-
-	vec3_dot(l_m, n, &surface_faces_light);
 	if (surface_faces_light <= 0)
-	{
-		*out = (t_rgb){{{0, 0, 0}}};
-		return (out);
-	}
-	vec3_mult(&k_d, i_d, out);
-	return (vec3_scale(out, surface_faces_light));
+		return (rgb(0, 0, 0));
+	return (vec3_scale(vec3_mult(k_d, i_d), surface_faces_light));
 }
 
-static t_rgb	*get_specular(const t_vec3 *r_m, const t_vec3 *v, t_rgb *out)
+static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v)
 {
 	float	surface_faces_camera;
 
-	vec3_dot(r_m, v, &surface_faces_camera);
+	surface_faces_camera = vec3_dot(r_m, v);
 	if (surface_faces_camera <= 0)
-	{
-		*out = (t_rgb){{{0, 0, 0}}};
-		return (out);
-	}
-	vec3_mult(&k_s, &i_s, out);
+		return (rgb(0, 0, 0));
 	surface_faces_camera = powf(surface_faces_camera, alpha);
-	return (vec3_scale(out, surface_faces_camera));
+	return (vec3_scale(vec3_mult(k_s, i_s), surface_faces_camera));
 }
 
-static int	is_light_blocked(t_scene *scene, t_vec3 *hit_point,
-		t_vec3 *light_pos, t_vec3 *normal)
+static int	is_light_blocked(t_scene *scene, t_vec3 hit_point,
+		t_vec3 light_pos, t_vec3 normal)
 {
-	t_ray	shadow_ray;
-	t_vec3	to_light;
-	t_vec3	offset_point;
-	float	light_distance;
-	float	hit_distance;
+	const t_vec3	offset_point = vec3_add(hit_point, vec3_scale(normal, SHADOW_BIAS));
+	t_ray			shadow_ray;
+	t_vec3			to_light;
+	float			light_distance;
+	float			hit_distance;
 
-	offset_point = *normal;
-	vec3_scale(&offset_point, SHADOW_BIAS);
-	vec3_add(hit_point, &offset_point, &offset_point);
 	shadow_ray.pos = offset_point;
-	vec3_sub(light_pos, &offset_point, &to_light);
-	light_distance = vec3_length(&to_light);
-	vec3_normalize(&to_light);
-	shadow_ray.dir = to_light;
+	to_light = vec3_sub(light_pos, offset_point);
+	light_distance = vec3_length(to_light);
+	shadow_ray.dir = vec3_normalize(to_light);
 	hit_distance = hit_register(&shadow_ray, &scene->objects);
 	return ((hit_distance > 0) && (hit_distance < light_distance));
 }
@@ -91,31 +72,30 @@ static int	is_light_blocked(t_scene *scene, t_vec3 *hit_point,
 	Function that comptes the color of a pixel based on Phong's reflection model
 	m is each light sources
 */
-t_rgb	*phong_path(t_scene *scene, t_ray *ray, t_rgb *i_p)
+t_rgb	phong_path(t_scene *scene, t_ray *ray)
 {
-	t_rgb	ambient;
+	const t_rgb	ambient = vec3_mult(ray->hit_rgb, scene->ambient.rgb);
 	t_rgb	diffuse_m;
 	t_rgb	specular_m;
-	t_rgb	temp;
+	t_rgb	i_p;
 	size_t	m;
 
-	get_ambient(&ray->hit_rgb, &(scene->ambient.rgb), &ambient);
 	m = 0;
+	i_p = rgb(0, 0, 0);
 	while (m < scene->lights.num_elements)
 	{
-		if (is_light_blocked(scene, &ray->pos,
-				&(((t_object *)(scene->lights.data))[m].light.pos),
-				&ray->hit_normal))
+		if (is_light_blocked(scene, ray->pos,
+				(((t_object *)(scene->lights.data))[m].light.pos),
+				ray->hit_normal))
 		{
 			m++;
 			continue ;
 		}
-		get_diffuse(scene->phong.l + m, scene->phong.d + m,
-			&ray->hit_normal, &diffuse_m);
-		get_specular(scene->phong.r + m, &(scene->phong.v), &specular_m);
-		vec3_add(&diffuse_m, &specular_m, &temp);
-		vec3_add(i_p, &temp, i_p);
+		diffuse_m = get_diffuse(scene->phong.l[m], scene->phong.d[m],
+			ray->hit_normal);
+		specular_m = get_specular(scene->phong.r[m], scene->phong.v);
+		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));
 		m++;
 	}
-	return (vec3_add(i_p, &ambient, i_p));
+	return (vec3_add(i_p, ambient));
 }

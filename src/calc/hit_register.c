@@ -12,7 +12,7 @@
 
 #include <float.h>
 
-#include "vec3.h"
+#include "vectors.h"
 #include "calc.h"
 
 #define OFFSET 0.001f
@@ -23,12 +23,11 @@ static void	hit_register_obj(t_ray *restrict ray,
 	t_vec3	hit_dir;
 	t_vec3	hit_point;
 
-	hit_dir = ray->dir;
-	vec3_scale(&hit_dir, t_min);
-	vec3_add(&ray->pos, &hit_dir, &hit_point);
+	hit_dir = vec3_scale(ray->dir, t_min);
+	hit_point = vec3_add(ray->pos, hit_dir);
 	if (objects->type == SPHERE)
 	{
-		vec3_sub(&hit_point, &objects->sphere.pos, &ray->hit_normal);
+		ray->hit_normal = vec3_sub(hit_point, objects->sphere.pos);
 		ray->hit_rgb = objects->sphere.rgb;
 	}
 	else if (objects->type == PLANE)
@@ -38,10 +37,10 @@ static void	hit_register_obj(t_ray *restrict ray,
 	}
 	else
 	{
-		vec3_sub(&hit_point, &objects->cylinder.pos, &ray->hit_normal);
+		ray->hit_normal = vec3_sub(hit_point, objects->cylinder.pos);
 		ray->hit_rgb = objects->cylinder.rgb;
 	}
-	vec3_normalize(&ray->hit_normal);
+	ray->hit_normal = vec3_normalize(ray->hit_normal);
 	ray->pos = hit_point;
 }
 

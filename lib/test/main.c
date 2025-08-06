@@ -5,38 +5,35 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 03:17:18 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/05/11 10:17:42 by jaubry--          #+#    #+#             */
+/*   Updated: 2025/07/17 23:06:48 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
-#include "minirt.h"
-#include "time.h"
 #include "font_renderer.h"
 
+int		init_ttf(const char *path, t_ttf_font **ptr);
+void	start_mainloop(t_rast_env *env, t_ttf_font *font);
 void	free_ttf(t_ttf_font *font);
 
 int	main(int argc, char **argv)
 {
-	t_data	mlx;
-	time_t	seed;
+	t_ttf_font	*font;
+	t_rast_env	env;
+	int			ret;
 
-	(void)argv;
-	if (argc < 2)
-		return (1);
-	seed = time(NULL);
-	if (DEBUG)
-		printf("SEED: '%zu'\n", seed);
-	srand(seed);
-	ft_bzero(&mlx, sizeof(t_data));
-	if (init_graphics(&mlx) == -1)
-		return (2);
-	if (parse_scene(argv[1], &mlx.scene) != 0)
-		return (3); //free mlx;
-	loop_hook(&mlx);
-	free_ttf(mlx.font_env->fps->font);
-	free(mlx.font_env->fps);
-	free(mlx.font_env);
+	font = NULL;
+	if (argc == 2)
+	{
+		printf("'%s'\n", argv[1]);
+		ret = init_ttf(argv[1], &font);
+		if (ret)
+			return (ret);
+		ft_bzero(&env, sizeof(t_rast_env));
+		start_mainloop(&env, font);
+		free_ttf(font);
+	}
+	else
+		return (error(ERR_ARG_NUM, ": %d", argc - 1));
 	return (0);
 }
