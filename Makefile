@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/06 22:01:54 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/08/07 01:02:42 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -91,8 +91,9 @@ debug: $(NAME)
 fast: CFLAGS += $(FFLAGS)
 fast: $(NAME)
 
-$(NAME): $(MLX) $(LIBFT) $(FONT_RENDER) $(OBJS)
-	@$(CF) $^ $(LFLAGS) -o $@
+$(NAME): $(MLX) $(LIBFT) $(OBJS)
+	@$(MAKE) $(FONT_RENDER)
+	@$(CF) $^ $(LFLAGS) -o $@ $(FONT_RENDER)
 ifeq ($(DEBUG),1)
 	$(call color,$(ORANGE)$(BOLD),"✓ Debug build %UL%$@%NUL% complete")
 else

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:37:35 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 00:09:51 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 00:43:01 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,20 +57,16 @@ int light_intersect(t_ray *ray, t_light *light, float *t)
 
 float light_hit_register(t_ray *ray, t_scene *scene)
 {
-	t_vector*light_vec;
-    t_light *lights;
+	t_object	*lights;
     float   t_min = FLT_MAX;
     float   t_current;
     int     hit_light_idx = -1;
     int     i = 0;
 
-	light_vec = &scene->lights;
-    lights = light_vec->data;
-    
-    //printf("%f\n", lights[0].pos.x);
-    while (i < (int)light_vec->num_elements)
+    lights = (t_object *)scene->lights.data;
+    while (i < scene->lights.num_elements)
     {
-        if (light_intersect(ray, &lights[i], &t_current))
+        if (light_intersect(ray, &(lights[i].light), &t_current))
         {
             if (t_current < t_min)
             {
@@ -85,7 +81,7 @@ float light_hit_register(t_ray *ray, t_scene *scene)
         return (0);
     
     // Register the light hit
-    light_hit_register_data(ray, &lights[hit_light_idx], t_min);
+    light_hit_register_data(ray, &(lights[hit_light_idx].light), t_min);
     return (t_min);
 }
 
