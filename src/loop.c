@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:36:34 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 00:19:26 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	compute(t_data *data)
 		}
 		++y;
 	}
-	((t_object *)(scene->lights.data))[0].light.pos.x -= 0.1;
+	((t_object *)(scene->lights.data))[0].light.pos.x -= 1;
 }
 
 void	update_fps(t_rast_env *env);

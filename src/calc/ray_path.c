@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:37:35 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 10:34:17 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 00:09:51 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ t_rgb_int render_light_hollow_circle(t_ray *ray)
 
     // Only show orange color on the rim (hollow effect)
     if (rim_factor)
-        return (rgb_int(255 * rim_factor, 157 * rim_factor, 0));
+        return (rgb_int(255 * rim_factor, 127 * rim_factor, 0));
     return (rgb_int(0, 0, 0));
 }
 
@@ -103,7 +103,7 @@ t_rgb_int	ray_path(t_ray *ray, t_scene *scene)
 {
 	float	hit_distance;
 	float	hit_distance_light;
-	t_rgb_int	final_color;
+	t_rgb_int	final_color = rgb_int(0, 0, 0);
 	t_ray	og;
 
 	og = *ray;
@@ -114,7 +114,7 @@ t_rgb_int	ray_path(t_ray *ray, t_scene *scene)
 	if ((final_color.r <= 200) && (final_color.g <= 100))
 	{
 		if (hit_distance == 0)
-			return ((t_rgb_int){.rgb = 0});
+			return (rgb_int(0, 0, 0));
 		fill_phong(ray, scene);
 		final_color = rgb_ftoi(phong_path(scene, ray));
 	}

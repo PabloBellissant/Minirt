@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:07:39 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 09:13:39 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 22:41:37 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,18 @@ static inline float	vec3_length2(const t_vec3 v)
 	return (v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
+//magnitude
+//	return (sqrt(vec3_length_squared(v)));
+
+//unit
+// return (vec3_div_scalar(v, vec3_length(v)))
+
+//normalize
+// return (vec3_div_scalar(v, vec3_magnitude(v)));
+
+/*
+	Same as vec3_magnitude
+*/
 static inline float	vec3_length(const t_vec3 v)
 {
 	return (sqrtf(vec3_length2(v)));

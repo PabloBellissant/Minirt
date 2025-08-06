@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lmarcucc <lucas@student.fr>                +#+  +:+       +#+         #
+#    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/27 01:19:17 by jaubry--          #+#    #+#              #
-#    Updated: 2025/04/21 15:00:25 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/08/07 00:16:44 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ include colors.mk
 
 # Variables
 DEBUG		= $(if $(filter debug,$(MAKECMDGOALS)),1,0)
+SILENCE		= 2>/dev/null
 
 # Directories
 SRCDIR		= src
@@ -34,8 +35,8 @@ DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 IFLAGS		= -I$(INCDIR)
 CF			= $(CC) $(CFLAGS) $(IFLAGS) $(DFLAGS)
 
-AR			= ar
-ARFLAGS		= rcs
+AR          = $(if $(findstring -flto,$(CC)),llvm-ar-12,ar)
+RANLIB      = $(if $(findstring -flto,$(CC)),llvm-ranlib-12,ranlib)
 
 # VPATH
 vpath %.h $(INCDIR)
@@ -61,7 +62,8 @@ all: $(NAME)
 debug: $(NAME)
 
 $(NAME): $(OBJS)
-	@$(AR) $(ARFLAGS) $@ $^
+	@$(AR) $(ARFLAGS) $@ $^ $(SILENCE)
+	@$(if $(findstring -flto,$(CC)),@$(RANLIB) $@ $(SILENCE),)
 ifeq ($(DEBUG), 1)
 	$(call color,$(ORANGE)$(BOLD),"✓ %UL%$(NAME)%NUL% debug build complete")
 else

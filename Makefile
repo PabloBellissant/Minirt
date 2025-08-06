@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/06 06:41:26 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/08/06 22:01:54 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ SHELL		:= /bin/bash
 include colors.mk
 
 # Variables
+FAST		= $(if $(filter fast,$(MAKECMDGOALS)),1,0)
 DEBUG		= $(if $(filter debug,$(MAKECMDGOALS)),1,0)
 WINDOWLESS	= 0
 FULLSCREEN	= 0
@@ -59,10 +60,12 @@ CFLAGS		= -Wall -Werror -Wextra \
 			  -D PERF=$(PERF) \
 			  -D FULLSCREEN=$(FULLSCREEN) \
 			  -D WINDOWLESS=$(WINDOWLESS) \
-			  -march=native -msse3
+			  -msse3
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(FONT_RENDIR)/include -I$(MLXDIR)
 LFLAGS		= -L$(MLXDIR) -L$(LIBFTDIR) -L$(FONT_RENDIR) -lXext -lX11 -lXrandr -lm -lmlx -lfont_renderer -lft
+OFLAGS		= -Ofast -ffast-math -funroll-loops -march=native -mtune=native
+FFLAGS		= $(OFLAGS) -flto
 CF			= $(CC) $(CFLAGS) $(IFLAGS)
 
 # SRCS
@@ -85,7 +88,7 @@ vpath %.d $(DEPDIR) $(LIBFTDIR)/$(DEPDIR)
 all: $(NAME)
 debug: $(NAME)
 
-fast: CFLAGS += -Ofast -march=native -mtune=native -flto -funroll-loops
+fast: CFLAGS += $(FFLAGS)
 fast: $(NAME)
 
 $(NAME): $(MLX) $(LIBFT) $(FONT_RENDER) $(OBJS)
@@ -97,14 +100,14 @@ else
 endif
 
 $(FONT_RENDER):
-	@$(MAKE) -s -C $(FONT_RENDIR)
+	@$(MAKE) -s -C $(FONT_RENDIR) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
 
 $(LIBFT):
-	@$(MAKE) -s -C $(LIBFTDIR) $(if $(filter 1,$(DEBUG)),debug)
+	@$(MAKE) -s -C $(LIBFTDIR) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
 
 $(MLX):
 	@echo -e "$(PURPLE)-> Building $(UNDERLINE)minilibx$(RESET)"
-	@$(MAKE) -s -C $(MLXDIR)
+	@$(MAKE) -s -C $(MLXDIR) $(if $(filter 1,$(FAST)),CC="gcc $(OFLAGS)")
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR) $(DEPDIR) buildmsg
 	$(call color,$(BLUE),"➜ Compiling %UL%$<")
