@@ -26,21 +26,21 @@ static void	apply_rotations(t_camera *cam)
 // Apply yaw and pitch to your base forward vector
 static void	apply_yaw_and_pitch(t_camera *cam)
 {
-	cam->camera_forward = (t_vec3){{{
+	cam->camera_forward = (t_vec3){{
 		cam->sin_yaw * cam->cos_pitch,
 		cam->sin_pitch,
 		cam->cos_yaw * cam->cos_pitch
-	}}};
-	cam->camera_right = (t_vec3){{{
+	}};
+	cam->camera_right = (t_vec3){{
 		cam->cos_yaw,
 		0,
 		-cam->sin_yaw
-	}}};
-	cam->camera_up = (t_vec3){{{
+	}};
+	cam->camera_up = (t_vec3){{
 		-cam->sin_yaw * cam->sin_pitch,
 		cam->cos_pitch,
 		cam->cos_yaw * -cam->sin_pitch
-	}}};
+	}};
 }
 
 // Create viewport vectors
