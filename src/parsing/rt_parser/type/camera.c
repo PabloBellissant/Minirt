@@ -13,8 +13,8 @@
 #include "libft.h"
 #include "render.h"
 
-#define CAMERA_FORMAT " *C +%f *, *%f *, *%f +%f[-1,1] *, *%f[-1,1] *\
-, *%f[-1,1] +%d[180]\n"
+#define CAMERA_FORMAT " *C  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *\
+, *%f[-1,1]  *%d[180]\n"
 
 int	camera(char *line, int line_num, t_scene *scene)
 {

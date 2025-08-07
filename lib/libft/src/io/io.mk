@@ -24,7 +24,7 @@ PUT_SRCS	= ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c
 GNL_SRCS	= get_next_line.c get_next_line_utils.c
 GNL_SRCS	:= $(addprefix $(GNL_DIR)/, $(GNL_SRCS))
 
-SCAN_SRCS	= ft_scan.c parse_float.c parse_int.c parse_type.c
+SCAN_SRCS	= ft_scan.c parse_float.c parse_int.c parse_type.c parse_str.c
 SCAN_SRCS	:= $(addprefix $(SCAN_DIR)/, $(SCAN_SRCS))
 
 PRINTFS_SRCS= ft_handlers_utils.c ft_put_hex.c ft_putnbr.c write_utils.c

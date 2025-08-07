@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_scan.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 00:11:43 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/30 20:54:16 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/06/16 00:11:46 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,59 @@
 #include <unistd.h>
 #include "libft.h"
 
-static int	skip_wildcard(char **line, char char_to_skip, int minimum, int num);
+static void	skip_wildcard(char **line, char char_to_skip);
 int			parse_type(va_list *args, char **line, int line_num, char *format);
 static void	wrong_char_error(int line_num, char needed, char found);
-static int	verif_char(char *format, char *line, int line_num);
+static int	verif_char(char *format, char **line, int line_num);
 static char	*skip_range(char *format);
+
+void	scan_optional_arg(va_list *args, char **format, char **line)
+{
+	va_list	copy;
+	char	*line_backup;
+
+	line_backup = *line;
+	++*format;
+	va_copy(copy, *args);
+	while (**format && **format != ')')
+	{
+		if ((*format)[0] && (*format)[1] == '*')
+		{
+			skip_wildcard(line, **format);
+			++*format;
+		}
+		else if (**format == '%')
+		{
+			++*format;
+			if (parse_type(&copy, line, -1, *format) == -1)
+			{
+				*line = line_backup;
+				break ;
+			}
+			*format = skip_range(*format);
+		}
+		else if (verif_char(*format, line, -1) == -1)
+		{
+			*line = line_backup;
+			break ;
+		}
+		++*format;
+	}
+	*format = ft_strchr(*format, ')') + 1;
+}
 
 int	ft_scan(int line_num, char *format, char *line, ...)
 {
 	va_list		args;
 
 	va_start(args, line);
-	while (*format/* || *line*/)
+	while (*format)
 	{
-		if (format[1] == '*' || format[1] == '+')
+		if (format[0] == '(')
+			scan_optional_arg(&args, &format, &line);
+		if (format[0] && format[1] == '*')
 		{
-			if (skip_wildcard(&line, *format, format[1] == '+', line_num) == -1)
-				return (-1);
+			skip_wildcard(&line, *format);
 			++format;
 		}
 		else if (*format == '%')
@@ -40,10 +76,8 @@ int	ft_scan(int line_num, char *format, char *line, ...)
 				return (-1);
 			format = skip_range(format);
 		}
-		else if (verif_char(format, line, line_num) == -1)
+		else if (verif_char(format, &line, line_num) == -1)
 			return (-1);
-		else
-			++line;
 		++format;
 	}
 	return (0);
@@ -56,13 +90,17 @@ static char	*skip_range(char *format)
 	return (format);
 }
 
-static int	verif_char(char *format, char *line, int line_num)
+static int	verif_char(char *format, char **line, int line_num)
 {
-	if (*format != *line && !(*line == '\0' && *format == '\n'))
+	if (*format != **line && !(**line == '\0' && *format == '\n') &&
+		!(ft_isspace(*format) && ft_isspace(**line)))
 	{
-		wrong_char_error(line_num, *format, *line);
+		if (line_num == -1)
+			return (-1);
+		wrong_char_error(line_num, *format, **line);
 		return (-1);
 	}
+	++*line;
 	return (0);
 }
 
@@ -80,30 +118,9 @@ static void	wrong_char_error(int line_num, char needed, char found)
 	ft_putstr_fd("'\n", 2);
 }
 
-static int	skip_wildcard(char **line, char char_to_skip, int minimum, int num)
+static void	skip_wildcard(char **line, const char char_to_skip)
 {
-	int	i;
-
-	i = 0;
-	while ((*line)[i] == char_to_skip)
-		++i;
-	if (i < minimum)
-	{
-		ft_putstr_fd("Error\nNeed at least ", 2);
-		ft_putnbr_fd(minimum, 2);
-		if (!ft_isspace(char_to_skip))
-		{
-			ft_putstr_fd(" '", 2);
-			write(2, &char_to_skip, 1);
-			ft_putstr_fd("' ", 2);
-		}
-		else
-			ft_putstr_fd(" space ", 2);
-		ft_putstr_fd("between arguments, line '", 2);
-		ft_putnbr_fd(num, 2);
-		ft_putstr_fd("'\n", 2);
-		return (-1);
-	}
-	(*line) += i;
-	return (0);
+	while (**line == char_to_skip ||
+		(ft_isspace(char_to_skip) && ft_isspace(**line)))
+		++*line;
 }
