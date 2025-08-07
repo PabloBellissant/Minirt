@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:50:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:22:38 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 09:38:09 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 # include "object.h"
 # include "render.h"
 
-float	hit_register(t_ray *ray, t_vector *obj_vec);
 t_rgb_int	ray_path(t_ray *ray, t_scene *scene);
-int		hit_plane(t_ray *ray, t_object *o, float *t);
-int		hit_sphere(t_ray *ray, t_object *o, float *t);
-int		hit_cylinder(t_ray *ray, t_object *o, float *t);
+float		hit_register(t_ray *ray, t_vector *obj_vec);
+int			hit_plane(t_ray *ray, t_object *o, float *t);
+int			hit_sphere(t_ray *ray, t_object *o, float *t);
+int			hit_cylinder(t_ray *ray, t_object *o, float *t);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 05:50:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:53:16 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 09:47:16 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	plane(char *line, int line_num, t_scene *scene)
 	t_vec3		*pos;
 	t_vec3		*norm;
 	t_object	*object;
-	t_rgb_int		color;
+	t_rgb_int	color;
 
 	object = create_object(scene, PLANE);
 	plane = &object->plane;

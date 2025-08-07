@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 10:35:07 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 09:51:13 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	frame_gen(void compute(void *), void *data)
 	generation++;
 	if (!DEBUG)
 		printf("\033[H\033[J");
-	printf("[FRAME %zu]\nFrame time:\t%zu μs\n",generation, frame_time);
+	printf("[FRAME %zu]\nFrame time:\t%zu μs\n", generation, frame_time);
 	printf("Average:\t%zu μs\n\n", (total_time / generation));
 }
 
@@ -71,7 +71,8 @@ void	compute(t_data *data)
 			compute_offsets(cam, x, y);
 			ray.pos = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-			ft_mlx_pixel_put(&data->mlx->img, vec2i(x, y), ray_path(&ray, scene).rgb);
+			ft_mlx_pixel_put(&data->mlx->img, vec2i(x, y),
+				ray_path(&ray, scene).rgb);
 			++x;
 		}
 		++y;
@@ -87,10 +88,11 @@ int	loop(t_data *data)
 	update_fps(data->font_env);
 	handle_camera_move(&data->scene.camera, data->keys);
 	if (DEBUG || PERF)
-		frame_gen((void (*)(void *))&compute, (void *)data);
+		frame_gen((void (*)(void *))(&compute), (void *)data);
 	else
 		compute(data);
 	draw_text(data->font_env->fps);
-	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win, data->mlx->img.img, 0, 0);
+	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win,
+		data->mlx->img.img, 0, 0);
 	return (0);
 }
