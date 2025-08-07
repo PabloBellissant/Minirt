@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 10:37:06 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 09:51:51 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ void	update_fps(t_rast_env *env)
 {
 	ft_itoal(get_fps(), env->fps->content);
 }
-
 
 int	init_fps(t_rast_env *env, t_ttf_font *font)
 {

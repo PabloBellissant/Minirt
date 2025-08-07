@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 02:44:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:53:37 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 09:47:21 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	sphere(char *line, int line_num, t_scene *scene)
 {
 	t_sphere	*sphere;
 	t_vec3		*pos;
-	t_rgb_int		color;
+	t_rgb_int	color;
 	t_object	*object;
 	float		radius;
 

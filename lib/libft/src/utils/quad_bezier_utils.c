@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 10:27:40 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/07 07:09:27 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/07 09:30:46 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ float	quad_bezier_res(const t_vec2i start, const t_vec2i ctrl,
 	if (((a + b) == 0) || (c == 0))
 		return (-1);
 	return (clamp(((a + b) / c) / CURVE_RESOLUTION,
-				MIN_CURVE_RES, MAX_CURVE_RES));
+			MIN_CURVE_RES, MAX_CURVE_RES));
 }
 
 float	quad_curve_length(const t_vec2i start, const t_vec2i ctrl,
@@ -84,4 +84,3 @@ float	quad_curve_length(const t_vec2i start, const t_vec2i ctrl,
 
 	return ((chord_length + ctrl_length) * 0.5f);
 }
-

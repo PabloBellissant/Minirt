@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 00:40:54 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:45:18 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 09:47:09 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	light(char *line, int line_num, t_scene *scene)
 {
 	t_light		*light;
 	t_vec3		*pos;
-	t_rgb_int		color;
+	t_rgb_int	color;
 	t_object	*object;
 
 	object = create_light(scene, LIGHT);

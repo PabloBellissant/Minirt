@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 01:49:47 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 10:17:18 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 09:40:46 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v)
 static int	is_light_blocked(t_scene *scene, t_vec3 hit_point,
 		t_vec3 light_pos, t_vec3 normal)
 {
-	const t_vec3	offset_point = vec3_add(hit_point, vec3_scale(normal, SHADOW_BIAS));
+	const t_vec3	offset_point = vec3_add(hit_point,
+			vec3_scale(normal, SHADOW_BIAS));
 	t_ray			shadow_ray;
 	t_vec3			to_light;
 	float			light_distance;
@@ -75,10 +76,10 @@ static int	is_light_blocked(t_scene *scene, t_vec3 hit_point,
 t_rgb	phong_path(t_scene *scene, t_ray *ray)
 {
 	const t_rgb	ambient = vec3_mult(ray->hit_rgb, scene->ambient.rgb);
-	t_rgb	diffuse_m;
-	t_rgb	specular_m;
-	t_rgb	i_p;
-	size_t	m;
+	t_rgb		diffuse_m;
+	t_rgb		specular_m;
+	t_rgb		i_p;
+	size_t		m;
 
 	m = 0;
 	i_p = rgb(0, 0, 0);
@@ -92,7 +93,7 @@ t_rgb	phong_path(t_scene *scene, t_ray *ray)
 			continue ;
 		}
 		diffuse_m = get_diffuse(scene->phong.l[m], scene->phong.d[m],
-			ray->hit_normal);
+				ray->hit_normal);
 		specular_m = get_specular(scene->phong.r[m], scene->phong.v);
 		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));
 		m++;

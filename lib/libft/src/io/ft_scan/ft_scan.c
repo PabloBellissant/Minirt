@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 00:11:43 by pabellis          #+#    #+#             */
-/*   Updated: 2025/06/16 00:11:46 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/08/07 09:32:13 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ static char	*skip_range(char *format)
 
 static int	verif_char(char *format, char **line, int line_num)
 {
-	if (*format != **line && !(**line == '\0' && *format == '\n') &&
-		!(ft_isspace(*format) && ft_isspace(**line)))
+	if (*format != **line && !(**line == '\0' && *format == '\n')
+		&& !(ft_isspace(*format) && ft_isspace(**line)))
 	{
 		if (line_num == -1)
 			return (-1);
@@ -120,7 +120,7 @@ static void	wrong_char_error(int line_num, char needed, char found)
 
 static void	skip_wildcard(char **line, const char char_to_skip)
 {
-	while (**line == char_to_skip ||
-		(ft_isspace(char_to_skip) && ft_isspace(**line)))
+	while (**line == char_to_skip
+		|| (ft_isspace(char_to_skip) && ft_isspace(**line)))
 		++*line;
 }
