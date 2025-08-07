@@ -50,11 +50,11 @@ static inline float	clamp_branchless(const float val, const float min,
 static inline t_vec3	vec3_clamp(const t_vec3 v, const float mn,
 						const float mx)
 {
-	return ((t_vec3){{{
+	return ((t_vec3){{
 				clamp_branchless(v.x, mn, mx),
 				clamp_branchless(v.y, mn, mx),
 				clamp_branchless(v.z, mn, mx)
-			}}});
+			}});
 }
 
 #endif

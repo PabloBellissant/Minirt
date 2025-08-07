@@ -17,22 +17,22 @@
 
 static inline t_vec3	vec3_scale(const t_vec3 v, const float s)
 {
-	return ((t_vec3){{{v.x * s, v.y * s, v.z * s}}});
+	return ((t_vec3){{v.x * s, v.y * s, v.z * s}});
 }
 
 static inline t_vec3	vec3_add_scalar(const t_vec3 v, const float s)
 {
-	return ((t_vec3){{{v.x + s, v.y + s, v.z + s}}});
+	return ((t_vec3){{v.x + s, v.y + s, v.z + s}});
 }
 
 static inline t_vec3	vec3_sub_scalar(const t_vec3 v, const float s)
 {
-	return ((t_vec3){{{v.x - s, v.y - s, v.z - s}}});
+	return ((t_vec3){{v.x - s, v.y - s, v.z - s}});
 }
 
 static inline t_vec3	vec3_div_scalar(const t_vec3 v, const float s)
 {
-	return ((t_vec3){{{v.x / s, v.y / s, v.z / s}}});
+	return ((t_vec3){{v.x / s, v.y / s, v.z / s}});
 }
 
 #endif

@@ -28,11 +28,11 @@ static inline float	vec3_dot(const t_vec3 a, const t_vec3 b)
 */
 static inline t_vec3	vec3_cross(const t_vec3 a, const t_vec3 b)
 {
-	return ((t_vec3){{{
+	return ((t_vec3){{
 				a.y * b.z - a.z * b.y,
 				a.z * b.x - a.x * b.z,
 				a.x * b.y - a.y * b.x
-			}}});
+			}});
 }
 
 static inline float	vec3_length2(const t_vec3 v)
@@ -59,11 +59,11 @@ static inline float	vec3_length(const t_vec3 v)
 
 static inline t_vec3	vec3_lerp(const t_vec3 a, const t_vec3 b, const float t)
 {
-	return ((t_vec3){{{
+	return ((t_vec3){{
 				a.x * (1.0f - t) + b.x * t,
 				a.y * (1.0f - t) + b.y * t,
 				a.z * (1.0f - t) + b.z * t
-			}}});
+			}});
 }
 
 /*

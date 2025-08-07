@@ -17,22 +17,22 @@
 
 static inline t_vec3i	vec3i(const int x, const int y, const int z)
 {
-	return ((t_vec3i){{{x, y, z}}});
+	return ((t_vec3i){{x, y, z}});
 }
 
 static inline t_vec3i	vec3i_add(const t_vec3i a, const t_vec3i b)
 {
-	return ((t_vec3i){{{a.x + b.x, a.y + b.y, a.z + b.z}}});
+	return ((t_vec3i){{a.x + b.x, a.y + b.y, a.z + b.z}});
 }
 
 static inline t_vec3i	vec3i_sub(const t_vec3i a, const t_vec3i b)
 {
-	return ((t_vec3i){{{a.x - b.x, a.y - b.y, a.z - b.z}}});
+	return ((t_vec3i){{a.x - b.x, a.y - b.y, a.z - b.z}});
 }
 
 static inline t_vec3i	vec3i_mult(const t_vec3i a, const t_vec3i b)
 {
-	return ((t_vec3i){{{a.x * b.x, a.y * b.y, a.z * b.z}}});
+	return ((t_vec3i){{a.x * b.x, a.y * b.y, a.z * b.z}});
 }
 
 #endif

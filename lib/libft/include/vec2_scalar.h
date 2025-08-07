@@ -17,22 +17,22 @@
 
 static inline t_vec2	vec2_scale(const t_vec2 v, const float s)
 {
-	return ((t_vec2){{{v.x * s, v.y * s}}});
+	return ((t_vec2){{v.x * s, v.y * s}});
 }
 
 static inline t_vec2	vec2_add_scalar(const t_vec2 v, const float s)
 {
-	return ((t_vec2){{{v.x + s, v.y + s}}});
+	return ((t_vec2){{v.x + s, v.y + s}});
 }
 
 static inline t_vec2	vec2_sub_scalar(const t_vec2 v, const float s)
 {
-	return ((t_vec2){{{v.x - s, v.y - s}}});
+	return ((t_vec2){{v.x - s, v.y - s}});
 }
 
 static inline t_vec2	vec2_div_scalar(const t_vec2 v, const float s)
 {
-	return ((t_vec2){{{v.x / s, v.y / s}}});
+	return ((t_vec2){{v.x / s, v.y / s}});
 }
 
 #endif

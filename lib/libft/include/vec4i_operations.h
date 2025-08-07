@@ -18,22 +18,22 @@
 static inline t_vec4i	vec4i(const int x, const int y, const int z,
 							const int w)
 {
-	return ((t_vec4i){{{x, y, z, w}}});
+	return ((t_vec4i){{x, y, z, w}});
 }
 
 static inline t_vec4i	vec4i_add(const t_vec4i a, const t_vec4i b)
 {
-	return ((t_vec4i){{{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}}});
+	return ((t_vec4i){{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}});
 }
 
 static inline t_vec4i	vec4i_sub(const t_vec4i a, const t_vec4i b)
 {
-	return ((t_vec4i){{{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}}});
+	return ((t_vec4i){{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}});
 }
 
 static inline t_vec4i	vec4i_mult(const t_vec4i a, const t_vec4i b)
 {
-	return ((t_vec4i){{{a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w}}});
+	return ((t_vec4i){{a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w}});
 }
 
 #endif
