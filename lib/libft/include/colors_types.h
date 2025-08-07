@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 02:54:43 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/07 00:06:03 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 01:40:36 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,22 +75,25 @@ typedef struct s_rgba_int
 	};
 }					t_rgba_int;
 
-static inline t_rgb rgb(const float r, const float g, const float b)
+static inline t_rgb	rgb(const float r, const float g, const float b)
 {
 	return ((t_rgb){{{r, g, b}}});
 }
 
-static inline t_rgba rgba(const float r, const float g, const float b, const float a)
+static inline t_rgba	rgba(const float r, const float g,
+							const float b, const float a)
 {
 	return ((t_rgba){{{r, g, b, a}}});
 }
 
-static inline t_rgb_int rgb_int(const uint8_t r, const uint8_t g, const uint8_t b)
+static inline t_rgb_int	rgb_int(const uint8_t r, const uint8_t g,
+							const uint8_t b)
 {
 	return ((t_rgb_int){{{b, g, r}}});
 }
 
-static inline t_rgba_int rgba_int(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a)
+static inline t_rgba_int	rgba_int(const uint8_t r, const uint8_t g,
+								const uint8_t b, const uint8_t a)
 {
 	return ((t_rgba_int){{{r, g, b, a}}});
 }

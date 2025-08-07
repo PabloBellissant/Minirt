@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:08:56 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 22:47:36 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 01:35:09 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,30 +30,31 @@ static inline t_vec3	vec3_normalize(const t_vec3 v)
 	return (vec3_div_scalar(v, len));
 }
 
-static inline t_vec3 fast_vec3_normalize(const t_vec3 v)
+static inline t_vec3	fast_vec3_normalize(const t_vec3 v)
 {
-    const float len_sq = vec3_length2(v);
-    if (len_sq == 0.0f)
-        return v;
-    
-    // Fast reciprocal square root approximation + Newton-Raphson iteration
-    const float inv_len = 1.0f / sqrtf(len_sq);
-    return vec3_scale(v, inv_len);
+	const float	len_sq = vec3_length2(v);
+	float		inv_len;
+
+	if (len_sq == 0.0f)
+		return (v);
+	inv_len = 1.0f / sqrtf(len_sq);
+	return (vec3_scale(v, inv_len));
 }
 
-static inline float clamp_branchless(const float val, const float min, const float max)
+static inline float	clamp_branchless(const float val, const float min,
+						const float max)
 {
-    return fminf(fmaxf(val, min), max);
+	return (fminf(fmaxf(val, min), max));
 }
 
-static inline t_vec3	vec3_clamp(const t_vec3 v, const float mn, const float mx)
+static inline t_vec3	vec3_clamp(const t_vec3 v, const float mn,
+						const float mx)
 {
-    return (t_vec3){{{
-        clamp_branchless(v.x, mn, mx),
-        clamp_branchless(v.y, mn, mx),
-        clamp_branchless(v.z, mn, mx)
-	}}};
+	return ((t_vec3){{{
+				clamp_branchless(v.x, mn, mx),
+				clamp_branchless(v.y, mn, mx),
+				clamp_branchless(v.z, mn, mx)
+			}}});
 }
-
 
 #endif
