@@ -36,21 +36,23 @@ inline static void	light_hit_register_data(t_ray *restrict ray,
 inline static int	light_intersect(t_ray *ray, t_light *light, float *t)
 {
 	const t_vec3	oc = vec3_sub(ray->pos, light->pos);
-	const float		radius = .1f;
 	const float		a = vec3_dot(ray->dir, ray->dir);
-	const float		b = vec3_dot(oc, ray->dir) * 2;
-	const float		c = vec3_dot(oc, oc) - radius * radius;
-	const float		discriminant = b * b - 4 * a * c;
-	float			t1;
-	float			t2;
+	const float		b = vec3_dot(oc, ray->dir);
+	float			temp;
 
-	if (discriminant == 0)
+	temp = b * b - a * vec3_dot(oc, oc);
+	if (temp < 0)
 		return (0);
-	t1 = (-b - sqrtf(discriminant)) / (2 * a);
-	t2 = (-b + sqrtf(discriminant)) / (2 * a);
-	*t = (t1 > OFFSET) ? t1 : t2;
-	return (*t > OFFSET);
+	temp = sqrtf(temp);
+	*t = (-b - temp) / a;
+	if (*t > OFFSET)
+		return (1);
+	*t = (-b + temp) / a;
+	if (*t > OFFSET)
+		return (1);
+	return (0);
 }
+
 
 float	light_hit_register(t_ray *ray, t_scene *scene)
 {
