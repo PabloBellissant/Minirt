@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 01:08:23 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/07 05:40:10 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,8 @@ FONT_RENDER	= $(FONT_RENDIR)/libfont_renderer.a
 # -03 -ffast-math -funroll-loops -march=native -mtune=native -flto -fuse-ld=gold
 # Flags
 CC			= cc
-DEBUG_FLAGS	= -g3 -pg -Rpass-missed=.*
+DEBUG_FLAGS	= -g3
+#-pg -Rpass-missed=.*
 CFLAGS		= -Wall -Werror -Wextra \
 			  -std=gnu11 \
 			  $(if $(filter 1,$(DEBUG)),$(DEBUG_FLAGS)) \
@@ -91,27 +92,26 @@ debug: $(NAME)
 fast: CFLAGS += $(FFLAGS)
 fast: $(NAME)
 
-$(NAME): $(MLX) $(LIBFT) $(OBJS)
-	@$(MAKE) -s $(FONT_RENDER) DEBUG=$(DEBUG) FAST=$(FAST)
+$(NAME): $(FONT_RENDER) $(OBJS)
+	$(call bin-link-msg)
 	@$(CF) $^ $(LFLAGS) -o $@ $(FONT_RENDER)
-ifeq ($(DEBUG),1)
-	$(call color,$(ORANGE)$(BOLD),"✓ Debug build %UL%$@%NUL% complete")
-else
-	$(call color,$(GREEN)$(BOLD),"✓ Program %UL%$@%NUL% successfully created!")
-endif
+	$(call bin-finish-msg)
 
-$(FONT_RENDER):
-	@$(MAKE) -s -C $(FONT_RENDIR) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
+finish: $(OBJS)
+
+$(FONT_RENDER): $(MLX) $(LIBFT)
+	@$(MAKE) -s -C $(FONT_RENDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
 
 $(LIBFT):
-	@$(MAKE) -s -C $(LIBFTDIR) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
+	@$(MAKE) -s -C $(LIBFTDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
 
 $(MLX):
-	@echo -e "$(PURPLE)-> Building $(UNDERLINE)minilibx$(RESET)"
-	@$(MAKE) -s -C $(MLXDIR) $(if $(filter 1,$(FAST)),CC="gcc $(OFLAGS)")
+	$(call mlx-build-msg)
+	@$(MAKE) -s -C $(MLXDIR) $(if $(filter 1,$(FAST)),CC="gcc $(OFLAGS)") $(MUTE)
+	$(call mlx-finish-msg)
 
-$(OBJDIR)/%.o: %.c | $(OBJDIR) $(DEPDIR) buildmsg
-	$(call color,$(BLUE),"➜ Compiling %UL%$<")
+$(OBJDIR)/%.o: %.c | buildmsg $(OBJDIR) $(DEPDIR)
+	$(call bin-compile-obj-msg)
 	@$(CF) $(DFLAGS) -c $< -o $@
 
 $(OBJDIR) $(DEPDIR):
@@ -120,11 +120,7 @@ $(OBJDIR) $(DEPDIR):
 
 buildmsg:
 ifneq ($(shell [ -f $(NAME) ] && echo exists),exists)
-ifeq ($(DEBUG),1)
-	$(call color,$(YELLOW)$(BOLD),"$(NL)⚠ Building %UL%$(NAME)%NUL% in debug mode...")
-else
-	$(call color,$(PURPLE),"$(NL)Creating program %UL%$(NAME)%NUL%...")
-endif
+	$(call bin-build-msg)
 endif
 
 help:
@@ -143,15 +139,15 @@ help:
 print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
 
 clean:
-	@$(MAKE) -s -C $(LIBFTDIR) clean
-	$(call color,$(RED),"Cleaning %UL%$(NAME)%NUL% object files from %UL%$(OBJDIR)%NUL% and %UL%$(DEPDIR)")
+	@$(MAKE) -s -C $(FONT_RENDIR) clean
+	$(call rm-obj-msg)
 	@rm -rf $(OBJDIR) $(DEPDIR)
 
 fclean:
 	@$(MAKE) -s -C $(FONT_RENDIR) fclean
-	$(call color,$(RED),"Cleaning %UL%$(NAME)%NUL% object files from %UL%$(OBJDIR)%NUL% and %UL%$(DEPDIR)")
+	$(call rm-obj-msg)
 	@rm -rf $(OBJDIR) $(DEPDIR)
-	$(call color,$(RED),"Removing program %UL%$(NAME)")
+	$(call rm-bin-msg)
 	@rm -f $(NAME)
 
 re: fclean all

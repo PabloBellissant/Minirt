@@ -6,24 +6,24 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/27 01:19:17 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 03:25:30 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/07 06:55:16 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
 SHELL := /bin/bash
 
 # Print utils
-include colors.mk
+include ../../colors.mk
 
 # Variables
 DEBUG		= $(if $(filter debug,$(MAKECMDGOALS)),1,0)
-SILENCE		= 2>/dev/null
 
 # Directories
+CDIR		= libft
 SRCDIR		= src
+INCDIR		= include
 OBJDIR		= .obj
 DEPDIR		= .dep
-INCDIR		= include
 
 # Output
 NAME		= libft.a
@@ -54,7 +54,6 @@ include $(addprefix $(SRCDIR)/, $(MKS))
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.o=.d)))
-INCLUDES	= libft.h ft_printfs_utils.h get_next_line_utils.h
 
 
 
@@ -63,29 +62,22 @@ all: $(NAME)
 debug: $(NAME)
 
 $(NAME): $(OBJS)
+	$(call ar-msg)
 	@$(AR) $(ARFLAGS) $@ $^
 	@$(if $(findstring -flto,$(CC)),@$(RANLIB) $@,)
-ifeq ($(DEBUG), 1)
-	$(call color,$(ORANGE)$(BOLD),"✓ %UL%$(NAME)%NUL% debug build complete")
-else
-	$(call color,$(GREEN)$(BOLD),"✓ Library %UL%$(NAME)%NUL% successfully created")
-endif
+	$(call ar-finish-msg)
 
 $(OBJDIR)/%.o: %.c | buildmsg $(OBJDIR) $(DEPDIR)
-	$(call color,$(BLUE),"➜ Compiling %UL%libft/$<")
+	$(call lib-compile-obj-msg)
 	@$(CF) -c $< -o $@
 
 $(OBJDIR) $(DEPDIR):
-	$(call color,$(CYAN),"Creating directory %UL%libft/$@")
+	$(call create-dir-msg)
 	@mkdir -p $@
 
 buildmsg:
 ifneq ($(shell [ -f $(NAME) ] && echo exists),exists)
-ifeq ($(DEBUG),1)
-	$(call color,$(YELLOW)$(BOLD),"$(NL)⚠ Building debug library %UL%$(NAME)%NUL%...")
-else
-	$(call color,$(PURPLE)$(BOLD),"$(NL)Creating library %UL%$(NAME)%NUL%...")
-endif
+	$(call lib-build-msg)
 endif
 
 help:
@@ -96,11 +88,11 @@ help:
 	@echo "  re      : Rebuild everything"
 
 clean:
-	$(call color,$(RED),"Cleaning %UL%libft%NUL% object files from %UL%$(OBJDIR)%NUL% and %UL%$(DEPDIR)")
+	$(call rm-obj-msg)
 	@rm -rf $(OBJDIR) $(DEPDIR)
 
 fclean: clean
-	$(call color,$(RED),"Removing library %UL%$(NAME)")
+	$(call rm-lib-msg)
 	@rm -f $(NAME)
 
 re: fclean all
