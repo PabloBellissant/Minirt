@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:55:07 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 00:00:48 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 #include "mlx.h"
 #include "minirt.h"
 #include "font_renderer.h"
+
+#define FONT_PATH "/home/jaubry--/Downloads/JetBrainsMono-2.304/fonts/ttf/Jet\
+BrainsMono-Regular.ttf"
+
+int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
 
 void	disable_decorations(Display *d, Window w)
 {
@@ -26,8 +31,6 @@ void	disable_decorations(Display *d, Window w)
 	XChangeProperty(d, w, prop, prop, 32, PropModeReplace,
 		(unsigned char *)&hints, 5);
 }
-
-int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
 
 int	init_img(t_data *data)
 {
@@ -43,10 +46,6 @@ int	init_img(t_data *data)
 			&data->line_len, &data->endian);
 	return (0);
 }
-
-int		init_ttf(const char *path, t_ttf_font **ptr);
-
-#define FONT_PATH "/home/jaubry--/Downloads/JetBrainsMono-2.304/fonts/ttf/JetBrainsMono-Regular.ttf"
 
 t_mlx	*init_mlx(t_data *data)
 {

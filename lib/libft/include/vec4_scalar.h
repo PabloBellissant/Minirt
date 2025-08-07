@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:09:41 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 09:12:57 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 01:29:05 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,17 @@ static inline t_vec4	vec4_scale(const t_vec4 v, const float s)
 {
 	return ((t_vec4){{{v.x * s, v.y * s, v.z * s, v.w * s}}});
 }
+
 static inline t_vec4	vec4_add_scalar(const t_vec4 v, const float s)
 {
 	return ((t_vec4){{{v.x + s, v.y + s, v.z + s, v.w + s}}});
 }
+
 static inline t_vec4	vec4_sub_scalar(const t_vec4 v, const float s)
 {
 	return ((t_vec4){{{v.x - s, v.y - s, v.z - s, v.w - s}}});
 }
+
 static inline t_vec4	vec4_div_scalar(const t_vec4 v, const float s)
 {
 	return ((t_vec4){{{v.x / s, v.y / s, v.z / s, v.w / s}}});
