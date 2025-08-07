@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:37:35 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 00:43:01 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 03:32:13 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ float light_hit_register(t_ray *ray, t_scene *scene)
     float   t_min = FLT_MAX;
     float   t_current;
     int     hit_light_idx = -1;
-    int     i = 0;
+    size_t	i = 0;
 
     lights = (t_object *)scene->lights.data;
     while (i < scene->lights.num_elements)

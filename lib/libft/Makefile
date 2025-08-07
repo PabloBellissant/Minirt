@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/27 01:19:17 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 01:22:05 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/07 03:25:30 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,7 @@ vpath %.d $(DEPDIR)
 MKS			= io/io.mk alloc/alloc.mk parsing/parsing.mk \
 			  conversion/conversion.mk mem_utils/mem_utils.mk \
 			  str_utils/str_utils.mk strr_utils/strr_utils.mk \
-			  data_structs/data_structs.mk
+			  data_structs/data_structs.mk utils/utils.mk
 
 include $(addprefix $(SRCDIR)/, $(MKS))
 
