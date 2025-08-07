@@ -19,11 +19,17 @@ int	parse_scene(char *file_name, t_scene *scene)
 {
 	int	fd;
 
+	if (ft_strrncmp(file_name, ".rt", 3) != 0)
+		return (-1);
 	fd = open(file_name, O_RDONLY);
-	if (!fd)
+	if (fd == -1)
 		return (-1);
 	if (rt_parser(fd, scene) == -1)
+	{
+		close(fd);
 		return (-1);
+	}
+	close(fd);
 	if (create_bvh(scene) == -1)
 		return (-1);
 	return (0);
