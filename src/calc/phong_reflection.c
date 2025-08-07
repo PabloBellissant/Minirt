@@ -26,9 +26,9 @@
 	i_d(_m) = light color (t_rgb)
 	i_s = specular
 */
-const t_vec3	k_d = (t_vec3){{{0.752f, 0.606f, 0.226f}}};
-const t_vec3	k_s = (t_vec3){{{0.628f, 0.556f, 0.366f}}};
-const t_vec3	i_s = (t_vec3){{{1.0f, 1.0f, 1.0f}}};
+const t_vec3	k_d = (t_vec3){{0.752f, 0.606f, 0.226f}};
+const t_vec3	k_s = (t_vec3){{0.628f, 0.556f, 0.366f}};
+const t_vec3	i_s = (t_vec3){{1.0f, 1.0f, 1.0f}};
 const float		alpha = 55.2f;
 
 static t_rgb	get_diffuse(const t_vec3 l_m, const t_rgb i_d, const t_vec3 n)

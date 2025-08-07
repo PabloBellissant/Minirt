@@ -35,16 +35,16 @@ static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add)
 
 void	handle_camera_move(t_camera *cam, t_keys keys)
 {
-	const t_vec3	camera_forward = {{{
+	const t_vec3	camera_forward = {{
 		-cam->sin_yaw,
 		0,
 		-cam->cos_yaw
-	}}};
-	const t_vec3	camera_right = {{{
+	}};
+	const t_vec3	camera_right = {{
 		cam->cos_yaw,
 		0,
 		-cam->sin_yaw
-	}}};
+	}};
 
 	if (keys.forward)
 		adjust_cam(cam, &camera_forward, true);
