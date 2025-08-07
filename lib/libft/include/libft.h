@@ -55,6 +55,7 @@ bool	ft_isspace(const char c);
 bool	is_in(const char *str, char c);
 bool	has_in(const char *str, bool is_char(char));
 int		count_tokens(const char *str, char sep);
+char	*ft_strtok(char *s, const char *delim);
 
 //
 //
@@ -94,6 +95,7 @@ char	*ft_strndup(const char *str, size_t n);
 
 int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
+int		ft_strrncmp(const char *s1, const char *s2, size_t n);
 
 char	*ft_strstr(const char *big, const char *little);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
