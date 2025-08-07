@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <math.h>
 #include "libft.h"
 
 int	ft_strrncmp(const char *s1, const char *s2, size_t n)
@@ -24,7 +25,7 @@ int	ft_strrncmp(const char *s1, const char *s2, size_t n)
 	s1_len = ft_strlen(s1);
 	s2_len = ft_strlen(s2);
 	if (n > s1_len || n > s2_len)
-		n = ft_min(s1_len, s2_len);
+		n = fminf(s1_len, s2_len);
 	i = 0;
 	while (i < n - 1 && (s1[s1_len - i - 1] == s2[s2_len - i - 1]))
 		++i;
