@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 03:26:27 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 10:37:06 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "minirt.h"
 #include "font_renderer.h"
 #include "libft.h"
+#include "mlx_wrapper.h"
 
 #define FONT_PATH "/home/jaubry--/Downloads/JetBrainsMono-2.304/fonts/ttf/Jet\
 BrainsMono-Regular.ttf"
@@ -31,44 +32,6 @@ void	disable_decorations(Display *d, Window w)
 	prop = XInternAtom(d, "_MOTIF_WM_HINTS", False);
 	XChangeProperty(d, w, prop, prop, 32, PropModeReplace,
 		(unsigned char *)&hints, 5);
-}
-
-int	init_img(t_data *data)
-{
-	data->img = mlx_new_image(data->mlx, WIDTH, HEIGHT);
-	if (data->img == NULL)
-	{
-		mlx_destroy_window(data->mlx, data->win);
-		mlx_destroy_display(data->mlx);
-		free(data->mlx);
-		return (-1);
-	}
-	data->addr = (int *)mlx_get_data_addr(data->img, &data->bits,
-			&data->line_len, &data->endian);
-	return (0);
-}
-
-t_mlx	*init_mlx(t_data *data)
-{
-	t_mlx		*mlx;
-	t_img_data	img;
-
-	mlx = ft_calloc(sizeof(t_mlx), 1);
-	if (!mlx)
-		return (NULL);
-	img.img = data->img;
-	img.addr = data->addr;
-	img.byte_depth = data->bits;
-	img.line_len = data->line_len;
-	img.endian = data->endian;
-	img.width = data->screen.x;
-	img.height = data->screen.y;
-	mlx->mlx = data->mlx;
-	mlx->win = data->win;
-	mlx->img = img;
-	mlx->origin = vec2i(0, 0);
-	mlx->size = vec2i(WIDTH, HEIGHT);
-	return (mlx);
 }
 
 static int	get_fps(void)
@@ -155,18 +118,18 @@ int	init_fps(t_rast_env *env, t_ttf_font *font)
 	return (0);
 }
 
-t_rast_env	*init_font_rasterizer(t_data *data)
+t_rast_env	*init_font_rasterizer(t_mlx *mlx)
 {
 	t_ttf_font	*font;
 	t_rast_env	*env;
 
 	font = NULL;
-	if ( init_ttf(FONT_PATH, &font))
+	if (init_ttf(FONT_PATH, &font))
 		return (NULL);
 	env = ft_calloc(sizeof(t_rast_env), 1);
 	if (!env)
 		return (NULL);
-	env->mlx = init_mlx(data);
+	env->mlx = mlx;
 	if (!env->mlx)
 		return (NULL);
 	if (init_fps(env, font) != 0)
@@ -176,26 +139,18 @@ t_rast_env	*init_font_rasterizer(t_data *data)
 
 int	init_graphics(t_data *data)
 {
-	data->screen.x = WIDTH;
-	data->screen.y = HEIGHT;
-	data->mlx = mlx_init();
+	data->mlx = init_mlx(WIDTH, HEIGHT, TITLE);
 	if (!data->mlx)
 		return (-1);
-	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, TITLE);
-	if (!data->win)
-	{
-		mlx_destroy_display(data->mlx);
-		free(data->mlx);
-		return (-1);
-	}
 	if (WINDOWLESS || FULLSCREEN)
-		disable_decorations(data->mlx->display, data->win->window);
+		disable_decorations(data->mlx->mlx->display, data->mlx->win->window);
 	if (FULLSCREEN)
-		mlx_ext_fullscreen(data->mlx, data->win, 1);
-	data->fullscreen = FULLSCREEN;
-	init_img(data);
-	data->font_env = init_font_rasterizer(data);
+		mlx_ext_fullscreen(data->mlx->mlx, data->mlx->win, 1);
+	data->fullscreen = FULLSCREEN;//to move
+	data->font_env = init_font_rasterizer(data->mlx);
 	if (!data->font_env)
 		return (-1);
+	data->screen.x = WIDTH;
+	data->screen.y = HEIGHT;
 	return (0);
 }

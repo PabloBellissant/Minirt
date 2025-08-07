@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 07:36:56 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/07 03:25:06 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 07:07:49 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdbool.h>
 # include <stdarg.h>
 # include <stdint.h>
+# include "vectors.h"
 
 # define VECTOR_BASE_SIZE 128
 
@@ -269,4 +270,14 @@ void	remove_vector_elem(t_vector *vector, size_t i);
 
 ssize_t	get_current_time(void);
 
+/* ---------------------- Quadratic bezier curve utils ---------------------- */
+
+t_vec2i	quad_bezier_pt(const t_vec2i start, const t_vec2i ctrl,
+			const t_vec2i end, const float t);
+
+float	quad_bezier_res(const t_vec2i start, const t_vec2i ctrl,
+			const t_vec2i end);
+
+float	quad_curve_length(const t_vec2i start, const t_vec2i ctrl,
+			const t_vec2i end);
 #endif

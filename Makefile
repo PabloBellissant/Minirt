@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 05:40:10 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/08/07 09:45:01 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,16 +38,16 @@ DEPDIR		= .dep
 LIBDIR		= lib
 LIBFTDIR	= $(LIBDIR)/libft
 MLXDIR		= $(LIBDIR)/minilibx-linux
+MLXWDIR		= $(LIBDIR)/mlx_wrapper
 FONT_RENDIR	= $(LIBDIR)/font_renderer
 
 # Output
 NAME		= MiniRT
 LIBFT		= $(LIBFTDIR)/libft.a
 MLX			= $(MLXDIR)/libmlx.a
-FONT_RENDER	= $(FONT_RENDIR)/libfont_renderer.a
+MLXW		= $(MLXWDIR)/libmlx-wrapper.a
+FONT_RENDER	= $(FONT_RENDIR)/libfont-renderer.a
 
-# AGRESSIVE FLAGS
-# -03 -ffast-math -funroll-loops -march=native -mtune=native -flto -fuse-ld=gold
 # Flags
 CC			= cc
 DEBUG_FLAGS	= -g3
@@ -63,8 +63,9 @@ CFLAGS		= -Wall -Werror -Wextra \
 			  -D WINDOWLESS=$(WINDOWLESS) \
 			  -msse3
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
-IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(FONT_RENDIR)/include -I$(MLXDIR)
-LFLAGS		= -L$(MLXDIR) -L$(LIBFTDIR) -L$(FONT_RENDIR) -lXext -lX11 -lXrandr -lm -lmlx -lfont_renderer -lft
+IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(FONT_RENDIR)/include -I$(MLXDIR) -I$(MLXWDIR)/include
+LFLAGS		= -L$(MLXDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(FONT_RENDIR) \
+			  -lXext -lX11 -lXrandr -lm -lmlx -lmlx-wrapper -lfont-renderer -lft
 OFLAGS		= -Ofast -ffast-math -funroll-loops -march=native -mtune=native
 FFLAGS		= $(OFLAGS) -flto
 CF			= $(CC) $(CFLAGS) $(IFLAGS)
@@ -82,11 +83,12 @@ OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))
 
 # VPATH
-vpath %.h $(INCDIR) $(LIBFTDIR)/$(INCDIR) $(MLXDIR)
-vpath %.o $(OBJDIR) $(LIBFTDIR)/$(OBJDIR)
-vpath %.d $(DEPDIR) $(LIBFTDIR)/$(DEPDIR)
+vpath %.h $(INCDIR) $(LIBFTDIR)/$(INCDIR) $(MLXWDIR)/$(INCDIR) $(MLXDIR)
+vpath %.o $(OBJDIR) $(LIBFTDIR)/$(OBJDIR) $(MLXWDIR)/$(OBJDIR)
+vpath %.d $(DEPDIR) $(LIBFTDIR)/$(DEPDIR) $(MLXWDIR)/$(DEPDIR)
 
 all: $(NAME)
+
 debug: $(NAME)
 
 fast: CFLAGS += $(FFLAGS)
@@ -94,13 +96,14 @@ fast: $(NAME)
 
 $(NAME): $(FONT_RENDER) $(OBJS)
 	$(call bin-link-msg)
-	@$(CF) $^ $(LFLAGS) -o $@ $(FONT_RENDER)
+	@$(CF) $^ $(LFLAGS) -o $@ $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)
 	$(call bin-finish-msg)
 
-finish: $(OBJS)
-
-$(FONT_RENDER): $(MLX) $(LIBFT)
+$(FONT_RENDER): $(MLXW) $(MLX) $(LIBFT)
 	@$(MAKE) -s -C $(FONT_RENDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
+
+$(MLXW): $(MLX) $(LIBFT)
+	@$(MAKE) -s -C $(MLXWDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
 
 $(LIBFT):
 	@$(MAKE) -s -C $(LIBFTDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
