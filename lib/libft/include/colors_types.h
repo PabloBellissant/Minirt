@@ -29,73 +29,64 @@ typedef enum e_col_idx
 
 typedef t_vec3		t_rgb;
 
-typedef struct s_rgb_int
+typedef union u_rgb_int
 {
-	union
+	struct
 	{
-		struct
-		{
-			uint8_t	b;
-			uint8_t	g;
-			uint8_t	r;
-		};
-		uint8_t		data[3];
-		uint32_t	rgb;
+		uint8_t	b;
+		uint8_t	g;
+		uint8_t	r;
 	};
-}					t_rgb_int;
+	uint8_t		data[3];
+	uint32_t	rgb;
+}	t_rgb_int;
 
-typedef struct s_rgba
+typedef union u_rgba
 {
-	union
+	struct
 	{
-		struct
-		{
-			float	r;
-			float	g;
-			float	b;
-			float	a;
-		};
-		float		data[4];
+		float	r;
+		float	g;
+		float	b;
+		float	a;
 	};
-}					t_rgba;
+	float		data[4];
+}	t_rgba;
 
-typedef struct s_rgba_int
+typedef union u_rgba_int
 {
-	union
+	struct
 	{
-		struct
-		{
-			uint8_t	r;
-			uint8_t	g;
-			uint8_t	b;
-			uint8_t	a;
-		};
-		uint8_t		data[4];
-		uint32_t	rgba;
+		uint8_t	r;
+		uint8_t	g;
+		uint8_t	b;
+		uint8_t	a;
 	};
-}					t_rgba_int;
+	uint8_t		data[4];
+	uint32_t	rgba;
+}	t_rgba_int;
 
 static inline t_rgb	rgb(const float r, const float g, const float b)
 {
-	return ((t_rgb){{{r, g, b}}});
+	return ((t_rgb){{r, g, b}});
 }
 
 static inline t_rgba	rgba(const float r, const float g,
 							const float b, const float a)
 {
-	return ((t_rgba){{{r, g, b, a}}});
+	return ((t_rgba){{r, g, b, a}});
 }
 
 static inline t_rgb_int	rgb_int(const uint8_t r, const uint8_t g,
 							const uint8_t b)
 {
-	return ((t_rgb_int){{{b, g, r}}});
+	return ((t_rgb_int){{b, g, r}});
 }
 
 static inline t_rgba_int	rgba_int(const uint8_t r, const uint8_t g,
 								const uint8_t b, const uint8_t a)
 {
-	return ((t_rgba_int){{{r, g, b, a}}});
+	return ((t_rgba_int){{r, g, b, a}});
 }
 
 #endif//COLORS_TYPES_H
