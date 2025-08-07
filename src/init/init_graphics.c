@@ -27,7 +27,7 @@ void	disable_decorations(Display *d, Window w)
 	struct MotifWmHints	hints;
 	Atom				prop;
 
-	hints.flags = (1L << 1);//find define
+	hints.flags = CWBackPixel;
 	hints.decorations = 0;
 	prop = XInternAtom(d, "_MOTIF_WM_HINTS", False);
 	XChangeProperty(d, w, prop, prop, 32, PropModeReplace,
