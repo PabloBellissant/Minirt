@@ -24,7 +24,6 @@ SRCS		+= $(addprefix $(SRCDIR)/, $(MINIRT_SRCS)) \
 
 # MKs
 MKS			= parsing/parsing.mk \
-			  draw/draw.mk \
 			  calc/calc.mk
 
 include	$(addprefix $(SRCDIR)/, $(MKS))

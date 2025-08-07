@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/07 15:57:36 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 06:54:45 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/07 07:18:10 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -107,6 +107,9 @@ define mlx-finish-msg
 	$(call color,$(GREEN)$(BOLD),"✓ Minilibx build successfully completed")
 endef
 
+define mlx-clean-msg
+	$(call color,$(RED),"Cleaning minilibx folder")
+endef
 
 # COMMON
 

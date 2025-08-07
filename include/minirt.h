@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:18:35 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 10:21:28 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@
 # include "vectors.h"
 # include "render.h"
 # include "font_renderer.h"
+# include "mlx_wrapper.h"
 
 typedef struct s_keys
 {
@@ -71,16 +72,11 @@ typedef struct s_mouse
 
 typedef struct s_data
 {
-	t_xvar		*mlx;
-	t_win_list	*win;
-	t_img		*img;
 	int			*addr;
 	t_keys		keys;
 	t_mouse		mouse;
 	bool		fullscreen;
-	int			bits;
-	int			line_len;
-	int			endian;
+	t_mlx		*mlx;
 	t_vec2i		screen;
 	t_scene		scene;
 	t_rast_env	*font_env;

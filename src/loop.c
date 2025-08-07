@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 03:56:38 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 10:35:07 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <sys/time.h>
 #include "mlx.h"
 #include "libft.h"
-#include "draw.h"
 #include "vectors.h"
 #include "calc.h"
 #include "minirt.h"
@@ -72,7 +71,7 @@ void	compute(t_data *data)
 			compute_offsets(cam, x, y);
 			ray.pos = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-			put_pixel(data->addr, x, y, ray_path(&ray, scene).rgb);
+			ft_mlx_pixel_put(&data->mlx->img, vec2i(x, y), ray_path(&ray, scene).rgb);
 			++x;
 		}
 		++y;
@@ -92,6 +91,6 @@ int	loop(t_data *data)
 	else
 		compute(data);
 	draw_text(data->font_env->fps);
-	mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
+	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win, data->mlx->img.img, 0, 0);
 	return (0);
 }
