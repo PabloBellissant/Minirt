@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 07:36:56 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/07/23 00:54:55 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/07 03:25:06 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,9 @@ typedef union u_result
 	int		*int_t;
 	uint8_t	*uint8_t;
 }	t_result;
+
 int		ft_scan(int line_num, char *format, char *line, ...);
+
 //
 //
 //
@@ -255,5 +257,16 @@ int		vector_realloc(t_vector *vector);
 int		set_vector_size(t_vector *vector, size_t size);
 
 void	remove_vector_elem(t_vector *vector, size_t i);
+//
+//
+//
+
+/* -------------------------------------------------------------------------- */
+/*                                   Utils                                    */
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------- Time utils ------------------------------- */
+
+ssize_t	get_current_time(void);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 00:00:48 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/07 03:26:27 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "mlx.h"
 #include "minirt.h"
 #include "font_renderer.h"
+#include "libft.h"
 
 #define FONT_PATH "/home/jaubry--/Downloads/JetBrainsMono-2.304/fonts/ttf/Jet\
 BrainsMono-Regular.ttf"
@@ -70,13 +71,11 @@ t_mlx	*init_mlx(t_data *data)
 	return (mlx);
 }
 
-ssize_t	get_current_time(void);
-
 static int	get_fps(void)
 {
 	static ssize_t	last_time = -1;
-	static ssize_t	fc = 0;
 	static ssize_t	result = 0;
+	static ssize_t	fc = 0;
 
 	fc++;
 	if (last_time == -1)
@@ -120,7 +119,6 @@ static void	ft_itoal(int n, char *str)
 	num = (long int)n;
 	len = ft_itoalen(num);
 	str[len] = '\0';
-	str[0] = '0';
 	if (num < 0)
 	{
 		str[0] = '-';
