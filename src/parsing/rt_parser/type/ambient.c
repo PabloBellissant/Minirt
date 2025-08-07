@@ -14,7 +14,7 @@
 #include "render.h"
 #include "vectors.h"
 
-#define AMBIENT_FORMAT " *A +%f[1] +%8[255] *, *%8[255] *, *%8[255] *\n"
+#define AMBIENT_FORMAT " *A  *%f[1]  *%8[255] *, *%8[255] *, *%8[255] *\n"
 
 int	ambient(char *line, int line_num, t_scene *scene)
 {

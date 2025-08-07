@@ -15,8 +15,8 @@
 #include "calc.h"
 #include "vectors.h"
 
-#define CYLINDER_FORMAT " *cy +%f *, *%f *, *%f +%f[-1,1] *, *%f[-1,1] *, *\
-%f[-1,1] +%f +%f +%8[255] *, *%8[255] *, *%8[255] *\n"
+#define CYLINDER_FORMAT " *cy  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *, *\
+%f[-1,1]  *%f  *%f  *%8[255] *, *%8[255] *, *%8[255] *\n"
 
 int	cylinder(char *line, int line_num, t_scene *scene)
 {

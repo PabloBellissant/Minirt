@@ -15,7 +15,7 @@
 #include "calc.h"
 #include "vectors.h"
 
-#define SPHERE_FORMAT " *sp +%f *, *%f *, *%f +%f +%8[255] *\
+#define SPHERE_FORMAT " *sp  *%f *, *%f *, *%f  *%f  *%8[255] *\
 , *%8[255] *, *%8[255] *\n"
 
 int	sphere(char *line, int line_num, t_scene *scene)

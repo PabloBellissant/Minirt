@@ -14,7 +14,7 @@
 #include "render.h"
 #include "vectors.h"
 
-#define LIGHT_FORMAT " *L +%f *, *%f *, *%f +%f[1] +%8[255] *\
+#define LIGHT_FORMAT " *L  *%f *, *%f *, *%f  *%f[1]  *%8[255] *\
 , *%8[255] *, *%8[255] *\n"
 
 static t_object	*create_light(t_scene *scene, t_object_type type)
