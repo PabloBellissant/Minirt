@@ -17,17 +17,17 @@
 
 static inline t_vec4i	vec4i_scale(const t_vec4i v, const int s)
 {
-	return ((t_vec4i){{{v.x * s, v.y * s, v.z * s, v.w * s}}});
+	return ((t_vec4i){{v.x * s, v.y * s, v.z * s, v.w * s}});
 }
 
 static inline t_vec4i	vec4i_add_scalar(const t_vec4i v, const int s)
 {
-	return ((t_vec4i){{{v.x + s, v.y + s, v.z + s, v.w + s}}});
+	return ((t_vec4i){{v.x + s, v.y + s, v.z + s, v.w + s}});
 }
 
 static inline t_vec4i	vec4i_sub_scalar(const t_vec4i v, const int s)
 {
-	return ((t_vec4i){{{v.x - s, v.y - s, v.z - s, v.w - s}}});
+	return ((t_vec4i){{v.x - s, v.y - s, v.z - s, v.w - s}});
 }
 
 #endif

@@ -17,17 +17,17 @@
 
 static inline t_vec3i	vec3i_scale(const t_vec3i v, const int s)
 {
-	return ((t_vec3i){{{v.x * s, v.y * s, v.z * s}}});
+	return ((t_vec3i){{v.x * s, v.y * s, v.z * s}});
 }
 
 static inline t_vec3i	vec3i_add_scalar(const t_vec3i v, const int s)
 {
-	return ((t_vec3i){{{v.x + s, v.y + s, v.z + s}}});
+	return ((t_vec3i){{v.x + s, v.y + s, v.z + s}});
 }
 
 static inline t_vec3i	vec3i_sub_scalar(const t_vec3i v, const int s)
 {
-	return ((t_vec3i){{{v.x - s, v.y - s, v.z - s}}});
+	return ((t_vec3i){{v.x - s, v.y - s, v.z - s}});
 }
 
 #endif

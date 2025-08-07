@@ -37,11 +37,11 @@ static inline uint8_t	clamp_float_to_byte(float val)
 */
 static inline t_rgb_int	rgb_ftoi(const t_rgb rgb)
 {
-	return ((t_rgb_int){{{
+	return ((t_rgb_int){{
 				clamp_float_to_byte(rgb.b),
 				clamp_float_to_byte(rgb.g),
 				clamp_float_to_byte(rgb.r)
-			}}});
+			}});
 }
 
 /*
@@ -50,20 +50,20 @@ static inline t_rgb_int	rgb_ftoi(const t_rgb rgb)
 */
 static inline t_rgb	rgb_itof(const t_rgb_int rgb)
 {
-	return (rgb_clamp((t_vec3){{{
+	return (rgb_clamp((t_vec3){{
 					(float)rgb.b * INV_255,
 					(float)rgb.g * INV_255,
 					(float)rgb.r * INV_255
-				}}}, 0.f, 1.f));
+				}}, 0.f, 1.f));
 }
 
 static inline t_rgb	get_real_ratio(const t_rgb_int rgb, float ratio)
 {
-	return (rgb_clamp(rgb_scale((t_vec3){{{
+	return (rgb_clamp(rgb_scale((t_vec3){{
 						(float)rgb.b * INV_255,
 						(float)rgb.g * INV_255,
 						(float)rgb.r * INV_255
-					}}}, ratio), 0.f, 1.f));
+					}}, ratio), 0.f, 1.f));
 }
 
 #endif
