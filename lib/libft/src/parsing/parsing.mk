@@ -16,6 +16,7 @@ PARSE_DIR	= $(SRCDIR)/parsing
 # Source files
 PARSE_SRCS	= is_in.c has_in.c \
 			  count_tokens.c \
+			  ft_strtok.c \
 			  ft_isalnum.c ft_isascii.c ft_isdigit.c ft_isprint.c ft_isspace.c \
 			  ft_isalpha.c
 

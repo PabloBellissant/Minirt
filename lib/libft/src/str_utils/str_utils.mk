@@ -18,7 +18,7 @@ STR_SRCS	= ft_strlen.c \
 			  ft_strtrim.c ft_strcrop.c \
 			  ft_strrchr.c ft_strchr.c ft_substr.c \
 			  ft_strdup.c ft_strndup.c \
-			  ft_strcmp.c ft_strncmp.c \
+			  ft_strcmp.c ft_strncmp.c ft_strrncmp.c \
 			  ft_strstr.c ft_strnstr.c \
 			  ft_strlcat.c ft_strlcpy.c \
 			  ft_striteri.c ft_strmapi.c \
