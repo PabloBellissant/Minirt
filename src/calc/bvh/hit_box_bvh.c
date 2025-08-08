@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <math.h>
-
+#include <float.h>
 #include "bvh.h"
 #include "calc.h"
 
@@ -48,8 +48,8 @@ bool	hit_box(t_ray *ray, t_bvh *bvh)
 	t_hit_box_bvh	hb;
 	uint8_t			i;
 
-	hb.t_max = INFINITY;
-	hb.t_min = -INFINITY;
+	hb.t_max = FLT_MAX;
+	hb.t_min = -FLT_MAX;
 	i = 0;
 	while (i < 3)
 	{
