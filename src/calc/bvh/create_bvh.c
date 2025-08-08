@@ -75,13 +75,19 @@ static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 {
 	t_bvh		single_bvh;
 	t_object	*actual_object;
+	size_t		i;
 
 	single_bvh.parent = NULL;
 	single_bvh.depth = 0;
-	while (bvh_vec->num_elements < scene->objects.num_elements)
+	i = 0;
+	while (i < scene->objects.num_elements)
 	{
-		actual_object = get_vector_value(&scene->objects,
-				bvh_vec->num_elements);
+		actual_object = get_vector_value(&scene->objects, i);
+		if (actual_object->type == PLANE || actual_object->type == LIGHT)
+		{
+			++i;
+			continue;
+		}
 		set_bvh_size(actual_object, &single_bvh.pos, &single_bvh.size);
 		single_bvh.object = actual_object;
 		if (vector_add(bvh_vec, &single_bvh, 1) == -1)
@@ -89,6 +95,7 @@ static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 			free_vector(bvh_vec);
 			return (-1);
 		}
+		++i;
 	}
 	return (0);
 }
