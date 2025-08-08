@@ -25,11 +25,13 @@ typedef enum e_object_type
 	SPHERE,
 	PLANE,
 	CYLINDER,
+	TRIANGLE,
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
 int				parse_scene(char *file_name, t_scene *scene);
 int				rt_parser(int fd, t_scene *scene);
+int				fill_by_type(t_scene *scene);
 int				parse_line(t_scene *scene, char *line, int actual_line);
 t_object_type	get_type(char *line, int actual_line);
 int				check_float(t_object_type type, int actual_line);
