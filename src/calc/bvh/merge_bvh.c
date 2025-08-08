@@ -17,7 +17,7 @@ int	merge_bvh(t_vector *bvh_vec, t_bvh *a, t_bvh *b)
 {
 	t_bvh	bvh;
 
-	bvh.depth = fmax(a->depth, b->depth);
+	bvh.depth = fmax(a->depth, b->depth) + 1;
 	bvh.next_a = a;
 	bvh.next_b = b;
 	bvh.pos.x = fminf(a->pos.x, b->pos.x);
