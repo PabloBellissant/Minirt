@@ -44,31 +44,20 @@ static void	hit_register_obj(t_ray *restrict ray,
 	ray->pos = hit_point;
 }
 
-float	hit_register(t_ray *restrict ray, t_vector *restrict obj_vec)
+float	hit_register(t_ray *restrict ray, t_scene *scene)
 {
-	t_object	*objects;
-	float		t_n_min[2];
-	int			i_n_min[2];
+	t_object	*object;
+	t_object	*bvh_ret;
 
-	objects = obj_vec->data;
-	i_n_min[0] = 0;
-	i_n_min[1] = 0;
-	t_n_min[1] = FLT_MAX;
-	while (i_n_min[0] < (int)obj_vec->num_elements)
+	object = hit_reg_plane(ray, scene);
+	bvh_ret = hit_bvh(ray, scene->bvh);
+	if (bvh_ret != NULL)
 	{
-		if (objects[i_n_min[0]].f(ray, &objects[i_n_min[0]], &t_n_min[0]))
-		{
-			if (t_n_min[0] < t_n_min[1])
-			{
-				i_n_min[1] = i_n_min[0];
-				t_n_min[1] = t_n_min[0];
-			}
-		}
-		++i_n_min[0];
+		if (!object || bvh_ret->t < object->t)
+			object = bvh_ret;
 	}
-	if (t_n_min[1] == FLT_MAX)
+	else if (!object || object->t == FLT_MAX)
 		return (0);
-	objects = &objects[i_n_min[1]];
-	hit_register_obj(ray, objects, t_n_min[1]);
-	return (t_n_min[1]);
+	hit_register_obj(ray, object, object->t);
+	return (object->t);
 }
