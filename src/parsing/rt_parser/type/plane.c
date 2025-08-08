@@ -29,7 +29,6 @@ int	plane(char *line, int line_num, t_scene *scene)
 	plane = &object->plane;
 	pos = &plane->pos;
 	norm = &plane->normal;
-	object->f = hit_plane;
 	if (ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&norm->x, &norm->y, &norm->z, &color.r, &color.g, &color.b))
 		return (-1);
