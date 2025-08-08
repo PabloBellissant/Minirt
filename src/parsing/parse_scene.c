@@ -32,5 +32,7 @@ int	parse_scene(char *file_name, t_scene *scene)
 	close(fd);
 	if (create_bvh(scene) == -1)
 		return (-1);
+	if (fill_by_type(scene) == -1)
+		return (-1); //free
 	return (0);
 }
