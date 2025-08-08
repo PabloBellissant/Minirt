@@ -15,6 +15,7 @@ CALC_DIR	= $(SRCDIR)/calc
 
 # Source files
 CALC_SRCS	= hit_register.c \
+			  hit_reg_plane.c \
 			  ray_path.c \
 			  phong_reflection.c
 SRCS		+= $(addprefix $(CALC_DIR)/, $(CALC_SRCS))
