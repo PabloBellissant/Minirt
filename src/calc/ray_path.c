@@ -98,7 +98,7 @@ t_rgb_int	ray_path(t_ray *ray, t_scene *scene)
 	t_ray		og;
 
 	og = *ray;
-	hit_distance = hit_register(ray, &scene->objects);
+	hit_distance = hit_register(ray, scene);
 	hit_distance_light = light_hit_register(&og, scene);
 	if ((hit_distance_light > 0) && ((hit_distance == 0)
 			|| (hit_distance_light < hit_distance)))
