@@ -71,6 +71,8 @@ typedef struct s_scene
 	t_vector	objects;
 	t_vector	lights;
 	t_phong		phong;
+	t_object	*planes;
+	int			plane_count;
 	t_bvh		*bvh;
 }				t_scene;
 
