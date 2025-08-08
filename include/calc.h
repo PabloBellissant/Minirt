@@ -17,8 +17,9 @@
 # include "render.h"
 
 t_rgb_int	ray_path(t_ray *ray, t_scene *scene);
-float		hit_register(t_ray *ray, t_vector *obj_vec);
-int			hit_plane(t_ray *ray, t_object *o, float *t);
+float		hit_register(t_ray *restrict ray, t_scene *scene);
+t_object	*hit_reg_plane(t_ray *ray, t_scene *scene);
+int			hit_plane(t_ray *ray, t_plane *p, float *t);
 int			hit_sphere(t_ray *ray, t_object *o, float *t);
 int			hit_cylinder(t_ray *ray, t_object *o, float *t);
 
