@@ -60,6 +60,7 @@ typedef struct s_object
 	char			*name;
 	t_object_type	type;
 	int				(*f)(t_ray *, t_object *, float *);
+	float			t;
 	union
 	{
 		t_light		light;
