@@ -14,7 +14,8 @@
 PARSING_DIR		= $(SRCDIR)/parsing
 
 # Source files
-PARSING_SRCS	= parse_scene.c
+PARSING_SRCS	= parse_scene.c \
+				  fill_by_type.c
 SRCS			+= $(addprefix $(PARSING_DIR)/, $(PARSING_SRCS))
 
 PARSING_MKS		= rt_parser/rt_parser.mk
