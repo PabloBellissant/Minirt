@@ -65,7 +65,7 @@ static int	is_light_blocked(t_scene *scene, t_vec3 hit_point,
 	to_light = vec3_sub(light_pos, offset_point);
 	light_distance = vec3_length(to_light);
 	shadow_ray.dir = vec3_normalize(to_light);
-	hit_distance = hit_register(&shadow_ray, &scene->objects);
+	hit_distance = hit_register(&shadow_ray, scene);
 	return ((hit_distance > 0) && (hit_distance < light_distance));
 }
 
