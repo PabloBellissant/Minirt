@@ -1,0 +1,18 @@
+[submodule "mkidir"]
+	path = mkidir
+	url = git@github.com:dct-LuLu/mkidir.git
+
+[submodule "lib/libft"]
+	path = lib/libft
+	url = git@github.com:dct-LuLu/libft.git
+	branch = libft-stripped
+
+[submodule "lib/font_renderer"]
+	path = lib/font_renderer
+	url = git@github.com:dct-LuLu/mlx_ttf_font_renderer.git
+	branch = library-stripped
+
+[submodule "lib/mlx_wrapper"]
+	path = lib/mlx_wrapper
+	url = git@github.com:dct-LuLu/mlx_wrapper.git
+	branch = library-stripped
