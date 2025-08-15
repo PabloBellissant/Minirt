@@ -6,20 +6,17 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/07 09:45:01 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/08/15 22:34:11 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SHELL		:= /bin/bash
-
-# Print utils
-include colors.mk
+ROOTDIR		= .
+include $(ROOTDIR)/mkidir/make_utils.mk
 
 # Variables
-FAST		= $(if $(filter fast,$(MAKECMDGOALS)),1,0)
-DEBUG		= $(if $(filter debug,$(MAKECMDGOALS)),1,0)
 WINDOWLESS	= 0
 FULLSCREEN	= 0
+RESIZEABLE	= 0
 ifeq ($(FULLSCREEN), 1)
 WIDTH		= 1920
 HEIGHT		= 1080
@@ -35,7 +32,6 @@ INCDIR		= include
 OBJDIR		= .obj
 DEPDIR		= .dep
 
-LIBDIR		= lib
 LIBFTDIR	= $(LIBDIR)/libft
 MLXDIR		= $(LIBDIR)/minilibx-linux
 MLXWDIR		= $(LIBDIR)/mlx_wrapper
@@ -47,37 +43,43 @@ LIBFT		= $(LIBFTDIR)/libft.a
 MLX			= $(MLXDIR)/libmlx.a
 MLXW		= $(MLXWDIR)/libmlx-wrapper.a
 FONT_RENDER	= $(FONT_RENDIR)/libfont-renderer.a
+ARCHIVES	= $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)
 
-# Flags
+# Compiler and flags
 CC			= cc
-DEBUG_FLAGS	= -g3
-#-pg -Rpass-missed=.*
+
 CFLAGS		= -Wall -Werror -Wextra \
-			  -std=gnu11 \
-			  $(if $(filter 1,$(DEBUG)),$(DEBUG_FLAGS)) \
-			  -D DEBUG=$(DEBUG) \
+			  -std=gnu11
+
+DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
+
+IFLAGS		= -I$(INCDIR) -I$(FONT_RENDIR)/include -I$(MLXWDIR)/include \
+			  -I$(LIBFTDIR)/include -I$(MLXDIR)
+
+LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) \
+			  -lfont-renderer -lmlx-wrapper -lmlx -lft \
+			  -lXext -lX11 -lXrandr -lm
+
+VFLAGS		= -D DEBUG=$(DEBUG) \
 			  -D WIDTH=$(WIDTH) \
 			  -D HEIGHT=$(HEIGHT) \
 			  -D PERF=$(PERF) \
 			  -D FULLSCREEN=$(FULLSCREEN) \
-			  -D WINDOWLESS=$(WINDOWLESS) \
-			  -msse3
-DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
-IFLAGS		= -I$(INCDIR) -I$(LIBFTDIR)/include -I$(FONT_RENDIR)/include -I$(MLXDIR) -I$(MLXWDIR)/include
-LFLAGS		= -L$(MLXDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(FONT_RENDIR) \
-			  -lXext -lX11 -lXrandr -lm -lmlx -lmlx-wrapper -lfont-renderer -lft
-OFLAGS		= -Ofast -ffast-math -funroll-loops -march=native -mtune=native
-FFLAGS		= $(OFLAGS) -flto
+			  -D RESIZEABLE=$(RESIZEABLE) \
+			  -D WINDOWLESS=$(WINDOWLESS)
+
+CFLAGS		+= $(DEBUG_FLAGS) $(FFLAGS) $(VFLAGS)
+
 CF			= $(CC) $(CFLAGS) $(IFLAGS)
 
 # SRCS
 include $(SRCDIR)/srcs.mk
 
-ifeq ($(FULLSCREEN), 0) #potentiellement a remettre
-endif
-	SRCS += $(MLXDIR)/mlx_ext_randr.c
-	CFLAGS += -Wno-error=sign-compare -Wno-error=return-type
+ifeq ($(or $(FULLSCREEN), $(RESIZEABLE)),) #allows using resizing functions
+	SRCS	+= $(MLXDIR)/mlx_ext_randr.c
+	CFLAGS	+= -Wno-error=sign-compare -Wno-error=return-type
 	vpath %.c $(MLXDIR)
+endif
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))
@@ -87,30 +89,27 @@ vpath %.h $(INCDIR) $(LIBFTDIR)/$(INCDIR) $(MLXWDIR)/$(INCDIR) $(MLXDIR)
 vpath %.o $(OBJDIR) $(LIBFTDIR)/$(OBJDIR) $(MLXWDIR)/$(OBJDIR)
 vpath %.d $(DEPDIR) $(LIBFTDIR)/$(DEPDIR) $(MLXWDIR)/$(DEPDIR)
 
-all: $(NAME)
-
-debug: $(NAME)
-
-fast: CFLAGS += $(FFLAGS)
-fast: $(NAME)
+all:	$(NAME)
+fast:	$(NAME)
+debug:	$(NAME)
 
 $(NAME): $(FONT_RENDER) $(OBJS)
 	$(call bin-link-msg)
-	@$(CF) $^ $(LFLAGS) -o $@ $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)
+	$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
 	$(call bin-finish-msg)
 
 $(FONT_RENDER): $(MLXW) $(MLX) $(LIBFT)
-	@$(MAKE) -s -C $(FONT_RENDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
+	@$(MAKE) -s -C $(FONT_RENDIR) $(RULE) $(MAKEFLAGS) ROOTDIR=../..
 
 $(MLXW): $(MLX) $(LIBFT)
-	@$(MAKE) -s -C $(MLXWDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
+	@$(MAKE) -s -C $(MLXWDIR) $(RULE) $(MAKEFLAGS) ROOTDIR=../..
 
 $(LIBFT):
-	@$(MAKE) -s -C $(LIBFTDIR) $(if $(filter 1,$(DEBUG)),debug) $(if $(filter 1,$(FAST)),CC="$(CC) $(FFLAGS)")
+	@$(MAKE) -s -C $(LIBFTDIR) $(RULE) $(MAKEFLAGS) ROOTDIR=../..
 
 $(MLX):
 	$(call mlx-build-msg)
-	@$(MAKE) -s -C $(MLXDIR) $(if $(filter 1,$(FAST)),CC="gcc $(OFLAGS)") $(MUTE)
+	@$(MAKE) -s -C $(MLXDIR) CC="gcc-14 $(if $(filter 1,$(FAST)),$(OFLAGS))" $(MUTE)
 	$(call mlx-finish-msg)
 
 $(OBJDIR)/%.o: %.c | buildmsg $(OBJDIR) $(DEPDIR)
@@ -142,23 +141,23 @@ help:
 print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
 
 clean:
-	@$(MAKE) -s -C $(FONT_RENDIR) clean
+	@$(MAKE) -s -C $(FONT_RENDIR) clean ROOTDIR=../..
 	$(call rm-obj-msg)
 	@rm -rf $(OBJDIR) $(DEPDIR)
 
 fclean:
-	@$(MAKE) -s -C $(FONT_RENDIR) fclean
+	@$(MAKE) -s -C $(FONT_RENDIR) fclean ROOTDIR=../..
 	$(call rm-obj-msg)
 	@rm -rf $(OBJDIR) $(DEPDIR)
 	$(call rm-bin-msg)
 	@rm -f $(NAME)
 
-re: fclean all
-
-refast: fclean fast
+re: 	fclean all
+refast:	fclean fast
+redebug:fclean debug
 
 bonus: all
 
 -include $(DEPS)
 
-.PHONY: all debug fast refast re clean fclean help buildmsg print-%
+.PHONY: all debug fast refast redebug re clean fclean help buildmsg print-%

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 10:38:39 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/15 21:34:04 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
 
 int	key_press(int key_code, t_data *data)
 {
-	if (key_code == XK_F11)
+	if (RESIZEABLE && (key_code == XK_F11))
 	{
 		data->fullscreen = !data->fullscreen;
 		mlx_ext_fullscreen(data->mlx->mlx, data->mlx->win, data->fullscreen);

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 10:21:28 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/15 21:34:37 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@
 # ifndef WINDOWLESS
 #  define WINDOWLESS 0
 # endif//WINDOWLESS
+
+# ifndef RESIZEABLE
+#  define RESIZEABLE 0
+# endif//RESIZEABLE
 
 # define BOUNCE_MAX 10
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"

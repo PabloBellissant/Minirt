@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 03:26:31 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 04:07:46 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/13 14:49:46 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 static void	print_already_type(t_object_type type, int actual_line);
 
-#define FORBIDEN_COUNT 3
+#define FORBIDEN_COUNT 2
 
 int	check_float(t_object_type type, int actual_line)
 {
