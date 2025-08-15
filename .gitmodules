@@ -16,3 +16,6 @@
 	path = lib/mlx_wrapper
 	url = git@github.com:dct-LuLu/mlx_wrapper.git
 	branch = library-stripped
+[submodule "lib/minilibx-linux"]
+	path = lib/minilibx-linux
+	url = git@github.com:42paris/minilibx-linux.git
