@@ -37,10 +37,10 @@ static inline void	bvh_check(float t1, float t2, float *t_min, float *t_max)
 static inline void	fill_hb(t_hit_box_bvh *hb, t_ray *ray,
 	t_bvh *bvh, uint8_t i)
 {
-	hb->ray_origin = ((float *)&ray->pos)[i];
-	hb->ray_dir = ((float *)&ray->dir)[i];
-	hb->box_min = ((float *)&bvh->pos)[i];
-	hb->box_max = hb->box_min + ((float *)&bvh->size)[i];
+	hb->ray_origin = ray->pos.data[i];
+	hb->ray_dir = ray->dir.data[i];
+	hb->box_min = bvh->pos.data[i];
+	hb->box_max = hb->box_min + bvh->size.data[i];
 }
 
 bool	hit_box(t_ray *ray, t_bvh *bvh)
