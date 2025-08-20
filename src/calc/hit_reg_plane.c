@@ -13,32 +13,46 @@
 #include <float.h>
 #include "calc.h"
 
+static inline int	hit_plane(t_ray *restrict ray,
+	t_plane *restrict p, float *t, t_vec3 normal);
+
 t_object	*hit_reg_plane(t_ray *ray, t_scene *scene)
 {
-	int			i;
-	int			i_min;
+	t_object	*obj;
+	t_object	*res;
 	float		t_min;
-	t_object	*object;
 	float		t;
+	int			i;
 
-	object = scene->planes;
+	obj = scene->planes;
+	res = NULL;
 	t_min = FLT_MAX;
-	i_min = -1;
 	i = 0;
 	while (i < scene->plane_count)
 	{
-		if (hit_plane(ray, &object[i].plane, &t))
+		if (hit_plane(ray, &obj[i].plane, &t, obj[i].plane.normal))
 		{
 			if (t < t_min)
 			{
-				i_min = i;
 				t_min = t;
+				res = &obj[i];
 			}
 		}
 		++i;
 	}
-	if (i_min == -1)
+	if (!res)
 		return (NULL);
-	object[i_min].t = t_min;
-	return (&object[i_min]);
+	res->t = t_min;
+	return (res);
 }
+
+static inline int	hit_plane(t_ray *restrict ray,
+	t_plane *restrict p, float *t, t_vec3 normal)
+{
+	float	denom;
+
+	denom = vec3_dot(ray->dir, normal) + FLT_MIN;
+	*t = vec3_dot(vec3_sub(p->pos, ray->pos), normal) / denom;
+	return (*t >= 0);
+}
+
