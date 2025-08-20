@@ -42,12 +42,17 @@ static void	frame_gen(void compute(void *), void *data)
 	printf("Average:\t%zu μs\n\n", (total_time / generation));
 }
 
-static void	compute_offsets(t_camera *cam, int x, int y)
+static inline void	compute_offsets_x(t_camera *cam)
 {
-	cam->pixel_center = cam->pixel00_loc;
-	cam->x_offset = vec3_scale(cam->pixel_delta_u, (float)x);
-	cam->y_offset = vec3_scale(cam->pixel_delta_v, (float)y);
-	cam->pixel_center = vec3_add(cam->pixel_center, cam->x_offset);
+	cam->x_offset = vec3_add(cam->x_offset, cam->pixel_delta_u);
+	cam->pixel_center = vec3_add(cam->pixel00_loc, cam->x_offset);
+	cam->pixel_center = vec3_add(cam->pixel_center, cam->y_offset);
+}
+
+static inline void	compute_offsets_y(t_camera *cam)
+{
+	cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
+	cam->pixel_center = vec3_add(cam->pixel00_loc, cam->x_offset);
 	cam->pixel_center = vec3_add(cam->pixel_center, cam->y_offset);
 }
 
@@ -61,14 +66,17 @@ void	compute(t_data *data)
 
 	scene = &data->scene;
 	cam = &data->scene.camera;
+	cam->y_offset = cam->pixel_delta_v;
 	fill_camera(cam);
 	y = 0;
 	while (y < HEIGHT)
 	{
 		x = 0;
+		cam->x_offset = cam->pixel_delta_u;
+		compute_offsets_y(cam);
 		while (x < WIDTH)
 		{
-			compute_offsets(cam, x, y);
+			compute_offsets_x(cam);
 			ray.pos = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 			ft_mlx_pixel_put(&data->mlx->img, vec2i(x, y),
