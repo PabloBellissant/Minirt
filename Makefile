@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/20 20:12:02 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/08/20 21:10:59 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -95,7 +95,7 @@ debug:	$(NAME)
 
 $(NAME): $(FONT_RENDER) $(OBJS)
 	$(call bin-link-msg)
-	$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
+	@$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
 	$(call bin-finish-msg)
 
 $(FONT_RENDER): $(MLXW) $(MLX) $(LIBFT)
