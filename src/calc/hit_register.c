@@ -17,17 +17,17 @@
 
 #define OFFSET 0.001f
 
-static void	hit_register_obj(t_ray *restrict ray,
-	t_object *restrict objects, float t_min)
+static inline void	hit_register_obj(t_ray *restrict ray,
+	t_object *restrict objects)
 {
-	t_vec3	hit_dir;
 	t_vec3	hit_point;
 
-	hit_dir = vec3_scale(ray->dir, t_min);
-	hit_point = vec3_add(ray->pos, hit_dir);
+	hit_point = vec3_scale(ray->dir, objects->t);
+	hit_point = vec3_add(ray->pos, hit_point);
 	if (objects->type == SPHERE)
 	{
 		ray->hit_normal = vec3_sub(hit_point, objects->sphere.pos);
+		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
 		ray->hit_rgb = objects->sphere.rgb;
 	}
 	else if (objects->type == PLANE)
@@ -35,12 +35,10 @@ static void	hit_register_obj(t_ray *restrict ray,
 		ray->hit_normal = objects->plane.normal;
 		ray->hit_rgb = objects->plane.rgb;
 	}
-	else
-	{
-		ray->hit_normal = vec3_sub(hit_point, objects->cylinder.pos);
-		ray->hit_rgb = objects->cylinder.rgb;
-	}
-	ray->hit_normal = vec3_normalize(ray->hit_normal);
+	// else
+	// {
+	//		code for cylinder
+	// }
 	ray->pos = hit_point;
 }
 
@@ -58,6 +56,6 @@ float	hit_register(t_ray *restrict ray, t_scene *scene)
 	}
 	else if (!object || object->t == FLT_MAX)
 		return (0);
-	hit_register_obj(ray, object, object->t);
+	hit_register_obj(ray, object);
 	return (object->t);
 }
