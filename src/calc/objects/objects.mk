@@ -15,7 +15,6 @@ OBJECTS_DIR		= $(CALC_DIR)/objects
 
 # Source files
 OBJECTS_SRCS	= hit_cylinder.c \
-				  hit_plane.c \
 				  hit_sphere.c
 SRCS			+= $(addprefix $(OBJECTS_DIR)/, $(OBJECTS_SRCS))
 
