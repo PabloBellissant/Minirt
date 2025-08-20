@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/13 13:32:50 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/20 21:49:55 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "libft.h"
 #include "mlx_wrapper.h"
 
-#define FONT_PATH "/home/ketodin/Downloads/fonts/CaskaydiaCoveNerdFont-ExtraLight.ttf"
+#define FONT_PATH "./asset/fonts/JetBrainsMono-ExtraLight.ttf"
 
 int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
 
