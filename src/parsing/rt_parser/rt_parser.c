@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 06:07:52 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:28:27 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/21 19:38:54 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ int	rt_parser(int fd, t_scene *scene)
 		if (parse_line(scene, line, line_num) != 0)
 			return_val = -1;
 		errno = 0;
+		free(line);
 		line = get_next_line(fd);
 		++line_num;
 	}
