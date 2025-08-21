@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 13:21:50 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/21 18:56:08 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,14 +87,7 @@ typedef struct s_data
 	t_rast_env	*font_env;
 }				t_data;
 
-typedef struct MotifWmHints
-{
-	unsigned long	flags;
-	unsigned long	functions;
-	unsigned long	decorations;
-	long			input_mode;
-	unsigned long	status;
-}					t_MotifWmHints;
+
 
 int		init_graphics(t_data *data);
 void	clear_scene(t_scene *scene);

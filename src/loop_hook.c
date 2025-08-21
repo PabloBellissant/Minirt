@@ -6,15 +6,13 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 13:22:09 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/21 19:18:12 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
 #include "mlx.h"
 #include "minirt.h"
-
-int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
 
 int	key_press(int key_code, t_data *data)
 {
@@ -115,7 +113,6 @@ int	loop_hook(t_data *data)
 	mlx_hook(win, KeyPress, KeyPressMask, key_press, data);
 	mlx_hook(win, KeyRelease, KeyReleaseMask, key_release, data);
 	mlx_hook(win, DestroyNotify, StructureNotifyMask, mlx_loop_end, data);
-	mlx_loop_hook(mlx, loop, data);
-	mlx_loop(mlx);
+	start_mlx_loop(data->mlx, loop, data);
 	return (0);
 }
