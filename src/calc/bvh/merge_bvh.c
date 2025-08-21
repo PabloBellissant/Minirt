@@ -13,10 +13,14 @@
 #include "bvh.h"
 #include <math.h>
 
-int	merge_bvh(t_vector *bvh_vec, t_bvh *a, t_bvh *b)
+void	merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 {
 	t_bvh	bvh;
+	t_bvh	*a;
+	t_bvh	*b;
 
+	a = get_vector_value(bvh_vec, a_index);
+	b = get_vector_value(bvh_vec, b_index);
 	bvh.depth = fmax(a->depth, b->depth) + 1;
 	bvh.next_a = a;
 	bvh.next_b = b;
@@ -30,9 +34,9 @@ int	merge_bvh(t_vector *bvh_vec, t_bvh *a, t_bvh *b)
 	bvh.size.z = fmaxf(a->pos.z + a->size.z - bvh.pos.z,
 			b->pos.z + b->size.z - bvh.pos.z);
 	bvh.parent = NULL;
-	if (vector_add(bvh_vec, &bvh, 1) == -1)
-		return (-1);
+	vector_add(bvh_vec, &bvh, 1);
+	a = get_vector_value(bvh_vec, a_index);
+	b = get_vector_value(bvh_vec, b_index);
 	a->parent = get_vector_value(bvh_vec, bvh_vec->num_elements - 1);
 	b->parent = a->parent;
-	return (0);
 }
