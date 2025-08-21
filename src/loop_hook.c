@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/15 21:34:04 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/21 13:22:09 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ int	key_press(int key_code, t_data *data)
 		data->keys.upward = true;
 	if ((key_code == XK_Shift_L) || (key_code == XK_Shift_R))
 		data->keys.downward = true;
+	if ((key_code == XK_Control_L) || (key_code == XK_Control_R))
+		data->keys.run = true;
 	return (0);
 }
 
@@ -54,6 +56,8 @@ int	key_release(int key_code, t_data *data)
 		data->keys.upward = false;
 	if ((key_code == XK_Shift_L) || (key_code == XK_Shift_R))
 		data->keys.downward = false;
+	if ((key_code == XK_Control_L) || (key_code == XK_Control_R))
+		data->keys.run = false;
 	return (0);
 }
 
