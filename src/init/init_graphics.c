@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 17:37:33 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/21 19:43:19 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ int	init_graphics(t_data *data)
 	data->mlx = init_mlx(WIDTH, HEIGHT, TITLE);
 	if (!data->mlx)
 		return (-1);
-	data->fullscreen = FULLSCREEN;//to move
 	data->font_env = init_font_rasterizer(data->mlx);
 	if (!data->font_env)
 		return (-1);

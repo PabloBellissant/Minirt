@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 03:17:18 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/21 20:18:18 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,46 @@
 
 void	free_ttf(t_ttf_font *font);
 
+void	free_rast_env(t_rast_env *env)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < env->text_num)
+	{
+		free_ttf(env->texts[i]->font);
+		free(env->texts[i]);
+		i++;
+	}
+	free_ttf(env->fps->font);
+	free(env->fps);
+	free(env);
+}
+
+void	free_phong(t_phong phong)
+{
+	ft_free(phong.l);
+	ft_free(phong.r);
+	ft_free(phong.d);
+}
+
+void	free_scene(t_scene scene)
+{
+	free_phong(scene.phong);
+	free_vector(&scene.lights);
+	free_vector(&scene.objects);
+}
+
+void	free_data(t_data data)
+{
+	free_rast_env(data.font_env);
+	kill_mlx(data.mlx);
+	free_scene(data.scene);
+}
+
 int	main(int argc, char **argv)
 {
-	t_data	mlx;
+	t_data	data;
 	time_t	seed;
 
 	(void)argv;
@@ -29,14 +66,12 @@ int	main(int argc, char **argv)
 	if (DEBUG)
 		printf("SEED: '%zu'\n", seed);
 	srand(seed);
-	ft_bzero(&mlx, sizeof(t_data));
-	if (init_graphics(&mlx) == -1)
+	ft_bzero(&data, sizeof(t_data));
+	if (init_graphics(&data) == -1)
 		return (2);
-	if (parse_scene(argv[1], &mlx.scene) != 0)
+	if (parse_scene(argv[1], &data.scene) != 0)
 		return (3); //free mlx;
-	loop_hook(&mlx);
-	free_ttf(mlx.font_env->fps->font);
-	free(mlx.font_env->fps);
-	free(mlx.font_env);
+	loop_hook(&data);
+	free_data(data);
 	return (0);
 }

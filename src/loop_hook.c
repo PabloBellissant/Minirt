@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 19:18:12 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/21 19:51:40 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@ int	key_press(int key_code, t_data *data)
 {
 	if (RESIZEABLE && (key_code == XK_F11))
 	{
-		data->fullscreen = !data->fullscreen;
-		mlx_ext_fullscreen(data->mlx->mlx, data->mlx->win, data->fullscreen);
+		data->mlx->fullscreen = !data->mlx->fullscreen;
+		mlx_ext_fullscreen(data->mlx->mlx, data->mlx->win, data->mlx->fullscreen);
 	}
 	if (key_code == XK_Escape)
-		exit(1);
+		mlx_loop_end(data->mlx->mlx);
 	if ((key_code == XK_a) || (key_code == XK_Left))
 		data->keys.left = true;
 	if ((key_code == XK_d) || (key_code == XK_Right))

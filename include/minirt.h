@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 18:56:08 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/21 19:43:47 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ typedef struct s_data
 	int			*addr;
 	t_keys		keys;
 	t_mouse		mouse;
-	bool		fullscreen;
 	t_mlx		*mlx;
 	t_vec2i		screen;
 	t_scene		scene;
