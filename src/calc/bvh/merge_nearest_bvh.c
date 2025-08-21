@@ -15,7 +15,7 @@
 
 size_t	get_next_no_parent(ssize_t actual, t_bvh *bvh, ssize_t max);
 
-int	merge_nearest_bvh(t_vector *bvh_vec)
+void	merge_nearest_bvh(t_vector *bvh_vec)
 {
 	size_t	best[2];
 	size_t	i_old[2];
@@ -33,14 +33,13 @@ int	merge_nearest_bvh(t_vector *bvh_vec)
 		if (actual_area < min_area)
 		{
 			min_area = actual_area;
-			ft_memcpy(best, i_old, sizeof(size_t) * 2);
+			best[0] = i_old[0];
+			best[1] = i_old[1];
 		}
 		i_old[0] = i_old[1];
 		i_old[1] = get_next_no_parent(i_old[1], bvh, bvh_vec->num_elements - 1);
 	}
-	if (min_area >= FLT_MAX)
-		return (0);
-	return (merge_bvh(bvh_vec, &bvh[best[0]], &bvh[best[1]]) == -1);
+	merge_bvh(bvh_vec, best[0], best[1]);
 }
 
 size_t	get_next_no_parent(ssize_t actual, t_bvh *bvh, ssize_t max)

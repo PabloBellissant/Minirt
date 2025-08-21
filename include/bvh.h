@@ -49,8 +49,8 @@ typedef struct s_bvh
 int			create_bvh(t_scene *scene);
 float		get_bvh_area(t_bvh *bvh);
 float		get_next_bvh_area(t_bvh *a, t_bvh *b);
-int			merge_bvh(t_vector *bvh_vec, t_bvh *a, t_bvh *b);
-int			merge_nearest_bvh(t_vector *bvh_vec);
+void		merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index);
+void		merge_nearest_bvh(t_vector *bvh_vec);
 t_object	*hit_bvh(t_ray *ray, t_bvh *bvh);
 
 #endif
