@@ -20,21 +20,42 @@ static void		set_bvh_size(t_object *object, t_vec3 *pos, t_vec3 *size);
 bool			is_bvh_full(t_vector *bvh_vec);
 t_bvh			*get_root(t_vector *bvh_vec);
 
+int	init_bvh(t_vector *bvh_vec, t_scene *scene)
+{
+	size_t		volume_count;
+	size_t		i;
+	t_object	*object;
+
+	vector_init(bvh_vec, sizeof(t_bvh));
+	object = scene->objects.data;
+	volume_count = 0;
+	i = 0;
+	while (i < scene->objects.num_elements)
+	{
+		if (object[i].type != PLANE && object[i].type != LIGHT)
+			++volume_count;
+		++i;
+	}
+	i = volume_count;
+	while (i > 1)
+	{
+		volume_count += i / 2;
+		i -= i / 2;
+	}
+	if (set_vector_size(bvh_vec, volume_count) != 0)
+		return (-1);
+	return (0);
+}
+
 int	create_bvh(t_scene *scene)
 {
 	t_vector	bvh_vec;
 
-	vector_init(&bvh_vec, sizeof(t_bvh));
-	if (create_object_bvh(scene, &bvh_vec) == -1)
+	if (init_bvh(&bvh_vec, scene) == -1)
 		return (-1);
+	create_object_bvh(scene, &bvh_vec);
 	while (is_bvh_full(&bvh_vec) == false)
-	{
-		if (merge_nearest_bvh(&bvh_vec) == -1)
-		{
-			free_vector(&bvh_vec);
-			return (-1);
-		}
-	}
+		merge_nearest_bvh(&bvh_vec);
 	scene->bvh = get_root(&bvh_vec);
 	return (0);
 }
@@ -74,27 +95,22 @@ bool	is_bvh_full(t_vector *bvh_vec)
 static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 {
 	t_bvh		single_bvh;
-	t_object	*actual_object;
+	t_object	*object;
 	size_t		i;
 
-	single_bvh.parent = NULL;
-	single_bvh.depth = 0;
+	ft_bzero(&single_bvh, sizeof(t_bvh));
+	object = scene->objects.data;
 	i = 0;
 	while (i < scene->objects.num_elements)
 	{
-		actual_object = get_vector_value(&scene->objects, i);
-		if (actual_object->type == PLANE || actual_object->type == LIGHT)
+		if (object[i].type == PLANE || object[i].type == LIGHT)
 		{
 			++i;
 			continue;
 		}
-		set_bvh_size(actual_object, &single_bvh.pos, &single_bvh.size);
-		single_bvh.object = actual_object;
-		if (vector_add(bvh_vec, &single_bvh, 1) == -1)
-		{
-			free_vector(bvh_vec);
-			return (-1);
-		}
+		set_bvh_size(&(object[i]), &single_bvh.pos, &single_bvh.size);
+		single_bvh.object = &(object[i]);
+		vector_add(bvh_vec, &single_bvh, 1);
 		++i;
 	}
 	return (0);
