@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/15 21:34:37 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/21 13:21:50 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_keys
 	bool	backward;
 	bool	upward;
 	bool	downward;
+	bool	run;
 }			t_keys;
 
 typedef struct s_mouse
