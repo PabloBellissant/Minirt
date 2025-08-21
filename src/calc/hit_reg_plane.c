@@ -16,17 +16,15 @@
 static inline int	hit_plane(t_ray *restrict ray,
 	t_plane *restrict p, float *t, t_vec3 normal);
 
-t_object	*hit_reg_plane(t_ray *ray, t_scene *scene)
+t_object	*hit_reg_plane(t_ray *ray, t_scene *scene, float t_min)
 {
 	t_object	*obj;
 	t_object	*res;
-	float		t_min;
 	float		t;
 	int			i;
 
 	obj = scene->planes;
 	res = NULL;
-	t_min = FLT_MAX;
 	i = 0;
 	while (i < scene->plane_count)
 	{
