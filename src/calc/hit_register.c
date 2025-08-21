@@ -47,8 +47,11 @@ float	hit_register(t_ray *restrict ray, t_scene *scene)
 	t_object	*object;
 	t_object	*bvh_ret;
 
-	object = hit_reg_plane(ray, scene);
 	bvh_ret = hit_bvh(ray, scene->bvh);
+	if (bvh_ret)
+		object = hit_reg_plane(ray, scene, bvh_ret->t);
+	else
+		object = hit_reg_plane(ray, scene, FLT_MAX);
 	if (bvh_ret != NULL)
 	{
 		if (!object || bvh_ret->t < object->t)
