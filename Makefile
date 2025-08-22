@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/20 21:10:59 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/08/21 19:19:37 by jaubry--         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,13 +60,14 @@ LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) \
 			  -lfont-renderer -lmlx-wrapper -lmlx -lft \
 			  -lXext -lX11 -lXrandr -lm
 
-VFLAGS		= -D DEBUG=$(DEBUG) \
-			  -D WIDTH=$(WIDTH) \
-			  -D HEIGHT=$(HEIGHT) \
-			  -D PERF=$(PERF) \
-			  -D FULLSCREEN=$(FULLSCREEN) \
-			  -D RESIZEABLE=$(RESIZEABLE) \
-			  -D WINDOWLESS=$(WINDOWLESS)
+VARS		= DEBUG=$(DEBUG) \
+			  WIDTH=$(WIDTH) \
+			  HEIGHT=$(HEIGHT) \
+			  PERF=$(PERF) \
+			  FULLSCREEN=$(FULLSCREEN) \
+			  RESIZEABLE=$(RESIZEABLE) \
+			  WINDOWLESS=$(WINDOWLESS)
+VFLAGS		= $(addprefix -D ,$(VARS))
 
 CFLAGS		+= $(DEBUG_FLAGS) $(FFLAGS) $(VFLAGS)
 
@@ -74,12 +75,6 @@ CF			= $(CC) $(CFLAGS) $(IFLAGS)
 
 # SRCS
 include $(SRCDIR)/srcs.mk
-
-ifeq ($(or $(FULLSCREEN), $(RESIZEABLE)),) #allows using resizing functions
-	SRCS	+= $(MLXDIR)/mlx_ext_randr.c
-	CFLAGS	+= -Wno-error=sign-compare -Wno-error=return-type
-	vpath %.c $(MLXDIR)
-endif
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))
@@ -99,13 +94,13 @@ $(NAME): $(FONT_RENDER) $(OBJS)
 	$(call bin-finish-msg)
 
 $(FONT_RENDER): $(MLXW) $(MLX) $(LIBFT)
-	@$(MAKE) -s -C $(FONT_RENDIR) $(RULE) $(MAKEFLAGS) ROOTDIR=../..
+	@$(MAKE) -s -C $(FONT_RENDIR) $(RULE)  $(VARS) ROOTDIR=../..
 
 $(MLXW): $(MLX) $(LIBFT)
-	@$(MAKE) -s -C $(MLXWDIR) $(RULE) $(MAKEFLAGS) ROOTDIR=../..
+	@$(MAKE) -s -C $(MLXWDIR) $(RULE)  $(VARS) ROOTDIR=../..
 
 $(LIBFT):
-	@$(MAKE) -s -C $(LIBFTDIR) $(RULE) $(MAKEFLAGS) ROOTDIR=../..
+	@$(MAKE) -s -C $(LIBFTDIR) $(RULE)  $(VARS) ROOTDIR=../..
 
 $(MLX):
 	$(call mlx-build-msg)

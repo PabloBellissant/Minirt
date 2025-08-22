@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 13:22:09 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/21 19:51:40 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,15 @@
 #include "mlx.h"
 #include "minirt.h"
 
-int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
-
 int	key_press(int key_code, t_data *data)
 {
 	if (RESIZEABLE && (key_code == XK_F11))
 	{
-		data->fullscreen = !data->fullscreen;
-		mlx_ext_fullscreen(data->mlx->mlx, data->mlx->win, data->fullscreen);
+		data->mlx->fullscreen = !data->mlx->fullscreen;
+		mlx_ext_fullscreen(data->mlx->mlx, data->mlx->win, data->mlx->fullscreen);
 	}
 	if (key_code == XK_Escape)
-		exit(1);
+		mlx_loop_end(data->mlx->mlx);
 	if ((key_code == XK_a) || (key_code == XK_Left))
 		data->keys.left = true;
 	if ((key_code == XK_d) || (key_code == XK_Right))
@@ -115,7 +113,6 @@ int	loop_hook(t_data *data)
 	mlx_hook(win, KeyPress, KeyPressMask, key_press, data);
 	mlx_hook(win, KeyRelease, KeyReleaseMask, key_release, data);
 	mlx_hook(win, DestroyNotify, StructureNotifyMask, mlx_loop_end, data);
-	mlx_loop_hook(mlx, loop, data);
-	mlx_loop(mlx);
+	start_mlx_loop(data->mlx, loop, data);
 	return (0);
 }

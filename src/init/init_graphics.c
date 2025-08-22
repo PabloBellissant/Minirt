@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/20 21:49:55 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/21 19:43:19 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,37 +19,6 @@
 
 #define FONT_PATH "./asset/fonts/JetBrainsMono-ExtraLight.ttf"
 
-int	mlx_ext_fullscreen(t_xvar *xvar, t_win_list *win, int fullscreen);
-
-void	disable_decorations(Display *d, Window w)
-{
-	struct MotifWmHints	hints;
-	Atom				prop;
-
-	hints.flags = CWBackPixel;
-	hints.decorations = 0;
-	prop = XInternAtom(d, "_MOTIF_WM_HINTS", False);
-	XChangeProperty(d, w, prop, prop, 32, PropModeReplace,
-		(unsigned char *)&hints, 5);
-}
-
-static int	get_fps(void)
-{
-	static ssize_t	last_time = -1;
-	static ssize_t	result = 0;
-	static ssize_t	fc = 0;
-
-	fc++;
-	if (last_time == -1)
-		last_time = get_current_time();
-	if (get_current_time() >= last_time + 1000)
-	{
-		last_time = get_current_time();
-		result = fc;
-		fc = 0;
-	}
-	return (result);
-}
 
 static size_t	ft_itoalen(long int nb)
 {
@@ -94,9 +63,9 @@ static void	ft_itoal(int n, char *str)
 	}
 }
 
-void	update_fps(t_rast_env *env)
+void	update_fps(t_data *data)
 {
-	ft_itoal(get_fps(), env->fps->content);
+	ft_itoal(data->mlx->fps, data->font_env->fps->content);
 }
 
 int	init_fps(t_rast_env *env, t_ttf_font *font)
@@ -140,11 +109,6 @@ int	init_graphics(t_data *data)
 	data->mlx = init_mlx(WIDTH, HEIGHT, TITLE);
 	if (!data->mlx)
 		return (-1);
-	if (WINDOWLESS || FULLSCREEN)
-		disable_decorations(data->mlx->mlx->display, data->mlx->win->window);
-	if (FULLSCREEN)
-		mlx_ext_fullscreen(data->mlx->mlx, data->mlx->win, 1);
-	data->fullscreen = FULLSCREEN;//to move
 	data->font_env = init_font_rasterizer(data->mlx);
 	if (!data->font_env)
 		return (-1);

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 09:51:13 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/21 17:32:44 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,6 @@
 
 void	fill_camera(t_camera *cam);
 void	handle_camera_move(t_camera *cam, t_keys keys);
-
-static void	frame_gen(void compute(void *), void *data)
-{
-	static struct timeval	start;
-	static struct timeval	stop;
-	static size_t			total_time = 0;
-	static size_t			generation = 0;
-	size_t					frame_time;
-
-	gettimeofday(&start, NULL);
-	compute(data);
-	gettimeofday(&stop, NULL);
-	frame_time = (stop.tv_sec - start.tv_sec) * 1000000
-		+ stop.tv_usec - start.tv_usec;
-	total_time += frame_time;
-	generation++;
-	if (!DEBUG)
-		printf("\033[H\033[J");
-	printf("[FRAME %zu]\nFrame time:\t%zu μs\n", generation, frame_time);
-	printf("Average:\t%zu μs\n\n", (total_time / generation));
-}
 
 static inline void	compute_offsets_x(t_camera *cam)
 {
@@ -88,17 +67,14 @@ void	compute(t_data *data)
 	((t_object *)(scene->lights.data))[0].light.pos.x -= 0.01;
 }
 
-void	update_fps(t_rast_env *env);
+void	update_fps(t_data *data);
 void	draw_text(t_text *text);
 
 int	loop(t_data *data)
 {
-	update_fps(data->font_env);
+	update_fps(data);
 	handle_camera_move(&data->scene.camera, data->keys);
-	if (DEBUG || PERF)
-		frame_gen((void (*)(void *))(&compute), (void *)data);
-	else
-		compute(data);
+	compute(data);
 	draw_text(data->font_env->fps);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win,
 		data->mlx->img.img, 0, 0);
