@@ -43,7 +43,7 @@ static inline void	fill_hb(t_hit_box_bvh *hb, t_ray *ray,
 	hb->box_max = hb->box_min + bvh->size.data[i];
 }
 
-bool	hit_box(t_ray *ray, t_bvh *bvh)
+float	hit_box(t_ray *ray, t_bvh *bvh)
 {
 	t_hit_box_bvh	hb;
 	uint8_t			i;
@@ -57,7 +57,7 @@ bool	hit_box(t_ray *ray, t_bvh *bvh)
 		if (fabsf(hb.ray_dir) < 1e-8f)
 		{
 			if ((hb.ray_origin < hb.box_min) || (hb.ray_origin > hb.box_max))
-				return (false);
+				return (-1);
 		}
 		else
 		{
@@ -65,9 +65,9 @@ bool	hit_box(t_ray *ray, t_bvh *bvh)
 				(hb.box_max - hb.ray_origin) / hb.ray_dir,
 				&hb.t_min, &hb.t_max);
 			if (hb.t_min > hb.t_max)
-				return (false);
+				return (-1);
 		}
 		i++;
 	}
-	return (hb.t_max >= 0);
+	return (hb.t_max);
 }
