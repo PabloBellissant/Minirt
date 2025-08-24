@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:24:03 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/21 13:24:29 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/24 04:09:24 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 #include <math.h>
 #include "minirt.h"
 
-#define MOVE_SPEED 0.1f
+#define MOVE_SPEED 10
 
-static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add, t_keys keys)
+static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add, const float step)
 {
-	const float	new_x = matrix->x * MOVE_SPEED * (1 + keys.run);
-	const float	new_z = matrix->z * MOVE_SPEED * (1 + keys.run);
+	const float	new_x = matrix->x * step;
+	const float	new_z = matrix->z * step;
 
 	if (add)
 	{
@@ -33,8 +33,9 @@ static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add, t_ke
 	}
 }
 
-void	handle_camera_move(t_camera *cam, t_keys keys)
+void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 {
+	const float		step = MOVE_SPEED * (1 + keys.run) * data->mlx->delta_time;
 	const t_vec3	camera_forward = {{
 		-cam->sin_yaw,
 		0,
@@ -47,15 +48,28 @@ void	handle_camera_move(t_camera *cam, t_keys keys)
 	}};
 
 	if (keys.forward)
-		adjust_cam(cam, &camera_forward, true, keys);
+		adjust_cam(cam, &camera_forward, true, step);
 	if (keys.backward)
-		adjust_cam(cam, &camera_forward, false, keys);
+		adjust_cam(cam, &camera_forward, false, step);
 	if (keys.right)
-		adjust_cam(cam, &camera_right, true, keys);
+		adjust_cam(cam, &camera_right, true, step);
 	if (keys.left)
-		adjust_cam(cam, &camera_right, false, keys);
+		adjust_cam(cam, &camera_right, false, step);
 	if (keys.upward)
-		cam->pos.y += MOVE_SPEED * (1 + keys.run);
+		cam->pos.y += step;
 	if (keys.downward)
-		cam->pos.y -= MOVE_SPEED * (1 + keys.run);
+		cam->pos.y -= step;
+}
+
+#define SENSITIVITY .1f
+#define MAX_PITCH 1.53938043117523193F
+
+void	handle_camera_rotation(t_data *data, const float delta_x, const float delta_y)
+{
+	data->scene.camera.rot.y -= delta_x * SENSITIVITY;
+	data->scene.camera.rot.x += delta_y * SENSITIVITY;
+	if (data->scene.camera.rot.x > MAX_PITCH)
+		data->scene.camera.rot.x = MAX_PITCH;
+	else if (data->scene.camera.rot.x < -MAX_PITCH)
+		data->scene.camera.rot.x = -MAX_PITCH;
 }

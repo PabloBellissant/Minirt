@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 17:32:44 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 03:20:17 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "minirt.h"
 
 void	fill_camera(t_camera *cam);
-void	handle_camera_move(t_camera *cam, t_keys keys);
+void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys);
 
 static inline void	compute_offsets_x(t_camera *cam)
 {
@@ -73,7 +73,7 @@ void	draw_text(t_text *text);
 int	loop(t_data *data)
 {
 	update_fps(data);
-	handle_camera_move(&data->scene.camera, data->keys);
+	handle_camera_move(data,&data->scene.camera, data->keys);
 	compute(data);
 	draw_text(data->font_env->fps);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win,
