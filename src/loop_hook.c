@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/24 04:51:00 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/24 16:33:22 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ static bool	first_mouse_move(t_data *data,
 		data->mouse.last_x = center.x;
 		data->mouse.last_y = center.y;
 		first_move = false;
+		data->mouse.warped = true;
 		mlx_mouse_move(data->mlx->mlx, data->mlx->win, center.x, center.y);
 		return (1);
 	}
@@ -87,13 +88,19 @@ void	handle_camera_rotation(t_data *data, const float delta_x, const float delta
 
 int	mouse_move(int x, int y, t_data *data)
 {
+	if (data->mouse.warped)
+	{
+		data->mouse.warped = false;
+		return (0);
+	}
 	const float	delta_x = lerp(data->mlx->half_size.x, x, LERP_SPEED * data->mlx->delta_time) - data->mlx->half_size.x;
 	const float	delta_y = lerp(data->mlx->half_size.y, y, LERP_SPEED * data->mlx->delta_time) - data->mlx->half_size.y;
 	if (first_mouse_move(data, data->mlx->half_size))
 		return (0);
+
 	handle_camera_rotation(data, delta_x, delta_y);
-	if (data->mlx->generation % 2 == 0)
-		mlx_mouse_move(data->mlx->mlx, data->mlx->win, data->mlx->half_size.x, data->mlx->half_size.y);
+	data->mouse.warped = true;
+	mlx_mouse_move(data->mlx->mlx, data->mlx->win, data->mlx->half_size.x, data->mlx->half_size.y);
 	data->mouse.last_x = data->mlx->half_size.x;
 	data->mouse.last_y = data->mlx->half_size.y;
 	return (0);

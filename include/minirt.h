@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 19:43:47 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 16:30:58 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct s_mouse
 	float	target_pitch;
 	float	current_yaw;
 	float	current_pitch;
+	bool	warped;
 }			t_mouse;
 
 typedef struct s_data
