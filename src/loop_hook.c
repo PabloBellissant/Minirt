@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/28 07:14:28 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/28 11:22:10 by jaubry--         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,39 +62,63 @@ static bool	first_mouse_move(t_data *data,
 		data->mouse.last_y = center.y;
 		first_move = false;
 		data->mouse.warped = true;
+		XGrabPointer(data->mlx->mlx->display, data->mlx->win->window, True, PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
 		mlx_mouse_move(data->mlx->mlx, data->mlx->win, center.x, center.y);
 		return (1);
 	}
 	return (0);
 }
 
+/*
 float	lerp(float a, float b, float f)
 {
 //return (a * (1.0 - f) + (b * f)); // more precise
 	return (a + f * (b - a));
 }
+*/
 
-void	handle_camera_rotation(t_data *data, const float delta_x, const float delta_y);
-
-# define LERP_SPEED 0.2f
+void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y);
 
 int	mouse_move(int x, int y, t_data *data)
 {
+	int	delta_x = 0;
+	int	delta_y = 0;
 	if (data->mouse.warped)
 	{
+		data->mouse.last_x = data->mlx->half_size.x;
+		data->mouse.last_y = data->mlx->half_size.y;
 		data->mouse.warped = false;
 		return (0);
 	}
-	const float	delta_x = lerp(data->mlx->half_size.x, x, LERP_SPEED * data->mlx->delta_time) - data->mlx->half_size.x;
-	const float	delta_y = lerp(data->mlx->half_size.y, y, LERP_SPEED * data->mlx->delta_time) - data->mlx->half_size.y;
+
+	if ((x >= data->screen.x) || (y >= data->screen.y)
+	|| (x <= data->mlx->origin.x) || (y <= data->mlx->origin.y))
+	{
+		if (x >= data->screen.x)
+			delta_x = x - data->screen.x;
+		else if (x <= data->mlx->origin.x)
+			delta_x = x - data->mlx->origin.x;
+		if (y >= data->screen.y)
+			delta_y = y - data->screen.y;
+		else if (y <= data->mlx->origin.y)
+			delta_y = y - data->mlx->origin.y;
+		//handle_camera_rotation(data, delta_x, delta_y);
+		data->mouse.warped = true;
+		mlx_mouse_move(data->mlx->mlx, data->mlx->win, data->mlx->half_size.x, data->mlx->half_size.y);
+	}
+	else
+	{
+		delta_x = x - data->mouse.last_x;
+		delta_y = y - data->mouse.last_y;
+		data->mouse.last_x = x;
+		data->mouse.last_y = y;
+		//printf("delta: %d, y: %d, last: %d\n", delta_y, y, data->mouse.last_y);
+	}
+	printf("delta: %d, x: %d, last: %d\n", delta_x, x, data->mouse.last_x);
 	if (first_mouse_move(data, data->mlx->half_size))
 		return (0);
-
 	handle_camera_rotation(data, delta_x, delta_y);
-	//data->mouse.warped = true;
-	mlx_mouse_move(data->mlx->mlx, data->mlx->win, data->mlx->half_size.x, data->mlx->half_size.y);
-	data->mouse.last_x = data->mlx->half_size.x;
-	data->mouse.last_y = data->mlx->half_size.y;
+
 	return (0);
 }
 
@@ -106,6 +130,7 @@ int	loop_hook(t_data *data)
 	win = data->mlx->win;
 	mlx = data->mlx->mlx;
 	mlx_mouse_hide(mlx, win);
+	XMoveWindow(data->mlx->mlx->display, data->mlx->win->window, 1920 - (500 / 2), 1080 - (500 / 2));
 	mlx_hook(win, MotionNotify, PointerMotionMask, mouse_move, data);
 	setup_key_move_events(data);
 	start_mlx_loop(data->mlx, loop, data);
