@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/28 07:08:55 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/28 20:04:27 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,14 @@
 # ifndef DEBUG
 #  define DEBUG 0
 # endif//DEBUG
+
+# ifndef MAX_WIDTH
+#  define MAX_WIDTH 500
+# endif//MAX_WIDTH
+
+# ifndef MAX_HEIGHT
+#  define MAX_HEIGHT 500
+# endif//MAX_HEIGHT
 
 # ifndef WIDTH
 #  define WIDTH 500

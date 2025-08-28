@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/28 11:22:10 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/28 20:08:27 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	mouse_move(int x, int y, t_data *data)
 	}
 
 	if ((x >= data->screen.x) || (y >= data->screen.y)
-	|| (x <= data->mlx->origin.x) || (y <= data->mlx->origin.y))
+		|| (x <= data->mlx->origin.x) || (y <= data->mlx->origin.y))
 	{
 		if (x >= data->screen.x)
 			delta_x = x - data->screen.x;
@@ -102,7 +102,6 @@ int	mouse_move(int x, int y, t_data *data)
 			delta_y = y - data->screen.y;
 		else if (y <= data->mlx->origin.y)
 			delta_y = y - data->mlx->origin.y;
-		//handle_camera_rotation(data, delta_x, delta_y);
 		data->mouse.warped = true;
 		mlx_mouse_move(data->mlx->mlx, data->mlx->win, data->mlx->half_size.x, data->mlx->half_size.y);
 	}
@@ -112,13 +111,10 @@ int	mouse_move(int x, int y, t_data *data)
 		delta_y = y - data->mouse.last_y;
 		data->mouse.last_x = x;
 		data->mouse.last_y = y;
-		//printf("delta: %d, y: %d, last: %d\n", delta_y, y, data->mouse.last_y);
 	}
-	printf("delta: %d, x: %d, last: %d\n", delta_x, x, data->mouse.last_x);
 	if (first_mouse_move(data, data->mlx->half_size))
 		return (0);
 	handle_camera_rotation(data, delta_x, delta_y);
-
 	return (0);
 }
 
@@ -130,7 +126,7 @@ int	loop_hook(t_data *data)
 	win = data->mlx->win;
 	mlx = data->mlx->mlx;
 	mlx_mouse_hide(mlx, win);
-	XMoveWindow(data->mlx->mlx->display, data->mlx->win->window, 1920 - (500 / 2), 1080 - (500 / 2));
+	XMoveWindow(data->mlx->mlx->display, data->mlx->win->window, MAX_WIDTH / 2 - (WIDTH / 2), MAX_HEIGHT / 2 - (HEIGHT / 2));
 	mlx_hook(win, MotionNotify, PointerMotionMask, mouse_move, data);
 	setup_key_move_events(data);
 	start_mlx_loop(data->mlx, loop, data);
