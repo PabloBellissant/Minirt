@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:24:03 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/24 04:09:24 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/08/28 07:09:50 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add, cons
 
 void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 {
-	const float		step = MOVE_SPEED * (1 + keys.run) * data->mlx->delta_time;
+	const float		step = MOVE_SPEED * (1 + data->mlx->key_input.ctrl) * data->mlx->delta_time;
 	const t_vec3	camera_forward = {{
 		-cam->sin_yaw,
 		0,
@@ -57,7 +57,7 @@ void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 		adjust_cam(cam, &camera_right, false, step);
 	if (keys.upward)
 		cam->pos.y += step;
-	if (keys.downward)
+	if (data->mlx->key_input.shift)
 		cam->pos.y -= step;
 }
 

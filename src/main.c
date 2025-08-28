@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/21 20:18:18 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/28 06:55:25 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void	free_scene(t_scene scene)
 void	free_data(t_data data)
 {
 	free_rast_env(data.font_env);
-	kill_mlx(data.mlx);
 	free_scene(data.scene);
 }
 
