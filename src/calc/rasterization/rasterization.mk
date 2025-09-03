@@ -14,8 +14,8 @@
 RASTERIZATION_DIR	= $(CALC_DIR)/rasterization
 
 # Source files
-RASTERIZATION_SRCS	= rasterize_bvh.c \
-					  projection_matrix.c
+RASTERIZATION_SRCS	= rasterize_cuboid.c \
+					  project_point.c
 SRCS				+= $(addprefix $(RASTERIZATION_DIR)/, $(RASTERIZATION_SRCS))
 
 # VPATH
