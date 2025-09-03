@@ -28,10 +28,10 @@ void	merge_nearest_bvh(t_vector *bvh_vec)
 	{
 		if (bvh[i[0]].parent == NULL)
 		{
-			i[1] = 0;
+			i[1] = i[0] + 1;
 			while (i[1] < bvh_vec->num_elements)
 			{
-				if (bvh[i[1]].parent == NULL && i[0] != i[1])
+				if (bvh[i[1]].parent == NULL)
 				{
 					actual_area = get_next_bvh_area(&bvh[i[0]], &bvh[i[1]]);
 					if (actual_area < min_area)
