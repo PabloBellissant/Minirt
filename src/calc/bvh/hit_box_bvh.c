@@ -15,23 +15,10 @@
 #include "bvh.h"
 #include "calc.h"
 
-static inline void	swap_float(float *a, float *b)
+static inline void bvh_check(float t1, float t2, float *t_min, float *t_max)
 {
-	float	temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
-static inline void	bvh_check(float t1, float t2, float *t_min, float *t_max)
-{
-	if (t1 > t2)
-		swap_float(&t1, &t2);
-	if (t1 > *t_min)
-		*t_min = t1;
-	if (t2 < *t_max)
-		*t_max = t2;
+	*t_min = fmaxf(fminf(t1, t2), *t_min);
+	*t_max = fminf(fmaxf(t1, t2), *t_max);
 }
 
 static inline void	fill_hb(t_hit_box_bvh *hb, t_ray *ray,
@@ -54,7 +41,7 @@ float	hit_box(t_ray *ray, t_bvh *bvh)
 	while (i < 3)
 	{
 		fill_hb(&hb, ray, bvh, i);
-		if (fabsf(hb.ray_dir) < 1e-8f)
+		if (hb.ray_dir == .0f)
 		{
 			if ((hb.ray_origin < hb.box_min) || (hb.ray_origin > hb.box_max))
 				return (-1);
