@@ -13,7 +13,7 @@
 #ifndef RENDER_H
 # define RENDER_H
 # include "libft.h"
-# include "vectors.h"
+# include "mlx_wrapper.h"
 # include "object.h"
 # include "bvh.h"
 
@@ -76,4 +76,7 @@ typedef struct s_scene
 	t_bvh		*bvh;
 }				t_scene;
 
-#endif//RENDER_H
+int		rasterize_bvh(t_bvh *bvh, t_img_data *img, t_camera *camera);
+t_vec2i	projection_matrix(t_vec3 *p, t_camera *camera);
+
+#endif
