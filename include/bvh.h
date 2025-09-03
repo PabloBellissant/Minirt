@@ -18,6 +18,7 @@
 typedef struct s_scene	t_scene;
 typedef struct s_object	t_object;
 typedef struct s_ray	t_ray;
+
 typedef struct s_hit_box_bvh
 {
 	float	ray_origin;
@@ -28,12 +29,25 @@ typedef struct s_hit_box_bvh
 	float	t_max;
 }	t_hit_box_bvh;
 
-typedef struct s_bvh	t_bvh;
-typedef struct s_bvh
+typedef struct s_cuboid
 {
 	t_vec3	pos;
 	t_vec3	size;
-	int		depth;
+}	t_cuboid;
+
+typedef struct s_bvh	t_bvh;
+typedef struct s_bvh
+{
+	union
+	{
+		struct
+		{
+			t_vec3	pos;
+			t_vec3	size;
+		};
+		t_cuboid	cuboid;
+	};
+	int			depth;
 	union
 	{
 		struct
