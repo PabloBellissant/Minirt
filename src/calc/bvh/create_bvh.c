@@ -103,14 +103,12 @@ static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 	i = 0;
 	while (i < scene->objects.num_elements)
 	{
-		if (object[i].type == PLANE || object[i].type == LIGHT)
+		if (object[i].type != PLANE && object[i].type != LIGHT)
 		{
-			++i;
-			continue;
+			set_bvh_size(&(object[i]), &single_bvh.pos, &single_bvh.size);
+			single_bvh.object = &(object[i]);
+			vector_add(bvh_vec, &single_bvh, 1);
 		}
-		set_bvh_size(&(object[i]), &single_bvh.pos, &single_bvh.size);
-		single_bvh.object = &(object[i]);
-		vector_add(bvh_vec, &single_bvh, 1);
 		++i;
 	}
 	return (0);
