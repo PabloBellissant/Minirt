@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 00:38:46 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/03 00:45:58 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/09/03 23:38:39 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,17 @@ t_vec2i projection_matrix(t_vec3 *p, t_camera *camera)
 
 	temp = vec3_sub(*p, camera->pos);
 	cam_space.z = vec3_dot(temp, camera->camera_forward);
+	/*
 	if (cam_space.z >= 0)
 		return (t_vec2i){{-1, -1}};
+	*/
+	//ca fout la merde mais enlever fout la merde ailleur
 
 	cam_space.x = vec3_dot(temp, camera->camera_right);
 	cam_space.y = vec3_dot(temp, camera->camera_up);
 
 	// Calculer le facteur d'échelle à partir du FOV
-	fov_scale = 1.0f / tanf((camera->fov * (M_PI / 180.0f)) / 2.0f);
+	fov_scale = 1.0f / tanf((camera->fov * (M_PI / 180.0f)) / 2.0f);//always 1?
 
 	projected.x = (cam_space.x * fov_scale) / (fabsf(cam_space.z) * camera->aspect_ratio);
 	projected.y = (cam_space.y * fov_scale) / fabsf(cam_space.z);

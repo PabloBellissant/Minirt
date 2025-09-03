@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/28 20:08:27 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/03 23:49:54 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,16 @@ static inline bool	is_backward_key(int keycode)
 	return ((keycode == XK_s) || (keycode == XK_Down));
 }
 
+static inline bool	is_k_key(int keycode)
+{
+	return (keycode == XK_k);
+}
+
+static inline bool	is_v_key(int keycode)
+{
+	return (keycode == XK_v);
+}
+
 void	setup_key_move_events(t_data *data)
 {
 	t_key_event	move_event[5];
@@ -50,6 +60,18 @@ void	setup_key_move_events(t_data *data)
 		.toggle = false, .status = &(data->keys.upward)};
 	vector_add(data->mlx->key_input.key_events, move_event, 5);
 }
+
+void	setup_key_param_events(t_data *data)
+{
+	t_key_event	param_event[2];
+
+	param_event[0] = (t_key_event){.is_key = is_k_key, .action = NULL, .arg = NULL,
+		.toggle = true, .status = &(data->params.focus)};
+	param_event[1] = (t_key_event){.is_key = is_v_key, .action = NULL, .arg = NULL,
+		.toggle = true, .status = &(data->params.bvh_debug)};
+	vector_add(data->mlx->key_input.key_events, param_event, 2);
+}
+
 
 static bool	first_mouse_move(t_data *data,
 	const t_vec2i center)
@@ -81,6 +103,8 @@ void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y);
 
 int	mouse_move(int x, int y, t_data *data)
 {
+	if (data->params.focus)
+		return (0);
 	int	delta_x = 0;
 	int	delta_y = 0;
 	if (data->mouse.warped)
@@ -91,15 +115,15 @@ int	mouse_move(int x, int y, t_data *data)
 		return (0);
 	}
 
-	if ((x >= data->screen.x) || (y >= data->screen.y)
+	if ((x >= data->screen.x - 1) || (y >= data->screen.y - 1)
 		|| (x <= data->mlx->origin.x) || (y <= data->mlx->origin.y))
 	{
-		if (x >= data->screen.x)
-			delta_x = x - data->screen.x;
+		if (x >= data->screen.x - 1)
+			delta_x = x - data->screen.x - 1;
 		else if (x <= data->mlx->origin.x)
 			delta_x = x - data->mlx->origin.x;
-		if (y >= data->screen.y)
-			delta_y = y - data->screen.y;
+		if (y >= data->screen.y - 1)
+			delta_y = y - data->screen.y - 1;
 		else if (y <= data->mlx->origin.y)
 			delta_y = y - data->mlx->origin.y;
 		data->mouse.warped = true;
@@ -115,7 +139,7 @@ int	mouse_move(int x, int y, t_data *data)
 	if (first_mouse_move(data, data->mlx->half_size))
 		return (0);
 	handle_camera_rotation(data, delta_x, delta_y);
-	return (0);
+		return (0);
 }
 
 int	loop_hook(t_data *data)
@@ -129,6 +153,7 @@ int	loop_hook(t_data *data)
 	XMoveWindow(data->mlx->mlx->display, data->mlx->win->window, MAX_WIDTH / 2 - (WIDTH / 2), MAX_HEIGHT / 2 - (HEIGHT / 2));
 	mlx_hook(win, MotionNotify, PointerMotionMask, mouse_move, data);
 	setup_key_move_events(data);
+	setup_key_param_events(data);
 	start_mlx_loop(data->mlx, loop, data);
 	return (0);
 }

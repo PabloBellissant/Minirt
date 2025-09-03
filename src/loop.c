@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/26 20:18:33 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/03 23:39:22 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ void	compute(t_data *data)
 		}
 		++y;
 	}
+	if (data->params.bvh_debug && data->scene.bvh)
+		rasterize_bvh(data->scene.bvh, &data->mlx->img,cam);
 	((t_object *)(scene->lights.data))[0].light.pos.x -= 0.01;
 }
 

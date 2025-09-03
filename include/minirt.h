@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/28 20:04:27 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/03 23:31:45 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,16 @@ typedef struct s_mouse
 	bool	warped;
 }			t_mouse;
 
+typedef struct s_params
+{
+	bool	bvh_debug;
+	bool	focus;
+}			t_params;
+
 typedef struct s_data
 {
 	int			*addr;
+	t_params	params;
 	t_keys		keys;
 	t_mouse		mouse;
 	t_mlx		*mlx;
@@ -92,7 +99,6 @@ typedef struct s_data
 	t_scene		scene;
 	t_rast_env	*font_env;
 }				t_data;
-
 
 
 int		init_graphics(t_data *data);
