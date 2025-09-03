@@ -19,5 +19,5 @@ float	get_bvh_area(t_bvh *bvh)
 	area = bvh->size.x * bvh->size.y;
 	area += bvh->size.y * bvh->size.z;
 	area += bvh->size.x * bvh->size.z;
-	return (area * 2);
+	return (area);
 }

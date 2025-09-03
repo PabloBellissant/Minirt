@@ -28,5 +28,5 @@ float	get_next_bvh_area(t_bvh *a, t_bvh *b)
 	area = size.x * size.y;
 	area += size.y * size.z;
 	area += size.x * size.z;
-	return (area * 2);
+	return (area);
 }
