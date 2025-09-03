@@ -76,7 +76,8 @@ typedef struct s_scene
 	t_bvh		*bvh;
 }				t_scene;
 
-int		rasterize_bvh(t_bvh *bvh, t_img_data *img, t_camera *camera);
-t_vec2i	projection_matrix(t_vec3 *p, t_camera *camera);
+int		rasterize_cuboid(t_cuboid *c, t_img_data *img,
+	t_camera *camera, int color);
+t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 
 #endif
