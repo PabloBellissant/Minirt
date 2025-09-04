@@ -15,6 +15,7 @@ RASTERIZATION_DIR	= $(CALC_DIR)/rasterization
 
 # Source files
 RASTERIZATION_SRCS	= rasterize_cuboid.c \
+					  rasterize_bvh.c \
 					  project_point.c
 SRCS				+= $(addprefix $(RASTERIZATION_DIR)/, $(RASTERIZATION_SRCS))
 
