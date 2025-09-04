@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/04 07:40:28 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/04 19:48:01 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,10 @@ void	setup_key_param_events(t_data *data)
 		.toggle = true, .status = &(data->params.bvh_debug)};
 	param_event[2] = (t_key_event){.is_key = is_b_key,
 		.action = (void (*)(void *, t_mlx *))bvh_depth_changer, .arg = data,
-		.toggle = false, .status = &(data->params.bvh_depth_status)};
+		.toggle = false, .status = NULL};
 	param_event[3] = (t_key_event){.is_key = is_c_key,
 		.action = (void (*)(void *, t_mlx *))bvh_color_changer, .arg = data,
-		.toggle = false, .status = &(data->params.bvh_color_status)};
+		.toggle = false, .status = NULL};
 	vector_add(data->mlx->key_input.key_events, param_event, 4);
 }
 
