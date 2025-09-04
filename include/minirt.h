@@ -84,6 +84,7 @@ typedef struct s_mouse
 
 typedef struct s_params
 {
+	int		bvh_depth;
 	bool	bvh_debug;
 	bool	focus;
 }			t_params;
