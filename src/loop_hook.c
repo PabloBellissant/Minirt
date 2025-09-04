@@ -76,7 +76,7 @@ void	bvh_depth_changer(t_data *data, t_mlx *mlx)
 	(void) mlx;
 	if (data->params.full_render == true)
 		data->params.full_render = false;
-	else if (data->params.bvh_depth <= 1)
+	else if (data->params.bvh_depth < 1)
 	{
 		data->params.full_render = true;
 		data->params.bvh_depth = data->scene.bvh->depth;
