@@ -44,6 +44,11 @@ static inline bool	is_v_key(int keycode)
 	return (keycode == XK_v);
 }
 
+static inline bool	is_b_key(int keycode)
+{
+	return (keycode == XK_b);
+}
+
 void	setup_key_move_events(t_data *data)
 {
 	t_key_event	move_event[5];
@@ -61,15 +66,29 @@ void	setup_key_move_events(t_data *data)
 	vector_add(data->mlx->key_input.key_events, move_event, 5);
 }
 
+void	bvh_depth_changer(void *d, t_mlx *mlx)
+{
+	t_data	*data;
+
+	data = d;
+	(void) mlx;
+	if (data->params.bvh_depth <= 1)
+		data->params.bvh_depth = data->scene.bvh->depth;
+	else
+		--data->params.bvh_depth;
+}
+
 void	setup_key_param_events(t_data *data)
 {
-	t_key_event	param_event[2];
+	t_key_event	param_event[3];
 
 	param_event[0] = (t_key_event){.is_key = is_k_key, .action = NULL, .arg = NULL,
 		.toggle = true, .status = &(data->params.focus)};
 	param_event[1] = (t_key_event){.is_key = is_v_key, .action = NULL, .arg = NULL,
 		.toggle = true, .status = &(data->params.bvh_debug)};
-	vector_add(data->mlx->key_input.key_events, param_event, 2);
+	param_event[2] = (t_key_event){.is_key = is_b_key, .action = bvh_depth_changer, .arg = data,
+		.toggle = false, .status = NULL};
+	vector_add(data->mlx->key_input.key_events, param_event, 3);
 }
 
 
