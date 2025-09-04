@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 09:18:35 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/09/04 06:14:38 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct s_scene
 typedef struct s_data t_data;
 
 int		rasterize_cuboid(t_cuboid *c, t_img_data *img,
-	t_camera *camera, int color);
+	t_camera *camera, t_rgb_int color);
 void	rasterize_bvh(t_bvh *bvh, int depth, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 

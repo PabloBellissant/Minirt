@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/03 23:49:54 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/04 07:40:28 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ static inline bool	is_b_key(int keycode)
 	return (keycode == XK_b);
 }
 
+static inline bool	is_c_key(int keycode)
+{
+	return (keycode == XK_c);
+}
+
 void	setup_key_move_events(t_data *data)
 {
 	t_key_event	move_event[5];
@@ -66,29 +71,47 @@ void	setup_key_move_events(t_data *data)
 	vector_add(data->mlx->key_input.key_events, move_event, 5);
 }
 
-void	bvh_depth_changer(void *d, t_mlx *mlx)
+void	bvh_depth_changer(t_data *data, t_mlx *mlx)
 {
-	t_data	*data;
-
-	data = d;
 	(void) mlx;
-	if (data->params.bvh_depth <= 1)
+	if (data->params.full_render == true)
+		data->params.full_render = false;
+	else if (data->params.bvh_depth <= 1)
+	{
+		data->params.full_render = true;
 		data->params.bvh_depth = data->scene.bvh->depth;
+	}
 	else
 		--data->params.bvh_depth;
+	printf("render: %d depth: %d\n", data->params.full_render, data->params.bvh_depth);
+}
+
+void	bvh_color_changer(t_data *data, t_mlx *mlx)
+{
+	(void) mlx;
+	if (data->params.bvh_color_offset <= 1)// pas plutot < 1 ?
+		data->params.bvh_color_offset = data->scene.bvh->depth;
+	else
+		--data->params.bvh_color_offset;
+	printf("color offset: %d\n", data->params.bvh_color_offset);
 }
 
 void	setup_key_param_events(t_data *data)
 {
-	t_key_event	param_event[3];
+	t_key_event	param_event[4];
+	data->params.full_render = true;
 
 	param_event[0] = (t_key_event){.is_key = is_k_key, .action = NULL, .arg = NULL,
 		.toggle = true, .status = &(data->params.focus)};
 	param_event[1] = (t_key_event){.is_key = is_v_key, .action = NULL, .arg = NULL,
 		.toggle = true, .status = &(data->params.bvh_debug)};
-	param_event[2] = (t_key_event){.is_key = is_b_key, .action = bvh_depth_changer, .arg = data,
-		.toggle = false, .status = NULL};
-	vector_add(data->mlx->key_input.key_events, param_event, 3);
+	param_event[2] = (t_key_event){.is_key = is_b_key,
+		.action = (void (*)(void *, t_mlx *))bvh_depth_changer, .arg = data,
+		.toggle = false, .status = &(data->params.bvh_depth_status)};
+	param_event[3] = (t_key_event){.is_key = is_c_key,
+		.action = (void (*)(void *, t_mlx *))bvh_color_changer, .arg = data,
+		.toggle = false, .status = &(data->params.bvh_color_status)};
+	vector_add(data->mlx->key_input.key_events, param_event, 4);
 }
 
 
@@ -103,7 +126,8 @@ static bool	first_mouse_move(t_data *data,
 		data->mouse.last_y = center.y;
 		first_move = false;
 		data->mouse.warped = true;
-		XGrabPointer(data->mlx->mlx->display, data->mlx->win->window, True, PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
+		XGrabPointer(data->mlx->mlx->display, data->mlx->win->window,
+				True, PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
 		mlx_mouse_move(data->mlx->mlx, data->mlx->win, center.x, center.y);
 		return (1);
 	}
@@ -168,7 +192,8 @@ int	loop_hook(t_data *data)
 
 	win = data->mlx->win;
 	mlx = data->mlx->mlx;
-	mlx_mouse_hide(mlx, win);
+	(void)mlx;
+	//mlx_mouse_hide(mlx, win);
 	XMoveWindow(data->mlx->mlx->display, data->mlx->win->window, MAX_WIDTH / 2 - (WIDTH / 2), MAX_HEIGHT / 2 - (HEIGHT / 2));
 	mlx_hook(win, MotionNotify, PointerMotionMask, mouse_move, data);
 	setup_key_move_events(data);

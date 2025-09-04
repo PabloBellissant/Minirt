@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/03 23:31:45 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/04 07:32:29 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,12 @@ typedef struct s_mouse
 
 typedef struct s_params
 {
+	bool	full_render;
 	int		bvh_depth;
+	bool	bvh_depth_status;
+
+	int		bvh_color_offset;
+	bool	bvh_color_status;
 	bool	bvh_debug;
 	bool	focus;
 }			t_params;
