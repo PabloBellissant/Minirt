@@ -65,9 +65,7 @@ void	compute(t_data *data)
 		++y;
 	}
 	if (data->params.bvh_debug && data->scene.bvh)
-		rasterize_cuboid(&data->scene.bvh->cuboid, &data->mlx->img,cam, 0xFFFF00);
-	//rasterize_cuboid(&scene->bvh->next_a->cuboid, &data->mlx->img, &scene->camera, 0xFF00FF);
-	//rasterize_cuboid(&scene->bvh->next_b->cuboid, &data->mlx->img, &scene->camera, 0xFF00FF);
+		rasterize_bvh(scene->bvh, data->params.bvh_depth, scene->bvh->depth, data);
 }
 
 void	update_fps(t_data *data);
