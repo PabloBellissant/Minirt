@@ -17,7 +17,8 @@
 
 static void	draw_vertices(t_vec2i vertices[8], t_img_data *img, int color);
 
-int	rasterize_cuboid(t_cuboid *c, t_img_data *img, t_camera *camera, t_rgb_int color)
+int	rasterize_cuboid(t_cuboid *c, t_img_data *img,
+	t_camera *camera, t_rgb_int color)
 {
 	t_vec3	vertices[8];
 	t_vec2i	projected[8];
