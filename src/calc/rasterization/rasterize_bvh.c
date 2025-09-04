@@ -62,21 +62,41 @@ static inline t_rgba_int depth_to_rgba_int(int depth, int total_depth)
     );
 }
 
+// ta version (jsp pourquoi t'avais fais comme ça)
+
+// void	rasterize_bvh(t_bvh *bvh, int depth, int total_depth, t_data *data)
+// {
+// 	t_rgba_int	rgba;
+// 	t_rgb_int	color;
+//
+// 	rgba = depth_to_rgba_int(depth + data->params.bvh_color_offset, total_depth);
+// 	color.r = rgba.r;
+// 	color.g = rgba.g;
+// 	color.b = rgba.b;
+// 	if (bvh->depth != 0)
+// 	{
+// 		rasterize_bvh(bvh->next_a, depth + 1 * data->params.full_render, total_depth, data);
+// 		rasterize_bvh(bvh->next_b, depth + 1 * data->params.full_render, total_depth, data);
+// 	}
+// 	if ((bvh->depth >= 0 && data->params.full_render) || (bvh->depth == depth))
+// 		rasterize_cuboid(&bvh->cuboid, &data->mlx->img, &data->scene.camera, color);
+// }
 
 void	rasterize_bvh(t_bvh *bvh, int depth, int total_depth, t_data *data)
 {
-	t_rgba_int	rgba;
-	t_rgb_int	color;
+    t_rgba_int	rgba;
+    t_rgb_int	color;
 
-	rgba = depth_to_rgba_int(depth + data->params.bvh_color_offset, total_depth);
-	color.r = rgba.r;
-	color.g = rgba.g;
-	color.b = rgba.b;
-	if (bvh->depth != 0)
-	{
-		rasterize_bvh(bvh->next_a, depth + 1 * data->params.full_render, total_depth, data);
-		rasterize_bvh(bvh->next_b, depth + 1 * data->params.full_render, total_depth, data);
-	}
-	if ((bvh->depth >= 0 && data->params.full_render) || (bvh->depth == depth))
-		rasterize_cuboid(&bvh->cuboid, &data->mlx->img, &data->scene.camera, color);
+    rgba = depth_to_rgba_int(depth + data->params.bvh_color_offset, total_depth);
+    color.r = rgba.r;
+    color.g = rgba.g;
+    color.b = rgba.b;
+    if (bvh->depth > depth)
+    {
+        rasterize_bvh(bvh->next_a, depth, total_depth, data);
+        rasterize_bvh(bvh->next_b, depth, total_depth, data);
+    }
+    else
+        rasterize_cuboid(&bvh->cuboid, &data->mlx->img, &data->scene.camera, color);
 }
+
