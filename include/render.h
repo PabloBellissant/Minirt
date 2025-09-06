@@ -80,6 +80,8 @@ typedef struct s_data t_data;
 
 int		rasterize_cuboid(t_cuboid *c, t_img_data *img,
 	t_camera *camera, t_rgb_int color);
+int		rasterize_sphere(t_sphere *s, t_img_data *img,
+	t_camera *camera, t_rgb_int color);
 void	rasterize_bvh(t_bvh *bvh, int depth, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 
