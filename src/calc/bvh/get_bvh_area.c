@@ -12,12 +12,16 @@
 
 #include "bvh.h"
 
-float	get_bvh_area(t_bvh *bvh)
+float	get_bvh_area(t_cuboid *cuboid)
 {
 	float	area;
+	t_vec3	size;
 
-	area = bvh->size.x * bvh->size.y;
-	area += bvh->size.y * bvh->size.z;
-	area += bvh->size.x * bvh->size.z;
+	size.x = cuboid->max.x - cuboid->min.x;
+	size.y = cuboid->max.y - cuboid->min.y;
+	size.z = cuboid->max.z - cuboid->min.z;
+	area = size.x * size.y;
+	area += size.y * size.z;
+	area += size.x * size.z;
 	return (area);
 }
