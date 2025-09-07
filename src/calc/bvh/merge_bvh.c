@@ -18,25 +18,21 @@ void	merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 	t_bvh	bvh;
 	t_bvh	*a;
 	t_bvh	*b;
+	t_vec3	size;
 
 	a = get_vector_value(bvh_vec, a_index);
 	b = get_vector_value(bvh_vec, b_index);
-	bvh.depth = fmax(a->depth, b->depth) + 1;
+	bvh.depth = fmaxf(a->depth, b->depth) + 1;
 	bvh.next_a = a;
 	bvh.next_b = b;
-	bvh.pos.x = fminf(a->pos.x, b->pos.x);
-	bvh.pos.y = fminf(a->pos.y, b->pos.y);
-	bvh.pos.z = fminf(a->pos.z, b->pos.z);
-	bvh.size.x = fmaxf(a->pos.x + a->size.x - bvh.pos.x,
-			b->pos.x + b->size.x - bvh.pos.x);
-	bvh.size.y = fmaxf(a->pos.y + a->size.y - bvh.pos.y,
-			b->pos.y + b->size.y - bvh.pos.y);
-	bvh.size.z = fmaxf(a->pos.z + a->size.z - bvh.pos.z,
-			b->pos.z + b->size.z - bvh.pos.z);
-	bvh.parent = NULL;
+	bvh.min.x = fminf(a->min.x, b->min.x);
+	bvh.min.y = fminf(a->min.y, b->min.y);
+	bvh.min.z = fminf(a->min.z, b->min.z);
+	size.x = fmaxf(a->max.x - bvh.min.x, b->max.x - bvh.min.x);
+	size.y = fmaxf(a->max.y - bvh.min.y, b->max.y - bvh.min.y);
+	size.z = fmaxf(a->max.z - bvh.min.z, b->max.z - bvh.min.z);
+	bvh.max.x = bvh.min.x + size.x;
+	bvh.max.y = bvh.min.y + size.y;
+	bvh.max.z = bvh.min.z + size.z;
 	vector_add(bvh_vec, &bvh, 1);
-	a = get_vector_value(bvh_vec, a_index);
-	b = get_vector_value(bvh_vec, b_index);
-	a->parent = get_vector_value(bvh_vec, bvh_vec->num_elements - 1);
-	b->parent = a->parent;
 }

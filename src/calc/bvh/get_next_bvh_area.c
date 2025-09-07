@@ -16,17 +16,13 @@
 float	get_next_bvh_area(t_bvh *a, t_bvh *b)
 {
 	float	area;
-	t_vec3	base_pos;
-	t_vec3	size;
+	float	size;
 
-	base_pos.x = fminf(a->pos.x, b->pos.x);
-	base_pos.y = fminf(a->pos.y, b->pos.y);
-	base_pos.z = fminf(a->pos.z, b->pos.z);
-	size.x = fmaxf(a->pos.x + a->size.x, b->pos.x + b->size.x) - base_pos.x;
-	size.y = fmaxf(a->pos.y + a->size.y, b->pos.y + b->size.y) - base_pos.y;
-	size.z = fmaxf(a->pos.z + a->size.z, b->pos.z + b->size.z) - base_pos.z;
-	area = size.x * size.y;
-	area += size.y * size.z;
-	area += size.x * size.z;
+	size = fmaxf(a->max.x, b->max.x) - fminf(a->min.x, b->min.x);
+	area = size * size;
+	size = fmaxf(a->max.y, b->max.y) - fminf(a->min.y, b->min.y);
+	area += size * size;
+	size = fmaxf(a->max.z, b->max.z) - fminf(a->min.z, b->min.z);
+	area += size * size;
 	return (area);
 }

@@ -17,22 +17,21 @@
 
 static void	draw_vertices(t_vec2i vertices[8], t_img_data *img, int color);
 
-int	rasterize_cuboid(t_cuboid *c, t_img_data *img,
+int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_camera *camera, t_rgb_int color)
 {
 	t_vec3	vertices[8];
 	t_vec2i	projected[8];
 	int		i;
 
-	vertices[0] = c->pos;
-	vertices[1] = vec3(c->pos.x + c->size.x, c->pos.y, c->pos.z);
-	vertices[2] = vec3(c->pos.x + c->size.x, c->pos.y + c->size.y, c->pos.z);
-	vertices[3] = vec3(c->pos.x, c->pos.y + c->size.y, c->pos.z);
-	vertices[4] = vec3(c->pos.x, c->pos.y, c->pos.z + c->size.z);
-	vertices[5] = vec3(c->pos.x + c->size.x, c->pos.y, c->pos.z + c->size.z);
-	vertices[6] = vec3(c->pos.x + c->size.x,
-			c->pos.y + c->size.y, c->pos.z + c->size.z);
-	vertices[7] = vec3(c->pos.x, c->pos.y + c->size.y, c->pos.z + c->size.z);
+	vertices[0] = cuboid->min;
+	vertices[1] = vec3(cuboid->max.x, cuboid->min.y, cuboid->min.z);
+	vertices[2] = vec3(cuboid->max.x, cuboid->max.y, cuboid->min.z);
+	vertices[3] = vec3(cuboid->min.x, cuboid->max.y, cuboid->min.z);
+	vertices[4] = vec3(cuboid->min.x, cuboid->min.y, cuboid->max.z);
+	vertices[5] = vec3(cuboid->max.x, cuboid->min.y, cuboid->max.z);
+	vertices[6] = vec3(cuboid->max.x, cuboid->max.y, cuboid->max.z);
+	vertices[7] = vec3(cuboid->min.x, cuboid->max.y, cuboid->max.z);
 	i = 0;
 	while (i < 8)
 	{
