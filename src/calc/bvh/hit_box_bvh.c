@@ -21,40 +21,32 @@ static inline void bvh_check(float t1, float t2, float *t_min, float *t_max)
 	*t_max = fminf(fmaxf(t1, t2), *t_max);
 }
 
-static inline void	fill_hb(t_hit_box_bvh *hb, t_ray *ray,
-	t_bvh *bvh, uint8_t i)
+bool	hit_box(t_ray *ray, t_bvh *bvh)
 {
-	hb->ray_origin = ray->pos.data[i];
-	hb->ray_dir = ray->dir.data[i];
-	hb->box_min = bvh->pos.data[i];
-	hb->box_max = hb->box_min + bvh->size.data[i];
-}
+	float	t_max;
+	float	t_min;
+	uint8_t	i;
 
-float	hit_box(t_ray *ray, t_bvh *bvh)
-{
-	t_hit_box_bvh	hb;
-	uint8_t			i;
-
-	hb.t_max = FLT_MAX;
-	hb.t_min = -FLT_MAX;
 	i = 0;
 	while (i < 3)
 	{
-		fill_hb(&hb, ray, bvh, i);
-		if (hb.ray_dir == .0f)
+		if (ray->dir.data[i] == .0f)
 		{
-			if ((hb.ray_origin < hb.box_min) || (hb.ray_origin > hb.box_max))
-				return (-1);
+			if (ray->pos.data[i] < bvh->min.data[i] ||
+				ray->pos.data[i] > bvh->max.data[i])
+			{
+				return (false);
+			}
 		}
 		else
 		{
-			bvh_check((hb.box_min - hb.ray_origin) / hb.ray_dir,
-				(hb.box_max - hb.ray_origin) / hb.ray_dir,
-				&hb.t_min, &hb.t_max);
-			if (hb.t_min > hb.t_max)
-				return (-1);
+			bvh_check((bvh->min.data[i] - ray->pos.data[i]) / ray->dir.data[i],
+				(bvh->max.data[i] - ray->pos.data[i]) / ray->dir.data[i],
+				&t_min, &t_max);
+			if (t_min > t_max)
+				return (false);
 		}
 		i++;
 	}
-	return (hb.t_max);
+	return (true);
 }
