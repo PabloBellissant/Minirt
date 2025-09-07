@@ -78,7 +78,7 @@ typedef struct s_scene
 
 typedef struct s_data t_data;
 
-int		rasterize_cuboid(t_cuboid *c, t_img_data *img,
+int		rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_camera *camera, t_rgb_int color);
 int		rasterize_sphere(t_sphere *s, t_img_data *img,
 	t_camera *camera, t_rgb_int color);
