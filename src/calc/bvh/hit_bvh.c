@@ -14,7 +14,7 @@
 #include <object.h>
 #include "bvh.h"
 
-float	hit_box(t_ray *ray, t_bvh *bvh);
+bool	hit_box(t_ray *ray, t_bvh *bvh);
 
 inline t_object	*hit_bvh(t_ray *ray, t_bvh *bvh)
 {
@@ -27,10 +27,10 @@ inline t_object	*hit_bvh(t_ray *ray, t_bvh *bvh)
 			return (NULL);
 		return (bvh->object);
 	}
-	if (hit_box(ray, bvh) < 0)
+	if (!hit_box(ray, bvh))
 		return (NULL);
 	object_a = hit_bvh(ray, bvh->next_a);
-	if (object_a == NULL)
+	if (!object_a)
 		return (hit_bvh(ray, bvh->next_b));
 	object_b = hit_bvh(ray, bvh->next_b);
 	if (object_b != NULL)
