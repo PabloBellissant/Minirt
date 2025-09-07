@@ -64,6 +64,7 @@ int	create_bvh(t_scene *scene)
 	while (is_bvh_full(&bvh_vec, parents) == false)
 		merge_nearest_bvh(&bvh_vec, parents);
 	scene->bvh = get_root(&bvh_vec, parents);
+	free(parents);
 	return (0);
 }
 
