@@ -19,20 +19,10 @@ typedef struct s_scene	t_scene;
 typedef struct s_object	t_object;
 typedef struct s_ray	t_ray;
 
-typedef struct s_hit_box_bvh
-{
-	float	ray_origin;
-	float	ray_dir;
-	float	box_min;
-	float	box_max;
-	float	t_min;
-	float	t_max;
-}	t_hit_box_bvh;
-
 typedef struct s_cuboid
 {
-	t_vec3	pos;
-	t_vec3	size;
+	t_vec3	min;
+	t_vec3	max;
 }	t_cuboid;
 
 typedef struct s_bvh	t_bvh;
@@ -42,8 +32,8 @@ typedef struct s_bvh
 	{
 		struct
 		{
-			t_vec3	pos;
-			t_vec3	size;
+			t_vec3	min;
+			t_vec3	max;
 		};
 		t_cuboid	cuboid;
 	};
@@ -57,14 +47,13 @@ typedef struct s_bvh
 		};
 		t_object	*object;
 	};
-	t_bvh	*parent;
 }	t_bvh;
 
 int			create_bvh(t_scene *scene);
-float		get_bvh_area(t_bvh *bvh);
+float		get_bvh_area(t_cuboid *cuboid);
 float		get_next_bvh_area(t_bvh *a, t_bvh *b);
 void		merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index);
-void		merge_nearest_bvh(t_vector *bvh_vec);
+void		merge_nearest_bvh(t_vector *bvh_vec, int *parents);
 t_object	*hit_bvh(t_ray *ray, t_bvh *bvh);
 
 #endif
