@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hit_sphere.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/23 03:38:30 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:11:22 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/08/07 02:23:40 by pabellis          #+#    #+#             */
+/*   Updated: 2025/09/08 03:07:30 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,21 @@ int	hit_sphere(t_ray *ray, t_object *o, float *t);
 
 inline int	hit_sphere(t_ray *restrict ray, t_object *restrict o, float *t)
 {
-	t_vec4	oc;
+	t_vec3	oc;
+	float	b;
+	float	c;
+	float	discriminant;
 
-	oc.x = ray->pos.x - o->sphere.pos.x;
-	oc.y = ray->pos.y - o->sphere.pos.y;
-	oc.z = ray->pos.z - o->sphere.pos.z;
-	oc.w = ray->dir.x * oc.x;
-	oc.w += ray->dir.y * oc.y;
-	oc.w += ray->dir.z * oc.z;
-	oc.w *= 2;
-	oc.x = oc.x * oc.x;
-	oc.x += oc.y * oc.y;
-	oc.x += oc.z * oc.z;
-	oc.x -= o->sphere.radius_squared;
-	oc.y = oc.w * oc.w - 4 * oc.x;
-	if (oc.y < 0)
+	oc = vec3_sub(ray->pos, o->sphere.pos);
+	b = vec3_dot(ray->dir, oc) * 2;
+	c = vec3_dot(oc, oc) - o->sphere.radius_squared;
+	discriminant = b * b - 4 * c;
+	if (discriminant < 0)
 		return (0);
-	oc.x = sqrtf(oc.y);
-	*t = -oc.w - oc.x;
+	c = sqrtf(discriminant);
+	*t = -b - c;
 	if (*t < 0)
-		*t = -oc.w + oc.x;
+		*t = -b + c;
 	*t /= 2;
 	return (*t >= 0);
 }
