@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cylinder.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/17 06:03:36 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:53:00 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/08/07 02:23:40 by pabellis          #+#    #+#             */
+/*   Updated: 2025/09/08 03:36:12 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "render.h"
 #include "calc.h"
 #include "vectors.h"
 
@@ -32,9 +31,12 @@ int	cylinder(char *line, int line_num, t_scene *scene)
 	rot = &cylinder->rot;
 	object->f = hit_cylinder;
 	if (ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
-			&rot->x, &rot->y, &rot->z, &cylinder->diameter, &cylinder->height,
+			&rot->x, &rot->y, &rot->z, &cylinder->radius, &cylinder->height,
 			&color.r, &color.g, &color.b))
 		return (-1);
+
+	cylinder->radius /= 2;
+	cylinder->rot = vec3_normalize(cylinder->rot);
 	cylinder->rgb = rgb_itof(color);
 	return (0);
 }
