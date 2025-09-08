@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_bvh.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/30 06:31:17 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:08:17 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/09/04 00:26:58 by pabellis          #+#    #+#             */
+/*   Updated: 2025/09/08 01:26:21 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "render.h"
 
 static int		create_object_bvh(t_scene *scene, t_vector *bvh_vec);
-static void		set_bvh_size(t_object *object, t_vec3 *pos, t_vec3 *max);
+static void		set_bvh_size(t_object *object, t_vec3 *min, t_vec3 *max);
 bool			is_bvh_full(t_vector *bvh_vec, int *parents);
 t_bvh			*get_root(t_vector *bvh_vec, int *parents);
 
@@ -107,6 +107,7 @@ static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 	ft_bzero(&single_bvh, sizeof(t_bvh));
 	object = scene->objects.data;
 	i = 0;
+	single_bvh.rotation = (t_vec3){{0, 0, 0}};
 	while (i < scene->objects.num_elements)
 	{
 		if (object[i].type != PLANE && object[i].type != LIGHT)
@@ -120,15 +121,24 @@ static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 	return (0);
 }
 
-static void	set_bvh_size(t_object *object, t_vec3 *pos, t_vec3 *max)
+static void	set_bvh_size(t_object *object, t_vec3 *min, t_vec3 *max)
 {
 	if (object->type == SPHERE)
 	{
-		pos->x = object->sphere.pos.x - (object->sphere.diameter / 2);
-		pos->y = object->sphere.pos.y - (object->sphere.diameter / 2);
-		pos->z = object->sphere.pos.z - (object->sphere.diameter / 2);
-		max->x = pos->x + object->sphere.diameter;
-		max->y = pos->y + object->sphere.diameter;
-		max->z = pos->z + object->sphere.diameter;
+		min->x = object->sphere.pos.x - (object->sphere.diameter / 2);
+		min->y = object->sphere.pos.y - (object->sphere.diameter / 2);
+		min->z = object->sphere.pos.z - (object->sphere.diameter / 2);
+		max->x = min->x + object->sphere.diameter;
+		max->y = min->y + object->sphere.diameter;
+		max->z = min->z + object->sphere.diameter;
+	}
+	if (object->type == CYLINDER)
+	{
+		min->x = object->cylinder.pos.x - (object->cylinder.diameter * 10);
+		min->y = object->cylinder.pos.y - (object->cylinder.diameter * 10);
+		min->z = object->cylinder.pos.z - (object->cylinder.diameter * 10);
+		max->x = min->x + object->cylinder.diameter * 20;
+		max->y = min->y + object->cylinder.diameter * 20;
+		max->z = min->z + object->cylinder.diameter * 20;
 	}
 }
