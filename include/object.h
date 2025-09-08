@@ -49,7 +49,7 @@ typedef struct s_cylinder
 	t_rgb	rgb;
 	t_vec3	pos;
 	t_vec3	rot;
-	float	diameter;
+	float	radius;
 	float	height;
 }			t_cylinder;
 
