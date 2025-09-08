@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hit_cylinder.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/27 06:55:38 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:10:16 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/08/07 02:23:40 by pabellis          #+#    #+#             */
+/*   Updated: 2025/09/08 02:27:13 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,38 +15,35 @@
 
 int	hit_cylinder(t_ray *ray, t_object *o, float *t);
 
-float	*solve_quadtratic_equation(const float a, const float b, const float c,
-		float *x)
+inline int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
 {
-	const float	delta = (b * b) - (4 * a * c);
-	float		x1;
-	float		x2;
+	t_vec3 oc = vec3_sub(ray->pos, o->cylinder.pos);
+	float card = vec3_dot(o->cylinder.rot, ray->dir);
+	float caoc = vec3_dot(o->cylinder.rot, oc);
 
-	if (delta == 0)
-		return (0);
-	x1 = (-b - sqrtf(delta)) / (2 * a);
-	x2 = (-b + sqrtf(delta)) / (2 * a);
-	if (x1 > x2)
-		*x = x2;
-	else
-		*x = x1;
-	return (x);
+	t_vec3 xdir = vec3_sub(ray->dir, vec3_scale(o->cylinder.rot, card));
+	t_vec3 xoc  = vec3_sub(oc, vec3_scale(o->cylinder.rot, caoc));
+
+	float A = vec3_dot(xdir, xdir);
+	float B = 2.0f * vec3_dot(xdir, xoc);
+	float C = vec3_dot(xoc, xoc) - o->cylinder.radius * o->cylinder.radius;
+	float discriminant = B * B - 4 * A * C;
+
+	if (discriminant < 0)
+		return 0;
+
+	float sqrtD = sqrtf(discriminant);
+	float tmin = 1e30f;
+	for (int k = 0; k < 2; k++) {
+		float t = (-B + (k == 0 ? -sqrtD : sqrtD)) / (2.0f * A);
+		if (t > 1e-4f) {
+			float y = caoc + t * card;
+			if (y >= 0.0f && y <= o->cylinder.height && t < tmin)
+				tmin = t;
+		}
+	}
+
+	*t_out = tmin;
+	return (tmin < 1e30f);
 }
 
-inline int	hit_cylinder(t_ray *ray, t_object *o, float *t)
-{
-	const float	a = ray->dir.x * ray->dir.x + ray->dir.z * ray->dir.z;
-	const float	b = 2 * (ray->dir.x * (ray->pos.x - o->cylinder.pos.x)
-			+ ray->dir.z * (ray->pos.z - o->cylinder.pos.z));
-	const float	c = ((ray->pos.x - o->cylinder.pos.x)
-			* (ray->pos.x - o->cylinder.pos.x))
-		+ ((ray->pos.z - o->cylinder.pos.z) * (ray->pos.z - o->cylinder.pos.z))
-		- o->cylinder.diameter;
-	float		r;
-
-	solve_quadtratic_equation(a, b, c, t);
-	r = ray->pos.y + *t * ray->dir.y;
-	if (r >= o->cylinder.pos.y && r <= o->cylinder.pos.y + o->cylinder.height)
-		return (1);
-	return (0);
-}
