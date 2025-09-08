@@ -25,7 +25,6 @@ typedef enum e_object_type
 	SPHERE,
 	PLANE,
 	CYLINDER,
-	TRIANGLE,
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
