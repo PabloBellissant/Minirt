@@ -23,6 +23,7 @@ typedef struct s_cuboid
 {
 	t_vec3	min;
 	t_vec3	max;
+	t_vec3	rotation;
 }	t_cuboid;
 
 typedef struct s_bvh	t_bvh;
@@ -34,6 +35,7 @@ typedef struct s_bvh
 		{
 			t_vec3	min;
 			t_vec3	max;
+			t_vec3	rotation;
 		};
 		t_cuboid	cuboid;
 	};
