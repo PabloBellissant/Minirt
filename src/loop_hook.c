@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/09 03:51:58 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:16:25 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,19 +56,11 @@ static inline bool	is_c_key(int keycode)
 
 void	setup_key_move_events(t_data *data)
 {
-	t_key_event	move_event[5];
-
-	move_event[0] = (t_key_event){.is_key = is_left_key, .action = NULL, .arg = NULL,
-		.toggle = false, .status = &(data->keys.left)};
-	move_event[1] = (t_key_event){.is_key = is_right_key, .action = NULL, .arg = NULL,
-		.toggle = false, .status = &(data->keys.right)};
-	move_event[2] = (t_key_event){.is_key = is_forward_key, .action = NULL, .arg = NULL,
-		.toggle = false, .status = &(data->keys.forward)};
-	move_event[3] = (t_key_event){.is_key = is_backward_key, .action = NULL, .arg = NULL,
-		.toggle = false, .status = &(data->keys.backward)};
-	move_event[4] = (t_key_event){.is_key = is_space_key, .action = NULL, .arg = NULL,
-		.toggle = false, .status = &(data->keys.upward)};
-	vector_add(data->mlx->key_input.key_events, move_event, 5);
+	add_status_key_hook(data->mlx, is_left_key, false, &(data->keys.left));
+	add_status_key_hook(data->mlx, is_right_key, false, &(data->keys.right));
+	add_status_key_hook(data->mlx, is_forward_key, false, &(data->keys.forward));
+	add_status_key_hook(data->mlx, is_backward_key, false, &(data->keys.backward));
+	add_status_key_hook(data->mlx, is_space_key, false, &(data->keys.upward));
 }
 
 void	bvh_depth_changer(t_data *data, t_mlx *mlx)
@@ -96,22 +88,19 @@ void	bvh_color_changer(t_data *data, t_mlx *mlx)
 	printf("color offset: %d\n", data->params.bvh_color_offset);
 }
 
+void	toggle_mouse_focus(void *v, t_mlx *mlx_data)
+{
+	mlx_data->mouse_input.focus = !mlx_data->mouse_input.focus;
+	update_mouse_focus_state(v, mlx_data);
+}
+
 void	setup_key_param_events(t_data *data)
 {
-	t_key_event	param_event[4];
 	data->params.full_render = true;
-
-	param_event[0] = (t_key_event){.is_key = is_k_key, .action = update_mouse_focus_state, .arg = NULL,
-		.toggle = true, .status = &(data->mlx->mouse_input.focus)};
-	param_event[1] = (t_key_event){.is_key = is_v_key, .action = NULL, .arg = NULL,
-		.toggle = true, .status = &(data->params.bvh_debug)};
-	param_event[2] = (t_key_event){.is_key = is_b_key,
-		.action = (void (*)(void *, t_mlx *))bvh_depth_changer, .arg = data,
-		.toggle = false, .status = NULL};
-	param_event[3] = (t_key_event){.is_key = is_c_key,
-		.action = (void (*)(void *, t_mlx *))bvh_color_changer, .arg = data,
-		.toggle = false, .status = NULL};
-	vector_add(data->mlx->key_input.key_events, param_event, 4);
+	add_func_key_hook(data->mlx, is_k_key, toggle_mouse_focus, NULL);
+	add_status_key_hook(data->mlx, is_v_key, true, &(data->params.bvh_debug));
+	add_func_key_hook(data->mlx, is_b_key, (void (*)(void *, t_mlx *))bvh_depth_changer, data);
+	add_func_key_hook(data->mlx, is_c_key, (void (*)(void *, t_mlx *))bvh_color_changer, data);
 }
 
 /*
