@@ -19,6 +19,14 @@ typedef struct s_scene	t_scene;
 typedef struct s_object	t_object;
 typedef struct s_ray	t_ray;
 
+typedef struct	s_bound
+{
+	int	top;
+	int	right;
+	int	down;
+	int	left;
+}	t_bound;
+
 typedef struct s_cuboid
 {
 	t_vec3	min;
