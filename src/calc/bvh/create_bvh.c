@@ -134,11 +134,11 @@ static void	set_bvh_size(t_object *object, t_vec3 *min, t_vec3 *max)
 	}
 	if (object->type == CYLINDER)
 	{
-		min->x = object->cylinder.pos.x - (object->cylinder.diameter * 10);
-		min->y = object->cylinder.pos.y - (object->cylinder.diameter * 10);
-		min->z = object->cylinder.pos.z - (object->cylinder.diameter * 10);
-		max->x = min->x + object->cylinder.diameter * 20;
-		max->y = min->y + object->cylinder.diameter * 20;
-		max->z = min->z + object->cylinder.diameter * 20;
+		min->x = object->cylinder.pos.x - fmaxf(object->cylinder.radius, object->cylinder.height);
+		min->y = object->cylinder.pos.y - fmaxf(object->cylinder.radius, object->cylinder.height);
+		min->z = object->cylinder.pos.z - fmaxf(object->cylinder.radius, object->cylinder.height);
+		max->x = min->x + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
+		max->y = min->y + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
+		max->z = min->z + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
 	}
 }
