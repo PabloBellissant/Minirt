@@ -74,6 +74,7 @@ typedef struct s_scene
 	t_object	*planes;
 	int			plane_count;
 	t_bvh		*bvh;
+	t_bound		bvh_bound;
 }				t_scene;
 
 typedef struct s_data t_data;

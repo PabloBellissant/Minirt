@@ -14,6 +14,7 @@
 #include <sys/time.h>
 #include "mlx.h"
 #include "libft.h"
+#include "bvh.h"
 #include "vectors.h"
 #include "calc.h"
 #include "minirt.h"
@@ -35,37 +36,106 @@ static inline void	compute_offsets_y(t_camera *cam)
 	cam->pixel_center = vec3_add(cam->pixel_center, cam->y_offset);
 }
 
+static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
+{
+	t_vec3	vertices[8];
+	t_vec2i	proj;
+	int		i;
+
+	ft_bzero(bound, sizeof(t_bound));
+	vertices[0] = bvh_cuboid->min;
+	vertices[1] = vec3(bvh_cuboid->max.x, bvh_cuboid->min.y, bvh_cuboid->min.z);
+	vertices[2] = vec3(bvh_cuboid->max.x, bvh_cuboid->max.y, bvh_cuboid->min.z);
+	vertices[3] = vec3(bvh_cuboid->min.x, bvh_cuboid->max.y, bvh_cuboid->min.z);
+	vertices[4] = vec3(bvh_cuboid->min.x, bvh_cuboid->min.y, bvh_cuboid->max.z);
+	vertices[5] = vec3(bvh_cuboid->max.x, bvh_cuboid->min.y, bvh_cuboid->max.z);
+	vertices[6] = vec3(bvh_cuboid->max.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
+	vertices[7] = vec3(bvh_cuboid->min.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
+	i = 0;
+	proj = project_point(&vertices[i], cam);
+	bound->top = proj.y;
+	bound->down = proj.y;
+	bound->left = proj.x;
+	bound->right = proj.x;
+	while (i < 8)
+	{
+		proj = project_point(&vertices[i], cam);
+		if (proj.y < bound->top)
+			bound->top = proj.y - 1;
+		if (proj.y > bound->down)
+			bound->down = proj.y + 1;
+		if (proj.x < bound->left)
+			bound->left = proj.x - 1;
+		if (proj.x > bound->right)
+			bound->right = proj.x + 1;
+		++i;
+	}
+	if (bound->top < 0)
+		bound->top = 0;
+	if (bound->left < 0)
+		bound->left = 0;
+	if (bound->right >= WIDTH)
+		bound->right = WIDTH - 1;
+	if (bound->down >= HEIGHT)
+		bound->down = HEIGHT - 1;
+}
+
+static void	clear_old_screen(t_img_data *img, t_bound *bound)
+{
+	int	i;
+
+	i = bound->top;
+	while (i < bound->down)
+	{
+		ft_fbzero(img->addr + (WIDTH * i + bound->left), (bound->right - bound->left) * 4);
+		++i;
+	}
+	i = 0;
+	while (i < 25) // clear fps peut mieux faire mdr
+	{
+		ft_fbzero(img->addr + (WIDTH * i), 50 * 4);
+		++i;
+	}
+}
+
 void	compute(t_data *data)
 {
 	t_camera	*cam;
 	t_scene		*scene;
 	t_ray		ray;
-	int			x;
-	int			y;
+	t_vec2i		pixel;
 
 	scene = &data->scene;
 	cam = &data->scene.camera;
-	cam->y_offset = cam->pixel_delta_v;
 	fill_camera(cam);
-	y = 0;
-	while (y < HEIGHT)
+	clear_old_screen(&data->mlx->img, &scene->bvh_bound);
+	calc_bvh_bound(&data->scene.camera, &scene->bvh_bound, &data->scene.bvh->cuboid);
+	pixel.y = scene->bvh_bound.top;
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, pixel.y);
+	while (pixel.y < scene->bvh_bound.down)
 	{
-		x = 0;
-		cam->x_offset = cam->pixel_delta_u;
+		pixel.x = scene->bvh_bound.left;
+		cam->x_offset = vec3_scale(cam->pixel_delta_u, pixel.x);
 		compute_offsets_y(cam);
-		while (x < WIDTH)
+		while (pixel.x < scene->bvh_bound.right)
 		{
 			compute_offsets_x(cam);
 			ray.pos = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-			ft_mlx_pixel_put(&data->mlx->img, vec2i(x, y),
+			ft_mlx_pixel_put(&data->mlx->img, pixel,
 				ray_path(&ray, scene).rgb);
-			++x;
+			++pixel.x;
 		}
-		++y;
+		++pixel.y;
 	}
 	if (data->params.bvh_debug && data->scene.bvh)
 		rasterize_bvh(scene->bvh, data->params.bvh_depth, scene->bvh->depth, data);
+	// t_sphere	sphere;
+	// sphere.rgb = (t_rgb) {{1, 1, 1}};
+	// sphere.pos = (t_vec3) {{0, 0, 0}};
+	// sphere.diameter = 25;
+	// sphere.radius_squared = 126.25f;
+	// rasterize_sphere(&sphere, &data->mlx->img, &scene->camera, (t_rgb_int) {.rgb = 0x00FFFF});
 }
 
 void	update_fps(t_data *data);
