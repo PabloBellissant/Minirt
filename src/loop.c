@@ -78,6 +78,10 @@ static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
 		bound->right = WIDTH - 1;
 	if (bound->down >= HEIGHT)
 		bound->down = HEIGHT - 1;
+	if (bound->left >= WIDTH)
+		bound->left = WIDTH - 1;
+	if (bound->top >= HEIGHT)
+		bound->top = HEIGHT - 1;
 }
 
 static void	clear_old_screen(t_img_data *img, t_bound *bound)
