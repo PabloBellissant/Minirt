@@ -25,8 +25,6 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 	cam_space.x = vec3_dot(temp, camera->camera_right);
 	cam_space.y = vec3_dot(temp, camera->camera_up);
 	cam_space.z = vec3_dot(temp, camera->camera_forward);
-	if (cam_space.z >= 0)
-		return ((t_vec2i){{-1,-1}});
 	fov_scale = 1.0f / tanf((camera->fov * (M_PI / 180.0f)) / 2.0f);
 	projected.x = (cam_space.x * fov_scale) / (fabsf(cam_space.z)
 			* camera->aspect_ratio);
