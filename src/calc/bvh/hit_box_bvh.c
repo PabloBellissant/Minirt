@@ -27,6 +27,8 @@ bool	hit_box(t_ray *ray, t_bvh *bvh)
 	float	t_min;
 	uint8_t	i;
 
+	t_min = -FLT_MAX;
+	t_max = FLT_MAX;
 	i = 0;
 	while (i < 3)
 	{
