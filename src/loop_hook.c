@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/04 19:48:01 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/09 03:51:58 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,8 @@ void	setup_key_param_events(t_data *data)
 	t_key_event	param_event[4];
 	data->params.full_render = true;
 
-	param_event[0] = (t_key_event){.is_key = is_k_key, .action = NULL, .arg = NULL,
-		.toggle = true, .status = &(data->params.focus)};
+	param_event[0] = (t_key_event){.is_key = is_k_key, .action = update_mouse_focus_state, .arg = NULL,
+		.toggle = true, .status = &(data->mlx->mouse_input.focus)};
 	param_event[1] = (t_key_event){.is_key = is_v_key, .action = NULL, .arg = NULL,
 		.toggle = true, .status = &(data->params.bvh_debug)};
 	param_event[2] = (t_key_event){.is_key = is_b_key,
@@ -112,26 +112,6 @@ void	setup_key_param_events(t_data *data)
 		.action = (void (*)(void *, t_mlx *))bvh_color_changer, .arg = data,
 		.toggle = false, .status = NULL};
 	vector_add(data->mlx->key_input.key_events, param_event, 4);
-}
-
-
-static bool	first_mouse_move(t_data *data,
-	const t_vec2i center)
-{
-	static bool	first_move = true;
-
-	if (first_move)
-	{
-		data->mouse.last_x = center.x;
-		data->mouse.last_y = center.y;
-		first_move = false;
-		data->mouse.warped = true;
-		XGrabPointer(data->mlx->mlx->display, data->mlx->win->window,
-				True, PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
-		mlx_mouse_move(data->mlx->mlx, data->mlx->win, center.x, center.y);
-		return (1);
-	}
-	return (0);
 }
 
 /*
@@ -144,58 +124,29 @@ float	lerp(float a, float b, float f)
 
 void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y);
 
-int	mouse_move(int x, int y, t_data *data)
+static inline void	cam_move(t_data *data, t_mlx *mlx_data)
 {
-	if (data->params.focus)
-		return (0);
-	int	delta_x = 0;
-	int	delta_y = 0;
-	if (data->mouse.warped)
-	{
-		data->mouse.last_x = data->mlx->half_size.x;
-		data->mouse.last_y = data->mlx->half_size.y;
-		data->mouse.warped = false;
-		return (0);
-	}
+	const t_vec2i	delta_pos = vec2i_sub(mlx_data->mouse_input.pos,
+										mlx_data->mouse_input.last_pos);
+	if (mlx_data->mouse_input.focus)
+		handle_camera_rotation(data, delta_pos.x, delta_pos.y);
+}
 
-	if ((x >= data->screen.x - 1) || (y >= data->screen.y - 1)
-		|| (x <= data->mlx->origin.x) || (y <= data->mlx->origin.y))
-	{
-		if (x >= data->screen.x - 1)
-			delta_x = x - data->screen.x - 1;
-		else if (x <= data->mlx->origin.x)
-			delta_x = x - data->mlx->origin.x;
-		if (y >= data->screen.y - 1)
-			delta_y = y - data->screen.y - 1;
-		else if (y <= data->mlx->origin.y)
-			delta_y = y - data->mlx->origin.y;
-		data->mouse.warped = true;
-		mlx_mouse_move(data->mlx->mlx, data->mlx->win, data->mlx->half_size.x, data->mlx->half_size.y);
-	}
-	else
-	{
-		delta_x = x - data->mouse.last_x;
-		delta_y = y - data->mouse.last_y;
-		data->mouse.last_x = x;
-		data->mouse.last_y = y;
-	}
-	if (first_mouse_move(data, data->mlx->half_size))
-		return (0);
-	handle_camera_rotation(data, delta_x, delta_y);
-		return (0);
+void	setup_mouse_move_events(t_data *data)
+{
+	t_mouse_event	move_event;
+
+	move_event = (t_mouse_event){.action = (void (*)(void *, t_mlx *))cam_move,
+		.arg = data};
+	vector_add(data->mlx->mouse_input.move_events, &move_event, 1);
 }
 
 int	loop_hook(t_data *data)
 {
-	void	*win;
-	void	*mlx;
-
-	win = data->mlx->win;
-	mlx = data->mlx->mlx;
-	(void)mlx;
-	//mlx_mouse_hide(mlx, win);
-	XMoveWindow(data->mlx->mlx->display, data->mlx->win->window, MAX_WIDTH / 2 - (WIDTH / 2), MAX_HEIGHT / 2 - (HEIGHT / 2));
-	mlx_hook(win, MotionNotify, PointerMotionMask, mouse_move, data);
+	data->mlx->mouse_input.focus = true;
+	update_mouse_focus_state(NULL, data->mlx);
+	ft_mlx_center_window(data->mlx);
+	setup_mouse_move_events(data);
 	setup_key_move_events(data);
 	setup_key_param_events(data);
 	start_mlx_loop(data->mlx, loop, data);

@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 22:08:27 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/04 06:12:17 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/09 03:42:02 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	while (i < 8)
 	{
 		projected[i] = project_point(&vertices[i], camera);
+		if (projected[i].x == -1 && projected[i].y == -1)
+			return (0);
 		++i;
 	}
 	draw_vertices(projected, img, color.rgb);

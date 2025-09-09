@@ -6,48 +6,13 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/04 19:46:59 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/09/09 02:39:52 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
-
-# ifndef DEBUG
-#  define DEBUG 0
-# endif//DEBUG
-
-# ifndef MAX_WIDTH
-#  define MAX_WIDTH 500
-# endif//MAX_WIDTH
-
-# ifndef MAX_HEIGHT
-#  define MAX_HEIGHT 500
-# endif//MAX_HEIGHT
-
-# ifndef WIDTH
-#  define WIDTH 500
-# endif//WIDTH
-
-# ifndef HEIGHT
-#  define HEIGHT 500
-# endif//HEIGHT
-
-# ifndef PERF
-#  define PERF 0
-# endif//PERF
-
-# ifndef FULLSCREEN
-#  define FULLSCREEN 0
-# endif//FULLSCREEN
-
-# ifndef WINDOWLESS
-#  define WINDOWLESS 0
-# endif//WINDOWLESS
-
-# ifndef RESIZEABLE
-#  define RESIZEABLE 0
-# endif//RESIZEABLE
+# include "mlx_wrapper.h"
 
 # define BOUNCE_MAX 10
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
@@ -73,13 +38,10 @@ typedef struct s_keys
 
 typedef struct s_mouse
 {
-	int		last_x;
-	int		last_y;
 	float	target_yaw;
 	float	target_pitch;
 	float	current_yaw;
 	float	current_pitch;
-	bool	warped;
 }			t_mouse;
 
 typedef struct s_params
@@ -89,7 +51,6 @@ typedef struct s_params
 
 	int		bvh_color_offset;
 	bool	bvh_debug;
-	bool	focus;
 }			t_params;
 
 typedef struct s_data

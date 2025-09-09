@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:43:56 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 09:22:08 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/09/08 22:51:45 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct s_cylinder
 	t_vec3	pos;
 	t_vec3	rot;
 	float	radius;
+	float	diameter;
 	float	height;
 }			t_cylinder;
 
