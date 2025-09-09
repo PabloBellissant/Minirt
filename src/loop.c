@@ -93,7 +93,7 @@ static void	clear_old_screen(t_img_data *img, t_bound *bound)
 	i = 0;
 	while (i < 25) // clear fps peut mieux faire mdr
 	{
-		ft_fbzero(img->addr + (WIDTH * i), 50 * 4);
+		ft_fbzero(img->addr + (WIDTH * i), 70 * 4);
 		++i;
 	}
 }
@@ -108,14 +108,19 @@ void	compute(t_data *data)
 	scene = &data->scene;
 	cam = &data->scene.camera;
 	fill_camera(cam);
-	clear_old_screen(&data->mlx->img, &scene->bvh_bound);
-	calc_bvh_bound(&data->scene.camera, &scene->bvh_bound, &data->scene.bvh->cuboid);
+	if (scene->plane_count == 0)
+	{
+		clear_old_screen(&data->mlx->img, &scene->bvh_bound);
+		calc_bvh_bound(&data->scene.camera, &scene->bvh_bound, &data->scene.bvh->cuboid);
+	}
+	else
+		scene->bvh_bound = (t_bound) {.right = WIDTH, .down = HEIGHT};
 	pixel.y = scene->bvh_bound.top;
-	cam->y_offset = vec3_scale(cam->pixel_delta_v, pixel.y);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, pixel.y + 1);
 	while (pixel.y < scene->bvh_bound.down)
 	{
 		pixel.x = scene->bvh_bound.left;
-		cam->x_offset = vec3_scale(cam->pixel_delta_u, pixel.x);
+		cam->x_offset = vec3_scale(cam->pixel_delta_u, pixel.x + 1);
 		compute_offsets_y(cam);
 		while (pixel.x < scene->bvh_bound.right)
 		{
