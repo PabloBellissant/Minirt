@@ -74,6 +74,10 @@ static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
 		bound->top = 0;
 	if (bound->left < 0)
 		bound->left = 0;
+	if (bound->down < 0)
+		bound->down = 0;
+	if (bound->right < 0)
+		bound->right = 0;
 	if (bound->right >= WIDTH)
 		bound->right = WIDTH - 1;
 	if (bound->down >= HEIGHT)
