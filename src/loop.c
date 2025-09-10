@@ -52,10 +52,10 @@ static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
 	vertices[6] = vec3(bvh_cuboid->max.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
 	vertices[7] = vec3(bvh_cuboid->min.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
 	i = 0;
-	bound->top = 0;
-	bound->down = HEIGHT - 1;
-	bound->left = 0;
-	bound->right = WIDTH - 1;
+	bound->top = HEIGHT - 1;
+	bound->down = 0;
+	bound->left = HEIGHT - 1;
+	bound->right = 0;
 	while (i < 8)
 	{
 		proj = project_point(&vertices[i], cam);
