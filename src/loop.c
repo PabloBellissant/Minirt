@@ -52,20 +52,27 @@ static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
 	vertices[6] = vec3(bvh_cuboid->max.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
 	vertices[7] = vec3(bvh_cuboid->min.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
 	i = 0;
-	proj = project_point(&vertices[i], cam);
-	bound->top = proj.y;
-	bound->down = proj.y;
-	bound->left = proj.x;
-	bound->right = proj.x;
+	bound->top = 0;
+	bound->down = HEIGHT - 1;
+	bound->left = 0;
+	bound->right = WIDTH - 1;
 	while (i < 8)
 	{
 		proj = project_point(&vertices[i], cam);
+		if (proj.x == -1)
+		{
+			bound->top = 0;
+			bound->down = HEIGHT - 1;
+			bound->left = 0;
+			bound->right = WIDTH - 1;
+			return ;
+		}
 		if (proj.y < bound->top)
-			bound->top = proj.y - 1;
+			bound->top = proj.y;
 		if (proj.y > bound->down)
-			bound->down = proj.y + 1;
-		if (proj.x < bound->left)
-			bound->left = proj.x - 1;
+			bound->down = proj.y;
+		if (proj.x < bound->left + 1)
+			bound->left = proj.x;
 		if (proj.x > bound->right)
 			bound->right = proj.x + 1;
 		++i;
@@ -78,14 +85,14 @@ static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
 		bound->down = 0;
 	if (bound->right < 0)
 		bound->right = 0;
-	if (bound->right >= WIDTH)
-		bound->right = WIDTH - 1;
-	if (bound->down >= HEIGHT)
-		bound->down = HEIGHT - 1;
-	if (bound->left >= WIDTH)
-		bound->left = WIDTH - 1;
-	if (bound->top >= HEIGHT)
-		bound->top = HEIGHT - 1;
+	if (bound->right > WIDTH)
+		bound->right = WIDTH;
+	if (bound->down > HEIGHT)
+		bound->down = HEIGHT;
+	if (bound->left > WIDTH)
+		bound->left = WIDTH;
+	if (bound->top > HEIGHT)
+		bound->top = HEIGHT;
 }
 
 static void	clear_old_screen(t_img_data *img, t_bound *bound)
@@ -93,9 +100,9 @@ static void	clear_old_screen(t_img_data *img, t_bound *bound)
 	int	i;
 
 	i = bound->top;
-	while (i < bound->down)
+	while (i < bound->down + 1)
 	{
-		ft_fbzero(img->addr + (WIDTH * i + bound->left), (bound->right - bound->left) * 4);
+		ft_fbzero(img->addr + (WIDTH * i + bound->left), (bound->right - bound->left + 1) * 4);
 		++i;
 	}
 	i = 0;
@@ -128,7 +135,7 @@ void	compute(t_data *data)
 	while (pixel.y < scene->bvh_bound.down)
 	{
 		pixel.x = scene->bvh_bound.left;
-		cam->x_offset = vec3_scale(cam->pixel_delta_u, pixel.x + 1);
+		cam->x_offset =		vec3_scale(cam->pixel_delta_u, pixel.x + 1);
 		compute_offsets_y(cam);
 		while (pixel.x < scene->bvh_bound.right)
 		{
