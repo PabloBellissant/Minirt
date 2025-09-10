@@ -78,12 +78,14 @@ typedef struct s_scene
 }				t_scene;
 
 typedef struct s_data t_data;
+typedef struct s_params t_params;
 
 int		rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_camera *camera, t_rgb_int color);
 int		rasterize_sphere(t_sphere *s, t_img_data *img,
 	t_camera *camera, t_rgb_int color);
-void	rasterize_bvh(t_bvh *bvh, int depth, int total_depth, t_data *data);
+void	rasterize_bvh(t_bvh *bvh, t_params *p, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
+void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
 
 #endif
