@@ -46,9 +46,8 @@ typedef struct s_mouse
 
 typedef struct s_params
 {
-	bool	full_render;
+	int		bvh_mode;
 	int		bvh_depth;
-
 	int		bvh_color_offset;
 	bool	bvh_debug;
 }			t_params;
