@@ -33,14 +33,7 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 {
 	t_vec3	vertices[8];
 
-	vertices[0] = cuboid->min;
-	vertices[1] = vec3(cuboid->max.x, cuboid->min.y, cuboid->min.z);
-	vertices[2] = vec3(cuboid->max.x, cuboid->max.y, cuboid->min.z);
-	vertices[3] = vec3(cuboid->min.x, cuboid->max.y, cuboid->min.z);
-	vertices[4] = vec3(cuboid->min.x, cuboid->min.y, cuboid->max.z);
-	vertices[5] = vec3(cuboid->max.x, cuboid->min.y, cuboid->max.z);
-	vertices[6] = vec3(cuboid->max.x, cuboid->max.y, cuboid->max.z);
-	vertices[7] = vec3(cuboid->min.x, cuboid->max.y, cuboid->max.z);
+	get_cuboid_vertice(vertices, cuboid);
 	draw_vertices(img, vertices, color.rgb, camera);
 	return (0);
 }

@@ -43,14 +43,7 @@ static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
 	int		i;
 
 	ft_bzero(bound, sizeof(t_bound));
-	vertices[0] = bvh_cuboid->min;
-	vertices[1] = vec3(bvh_cuboid->max.x, bvh_cuboid->min.y, bvh_cuboid->min.z);
-	vertices[2] = vec3(bvh_cuboid->max.x, bvh_cuboid->max.y, bvh_cuboid->min.z);
-	vertices[3] = vec3(bvh_cuboid->min.x, bvh_cuboid->max.y, bvh_cuboid->min.z);
-	vertices[4] = vec3(bvh_cuboid->min.x, bvh_cuboid->min.y, bvh_cuboid->max.z);
-	vertices[5] = vec3(bvh_cuboid->max.x, bvh_cuboid->min.y, bvh_cuboid->max.z);
-	vertices[6] = vec3(bvh_cuboid->max.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
-	vertices[7] = vec3(bvh_cuboid->min.x, bvh_cuboid->max.y, bvh_cuboid->max.z);
+	get_cuboid_vertice(vertices, bvh_cuboid);
 	i = 0;
 	bound->top = HEIGHT - 1;
 	bound->down = 0;
@@ -149,7 +142,7 @@ void	compute(t_data *data)
 		++pixel.y;
 	}
 	if (data->params.bvh_debug && data->scene.bvh)
-		rasterize_bvh(scene->bvh, data->params.bvh_depth, scene->bvh->depth, data);
+		rasterize_bvh(scene->bvh, &data->params, scene->bvh->depth, data);
 	// t_sphere	sphere;
 	// sphere.rgb = (t_rgb) {{1, 1, 1}};
 	// sphere.pos = (t_vec3) {{0, 0, 0}};
