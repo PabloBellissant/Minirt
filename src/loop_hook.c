@@ -16,22 +16,22 @@
 
 static inline bool	is_left_key(int keycode)
 {
-	return ((keycode == XK_a) || (keycode == XK_Left));
+	return ((keycode == XK_a));
 }
 
 static inline bool	is_right_key(int keycode)
 {
-	return ((keycode == XK_d) || (keycode == XK_Right));
+	return ((keycode == XK_d));
 }
 
 static inline bool	is_forward_key(int keycode)
 {
-	return ((keycode == XK_w) || (keycode == XK_Up));
+	return ((keycode == XK_w));
 }
 
 static inline bool	is_backward_key(int keycode)
 {
-	return ((keycode == XK_s) || (keycode == XK_Down));
+	return ((keycode == XK_s));
 }
 
 static inline bool	is_k_key(int keycode)
@@ -44,9 +44,24 @@ static inline bool	is_v_key(int keycode)
 	return (keycode == XK_v);
 }
 
-static inline bool	is_b_key(int keycode)
+static inline bool	is_up_arrow(int keycode)
 {
-	return (keycode == XK_b);
+	return (keycode == XK_Up);
+}
+
+static inline bool	is_down_arrow(int keycode)
+{
+	return (keycode == XK_Down);
+}
+
+static inline bool	is_right_arrow(int keycode)
+{
+	return (keycode == XK_Right);
+}
+
+static inline bool	is_left_arrow(int keycode)
+{
+	return (keycode == XK_Left);
 }
 
 static inline bool	is_c_key(int keycode)
@@ -63,24 +78,59 @@ void	setup_key_move_events(t_data *data)
 	add_status_key_hook(data->mlx, is_space_key, false, &(data->keys.upward));
 }
 
-void	bvh_depth_changer(t_data *data, t_mlx *mlx)
+void	bvh_depth_increase(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
-	if (data->params.full_render == true)
-		data->params.full_render = false;
-	else if (data->params.bvh_depth < 1)
-	{
-		data->params.full_render = true;
+	if (!data->params.bvh_debug)
+		return ;
+	if (data->params.bvh_depth < 0)
 		data->params.bvh_depth = data->scene.bvh->depth;
-	}
 	else
 		--data->params.bvh_depth;
-	printf("render: %d depth: %d\n", data->params.full_render, data->params.bvh_depth);
+	printf("depth: %d\n", data->params.bvh_depth);
+}
+
+void	bvh_depth_decrease(t_data *data, t_mlx *mlx)
+{
+	(void) mlx;
+	if (!data->params.bvh_debug)
+		return ;
+	if (data->params.bvh_depth == data->scene.bvh->depth)
+		data->params.bvh_depth = -1;
+	else
+		++data->params.bvh_depth;
+	printf("depth: %d\n", data->params.bvh_depth);
+}
+
+void	bvh_next_mode(t_data *data, t_mlx *mlx)
+{
+	(void) mlx;
+	if (!data->params.bvh_debug)
+		return ;
+	if (data->params.bvh_mode == 2)
+		data->params.bvh_mode = 0;
+	else
+		++data->params.bvh_mode;
+	printf("mode: %d\n", data->params.bvh_mode);
+}
+
+void	bvh_prev_mode(t_data *data, t_mlx *mlx)
+{
+	(void) mlx;
+	if (!data->params.bvh_debug)
+		return ;
+	if (data->params.bvh_mode == 0)
+		data->params.bvh_mode = 2;
+	else
+		--data->params.bvh_mode;
+	printf("mode: %d\n", data->params.bvh_mode);
 }
 
 void	bvh_color_changer(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
+	if (!data->params.bvh_debug)
+		return ;
 	if (data->params.bvh_color_offset <= 1)// pas plutot < 1 ?
 		data->params.bvh_color_offset = data->scene.bvh->depth;
 	else
@@ -96,10 +146,12 @@ void	toggle_mouse_focus(void *v, t_mlx *mlx_data)
 
 void	setup_key_param_events(t_data *data)
 {
-	data->params.full_render = true;
 	add_func_key_hook(data->mlx, is_k_key, toggle_mouse_focus, NULL);
 	add_status_key_hook(data->mlx, is_v_key, true, &(data->params.bvh_debug));
-	add_func_key_hook(data->mlx, is_b_key, (void (*)(void *, t_mlx *))bvh_depth_changer, data);
+	add_func_key_hook(data->mlx, is_up_arrow, (void (*)(void *, t_mlx *))bvh_depth_increase, data);
+	add_func_key_hook(data->mlx, is_down_arrow, (void (*)(void *, t_mlx *))bvh_depth_decrease, data);
+	add_func_key_hook(data->mlx, is_right_arrow, (void (*)(void *, t_mlx *))bvh_next_mode, data);
+	add_func_key_hook(data->mlx, is_left_arrow, (void (*)(void *, t_mlx *))bvh_prev_mode, data);
 	add_func_key_hook(data->mlx, is_c_key, (void (*)(void *, t_mlx *))bvh_color_changer, data);
 }
 
