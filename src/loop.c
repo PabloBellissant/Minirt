@@ -128,7 +128,7 @@ void	compute(t_data *data)
 	while (pixel.y < scene->bvh_bound.down)
 	{
 		pixel.x = scene->bvh_bound.left;
-		cam->x_offset =		vec3_scale(cam->pixel_delta_u, pixel.x + 1);
+		cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x + 1);
 		compute_offsets_y(cam);
 		while (pixel.x < scene->bvh_bound.right)
 		{
