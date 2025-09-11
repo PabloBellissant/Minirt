@@ -37,8 +37,7 @@ static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 {
 	float	val;
 	t_vec3	point;
-	t_vec2i	proj;
-	t_vec2i	prev_proj;
+	t_vec3	prev_point;
 	int		i;
 
 	i = 0;
@@ -52,10 +51,9 @@ static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 			point.y = s->pos.y + s->diameter / 2.0f * cosf(val);
 			point.z = s->pos.z + s->diameter / 2.0f * sinf(val)
 				* sinf(i * 2.0f * M_PI / V_COUNT);
-			proj = project_point(&point, camera);
 			if (val != 0.0f)
-				ft_mlx_line_put(img, prev_proj, proj, color.rgb);
-			prev_proj = proj;
+				draw_only_visible(img, &point, &prev_point, color.rgb, camera);
+			prev_point = point;
 			val += STEP;
 		}
 		++i;
@@ -67,8 +65,7 @@ static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 {
 	float	val;
 	t_vec3	point;
-	t_vec2i	proj;
-	t_vec2i	prev_proj;
+	t_vec3	prev_point;
 	int		i;
 
 	i = 0;
@@ -82,10 +79,9 @@ static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 			point.y = s->pos.y + s->diameter / 2.0f * cosf(i * M_PI / H_COUNT);
 			point.z = s->pos.z + s->diameter / 2.0f * sinf(i * M_PI
 					/ H_COUNT) * sinf(val);
-			proj = project_point(&point, camera);
 			if (val != 0.0f)
-				ft_mlx_line_put(img, prev_proj, proj, color.rgb);
-			prev_proj = proj;
+				draw_only_visible(img, &prev_point, &point, color.rgb, camera);
+			prev_point = point;
 			val += STEP;
 		}
 		++i;

@@ -17,17 +17,6 @@
 
 static void	draw_vertices(t_img_data *img, t_vec3 vertices[8], int color, t_camera *camera);
 
-void	visible_draw(t_img_data *img, t_vec3 *v1, t_vec3 *v2, int color, t_camera *camera)
-{
-	t_vec2i	proj1;
-	t_vec2i	proj2;
-
-	proj1 = project_point(v1, camera);
-	proj2 = project_point(v2, camera);
-	if (proj1.x != -1 && proj2.x != -1)
-		ft_mlx_line_put(img, proj1, proj2, color);
-}
-
 int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_camera *camera, t_rgb_int color)
 {
@@ -40,16 +29,16 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 
 static void	draw_vertices(t_img_data *img, t_vec3 vertices[8], int color, t_camera *camera)
 {
-	visible_draw(img, &vertices[0], &vertices[1], color, camera);
-	visible_draw(img, &vertices[1], &vertices[2], color, camera);
-	visible_draw(img, &vertices[2], &vertices[3], color, camera);
-	visible_draw(img, &vertices[3], &vertices[0], color, camera);
-	visible_draw(img, &vertices[4], &vertices[5], color, camera);
-	visible_draw(img, &vertices[5], &vertices[6], color, camera);
-	visible_draw(img, &vertices[6], &vertices[7], color, camera);
-	visible_draw(img, &vertices[7], &vertices[4], color, camera);
-	visible_draw(img, &vertices[0], &vertices[4], color, camera);
-	visible_draw(img, &vertices[1], &vertices[5], color, camera);
-	visible_draw(img, &vertices[2], &vertices[6], color, camera);
-	visible_draw(img, &vertices[3], &vertices[7], color, camera);
+	draw_only_visible(img, &vertices[0], &vertices[1], color, camera);
+	draw_only_visible(img, &vertices[1], &vertices[2], color, camera);
+	draw_only_visible(img, &vertices[2], &vertices[3], color, camera);
+	draw_only_visible(img, &vertices[3], &vertices[0], color, camera);
+	draw_only_visible(img, &vertices[4], &vertices[5], color, camera);
+	draw_only_visible(img, &vertices[5], &vertices[6], color, camera);
+	draw_only_visible(img, &vertices[6], &vertices[7], color, camera);
+	draw_only_visible(img, &vertices[7], &vertices[4], color, camera);
+	draw_only_visible(img, &vertices[0], &vertices[4], color, camera);
+	draw_only_visible(img, &vertices[1], &vertices[5], color, camera);
+	draw_only_visible(img, &vertices[2], &vertices[6], color, camera);
+	draw_only_visible(img, &vertices[3], &vertices[7], color, camera);
 }
