@@ -87,5 +87,6 @@ int		rasterize_sphere(t_sphere *s, t_img_data *img,
 void	rasterize_bvh(t_bvh *bvh, t_params *p, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
+void	draw_only_visible(t_img_data *img, t_vec3 *v1, t_vec3 *v2, int color, t_camera *camera);
 
 #endif
