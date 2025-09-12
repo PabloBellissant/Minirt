@@ -19,7 +19,7 @@ void	merge_nearest_bvh(t_vector *bvh_vec, int *parents)
 	size_t	i[2];
 	float	min_area;
 	float	actual_area;
-	t_bvh	*bvh;
+	t_aabb_bvh	*bvh;
 
 	bvh = bvh_vec->data;
 	min_area = FLT_MAX;
