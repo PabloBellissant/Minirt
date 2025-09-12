@@ -106,6 +106,8 @@ static void	clear_old_screen(t_img_data *img, t_bound *bound)
 	}
 }
 
+void	rasterize_sphere_bvh(t_sphere_bvh *bvh, t_params *p, int total_depth, t_data *data);
+
 void	compute(t_data *data)
 {
 	t_camera	*cam;
@@ -116,10 +118,10 @@ void	compute(t_data *data)
 	scene = &data->scene;
 	cam = &data->scene.camera;
 	fill_camera(cam);
-	if (scene->plane_count == 0)
+	if (0 && scene->plane_count == 0)
 	{
 		clear_old_screen(&data->mlx->img, &scene->bvh_bound);
-		calc_bvh_bound(&data->scene.camera, &scene->bvh_bound, &data->scene.bvh->cuboid);
+		calc_bvh_bound(&data->scene.camera, &scene->bvh_bound, /*&data->scene.bvh->cuboid*/NULL);
 	}
 	else
 		scene->bvh_bound = (t_bound) {.right = WIDTH, .down = HEIGHT};
@@ -141,8 +143,10 @@ void	compute(t_data *data)
 		}
 		++pixel.y;
 	}
-	if (data->params.bvh_debug && data->scene.bvh)
-		rasterize_bvh(scene->bvh, &data->params, scene->bvh->depth, data);
+	// if (data->params.bvh_debug && data->scene.bvh)
+	// 	rasterize_bvh(scene->bvh, &data->params, scene->bvh->depth, data);
+	if (data->params.bvh_debug && data->scene.bvh.aabb_bvh)
+		rasterize_sphere_bvh(scene->bvh.sphere_bvh, &data->params, scene->bvh.sphere_bvh->depth, data);
 	// t_sphere	sphere;
 	// sphere.rgb = (t_rgb) {{1, 1, 1}};
 	// sphere.pos = (t_vec3) {{0, 0, 0}};
