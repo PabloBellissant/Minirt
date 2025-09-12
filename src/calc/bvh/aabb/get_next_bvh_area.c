@@ -13,7 +13,7 @@
 #include "bvh.h"
 #include <math.h>
 
-float	get_next_bvh_area(t_bvh *a, t_bvh *b)
+float	get_next_bvh_area(t_aabb_bvh *a, t_aabb_bvh *b)
 {
 	float	area;
 	float	size;
