@@ -63,6 +63,15 @@ typedef struct s_camera
 	t_vec3	y_offset;
 }			t_camera;
 
+typedef struct s_bvh_main
+{
+	union
+	{
+		t_aabb_bvh		*aabb_bvh;
+		t_sphere_bvh	*sphere_bvh;
+	};
+}	t_bvh_main;
+
 typedef struct s_scene
 {
 	t_ambient	ambient;
@@ -73,7 +82,7 @@ typedef struct s_scene
 	t_phong		phong;
 	t_object	*planes;
 	int			plane_count;
-	t_bvh		*bvh;
+	t_bvh_main	bvh;
 	t_bound		bvh_bound;
 }				t_scene;
 
@@ -84,7 +93,7 @@ int		rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_camera *camera, t_rgb_int color);
 int		rasterize_sphere(t_sphere *s, t_img_data *img,
 	t_camera *camera, t_rgb_int color);
-void	rasterize_bvh(t_bvh *bvh, t_params *p, int total_depth, t_data *data);
+void	rasterize_bvh(t_aabb_bvh *bvh, t_params *p, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
 void	draw_only_visible(t_img_data *img, t_vec3 *v1, t_vec3 *v2, int color, t_camera *camera);
