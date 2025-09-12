@@ -84,7 +84,7 @@ void	bvh_depth_increase(t_data *data, t_mlx *mlx)
 	if (!data->params.bvh_debug)
 		return ;
 	if (data->params.bvh_depth < 0)
-		data->params.bvh_depth = data->scene.bvh->depth;
+		data->params.bvh_depth = data->scene.bvh.aabb_bvh->depth;
 	else
 		--data->params.bvh_depth;
 	printf("depth: %d\n", data->params.bvh_depth);
@@ -95,7 +95,7 @@ void	bvh_depth_decrease(t_data *data, t_mlx *mlx)
 	(void) mlx;
 	if (!data->params.bvh_debug)
 		return ;
-	if (data->params.bvh_depth == data->scene.bvh->depth)
+	if (data->params.bvh_depth == data->scene.bvh.aabb_bvh->depth)
 		data->params.bvh_depth = -1;
 	else
 		++data->params.bvh_depth;
@@ -132,7 +132,7 @@ void	bvh_color_changer(t_data *data, t_mlx *mlx)
 	if (!data->params.bvh_debug)
 		return ;
 	if (data->params.bvh_color_offset <= 1)// pas plutot < 1 ?
-		data->params.bvh_color_offset = data->scene.bvh->depth;
+		data->params.bvh_color_offset = data->scene.bvh.aabb_bvh->depth;
 	else
 		--data->params.bvh_color_offset;
 	printf("color offset: %d\n", data->params.bvh_color_offset);
