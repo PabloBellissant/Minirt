@@ -49,12 +49,14 @@ static inline void	hit_register_obj(t_ray *restrict ray,
 	ray->pos = hit_point;
 }
 
+t_object	*hit_sphere_bvh(t_ray *ray, t_sphere_bvh *bvh);
+
 float	hit_register(t_ray *restrict ray, t_scene *scene)
 {
 	t_object	*object;
 	t_object	*bvh_ret;
 
-	bvh_ret = hit_bvh(ray, scene->bvh);
+	bvh_ret = hit_sphere_bvh(ray, scene->bvh.sphere_bvh);
 	if (bvh_ret)
 		object = hit_reg_plane(ray, scene, bvh_ret->t);
 	else
