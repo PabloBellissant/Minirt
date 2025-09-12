@@ -17,7 +17,8 @@ AABB_DIR		= $(BVH_DIR)/aabb
 AABB_SRCS	= create_bvh.c \
 			  get_next_bvh_area.c \
 			  merge_bvh.c \
-			  merge_nearest_bvh.c
+			  merge_nearest_bvh.c \
+			  hit_bvh.c
 
 SRCS		+= $(addprefix $(AABB_DIR)/, $(AABB_SRCS))
 

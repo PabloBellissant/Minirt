@@ -14,12 +14,15 @@
 BVH_DIR		= $(CALC_DIR)/bvh
 
 # Source files
-BVH_SRCS	= hit_bvh.c \
-			  hit_box_bvh.c
+BVH_SRCS	= hit_box_bvh.c \
+			  get_bvh_count.c \
+			  get_root.c \
+			  is_bvh_full.c
 
 SRCS		+= $(addprefix $(BVH_DIR)/, $(BVH_SRCS))
 
-BVH_MKS	= aabb/aabb.mk
+BVH_MKS	= aabb/aabb.mk \
+		  sphere/sphere.mk
 
 include $(addprefix $(BVH_DIR)/, $(BVH_MKS))
 
