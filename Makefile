@@ -14,6 +14,7 @@ ROOTDIR		= .
 include $(ROOTDIR)/mkidir/make_utils.mk
 
 # Variables
+NPROC		= $(shell nproc)
 WINDOWLESS	= 0
 FULLSCREEN	= 0
 RESIZEABLE	= 0
@@ -66,7 +67,8 @@ VARS		= DEBUG=$(DEBUG) \
 			  PERF=$(PERF) \
 			  FULLSCREEN=$(FULLSCREEN) \
 			  RESIZEABLE=$(RESIZEABLE) \
-			  WINDOWLESS=$(WINDOWLESS)
+			  WINDOWLESS=$(WINDOWLESS) \
+			  NPROC=$(NPROC)
 VFLAGS		= $(addprefix -D ,$(VARS))
 
 CFLAGS		+= $(DEBUG_FLAGS) $(FFLAGS) $(VFLAGS)
@@ -78,6 +80,8 @@ include $(SRCDIR)/srcs.mk
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))
+INCLUDES	= bvh.h calc.h minirt.h object.h parsing.h render.h
+INCLUDES	:= $(addprefix $(INCDIR)/, $(INCLUDES))
 
 # VPATH
 vpath %.h $(INCDIR) $(LIBFTDIR)/$(INCDIR) $(MLXWDIR)/$(INCDIR) $(MLXDIR)
@@ -88,7 +92,7 @@ all:	$(NAME)
 fast:	$(NAME)
 debug:	$(NAME)
 
-$(NAME): $(FONT_RENDER) $(OBJS)
+$(NAME): $(FONT_RENDER) $(OBJS) $(INCLUDES)
 	$(call bin-link-msg)
 	@$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
 	$(call bin-finish-msg)
@@ -107,7 +111,7 @@ $(MLX):
 	@$(MAKE) -s -C $(MLXDIR) CC="$(MLX_GCC) $(if $(filter 1,$(FAST)),$(OFLAGS))" $(MUTE)
 	$(call mlx-finish-msg)
 
-$(OBJDIR)/%.o: %.c | buildmsg $(OBJDIR) $(DEPDIR)
+$(OBJDIR)/%.o: %.c $(INCLUDES) | buildmsg $(OBJDIR) $(DEPDIR)
 	$(call bin-compile-obj-msg)
 	@$(CF) $(DFLAGS) -c $< -o $@
 
