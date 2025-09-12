@@ -15,9 +15,9 @@
 
 void	merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 {
-	t_bvh	bvh;
-	t_bvh	*a;
-	t_bvh	*b;
+	t_aabb_bvh	bvh;
+	t_aabb_bvh	*a;
+	t_aabb_bvh	*b;
 	t_vec3	size;
 
 	a = get_vector_value(bvh_vec, a_index);
@@ -34,6 +34,5 @@ void	merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 	bvh.max.x = bvh.min.x + size.x;
 	bvh.max.y = bvh.min.y + size.y;
 	bvh.max.z = bvh.min.z + size.z;
-	bvh.rotation = (t_vec3){{0, 0, 0}};
 	vector_add(bvh_vec, &bvh, 1);
 }
