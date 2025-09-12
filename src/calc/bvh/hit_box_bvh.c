@@ -21,7 +21,7 @@ static inline void bvh_check(float t1, float t2, float *t_min, float *t_max)
 	*t_max = fminf(fmaxf(t1, t2), *t_max);
 }
 
-bool	hit_box(t_ray *ray, t_bvh *bvh)
+bool	hit_box(t_ray *ray, t_aabb_bvh *bvh)
 {
 	float	t_max;
 	float	t_min;
