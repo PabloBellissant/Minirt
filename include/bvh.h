@@ -82,7 +82,7 @@ float			get_bvh_area(t_cuboid *cuboid);
 float			get_next_bvh_area(t_aabb_bvh *a, t_aabb_bvh *b);
 void			merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index);
 void			merge_nearest_bvh(t_vector *bvh_vec, int *parents);
-t_object		*hit_bvh(t_ray *ray, t_aabb_bvh *bvh);
+t_object		*hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh);
 size_t			get_bvh_count(t_vector *objects);
 t_aabb_bvh		*get_aabb_root(t_vector *bvh_vec, int *parents);
 bool			is_bvh_full(t_vector *bvh_vec, int *parents);
@@ -91,6 +91,7 @@ void			merge_nearest_sphere_bvh(t_vector *bvh_vec, int *parents);
 float			get_next_sphere_bvh_area(t_sphere_bvh *a, t_sphere_bvh *b);
 void			merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index);
 t_sphere_bvh	*get_sphere_root(t_vector *bvh_vec, int *parents);
+int				load_bvh(int mode, t_scene *scene);
 
 #endif
 
