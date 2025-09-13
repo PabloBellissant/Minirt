@@ -30,7 +30,7 @@ int	parse_scene(char *file_name, t_scene *scene)
 		return (-1);
 	}
 	close(fd);
-	if (create_sphere_bvh(scene) == -1)
+	if (load_bvh(0, scene) == -1)
 		return (-1);
 	if (fill_by_type(scene) == -1)
 		return (-1); //free
