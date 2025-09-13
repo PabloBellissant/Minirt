@@ -36,56 +36,110 @@ static inline void	compute_offsets_y(t_camera *cam)
 	cam->pixel_center = vec3_add(cam->pixel_center, cam->y_offset);
 }
 
-static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_cuboid *bvh_cuboid)
+static int	imax(int a, int b)
+{
+	if (a > b)
+		return (a);
+	return (b);
+}
+
+static int	imin(int a, int b)
+{
+	if (a < b)
+		return (a);
+	return (b);
+}
+
+static void	get_sphere_vertice(t_vec3 vertices[1008], t_sphere_bvh *bvh)
+{
+	float	val;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	while (i < 16)
+	{
+		val = 0.0f;
+		while (val <= 2.0f * M_PI)
+		{
+			vertices[j].x = bvh->pos.x + bvh->size * sinf(i * M_PI
+					/ 16) * cosf(val);
+			vertices[j].y = bvh->pos.y + bvh->size * cosf(i * M_PI / 16);
+			vertices[j].z = bvh->pos.z + bvh->size * sinf(i * M_PI
+					/ 16) * sinf(val);
+			++j;
+			val += 0.1;
+		}
+		++i;
+	}
+}
+
+static int	apply_bound(t_vec2i *proj, t_bound *bound)
+{
+	if (proj->x == -1)
+	{
+		bound->top = 0;
+		bound->down = HEIGHT - 1;
+		bound->left = 0;
+		bound->right = WIDTH - 1;
+		return (-1);
+	}
+	if (proj->y < bound->top)
+		bound->top = imax(proj->y, 0);
+	if (proj->y > bound->down)
+		bound->down = imin(proj->y, HEIGHT - 1);
+	if (proj->x < bound->left)
+		bound->left = imax(proj->x, 0);
+	if (proj->x > bound->right)
+		bound->right = imin(proj->x, WIDTH - 1);
+	return (0);
+}
+
+static void calc_sphere_bound(t_camera *cam, t_bound *bound, t_sphere_bvh *bvh)
+{
+	t_vec3	vertices[1008];
+	t_vec2i	proj;
+	int		i;
+
+	get_sphere_vertice(vertices, bvh);
+	i = 0;
+	while (i < 1008)
+	{
+		proj = project_point(&vertices[i], cam);
+		if (apply_bound(&proj, bound) == -1)
+			return ;
+		++i;
+	}
+}
+
+static void calc_aabb_bound(t_camera *cam, t_bound *bound, t_aabb_bvh *bvh)
 {
 	t_vec3	vertices[8];
 	t_vec2i	proj;
 	int		i;
 
-	ft_bzero(bound, sizeof(t_bound));
-	get_cuboid_vertice(vertices, bvh_cuboid);
+	get_cuboid_vertice(vertices, &bvh->cuboid);
 	i = 0;
-	bound->top = HEIGHT - 1;
-	bound->down = 0;
-	bound->left = HEIGHT - 1;
-	bound->right = 0;
 	while (i < 8)
 	{
 		proj = project_point(&vertices[i], cam);
-		if (proj.x == -1)
-		{
-			bound->top = 0;
-			bound->down = HEIGHT - 1;
-			bound->left = 0;
-			bound->right = WIDTH - 1;
+		if (apply_bound(&proj, bound) == -1)
 			return ;
-		}
-		if (proj.y < bound->top)
-			bound->top = proj.y;
-		if (proj.y > bound->down)
-			bound->down = proj.y;
-		if (proj.x < bound->left + 1)
-			bound->left = proj.x;
-		if (proj.x > bound->right)
-			bound->right = proj.x + 1;
 		++i;
 	}
-	if (bound->top < 0)
-		bound->top = 0;
-	if (bound->left < 0)
-		bound->left = 0;
-	if (bound->down < 0)
-		bound->down = 0;
-	if (bound->right < 0)
-		bound->right = 0;
-	if (bound->right > WIDTH)
-		bound->right = WIDTH;
-	if (bound->down > HEIGHT)
-		bound->down = HEIGHT;
-	if (bound->left > WIDTH)
-		bound->left = WIDTH;
-	if (bound->top > HEIGHT)
-		bound->top = HEIGHT;
+}
+
+static void	calc_bvh_bound(t_camera *cam, t_bound *bound, t_bvh_main *bvh, int mode)
+{
+	bvh->bound.top = HEIGHT;
+	bvh->bound.down = 0;
+	bvh->bound.left = WIDTH;
+	bvh->bound.right = 0;
+	if (mode == 0)
+		calc_sphere_bound(cam, bound, bvh->sphere_bvh);
+	if (mode == 1)
+		calc_aabb_bound(cam, bound, bvh->aabb_bvh);
 }
 
 static void	clear_old_screen(t_img_data *img, t_bound *bound)
@@ -106,7 +160,22 @@ static void	clear_old_screen(t_img_data *img, t_bound *bound)
 	}
 }
 
-void	rasterize_sphere_bvh(t_sphere_bvh *bvh, t_params *p, int total_depth, t_data *data);
+static void	draw_bound(t_bound *bound, t_img_data *img)
+{
+	t_vec2i	c1;
+	t_vec2i	c2;
+	t_vec2i	c3;
+	t_vec2i	c4;
+
+	c1 = vec2i(bound->left, bound->top);
+	c2 = vec2i(bound->right, bound->top);
+	c3 = vec2i(bound->left, bound->down);
+	c4 = vec2i(bound->right, bound->down);
+	ft_mlx_line_put(img, c1, c2, 0xFFFFFF);
+	ft_mlx_line_put(img, c1, c3, 0xFFFFFF);
+	ft_mlx_line_put(img, c2, c4, 0xFFFFFF);
+	ft_mlx_line_put(img, c3, c4, 0xFFFFFF);
+}
 
 void	compute(t_data *data)
 {
@@ -118,21 +187,21 @@ void	compute(t_data *data)
 	scene = &data->scene;
 	cam = &data->scene.camera;
 	fill_camera(cam);
-	if (0 && scene->plane_count == 0)
+	if (scene->plane_count == 0)
 	{
-		clear_old_screen(&data->mlx->img, &scene->bvh_bound);
-		calc_bvh_bound(&data->scene.camera, &scene->bvh_bound, /*&data->scene.bvh->cuboid*/NULL);
+		clear_old_screen(&data->mlx->img, &scene->bvh.bound);
+		calc_bvh_bound(&data->scene.camera, &scene->bvh.bound, &data->scene.bvh, scene->bvh.bvh_mode);
 	}
 	else
-		scene->bvh_bound = (t_bound) {.right = WIDTH, .down = HEIGHT};
-	pixel.y = scene->bvh_bound.top;
+		scene->bvh.bound = (t_bound) {.right = WIDTH, .down = HEIGHT};
+	pixel.y = scene->bvh.bound.top;
 	cam->y_offset = vec3_scale(cam->pixel_delta_v, pixel.y + 1);
-	while (pixel.y < scene->bvh_bound.down)
+	while (pixel.y < scene->bvh.bound.down)
 	{
-		pixel.x = scene->bvh_bound.left;
+		pixel.x = scene->bvh.bound.left;
 		cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x + 1);
 		compute_offsets_y(cam);
-		while (pixel.x < scene->bvh_bound.right)
+		while (pixel.x < scene->bvh.bound.right)
 		{
 			compute_offsets_x(cam);
 			ray.pos = cam->pos;
@@ -143,16 +212,10 @@ void	compute(t_data *data)
 		}
 		++pixel.y;
 	}
-	// if (data->params.bvh_debug && data->scene.bvh)
-	// 	rasterize_bvh(scene->bvh, &data->params, scene->bvh->depth, data);
-	if (data->params.bvh_debug && data->scene.bvh.aabb_bvh)
-		rasterize_sphere_bvh(scene->bvh.sphere_bvh, &data->params, scene->bvh.sphere_bvh->depth, data);
-	// t_sphere	sphere;
-	// sphere.rgb = (t_rgb) {{1, 1, 1}};
-	// sphere.pos = (t_vec3) {{0, 0, 0}};
-	// sphere.diameter = 25;
-	// sphere.radius_squared = 126.25f;
-	// rasterize_sphere(&sphere, &data->mlx->img, &scene->camera, (t_rgb_int) {.rgb = 0x00FFFF});
+	if (data->params.bvh_debug && data->scene.bvh.bvh)
+		rasterize_bvh(scene->bvh.bvh, &data->params, scene->bvh.sphere_bvh->depth, data);
+	if (data->params.bound_debug)
+		draw_bound(&scene->bvh.bound, &data->mlx->img);
 }
 
 void	update_fps(t_data *data);
