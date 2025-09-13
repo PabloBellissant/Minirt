@@ -16,7 +16,7 @@
 
 bool	hit_box(t_ray *ray, t_aabb_bvh *bvh);
 
-inline t_object	*hit_bvh(t_ray *ray, t_aabb_bvh *bvh)
+inline t_object	*hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh)
 {
 	t_object	*object_a;
 	t_object	*object_b;
@@ -29,10 +29,10 @@ inline t_object	*hit_bvh(t_ray *ray, t_aabb_bvh *bvh)
 	}
 	if (!hit_box(ray, bvh))
 		return (NULL);
-	object_a = hit_bvh(ray, bvh->next_a);
+	object_a = hit_aabb_bvh(ray, bvh->next_a);
 	if (!object_a)
-		return (hit_bvh(ray, bvh->next_b));
-	object_b = hit_bvh(ray, bvh->next_b);
+		return (hit_aabb_bvh(ray, bvh->next_b));
+	object_b = hit_aabb_bvh(ray, bvh->next_b);
 	if (object_b != NULL)
 	{
 		if (object_a->t < object_b->t)
