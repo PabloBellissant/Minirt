@@ -21,6 +21,8 @@ static inline void	hit_register_obj(t_ray *restrict ray,
 	t_object *restrict objects)
 {
 	t_vec3	hit_point;
+	t_vec3	axis;
+	t_vec3	to_hit;
 
 	hit_point = vec3_scale(ray->dir, objects->t);
 	hit_point = vec3_add(ray->pos, hit_point);
@@ -37,8 +39,7 @@ static inline void	hit_register_obj(t_ray *restrict ray,
 	}
 	else if (objects->type == CYLINDER)
 	{
-		t_vec3	axis = objects->cylinder.rot;
-		t_vec3	to_hit;
+		axis = objects->cylinder.rot;
 		to_hit = vec3_sub(hit_point, objects->cylinder.pos);
 		axis = vec3_scale(axis, vec3_dot(to_hit, axis));
 		axis = vec3_add(objects->cylinder.pos, axis);
@@ -56,7 +57,12 @@ float	hit_register(t_ray *restrict ray, t_scene *scene)
 	t_object	*object;
 	t_object	*bvh_ret;
 
-	bvh_ret = hit_sphere_bvh(ray, scene->bvh.sphere_bvh);
+	if (scene->bvh.bvh_mode == 0)
+		bvh_ret = hit_sphere_bvh(ray, scene->bvh.sphere_bvh);
+	else if (scene->bvh.bvh_mode == 1)
+		bvh_ret = hit_aabb_bvh(ray, scene->bvh.aabb_bvh);
+	else
+		bvh_ret = hit_aabb_bvh(ray, scene->bvh.aabb_bvh); // will be obb.
 	if (bvh_ret)
 		object = hit_reg_plane(ray, scene, bvh_ret->t);
 	else
