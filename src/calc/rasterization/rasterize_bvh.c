@@ -14,6 +14,9 @@
 #include "minirt.h"
 #include "colors_types.h"
 
+void	rasterize_sphere_bvh(t_sphere_bvh *bvh, t_params *p, int total_depth, t_data *data);
+void	rasterize_aabb_bvh(t_aabb_bvh *bvh, t_params *p, int total_depth, t_data *data);
+
 static inline t_rgb_int	rgb_to_rgb_int(float r, float g, float b)
 {
 	return ((t_rgb_int) {{r * 255.0f, g * 255.0f, b * 255.0f}});
@@ -50,7 +53,7 @@ static inline t_rgb_int depth_to_rgb_int(int depth, int total_depth)
 	return (float_to_rainbow(fmodf(t, 1.0f)));
 }
 
-void	full_render(t_aabb_bvh *bvh, int target_depth, int total_depth, t_data *data)
+void	full_render_aabb(t_aabb_bvh *bvh, int target_depth, int total_depth, t_data *data)
 {
 	t_rgb_int	rgb;
 
@@ -58,12 +61,36 @@ void	full_render(t_aabb_bvh *bvh, int target_depth, int total_depth, t_data *dat
 	rasterize_cuboid(&bvh->cuboid, &data->mlx->img, &data->scene.camera, rgb);
 	if (bvh->depth > 0)
 	{
-		full_render(bvh->next_a, target_depth - 1, total_depth, data);
-		full_render(bvh->next_b, target_depth - 1, total_depth, data);
+		full_render_aabb(bvh->next_a, target_depth - 1, total_depth, data);
+		full_render_aabb(bvh->next_b, target_depth - 1, total_depth, data);
 	}
 }
 
-void	rasterize_bvh(t_aabb_bvh *bvh, t_params *p, int total_depth, t_data *data)
+void	full_render_sphere(t_sphere_bvh *bvh, int target_depth, int total_depth, t_data *data)
+{
+	t_rgb_int	rgb;
+	t_sphere	sphere;
+
+	sphere.diameter = bvh->size * 2;
+	sphere.pos = bvh->pos;
+	rgb = depth_to_rgb_int(target_depth + data->params.bvh_color_offset, total_depth);
+	rasterize_sphere(&sphere, &data->mlx->img, &data->scene.camera, rgb);
+	if (bvh->depth > 0)
+	{
+		full_render_sphere(bvh->next_a, target_depth - 1, total_depth, data);
+		full_render_sphere(bvh->next_b, target_depth - 1, total_depth, data);
+	}
+}
+
+void	rasterize_bvh(void *bvh, t_params *p, int total_depth, t_data *data)
+{
+	if (data->scene.bvh.bvh_mode == 0)
+		rasterize_sphere_bvh(bvh, p, total_depth, data);
+	else if (data->scene.bvh.bvh_mode == 1)
+		rasterize_aabb_bvh(bvh, p, total_depth, data);
+}
+
+void	rasterize_aabb_bvh(t_aabb_bvh *bvh, t_params *p, int total_depth, t_data *data)
 {
 	t_rgb_int	rgb;
 	t_rgb_int	color;
@@ -74,13 +101,13 @@ void	rasterize_bvh(t_aabb_bvh *bvh, t_params *p, int total_depth, t_data *data)
 	color.b = rgb.b;
 	if (p->bvh_depth == -1)
 	{
-		full_render(bvh, total_depth, total_depth, data);
+		full_render_aabb(bvh, total_depth, total_depth, data);
 		return ;
 	}
 	if (bvh->depth > p->bvh_depth)
 	{
-		rasterize_bvh(bvh->next_a, p, total_depth, data);
-		rasterize_bvh(bvh->next_b, p, total_depth, data);
+		rasterize_aabb_bvh(bvh->next_a, p, total_depth, data);
+		rasterize_aabb_bvh(bvh->next_b, p, total_depth, data);
 	}
 	else
 		rasterize_cuboid(&bvh->cuboid, &data->mlx->img, &data->scene.camera, color);
@@ -95,11 +122,11 @@ void	rasterize_sphere_bvh(t_sphere_bvh *bvh, t_params *p, int total_depth, t_dat
 	color.r = rgb.r;
 	color.g = rgb.g;
 	color.b = rgb.b;
-	// if (p->bvh_depth == -1)
-	// {
-	// 	//full_render(bvh, total_depth, total_depth, data);
-	// 	return ;
-	// }
+	if (p->bvh_depth == -1)
+	{
+		full_render_sphere(bvh, total_depth, total_depth, data);
+		return ;
+	}
 	if (bvh->depth > p->bvh_depth && p->bvh_depth >= 0)
 	{
 		rasterize_sphere_bvh(bvh->next_a, p, total_depth, data);
