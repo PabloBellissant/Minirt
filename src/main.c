@@ -66,11 +66,11 @@ int	main(int argc, char **argv)
 		printf("SEED: '%zu'\n", seed);
 	srand(seed);
 	ft_bzero(&data, sizeof(t_data));
-	data.params.bvh_depth = -1;
 	if (init_graphics(&data) == -1)
 		return (2);
 	if (parse_scene(argv[1], &data.scene) != 0)
 		return (3); //free mlx;
+	data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
 	loop_hook(&data);
 	free_data(data);
 	return (0);
