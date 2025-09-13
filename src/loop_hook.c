@@ -69,6 +69,11 @@ static inline bool	is_c_key(int keycode)
 	return (keycode == XK_c);
 }
 
+static inline bool	is_b_key(int keycode)
+{
+	return (keycode == XK_b);
+}
+
 void	setup_key_move_events(t_data *data)
 {
 	add_status_key_hook(data->mlx, is_left_key, false, &(data->keys.left));
@@ -105,25 +110,26 @@ void	bvh_depth_decrease(t_data *data, t_mlx *mlx)
 void	bvh_next_mode(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
-	if (!data->params.bvh_debug)
+	if (!data->params.bvh_debug && !data->params.bound_debug)
 		return ;
-	if (data->params.bvh_mode == 2)
-		data->params.bvh_mode = 0;
+	if (data->scene.bvh.bvh_mode == 1)
+		data->scene.bvh.bvh_mode = 0;
 	else
-		++data->params.bvh_mode;
-	printf("mode: %d\n", data->params.bvh_mode);
+		++data->scene.bvh.bvh_mode;
+	load_bvh(data->scene.bvh.bvh_mode, &data->scene); // need security for malloc
+	printf("mode: %d\n", data->scene.bvh.bvh_mode);
 }
 
 void	bvh_prev_mode(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
-	if (!data->params.bvh_debug)
+	if (!data->params.bvh_debug && !data->params.bound_debug)
 		return ;
-	if (data->params.bvh_mode == 0)
-		data->params.bvh_mode = 2;
+	if (data->scene.bvh.bvh_mode == 0)
+		data->scene.bvh.bvh_mode = 1;
 	else
-		--data->params.bvh_mode;
-	printf("mode: %d\n", data->params.bvh_mode);
+		--data->scene.bvh.bvh_mode;
+	load_bvh(data->scene.bvh.bvh_mode, &data->scene); // need security for malloc
 }
 
 void	bvh_color_changer(t_data *data, t_mlx *mlx)
@@ -148,6 +154,7 @@ void	setup_key_param_events(t_data *data)
 {
 	add_func_key_hook(data->mlx, is_k_key, toggle_mouse_focus, NULL);
 	add_status_key_hook(data->mlx, is_v_key, true, &(data->params.bvh_debug));
+	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.bound_debug));
 	add_func_key_hook(data->mlx, is_up_arrow, (void (*)(void *, t_mlx *))bvh_depth_increase, data);
 	add_func_key_hook(data->mlx, is_down_arrow, (void (*)(void *, t_mlx *))bvh_depth_decrease, data);
 	add_func_key_hook(data->mlx, is_right_arrow, (void (*)(void *, t_mlx *))bvh_next_mode, data);
