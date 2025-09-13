@@ -14,6 +14,10 @@
 # define MINIRT_H
 # include "mlx_wrapper.h"
 
+
+#ifndef NPROC
+	# define NPROC 1
+#endif
 # define BOUNCE_MAX 10
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
@@ -46,10 +50,10 @@ typedef struct s_mouse
 
 typedef struct s_params
 {
-	int		bvh_mode;
 	int		bvh_depth;
 	int		bvh_color_offset;
 	bool	bvh_debug;
+	bool	bound_debug;
 }			t_params;
 
 typedef struct s_data
