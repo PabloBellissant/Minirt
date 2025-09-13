@@ -44,6 +44,7 @@ int	create_sphere_bvh(t_scene *scene)
 	while (is_bvh_full(&bvh_vec, parents) == false)
 		merge_nearest_sphere_bvh(&bvh_vec, parents);
 	scene->bvh.sphere_bvh = get_sphere_root(&bvh_vec, parents);
+	scene->bvh.bvh_pointer = bvh_vec.data;
 	free(parents);
 	return (0);
 }
