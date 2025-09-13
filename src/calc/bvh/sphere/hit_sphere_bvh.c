@@ -14,7 +14,7 @@
 #include "bvh.h"
 #include "render.h"
 
-inline int	_hit_sphere(t_ray *restrict ray, t_vec3 *pos, float radius_squared)
+static inline int	_hit_sphere(t_ray *restrict ray, t_vec3 *pos, float radius_squared)
 {
 	t_vec3	oc;
 	float	b;
