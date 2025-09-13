@@ -56,13 +56,10 @@ void	free_data(t_data data)
 int	main(int argc, char **argv)
 {
 	t_data	data;
-	time_t	seed;
 
 	(void)argv;
 	if (argc < 2)
 		return (1);
-	seed = time(NULL);
-	srand(seed);
 	ft_bzero(&data, sizeof(t_data));
 	if (init_graphics(&data) == -1)
 		return (2);
