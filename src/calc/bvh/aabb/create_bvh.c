@@ -46,6 +46,7 @@ int	create_aabb_bvh(t_scene *scene)
 	while (is_bvh_full(&bvh_vec, parents) == false)
 		merge_nearest_bvh(&bvh_vec, parents);
 	scene->bvh.aabb_bvh = get_aabb_root(&bvh_vec, parents);
+	scene->bvh.bvh_pointer = bvh_vec.data;
 	free(parents);
 	return (0);
 }
