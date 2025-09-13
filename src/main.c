@@ -62,8 +62,6 @@ int	main(int argc, char **argv)
 	if (argc < 2)
 		return (1);
 	seed = time(NULL);
-	if (DEBUG)
-		printf("SEED: '%zu'\n", seed);
 	srand(seed);
 	ft_bzero(&data, sizeof(t_data));
 	if (init_graphics(&data) == -1)
