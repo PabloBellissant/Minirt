@@ -22,8 +22,8 @@ ifeq ($(FULLSCREEN), 1)
 WIDTH		= 1920
 HEIGHT		= 1080
 else
-WIDTH		= 500
-HEIGHT		= 500
+WIDTH		= 1920
+HEIGHT		= 1080
 endif
 PERF		= 0
 
