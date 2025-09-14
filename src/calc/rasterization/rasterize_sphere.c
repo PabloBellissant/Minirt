@@ -46,10 +46,10 @@ static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 		val = 0.0f;
 		while (val <= 2.0f * M_PI + STEP)
 		{
-			point.x = s->pos.x + s->diameter / 2.1f * sinf(val)
+			point.x = s->pos.x + s->diameter / 2.0f * sinf(val)
 				* cosf(i * 2.0f * M_PI / V_COUNT);
-			point.y = s->pos.y + s->diameter / 2.1f * cosf(val);
-			point.z = s->pos.z + s->diameter / 2.1f * sinf(val)
+			point.y = s->pos.y + s->diameter / 2.0f * cosf(val);
+			point.z = s->pos.z + s->diameter / 2.0f * sinf(val)
 				* sinf(i * 2.0f * M_PI / V_COUNT);
 			if (val != 0.0f)
 				draw_only_visible(img, &point, &prev_point, color.rgb, camera);
@@ -74,10 +74,10 @@ static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 		val = 0.0f;
 		while (val <= 2.0f * M_PI + STEP)
 		{
-			point.x = s->pos.x + s->diameter / 2.01f * sinf(i * M_PI
+			point.x = s->pos.x + s->diameter / 2.0f * sinf(i * M_PI
 					/ H_COUNT) * cosf(val);
-			point.y = s->pos.y + s->diameter / 2.01f * cosf(i * M_PI / H_COUNT);
-			point.z = s->pos.z + s->diameter / 2.01f * sinf(i * M_PI
+			point.y = s->pos.y + s->diameter / 2.0f * cosf(i * M_PI / H_COUNT);
+			point.z = s->pos.z + s->diameter / 2.0f * sinf(i * M_PI
 					/ H_COUNT) * sinf(val);
 			if (val != 0.0f)
 				draw_only_visible(img, &prev_point, &point, color.rgb, camera);
