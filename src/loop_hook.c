@@ -117,7 +117,7 @@ void	bvh_next_mode(t_data *data, t_mlx *mlx)
 	else
 		++data->scene.bvh.bvh_mode;
 	load_bvh(data->scene.bvh.bvh_mode, &data->scene); // need security for malloc
-	printf("mode: %d\n", data->scene.bvh.bvh_mode);
+	data->params.bvh_depth = data->scene.bvh.aabb_bvh->depth;
 }
 
 void	bvh_prev_mode(t_data *data, t_mlx *mlx)
@@ -130,6 +130,7 @@ void	bvh_prev_mode(t_data *data, t_mlx *mlx)
 	else
 		--data->scene.bvh.bvh_mode;
 	load_bvh(data->scene.bvh.bvh_mode, &data->scene); // need security for malloc
+	data->params.bvh_depth = data->scene.bvh.aabb_bvh->depth;
 }
 
 void	bvh_color_changer(t_data *data, t_mlx *mlx)
