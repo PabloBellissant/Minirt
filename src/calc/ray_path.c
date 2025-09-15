@@ -20,8 +20,8 @@ static void	fill_phong(t_ray *ray, t_scene *scene);
 #include <float.h>
 #define OFFSET 0.001f
 
-inline static void	light_hit_register_data(t_ray *restrict ray,
-		t_light *restrict light, float t_min)
+inline static void	light_hit_register_data(t_ray *ray,
+		t_light *light, float t_min)
 {
 	t_vec3	hit_dir;
 	t_vec3	hit_point;
