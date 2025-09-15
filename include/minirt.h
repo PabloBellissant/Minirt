@@ -15,9 +15,7 @@
 # include "mlx_wrapper.h"
 
 
-#ifndef NPROC
-	# define NPROC 1
-#endif
+
 # define BOUNCE_MAX 10
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
@@ -56,6 +54,16 @@ typedef struct s_params
 	bool	bound_debug;
 }			t_params;
 
+typedef struct	s_too_task
+{
+	t_data		*data;
+	t_ray		ray;
+	t_camera	cam;
+	int			y;
+}	t_to_task;
+
+#include "threading.h"
+
 typedef struct s_data
 {
 	int			*addr;
@@ -66,6 +74,9 @@ typedef struct s_data
 	t_vec2i		screen;
 	t_scene		scene;
 	t_rast_env	*font_env;
+	t_queue		*queue;
+	t_to_task	to_task[HEIGHT];
+	t_task		task[HEIGHT];
 }				t_data;
 
 
