@@ -177,6 +177,30 @@ static void	draw_bound(t_bound *bound, t_img_data *img)
 	ft_mlx_line_put(img, c3, c4, 0xFFFFFF);
 }
 
+#include "threading.h"
+
+int	threadify(t_to_task *data)
+{
+	t_vec2i	pixel;
+	t_ray	ray = data->ray;
+	t_scene	*scene;
+
+	scene = &data->data->scene;
+	pixel.x = scene->bvh.bound.left;
+	pixel.y = data->y;
+	data->cam.x_offset = vec3_scale(data->cam.pixel_delta_u, pixel.x + 1);
+	while (pixel.x < scene->bvh.bound.right)
+	{
+		compute_offsets_x(&data->cam);
+		ray.pos = data->cam.pos;
+		ray.dir = vec3_normalize(vec3_sub(data->cam.pixel_center, data->cam.pos));
+		ft_mlx_pixel_put(&data->data->mlx->img, pixel,
+			ray_path(&ray, scene).rgb);
+		++pixel.x;
+	}
+	return (0);
+}
+
 void	compute(t_data *data)
 {
 	t_camera	*cam;
@@ -217,10 +241,58 @@ void	compute(t_data *data)
 	if (data->params.bound_debug)
 		draw_bound(&scene->bvh.bound, &data->mlx->img);
 }
+//
+// #include <pthread.h>
+// void	compute(t_data *data)
+// {
+// 	t_scene		*scene;
+// 	int			y;
+//
+// 	scene = &data->scene;
+// 	fill_camera(&data->scene.camera);
+// 	if (scene->plane_count == 0)
+// 	{
+// 		clear_old_screen(&data->mlx->img, &scene->bvh.bound);
+// 		calc_bvh_bound(&data->scene.camera, &scene->bvh.bound, &data->scene.bvh, scene->bvh.bvh_mode);
+// 	}
+// 	else
+// 		scene->bvh.bound = (t_bound) {.right = WIDTH, .down = HEIGHT};
+// 	y = scene->bvh.bound.top;
+// 	data->scene.camera.y_offset = vec3_scale(data->scene.camera.pixel_delta_v, y + 1);
+// 	while (y < scene->bvh.bound.down)
+// 	{
+// 		compute_offsets_y(&data->scene.camera);
+// 		data->to_task[y].y = y;
+// 		data->to_task[y].cam = data->scene.camera;
+// 		data->to_task[y].data = data;
+// 		data->task[y].f = (int (*)(void *))&threadify;
+// 		data->task[y].data = &(data->to_task[y]);
+// 		enqueue(&(data->task[y]), data->queue);
+// 		++y;
+// 	}
+// 	while (1)
+// 	{
+// 		pthread_mutex_lock(&data->queue->mutex_queue);
+// 		if (data->queue->len == 0)
+// 		{
+// 			pthread_mutex_unlock(&data->queue->mutex_queue);
+// 			break;
+// 		}
+// 		pthread_mutex_unlock(&data->queue->mutex_queue);
+// 	}
+// 	if (data->params.bvh_debug && data->scene.bvh.bvh)
+// 		rasterize_bvh(scene->bvh.bvh, &data->params, scene->bvh.sphere_bvh->depth, data);
+// 	if (data->params.bound_debug)
+// 		draw_bound(&scene->bvh.bound, &data->mlx->img);
+// }
 
 void	update_fps(t_data *data);
 void	draw_text(t_text *text);
 
+// 84 fps no multi threading
+// maximum theorique : 1680 fps PTDR
+// ntm vrai objectif : 800fps
+// et on as :
 int	loop(t_data *data)
 {
 	update_fps(data);
