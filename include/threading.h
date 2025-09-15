@@ -15,8 +15,9 @@
 
 # define TASK_MAX 2500
 
+#ifndef NPROC
 	# define NPROC 1
-
+#endif
 
 typedef struct	s_task
 {
