@@ -52,7 +52,7 @@ static inline void	hit_register_obj(t_ray *restrict ray,
 
 t_object	*hit_sphere_bvh(t_ray *ray, t_sphere_bvh *bvh);
 
-float	hit_register(t_ray *restrict ray, t_scene *scene)
+float	hit_register(t_ray *ray, t_scene *scene)
 {
 	t_object	*object;
 	t_object	*bvh_ret;
