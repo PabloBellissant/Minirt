@@ -12,7 +12,7 @@
 
 #include "parsing.h"
 #include "minirt.h"
-#include "time.h"
+#include "threading.h"
 #include "font_renderer.h"
 
 void	free_ttf(t_ttf_font *font);
@@ -56,17 +56,22 @@ void	free_data(t_data data)
 int	main(int argc, char **argv)
 {
 	t_data	data;
+	t_queue	queue;
 
 	(void)argv;
 	if (argc < 2)
 		return (1);
 	ft_bzero(&data, sizeof(t_data));
+	ft_bzero(&queue, sizeof(t_queue));
+	data.queue = &queue;
 	if (init_graphics(&data) == -1)
 		return (2);
 	if (parse_scene(argv[1], &data.scene) != 0)
 		return (3); //free mlx;
+	init_threads(data.queue);
 	data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
 	loop_hook(&data);
 	free_data(data);
+	kill_threads(data.queue, NPROC);
 	return (0);
 }
