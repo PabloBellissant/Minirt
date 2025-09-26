@@ -46,12 +46,22 @@ typedef struct s_mouse
 	float	current_pitch;
 }			t_mouse;
 
+typedef struct s_supersampling
+{
+	int	force;
+	int	half_up;
+	int	half_down;
+}	t_supersampling;
+
 typedef struct s_params
 {
 	int		bvh_depth;
 	int		bvh_color_offset;
 	bool	bvh_debug;
 	bool	bound_debug;
+	bool	supersampling_debug;
+	int		supersampling_x;
+	int		supersampling_y;
 }			t_params;
 
 typedef struct	s_too_task
