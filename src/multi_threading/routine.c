@@ -16,7 +16,7 @@
 
 void	*routine(void *args)
 {
-	t_queue *queue;
+	t_queue	*queue;
 	t_task	task;
 
 	queue = (t_queue *)args;
