@@ -53,7 +53,7 @@ int	create_aabb_bvh(t_scene *scene)
 
 static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
 {
-	t_aabb_bvh		single_bvh;
+	t_aabb_bvh	single_bvh;
 	t_object	*object;
 	size_t		i;
 
@@ -85,7 +85,7 @@ static void	set_bvh_size(t_object *object, t_vec3 *min, t_vec3 *max)
 		max->z = min->z + object->sphere.diameter;
 	}
 	if (object->type == CYLINDER)
-	{
+	{ // temp
 		min->x = object->cylinder.pos.x - fmaxf(object->cylinder.radius, object->cylinder.height);
 		min->y = object->cylinder.pos.y - fmaxf(object->cylinder.radius, object->cylinder.height);
 		min->z = object->cylinder.pos.z - fmaxf(object->cylinder.radius, object->cylinder.height);
