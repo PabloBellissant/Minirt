@@ -33,5 +33,6 @@ int	plane(char *line, int line_num, t_scene *scene)
 			&norm->x, &norm->y, &norm->z, &color.r, &color.g, &color.b))
 		return (-1);
 	plane->rgb = rgb_itof(color);
+	object->f = hit_plane;
 	return (0);
 }
