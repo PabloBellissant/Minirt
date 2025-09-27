@@ -15,6 +15,8 @@
 #include "bvh.h"
 #include <fcntl.h>
 
+#include "render.h"
+
 int	parse_scene(char *file_name, t_scene *scene)
 {
 	int	fd;
@@ -30,7 +32,8 @@ int	parse_scene(char *file_name, t_scene *scene)
 		return (-1);
 	}
 	close(fd);
-	if (load_bvh(0, scene) == -1)
+	scene->bvh.bvh_mode = 1;
+	if (load_bvh(scene->bvh.bvh_mode, scene) == -1)
 		return (-1);
 	if (fill_by_type(scene) == -1)
 		return (-1); //free
