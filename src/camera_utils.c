@@ -17,10 +17,10 @@
 // Apply rotations to the base orientation
 static void	apply_rotations(t_camera *cam)
 {
-	cam->cos_pitch = cos(cam->rot.x);
-	cam->sin_pitch = sin(cam->rot.x);
-	cam->cos_yaw = cos(cam->rot.y);
-	cam->sin_yaw = sin(cam->rot.y);
+	cam->cos_pitch = cosf(cam->rot.x);
+	cam->sin_pitch = sinf(cam->rot.x);
+	cam->cos_yaw = cosf(cam->rot.y);
+	cam->sin_yaw = sinf(cam->rot.y);
 }
 
 // Apply yaw and pitch to your base forward vector
