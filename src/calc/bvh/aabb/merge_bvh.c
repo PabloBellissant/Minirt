@@ -18,7 +18,7 @@ void	merge_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 	t_aabb_bvh	bvh;
 	t_aabb_bvh	*a;
 	t_aabb_bvh	*b;
-	t_vec3	size;
+	t_vec3		size;
 
 	a = get_vector_value(bvh_vec, a_index);
 	b = get_vector_value(bvh_vec, b_index);
