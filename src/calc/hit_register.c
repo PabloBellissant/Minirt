@@ -17,8 +17,7 @@
 
 #define OFFSET 0.001f
 
-static inline void	hit_register_obj(t_ray *restrict ray,
-	t_object *restrict objects)
+void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects)
 {
 	t_vec3	hit_point;
 	t_vec3	axis;
@@ -52,9 +51,8 @@ static inline void	hit_register_obj(t_ray *restrict ray,
 
 t_object	*hit_sphere_bvh(t_ray *ray, t_sphere_bvh *bvh);
 
-float	hit_register(t_ray *ray, t_scene *scene)
+float	hit_register(t_ray *ray, t_scene *scene, t_object **hit_object)
 {
-	t_object	*object;
 	t_object	*bvh_ret;
 
 	if (scene->bvh.bvh_mode == 0)
@@ -64,16 +62,16 @@ float	hit_register(t_ray *ray, t_scene *scene)
 	else
 		bvh_ret = hit_aabb_bvh(ray, scene->bvh.aabb_bvh); // will be obb.
 	if (bvh_ret)
-		object = hit_reg_plane(ray, scene, bvh_ret->t);
+		(*hit_object) = hit_reg_plane(ray, scene, bvh_ret->t);
 	else
-		object = hit_reg_plane(ray, scene, FLT_MAX);
+		(*hit_object) = hit_reg_plane(ray, scene, FLT_MAX);
 	if (bvh_ret != NULL)
 	{
-		if (!object || bvh_ret->t < object->t)
-			object = bvh_ret;
+		if (!(*hit_object) || bvh_ret->t < (*hit_object)->t)
+			(*hit_object) = bvh_ret;
 	}
-	else if (!object || object->t == FLT_MAX)
+	else if (!(*hit_object) || (*hit_object)->t == FLT_MAX)
 		return (0);
-	hit_register_obj(ray, object);
-	return (object->t);
+	hit_register_obj(ray, (*hit_object));
+	return ((*hit_object)->t);
 }
