@@ -102,5 +102,6 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
 void	draw_only_visible(t_img_data *img, t_vec3 *v1, t_vec3 *v2, int color, t_camera *camera);
 void	draw_bound(t_bound *bound, t_img_data *img);
+void	draw_supersampling(t_bound *bound, t_vec2i force, t_img_data *img);
 
 #endif
