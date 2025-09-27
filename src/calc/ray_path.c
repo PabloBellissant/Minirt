@@ -90,7 +90,7 @@ t_rgb_int	render_light_hollow_circle(t_ray *ray)
 	return (rgb_int(0, 0, 0));
 }
 
-t_rgb_int	ray_path(t_ray *ray, t_scene *scene)
+t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object)
 {
 	float		hit_distance;
 	float		hit_distance_light;
@@ -98,7 +98,7 @@ t_rgb_int	ray_path(t_ray *ray, t_scene *scene)
 	t_ray		og;
 
 	og = *ray;
-	hit_distance = hit_register(ray, scene);
+	hit_distance = hit_register(ray, scene, hit_object);
 	hit_distance_light = light_hit_register(&og, scene);
 	if ((hit_distance_light > 0) && ((hit_distance == 0)
 			|| (hit_distance_light < hit_distance)))
@@ -106,6 +106,31 @@ t_rgb_int	ray_path(t_ray *ray, t_scene *scene)
 	if ((final_color.r <= 200) && (final_color.g <= 100))
 	{
 		if (hit_distance == 0)
+			return (rgb_int(0, 0, 0));
+		fill_phong(ray, scene);
+		final_color = rgb_ftoi(phong_path(scene, ray));
+	}
+	return (final_color);
+}
+
+void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects);
+
+t_rgb_int	fake_path(t_ray *ray, t_scene *scene, t_object *hit_object)
+{
+	float		hit_distance_light;
+	t_rgb_int	final_color = rgb_int(0, 0, 0);
+	t_ray		og;
+
+	og = *ray;
+	hit_object->f(ray, hit_object, &hit_object->t);
+	hit_register_obj(ray, hit_object);
+	hit_distance_light = light_hit_register(&og, scene);
+	if ((hit_distance_light > 0) && ((hit_object->t == 0)
+			|| (hit_distance_light < hit_object->t)))
+		final_color = render_light_hollow_circle(&og);
+	if ((final_color.r <= 200) && (final_color.g <= 100))
+	{
+		if (hit_object->t == 0)
 			return (rgb_int(0, 0, 0));
 		fill_phong(ray, scene);
 		final_color = rgb_ftoi(phong_path(scene, ray));
