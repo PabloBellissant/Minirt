@@ -110,7 +110,7 @@ void	bvh_depth_decrease(t_data *data, t_mlx *mlx)
 void	bvh_next_mode(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
-	if (!data->params.bvh_debug && !data->params.bound_debug)
+	if (!data->params.bvh_debug)
 		return ;
 	if (data->scene.bvh.bvh_mode == 1)
 		data->scene.bvh.bvh_mode = 0;
@@ -123,7 +123,7 @@ void	bvh_next_mode(t_data *data, t_mlx *mlx)
 void	bvh_prev_mode(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
-	if (!data->params.bvh_debug && !data->params.bound_debug)
+	if (!data->params.bvh_debug)
 		return ;
 	if (data->scene.bvh.bvh_mode == 0)
 		data->scene.bvh.bvh_mode = 1;
@@ -156,6 +156,7 @@ void	setup_key_param_events(t_data *data)
 	add_func_key_hook(data->mlx, is_k_key, toggle_mouse_focus, NULL);
 	add_status_key_hook(data->mlx, is_v_key, true, &(data->params.bvh_debug));
 	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.bound_debug));
+	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.supersampling_debug));
 	add_func_key_hook(data->mlx, is_up_arrow, (void (*)(void *, t_mlx *))bvh_depth_increase, data);
 	add_func_key_hook(data->mlx, is_down_arrow, (void (*)(void *, t_mlx *))bvh_depth_decrease, data);
 	add_func_key_hook(data->mlx, is_right_arrow, (void (*)(void *, t_mlx *))bvh_next_mode, data);
