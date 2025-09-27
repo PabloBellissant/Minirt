@@ -23,7 +23,8 @@ SRCS		+= $(addprefix $(CALC_DIR)/, $(CALC_SRCS))
 CALC_MKS	= bvh/bvh.mk \
 			  objects/objects.mk \
 			  rasterization/rasterization.mk \
-			  bound/bound.mk
+			  bound/bound.mk \
+			  sampling/sampling.mk
 
 include $(addprefix $(CALC_DIR)/, $(CALC_MKS))
 
