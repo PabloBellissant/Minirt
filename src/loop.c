@@ -38,10 +38,6 @@ static inline void  rewind_offsets_x(t_camera *cam, int force)
 	cam->x_offset = vec3_sub(cam->x_offset, vec3_scale(cam->pixel_delta_u, force));
 }
 
-static inline void  rewind_offsets_y(t_camera *cam, int force)
-{
-	cam->y_offset = vec3_sub(cam->y_offset, vec3_scale(cam->pixel_delta_v, force));
-}
 
 static inline void	compute_offsets_x(t_camera *cam, int force)
 {
@@ -125,141 +121,145 @@ t_rgb_int	mix_color(t_rgb_int color[4])
 	return result;
 }
 
-// void	sub_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
-// {
-// 	t_rgb_int	color[4];
-// 	t_ray		ray;
-// 	t_vec2i		temp;
-// 	t_object	*hit;
-// 	t_vec3		temp_vec[2];
-//
-// 	cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x);
-// 	temp.x = 0;
-// 	while (temp.x < data->params.supersampling_x)
-// 	{
-// 		temp.y = 0;
-// 		cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
-// 		while (temp.y < data->params.supersampling_y)
-// 		{
-// 			recalc_camera(cam);
-// 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-// 			ray.pos = cam->pos;
-// 			color[0] = ray_path(&ray, &data->scene, &hit);
-// 			temp_vec[0] = cam->x_offset;
-// 			cam->x_offset = vec3_add(cam->x_offset, vec3_scale(cam->pixel_delta_u, 0.5f));
-// 			recalc_camera(cam);
-// 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-// 			ray.pos = cam->pos;
-// 			color[1] = ray_path(&ray, &data->scene, &hit);
-// 			temp_vec[1] = cam->y_offset;
-// 			cam->y_offset = vec3_add(cam->y_offset, vec3_scale(cam->pixel_delta_v, 0.5f));
-// 			recalc_camera(cam);
-// 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-// 			ray.pos = cam->pos;
-// 			color[2] = ray_path(&ray, &data->scene, &hit);
-// 			cam->x_offset = temp_vec[0];
-// 			recalc_camera(cam);
-// 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-// 			ray.pos = cam->pos;
-// 			color[3] = ray_path(&ray, &data->scene, &hit);
-// 			cam->y_offset = temp_vec[1];
-// 			recalc_camera(cam);
-// 			ft_mlx_pixel_put(img, (t_vec2i) {{pixel.x + temp.x, pixel.y + temp.y}}, mix_color(color).rgb);
-// 			cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
-// 			++temp.y;
-// 		}
-// 		cam->y_offset =	vec3_scale(cam->pixel_delta_v, pixel.y);
-// 		cam->x_offset = vec3_add(cam->x_offset, cam->pixel_delta_u);
-// 		++temp.x;
-// 	}
-// }
+void	sub_draw(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
+{
+	t_rgb_int	color[4];
+	t_ray		ray;
+	t_object	*hit;
+	t_vec3		temp_vec[2];
+	t_camera	*cam;
+	t_vec2i		size;
 
-void	super_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
+	size.x = end.x - start.x;
+	size.y = end.y - start.y;
+	cam = &data->scene.camera;
+	cam->x_offset =	vec3_scale(cam->pixel_delta_u, start.x);
+	cam->x_offset = vec3_sub(cam->x_offset, vec3_scale(cam->pixel_delta_u, 0.25f));
+	cam->y_offset = vec3_sub(cam->y_offset, vec3_scale(cam->pixel_delta_v, 0.25f));
+	while (start.x < end.x)
+	{
+		cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
+		while (start.y < end.y)
+		{
+			recalc_camera(cam);
+			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
+			ray.pos = cam->pos;
+			color[0] = ray_path(&ray, &data->scene, &hit);
+			temp_vec[0] = cam->x_offset;
+			cam->x_offset = vec3_add(cam->x_offset, vec3_scale(cam->pixel_delta_u, 0.5f));
+			recalc_camera(cam);
+			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
+			ray.pos = cam->pos;
+			color[1] = ray_path(&ray, &data->scene, &hit);
+			temp_vec[1] = cam->y_offset;
+			cam->y_offset = vec3_add(cam->y_offset, vec3_scale(cam->pixel_delta_v, 0.5f));
+			recalc_camera(cam);
+			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
+			ray.pos = cam->pos;
+			color[2] = ray_path(&ray, &data->scene, &hit);
+			cam->x_offset = temp_vec[0];
+			recalc_camera(cam);
+			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
+			ray.pos = cam->pos;
+			color[3] = ray_path(&ray, &data->scene, &hit);
+			cam->y_offset = temp_vec[1];
+			recalc_camera(cam);
+			ft_mlx_pixel_put(img, (t_vec2i) {{start.x, start.y}}, mix_color(color).rgb);
+			cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
+			++start.y;
+		}
+		start.y -= size.y;
+		cam->y_offset =	vec3_scale(cam->pixel_delta_v, start.y);
+		cam->x_offset = vec3_add(cam->x_offset, cam->pixel_delta_u);
+		++start.x;
+	}
+}
+# define SUPERSAMPLING_MIN 5
+
+void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 {
 	int			color;
 	t_ray		ray;
 	t_object	*corners[5];
-	t_vec2i		temp;
+	t_camera	*cam;
+	t_vec2i		size;
 
+	size.x = end.x - start.x;
+	size.y = end.y - start.y;
+	cam = &data->scene.camera;
+	cam->x_offset = vec3_scale(cam->pixel_delta_u, start.x);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, start.y);
 	recalc_camera(cam);
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 	ray_path(&ray, &data->scene, &corners[0]);
 
-	compute_offsets_y(cam, data->params.supersampling_y);
+	compute_offsets_y(cam, size.y);
 	recalc_camera_y(cam);
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 	ray_path(&ray, &data->scene, &corners[2]);
 
-	compute_offsets_x(cam, data->params.supersampling_x);
+	compute_offsets_x(cam, size.x);
 	recalc_camera(cam);
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 	ray_path(&ray, &data->scene, &corners[3]);
 
-	cam->y_offset = vec3_scale(cam->pixel_delta_v, pixel.y);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, start.y);
 	recalc_camera_y(cam);
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 	ray_path(&ray, &data->scene, &corners[1]);
 
-	rewind_offsets_x(cam, data->params.supersampling_x / 2);
-	compute_offsets_y(cam, data->params.supersampling_y / 2);
+	rewind_offsets_x(cam, size.x / 2);
+	compute_offsets_y(cam, size.y / 2);
 	recalc_camera(cam);
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 	ray_path(&ray, &data->scene, &corners[4]);
-	rewind_offsets_y(cam, data->params.supersampling_y / 2);
-	compute_offsets_x(cam, data->params.supersampling_x / 2);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, start.y);
 
 	if (!(corners[0] == corners[3] && corners[1] == corners[2] && corners[1] == corners[3] && corners[3] == corners[4]))
 	{
-		//sub_draw(img, pixel, cam, data);
-		cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x);
-		temp.x = 0;
-		while (temp.x < data->params.supersampling_x)
+		cam->x_offset =	vec3_scale(cam->pixel_delta_u, start.x);
+		if (size.x <= SUPERSAMPLING_MIN || size.y <= SUPERSAMPLING_MIN)
 		{
-			temp.y = 0;
-			cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
-			while (temp.y < data->params.supersampling_y)
-			{
-				recalc_camera_y(cam);
-				ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-				ray.pos = cam->pos;
-				color = ray_path(&ray, &data->scene, &corners[3]).rgb;
-				ft_mlx_pixel_put(img, (t_vec2i) {{pixel.x + temp.x, pixel.y + temp.y}}, color);
-				cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
-				++temp.y;
-			}
-			cam->y_offset =	vec3_scale(cam->pixel_delta_v, pixel.y);
-			cam->x_offset = vec3_add(cam->x_offset, cam->pixel_delta_u);
-			++temp.x;
+			sub_draw(img, start, end, data);
+		}
+		else
+		{
+			size.x = end.x - start.x;
+			draw_zone(img, start, (t_vec2i) {{end.x - size.x / 2, end.y - size.y / 2}}, data);
+			draw_zone(img, (t_vec2i) {{start.x + size.x / 2, start.y}}, (t_vec2i) {{end.x, end.y - size.y / 2}}, data);
+			draw_zone(img, (t_vec2i) {{start.x + size.x / 2, start.y + size.y / 2}}, end, data);
+			draw_zone(img, (t_vec2i) {{start.x, start.y + size.y / 2}}, (t_vec2i) {{end.x - size.x / 2, end.y}}, data);
 		}
 	}
 	else if (corners[3] != NULL)
 	{
-		cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x);
-		temp.x = 0;
-		while (temp.x < data->params.supersampling_x)
+		cam->x_offset =	vec3_scale(cam->pixel_delta_u, start.x);
+		while (start.x < end.x)
 		{
-			temp.y = 0;
 			cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
-			while (temp.y < data->params.supersampling_y)
+			while (start.y < end.y)
 			{
 				recalc_camera_y(cam);
 				ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 				ray.pos = cam->pos;
 				color = fake_path(&ray, &data->scene, corners[3]).rgb;
-				ft_mlx_pixel_put(img, (t_vec2i) {{pixel.x + temp.x, pixel.y + temp.y}}, color);
+				ft_mlx_pixel_put(img, (t_vec2i) {{start.x, start.y}}, color);
 				cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
-				++temp.y;
+				++start.y;
 			}
-			cam->y_offset =	vec3_scale(cam->pixel_delta_v, pixel.y);
+			start.y -= size.y;
+			cam->y_offset =	vec3_scale(cam->pixel_delta_v, start.y);
 			cam->x_offset = vec3_add(cam->x_offset, cam->pixel_delta_u);
-			++temp.x;
+			++start.x;
 		}
 	}
+	else
+		cam->x_offset = vec3_scale(cam->pixel_delta_u, size.x);
 }
 
 void	normal_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
@@ -381,10 +381,10 @@ void	compute(t_data *data)
 		data->params.supersampling_x = 1;
 		data->params.supersampling_y = 1;
 	}
-	if (data->params.supersampling_x > 75 || data->params.supersampling_y > 75)
+	if (data->params.supersampling_x > 74 || data->params.supersampling_y > 74)
 	{
-		data->params.supersampling_x = 75;
-		data->params.supersampling_y = 75;
+		data->params.supersampling_x = 74;
+		data->params.supersampling_y = 74;
 	}
 	pixel.y = scene->bvh.bound.top;
 	cam->y_offset = vec3_scale(cam->pixel_delta_v, pixel.y);
@@ -400,7 +400,8 @@ void	compute(t_data *data)
 			cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x);
 			while (pixel.x < scene->bvh.bound.right - data->params.supersampling_x) // to complete
 			{
-				super_draw(&data->mlx->img, pixel, cam, data);
+				//super_draw(&data->mlx->img, pixel, data);
+				draw_zone(&data->mlx->img, pixel, (t_vec2i) {{pixel.x + data->params.supersampling_x, pixel.y + data->params.supersampling_y}}, data);
 				pixel.x += data->params.supersampling_x;
 			}
 			compute_offsets_y(cam, data->params.supersampling_y);
