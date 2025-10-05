@@ -22,6 +22,7 @@ t_object	*hit_reg_plane(t_ray *ray, t_scene *scene, float t_min);
 int			hit_sphere(t_ray *ray, t_object *o, float *t);
 int			hit_cylinder(t_ray *ray, t_object *o, float *t);
 int			hit_plane(t_ray *restrict ray, t_object *restrict o, float *t);
+int			hit_triangle(t_ray *ray, t_object *o, float *t);
 void		calc_bvh_bound(t_camera *cam, t_bound *bound, t_bvh_main *bvh, int mode);
 
 #endif
