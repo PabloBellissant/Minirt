@@ -332,6 +332,48 @@ t_vec2i	get_obj_rasterize_size(t_object *obj, t_camera *cam)
         // Return the bounding box size (diameter in pixels)
         return ((t_vec2i) {{pixel_radius_x - 1, pixel_radius_y - 1}});
 	}
+	else if (obj->type == TRIANGLE)
+	{
+		// Project all three triangle vertices positions into camera space (view space)
+		t_vec3 p0_cam = vec3_sub(obj->triangle.p0.pos, cam->pos);
+		t_vec3 p1_cam = vec3_sub(obj->triangle.p1.pos, cam->pos);
+		t_vec3 p2_cam = vec3_sub(obj->triangle.p2.pos, cam->pos);
+
+		// Calculate dot products with camera axis vectors
+		float p0_z = vec3_dot(p0_cam, cam->camera_forward);
+		float p1_z = vec3_dot(p1_cam, cam->camera_forward);
+		float p2_z = vec3_dot(p2_cam, cam->camera_forward);
+
+		// If all points are behind camera (z > 0 in your system), return screen max
+		if (p0_z > 0 && p1_z > 0 && p2_z > 0)
+			return (t_vec2i){{WIDTH, HEIGHT}};
+
+		// Project points to screen plane (using focal length and reversed z)
+		float p0_x = vec3_dot(p0_cam, cam->camera_right) * cam->focal_length / (-p0_z);
+		float p1_x = vec3_dot(p1_cam, cam->camera_right) * cam->focal_length / (-p1_z);
+		float p2_x = vec3_dot(p2_cam, cam->camera_right) * cam->focal_length / (-p2_z);
+
+		float p0_y = vec3_dot(p0_cam, cam->camera_up) * cam->focal_length / (-p0_z);
+		float p1_y = vec3_dot(p1_cam, cam->camera_up) * cam->focal_length / (-p1_z);
+		float p2_y = vec3_dot(p2_cam, cam->camera_up) * cam->focal_length / (-p2_z);
+
+		// Find bounding rectangle in viewport coordinates
+		float min_x = fminf(fminf(p0_x, p1_x), p2_x);
+		float max_x = fmaxf(fmaxf(p0_x, p1_x), p2_x);
+		float min_y = fminf(fminf(p0_y, p1_y), p2_y);
+		float max_y = fmaxf(fmaxf(p0_y, p1_y), p2_y);
+
+		// Convert viewport size to pixel size
+		int pixel_width = (int)((max_x - min_x) * WIDTH / cam->viewport_width) * 4;
+		int pixel_height = (int)((max_y - min_y) * HEIGHT / cam->viewport_height) * 4;
+
+		// Clamp minimal size to 1 or 0 if behind view
+		if (pixel_width < 1) pixel_width = 1;
+		if (pixel_height < 1) pixel_height = 1;
+
+		return (t_vec2i){{pixel_width, pixel_height}};
+	}
+
 	return ((t_vec2i) {{WIDTH, HEIGHT}});
 }
 
@@ -357,6 +399,13 @@ void	set_shortest_object(t_vector *objects, t_camera *cam, int *x, int *y)
 		}
 		++i;
 	}
+}
+
+static int	imin(int a, int b)
+{
+	if (a < b)
+		return (a);
+	return (b);
 }
 
 void	compute(t_data *data)
@@ -394,14 +443,14 @@ void	compute(t_data *data)
 	}
 	else
 	{
-		while (pixel.y < scene->bvh.bound.down - data->params.supersampling_x) // to complete
+		while (pixel.y < scene->bvh.bound.down)
 		{
 			pixel.x = scene->bvh.bound.left;
 			cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x);
-			while (pixel.x < scene->bvh.bound.right - data->params.supersampling_x) // to complete
+			while (pixel.x < scene->bvh.bound.right)
 			{
-				//super_draw(&data->mlx->img, pixel, data);
-				draw_zone(&data->mlx->img, pixel, (t_vec2i) {{pixel.x + data->params.supersampling_x, pixel.y + data->params.supersampling_y}}, data);
+				draw_zone(&data->mlx->img, pixel,
+					(t_vec2i) {{imin(pixel.x + data->params.supersampling_x, scene->bvh.bound.right), imin(pixel.y + data->params.supersampling_y, scene->bvh.bound.down)}}, data);
 				pixel.x += data->params.supersampling_x;
 			}
 			compute_offsets_y(cam, data->params.supersampling_y);
