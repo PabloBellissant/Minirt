@@ -267,6 +267,7 @@ void	normal_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
 	t_ray		ray;
 	t_object	*obj;
 
+	cam->x_offset =	vec3_scale(cam->pixel_delta_u, data->scene.bvh.bound.left);
 	pixel.x = data->scene.bvh.bound.left;
 	while (pixel.x < data->scene.bvh.bound.right)
 	{
