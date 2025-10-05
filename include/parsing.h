@@ -25,6 +25,7 @@ typedef enum e_object_type
 	SPHERE,
 	PLANE,
 	CYLINDER,
+	TRIANGLE,
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
@@ -42,5 +43,6 @@ int				light(char *line, int line_num, t_scene *scene);
 int				sphere(char *line, int line_num, t_scene *scene);
 int				plane(char *line, int line_num, t_scene *scene);
 int				cylinder(char *line, int line_num, t_scene *scene);
+int				obj(char *line, int line_num, t_scene *scene);
 
 #endif
