@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_root.c                                         :+:      :+:    :+:   */
+/*   obj.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/12 05:00:12 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/12 05:00:14 by pabellis         ###   ########.fr       */
+/*   Created: 2025/10/02 02:12:53 by pabellis          #+#    #+#             */
+/*   Updated: 2025/10/02 02:12:57 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "bvh.h"
+#include "calc.h"
+#include "vectors.h"
 
-t_aabb_bvh	*get_aabb_root(t_vector *bvh_vec, int *parents)
+#define OBJ_FORMAT " *obj  *%s  *%f *, *%f *, *%f *\n"
+
+int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos);
+
+int	obj(char *line, int line_num, t_scene *scene)
 {
-	size_t		i;
-	t_aabb_bvh	*bvh;
+	char	*obj_directory;
+	t_vec3	pos;
 
-	bvh = bvh_vec->data;
-	i = 0;
-	while (parents[i] == 1)
-		++i;
-	return (&bvh[i]);
+	if (ft_scan(line_num, OBJ_FORMAT, line, &obj_directory, &pos.x, &pos.y, &pos.z))
+		return (-1);
+	parse_obj_file(open(obj_directory, O_RDONLY), scene, &pos);
+	return (0);
 }

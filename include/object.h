@@ -54,6 +54,29 @@ typedef struct s_cylinder
 	float	height;
 }			t_cylinder;
 
+typedef struct s_vertex
+{
+	t_vec3	pos;
+	union
+	{
+		struct
+		{
+			float	u;
+			float	v;
+		};
+		t_vec2	uv;
+	};
+	t_vec3		norm;
+}	t_vertex;
+
+typedef struct s_triangle
+{
+	t_vertex	p0;
+	t_vertex	p1;
+	t_vertex	p2;
+	t_rgb		rgb;
+}	t_triangle;
+
 typedef struct s_ray	t_ray;
 
 typedef struct s_object
@@ -68,6 +91,7 @@ typedef struct s_object
 		t_sphere	sphere;
 		t_plane		plane;
 		t_cylinder	cylinder;
+		t_triangle	triangle;
 	};
 }					t_object;
 
