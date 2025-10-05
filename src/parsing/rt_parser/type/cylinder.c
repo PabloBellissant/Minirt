@@ -29,14 +29,13 @@ int	cylinder(char *line, int line_num, t_scene *scene)
 	cylinder = &object->cylinder;
 	pos = &cylinder->pos;
 	rot = &cylinder->rot;
-	object->f = hit_cylinder;
 	if (ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&rot->x, &rot->y, &rot->z, &cylinder->radius, &cylinder->height,
 			&color.r, &color.g, &color.b))
 		return (-1);
-
 	cylinder->radius /= 2;
 	cylinder->rot = vec3_normalize(cylinder->rot);
 	cylinder->rgb = rgb_itof(color);
+	object->f = hit_cylinder;
 	return (0);
 }
