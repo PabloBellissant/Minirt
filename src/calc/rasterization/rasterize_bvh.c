@@ -47,7 +47,7 @@ t_rgb_int float_to_rainbow(float f)
 
 static inline t_rgb_int depth_to_rgb_int(int depth, int total_depth)
 {
-	float		t;
+	float	t;
 
 	t = (float)(depth) / (float)total_depth;
 	return (float_to_rainbow(fmodf(t, 1.0f)));
@@ -57,7 +57,7 @@ void	full_render_aabb(t_aabb_bvh *bvh, int target_depth, int total_depth, t_data
 {
 	t_rgb_int	rgb;
 
-	rgb = depth_to_rgb_int(target_depth + data->params.bvh_color_offset, total_depth);
+	rgb = depth_to_rgb_int(target_depth + data->params.bvh_color_offset, total_depth + 2);
 	rasterize_cuboid(&bvh->cuboid, &data->mlx->img, &data->scene.camera, rgb);
 	if (bvh->depth > 0)
 	{
@@ -95,7 +95,7 @@ void	rasterize_aabb_bvh(t_aabb_bvh *bvh, t_params *p, int total_depth, t_data *d
 	t_rgb_int	rgb;
 	t_rgb_int	color;
 
-	rgb = depth_to_rgb_int(p->bvh_depth + data->params.bvh_color_offset, total_depth);
+	rgb = depth_to_rgb_int(p->bvh_depth + data->params.bvh_color_offset, total_depth - 1);
 	color.r = rgb.r;
 	color.g = rgb.g;
 	color.b = rgb.b;
