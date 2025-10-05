@@ -16,7 +16,6 @@ BVH_DIR		= $(CALC_DIR)/bvh
 # Source files
 BVH_SRCS	= hit_box_bvh.c \
 			  get_bvh_count.c \
-			  get_root.c \
 			  is_bvh_full.c \
 			  load_bvh.c
 

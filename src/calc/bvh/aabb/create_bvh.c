@@ -12,85 +12,249 @@
 
 #include "libft.h"
 #include <math.h>
+#include <float.h>
 #include "bvh.h"
 #include "render.h"
 
-static int		create_object_bvh(t_scene *scene, t_vector *bvh_vec);
-static void		set_bvh_size(t_object *object, t_vec3 *min, t_vec3 *max);
+static void	update_min_max(t_object *o, t_vec3 *min, t_vec3 *max);
 
-int	init_aabb_bvh(t_vector *bvh_vec, t_scene *scene)
+static t_vec3	get_min(t_object *o)
 {
-	size_t		volume_count;
+	t_vec3	temp;
+	t_vec3	min;
 
-	vector_init(bvh_vec, sizeof(t_aabb_bvh));
-	volume_count = get_bvh_count(&scene->objects);
-	if (set_vector_size(bvh_vec, volume_count) != 0)
-		return (-1);
-	return (0);
-}
-
-int	create_aabb_bvh(t_scene *scene)
-{
-	t_vector	bvh_vec;
-	int			*parents;
-
-	if (init_aabb_bvh(&bvh_vec, scene) == -1)
-		return (-1);
-	parents = ft_calloc(bvh_vec.max_elements, sizeof(int));
-	if (!parents)
+	if (o->type == SPHERE)
 	{
-		free_vector(&bvh_vec);
-		return (-1);
+		min.x = o->sphere.pos.x - (o->sphere.diameter / 2);
+		min.y = o->sphere.pos.y - (o->sphere.diameter / 2);
+		min.z = o->sphere.pos.z - (o->sphere.diameter / 2);
 	}
-	create_object_bvh(scene, &bvh_vec);
-	while (is_bvh_full(&bvh_vec, parents) == false)
-		merge_nearest_bvh(&bvh_vec, parents);
-	scene->bvh.aabb_bvh = get_aabb_root(&bvh_vec, parents);
-	scene->bvh.bvh_pointer = bvh_vec.data;
-	free(parents);
-	return (0);
+	if (o->type == TRIANGLE)
+	{
+		min.x = fminf(fminf(o->triangle.p0.pos.x, o->triangle.p1.pos.x), o->triangle.p2.pos.x);
+		min.y = fminf(fminf(o->triangle.p0.pos.y, o->triangle.p1.pos.y), o->triangle.p2.pos.y);
+		min.z = fminf(fminf(o->triangle.p0.pos.z, o->triangle.p1.pos.z), o->triangle.p2.pos.z);
+	}
+	if (o->type == CYLINDER)
+	{
+		t_vec3 P2 = vec3_add(o->cylinder.pos, vec3_scale(o->cylinder.rot, o->cylinder.height));
+
+		temp.x = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.x * o->cylinder.rot.x);
+		temp.y = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.y * o->cylinder.rot.y);
+		temp.z = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.z * o->cylinder.rot.z);
+
+		min.x = fminf(o->cylinder.pos.x - temp.x, P2.x - temp.x);
+		min.y = fminf(o->cylinder.pos.y - temp.y, P2.y - temp.y);
+		min.z = fminf(o->cylinder.pos.z - temp.z, P2.z - temp.z);
+	}
+	return (min);
 }
 
-static int	create_object_bvh(t_scene *scene, t_vector *bvh_vec)
+void	set_size(t_aabb_bvh *bvh, t_vector *objects_vec)
 {
-	t_aabb_bvh	single_bvh;
-	t_object	*object;
 	size_t		i;
+	t_object	**objects;
+	t_vec3		temp_min;
+	t_vec3		temp_max;
 
-	ft_bzero(&single_bvh, sizeof(t_aabb_bvh));
-	object = scene->objects.data;
-	i = 0;
-	while (i < scene->objects.num_elements)
+	bvh->min = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+	bvh->max = vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	objects = objects_vec->data;
+	i
+	= 0;
+	while (i < objects_vec->num_elements)
 	{
-		if (object[i].type != PLANE && object[i].type != LIGHT)
+		if (objects[i]->type != PLANE && objects[i]->type != LIGHT)
 		{
-			set_bvh_size(&(object[i]), &single_bvh.min, &single_bvh.max);
-			single_bvh.object = &(object[i]);
-			vector_add(bvh_vec, &single_bvh, 1);
+			update_min_max(objects[i], &temp_min, &temp_max);
+			bvh->min.x = fminf(bvh->min.x, temp_min.x);
+			bvh->min.y = fminf(bvh->min.y, temp_min.y);
+			bvh->min.z = fminf(bvh->min.z, temp_min.z);
+			bvh->max.x = fmaxf(bvh->max.x, temp_max.x);
+			bvh->max.y = fmaxf(bvh->max.y, temp_max.y);
+			bvh->max.z = fmaxf(bvh->max.z, temp_max.z);
+		}
+		++i;
+	}
+}
+
+int get_cut_axis(t_aabb_bvh *parent)
+{
+	t_vec3 distance;
+
+	distance.x = parent->max.x - parent->min.x;
+	distance.y = parent->max.y - parent->min.y;
+	distance.z = parent->max.z - parent->min.z;
+
+	if (distance.x >= distance.y && distance.x >= distance.z)
+		return (0);
+	if (distance.y >= distance.z)
+		return (1);
+	return (2);
+}
+
+int	sort_object_ptr(t_vector *vec, int axis)
+{
+	size_t i;
+	size_t j;
+	t_object **object;
+	t_object *temp_ptr;
+
+	object = vec->data;
+	i = 0;
+	while (i < vec->num_elements - 1)
+	{
+		j = 0;
+		while (j < vec->num_elements - 1 - i)
+		{
+			if (get_min(object[j]).data[axis] > get_min(object[j + 1]).data[axis])
+			{
+				temp_ptr = object[j];
+				object[j] = object[j + 1];
+				object[j + 1] = temp_ptr;
+			}
+			++j;
 		}
 		++i;
 	}
 	return (0);
 }
 
-static void	set_bvh_size(t_object *object, t_vec3 *min, t_vec3 *max)
+int	subdivise(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *objects_vec)
 {
-	if (object->type == SPHERE)
+	t_aabb_bvh	temp;
+	t_vector	new_object_ptr;
+
+	set_size(bvh, objects_vec);
+	if (objects_vec->num_elements > 1)
 	{
-		min->x = object->sphere.pos.x - (object->sphere.diameter / 2);
-		min->y = object->sphere.pos.y - (object->sphere.diameter / 2);
-		min->z = object->sphere.pos.z - (object->sphere.diameter / 2);
-		max->x = min->x + object->sphere.diameter;
-		max->y = min->y + object->sphere.diameter;
-		max->z = min->z + object->sphere.diameter;
+		sort_object_ptr(objects_vec, get_cut_axis(bvh));
+		vector_add(bvh_vec, &temp, 1);
+		bvh->next_a = get_last_vector_value(bvh_vec);
+		vector_init(&new_object_ptr, sizeof(t_object *));
+		vector_add(&new_object_ptr, objects_vec->data, objects_vec->num_elements / 2); // to secu
+		bvh->depth = subdivise(bvh->next_a, bvh_vec, &new_object_ptr);
+		free_vector(&new_object_ptr);
+		vector_add(bvh_vec, &temp, 1);
+		bvh->next_b = get_last_vector_value(bvh_vec);
+		vector_init(&new_object_ptr, sizeof(t_object *));
+		vector_add(&new_object_ptr, objects_vec->data + (objects_vec->element_size * (objects_vec->num_elements / 2)), (objects_vec->num_elements + 1) / 2); // to secu
+		bvh->depth = fmaxf(subdivise(bvh->next_b, bvh_vec, &new_object_ptr), bvh->depth) + 1;
+		return (bvh->depth);
 	}
-	if (object->type == CYLINDER)
-	{ // temp
-		min->x = object->cylinder.pos.x - fmaxf(object->cylinder.radius, object->cylinder.height);
-		min->y = object->cylinder.pos.y - fmaxf(object->cylinder.radius, object->cylinder.height);
-		min->z = object->cylinder.pos.z - fmaxf(object->cylinder.radius, object->cylinder.height);
-		max->x = min->x + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
-		max->y = min->y + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
-		max->z = min->z + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
+	bvh->object = *(t_object **)objects_vec->data;
+	dprintf(2, "%f\n", bvh->object->sphere.pos.x);
+	bvh->depth = 0;
+	return (0);
+}
+
+int	create_root_bvh(t_vector *bvh, t_vector *objects)
+{
+	t_aabb_bvh	root_bvh;
+
+	ft_bzero(&root_bvh, sizeof(t_aabb_bvh));
+	root_bvh.min = (t_vec3) {{FLT_MAX, FLT_MAX, FLT_MAX}};
+	root_bvh.max = (t_vec3) {{-FLT_MAX, -FLT_MAX, -FLT_MAX}};
+	set_size(&root_bvh, objects);
+	vector_add(bvh, &root_bvh, 1);
+	return (0);
+}
+
+static void	update_min_max(t_object *o, t_vec3 *min, t_vec3 *max)
+{
+	t_vec3	temp;
+
+	if (o->type == SPHERE)
+	{
+		min->x = o->sphere.pos.x - (o->sphere.diameter / 2);
+		min->y = o->sphere.pos.y - (o->sphere.diameter / 2);
+		min->z = o->sphere.pos.z - (o->sphere.diameter / 2);
+		max->x = min->x + o->sphere.diameter;
+		max->y = min->y + o->sphere.diameter;
+		max->z = min->z + o->sphere.diameter;
 	}
+	if (o->type == TRIANGLE)
+	{
+		min->x = fminf(fminf(o->triangle.p0.pos.x, o->triangle.p1.pos.x), o->triangle.p2.pos.x);
+		min->y = fminf(fminf(o->triangle.p0.pos.y, o->triangle.p1.pos.y), o->triangle.p2.pos.y);
+		min->z = fminf(fminf(o->triangle.p0.pos.z, o->triangle.p1.pos.z), o->triangle.p2.pos.z);
+		max->x = fmaxf(fmaxf(o->triangle.p0.pos.x, o->triangle.p1.pos.x), o->triangle.p2.pos.x);
+		max->y = fmaxf(fmaxf(o->triangle.p0.pos.y, o->triangle.p1.pos.y), o->triangle.p2.pos.y);
+		max->z = fmaxf(fmaxf(o->triangle.p0.pos.z, o->triangle.p1.pos.z), o->triangle.p2.pos.z);
+	}
+	if (o->type == CYLINDER)
+	{
+		t_vec3 P2 = vec3_add(o->cylinder.pos, vec3_scale(o->cylinder.rot, o->cylinder.height));
+
+		temp.x = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.x * o->cylinder.rot.x);
+		temp.y = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.y * o->cylinder.rot.y);
+		temp.z = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.z * o->cylinder.rot.z);
+
+		min->x = fminf(o->cylinder.pos.x - temp.x, P2.x - temp.x);
+		max->x = fmaxf(o->cylinder.pos.x + temp.x, P2.x + temp.x);
+		min->y = fminf(o->cylinder.pos.y - temp.y, P2.y - temp.y);
+		max->y = fmaxf(o->cylinder.pos.y + temp.y, P2.y + temp.y);
+		min->z = fminf(o->cylinder.pos.z - temp.z, P2.z - temp.z);
+		max->z = fmaxf(o->cylinder.pos.z + temp.z, P2.z + temp.z);
+	}
+}
+
+void	init_index(t_vector *index_vec, t_vector *objects_vec)
+{
+	size_t		i;
+	t_object	*object;
+
+	vector_init(index_vec, sizeof(int));
+	object = objects_vec->data;
+	i = 0;
+	while (i < objects_vec->num_elements)
+	{
+		if (object[i].type != PLANE && object[i].type != LIGHT)
+			vector_add(index_vec, &i, 1);
+		++i;
+	}
+}
+
+int	fill_pointer(t_vector *object_vec, t_vector *pointer_vec)
+{
+	size_t		i;
+	t_object	*object;
+	t_object	*actual;
+
+	vector_init(pointer_vec, sizeof(t_object *));
+	object = object_vec->data;
+	i = 0;
+	while (i < object_vec->num_elements)
+	{
+		if (object[i].type != PLANE && object[i].type != LIGHT)
+		{
+			actual = &object[i];
+			if (vector_add(pointer_vec, &actual, 1) == -1)
+				return (-1);
+		}
+		++i;
+	}
+	return (0);
+}
+
+int	create_aabb_bvh(t_scene *scene)
+{
+	t_vector	bvh_vec;
+	size_t		volume_count;
+	t_vector	objects_pointer;
+
+	volume_count = get_bvh_count(&scene->objects);
+	vector_init(&bvh_vec, sizeof(t_aabb_bvh));
+	if (set_vector_size(&bvh_vec, volume_count) != 0)
+		return (-1);
+
+	if (fill_pointer(&scene->objects, &objects_pointer) != 0)
+	{
+		free_vector(&bvh_vec);
+		return (-1);
+	}
+	create_root_bvh(&bvh_vec, &objects_pointer);
+	subdivise(get_last_vector_value(&bvh_vec), &bvh_vec, &objects_pointer);
+	scene->bvh.aabb_bvh = bvh_vec.data;
+	return (0);
 }

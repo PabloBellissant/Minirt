@@ -73,10 +73,22 @@ static int	create_object_sphere_bvh(t_scene *scene, t_vector *bvh_vec)
 
 static void	set_sphere_bvh_size(t_object *object, t_vec3 *pos, float *radius)
 {
+	t_vec3	temp;
+
 	if (object->type == SPHERE)
 	{
 		*pos = object->sphere.pos;
 		*radius = object->sphere.diameter / 2;
+	}
+	if (object->type == TRIANGLE)
+	{
+		pos->x = (object->triangle.p0.pos.x + object->triangle.p1.pos.x + object->triangle.p2.pos.x) / 3.0f;
+		pos->y = (object->triangle.p0.pos.y + object->triangle.p1.pos.y + object->triangle.p2.pos.y) / 3.0f;
+		pos->z = (object->triangle.p0.pos.z + object->triangle.p1.pos.z + object->triangle.p2.pos.z) / 3.0f;
+		temp.x = vec3_length(vec3_sub(object->triangle.p0.pos, *pos));
+		temp.y = vec3_length(vec3_sub(object->triangle.p1.pos, *pos));
+		temp.z = vec3_length(vec3_sub(object->triangle.p2.pos, *pos));
+		*radius = fmaxf(fmaxf(temp.x, temp.y), temp.z);
 	}
 	if (object->type == CYLINDER)
 	{
