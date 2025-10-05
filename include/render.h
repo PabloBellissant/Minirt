@@ -88,6 +88,13 @@ typedef struct s_scene
 	t_object	*planes;
 	int			plane_count;
 	t_bvh_main	bvh;
+	t_img		*tex;
+	int			tex_bpp;
+	int			tex_size_line;
+	int			tex_endian;
+	char		*pixels;
+	int			tex_width;
+	int			tex_height;
 }				t_scene;
 
 typedef struct s_data t_data;
