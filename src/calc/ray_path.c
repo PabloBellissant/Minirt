@@ -113,7 +113,7 @@ t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object)
 	return (final_color);
 }
 
-void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects);
+void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects, t_scene *scene);
 
 t_rgb_int	fake_path(t_ray *ray, t_scene *scene, t_object *hit_object)
 {
@@ -123,7 +123,7 @@ t_rgb_int	fake_path(t_ray *ray, t_scene *scene, t_object *hit_object)
 
 	og = *ray;
 	hit_object->f(ray, hit_object, &hit_object->t);
-	hit_register_obj(ray, hit_object);
+	hit_register_obj(ray, hit_object, scene);
 	hit_distance_light = light_hit_register(&og, scene);
 	if ((hit_distance_light > 0) && ((hit_object->t == 0)
 			|| (hit_distance_light < hit_object->t)))
