@@ -30,7 +30,7 @@ static t_object	*create_light(t_scene *scene, t_object_type type)
 	return (get_vector_value(&scene->lights, scene->lights.num_elements - 1));
 }
 
-int	light(char *line, int line_num, t_scene *scene)
+int	light(const char *line, int line_num, t_scene *scene)
 {
 	t_light		*light;
 	t_vec3		*pos;

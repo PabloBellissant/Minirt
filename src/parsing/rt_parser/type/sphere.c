@@ -11,14 +11,13 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "render.h"
 #include "calc.h"
 #include "vectors.h"
 
 #define SPHERE_FORMAT " *sp  *%f *, *%f *, *%f  *%f  *%8[255] *\
 , *%8[255] *, *%8[255] *\n"
 
-int	sphere(char *line, int line_num, t_scene *scene)
+int	sphere(const char *line, int line_num, t_scene *scene)
 {
 	t_sphere	*sphere;
 	t_vec3		*pos;

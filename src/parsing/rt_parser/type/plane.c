@@ -17,7 +17,7 @@
 #define PLANE_FORMAT " *pl  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *\
 , *%f[-1,1]  *%8[255] *, *%8[255] *, *%8[255] *\n"
 
-int	plane(char *line, int line_num, t_scene *scene)
+int	plane(const char *line, int line_num, t_scene *scene)
 {
 	t_plane		*plane;
 	t_vec3		*pos;

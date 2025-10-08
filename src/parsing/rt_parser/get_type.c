@@ -14,11 +14,12 @@
 #include "libft.h"
 #include "parsing.h"
 
-static void	print_unrecognized_identifier(char *token, int actual_line);
+static void	print_unrecognized_identifier(const char *token, int actual_line);
 
-t_object_type	get_type(char *line, int actual_line)
+t_object_type	get_type(const char *line, int actual_line)
 {
-	static char	*elem[] = {"A", "C", "L", "sp", "pl", "cy", "obj", NULL};
+	static const char	*elem[] = {"A", "C", "L", "sp", "pl",
+		"cy", "obj", NULL};
 	int			i;
 
 	while (*line == ' ' || *line == '\t')
@@ -30,7 +31,7 @@ t_object_type	get_type(char *line, int actual_line)
 		{
 			if ((*(line + ft_strlen(elem[i])) == ' ')
 				|| (*(line + ft_strlen(elem[i])) == '\t'))
-				return (i + 1);
+				return ((t_object_type)i + 1);
 		}
 		++i;
 	}
@@ -38,16 +39,16 @@ t_object_type	get_type(char *line, int actual_line)
 	return (UNDEFINED);
 }
 
-static void	print_unrecognized_identifier(char *token, int actual_line)
+static void	print_unrecognized_identifier(const char *token, int actual_line)
 {
-	int	len;
+	size_t	len;
 
 	len = 0;
 	while (token[len] && (token[len] != ' ' && token[len] != '\n'))
 		++len;
 	ft_putstr_fd("Error\nUnrecognized identifier : '", 2);
-	write(2, token, len);
+	(void) write(2, token, len);
 	ft_putstr_fd("', line : '", 2);
 	ft_putnbr_fd(actual_line, 2);
-	write(2, "'\n", 2);
+	(void) write(2, "'\n", 2);
 }

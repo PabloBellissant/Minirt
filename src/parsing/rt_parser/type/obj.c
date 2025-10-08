@@ -18,7 +18,7 @@
 
 int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos);
 
-int	obj(char *line, int line_num, t_scene *scene)
+int	obj(const char *line, int line_num, t_scene *scene)
 {
 	char	*obj_directory;
 	t_vec3	pos;

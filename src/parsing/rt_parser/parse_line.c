@@ -12,10 +12,10 @@
 
 #include "parsing.h"
 
-int	parse_line(t_scene *scene, char *line, int actual_line)
+int	parse_line(t_scene *scene, const char *line, int actual_line)
 {
 	t_object_type	type;
-	static int		(*f[])(char *, int, t_scene *)
+	static int		(*f[])(const char *, int, t_scene *)
 		= {ambient, camera, light, sphere, plane, cylinder, obj};
 
 	if (line[0] == '#' || (line[0] == '/' && line[1] == '/') || line[0] == '\n')

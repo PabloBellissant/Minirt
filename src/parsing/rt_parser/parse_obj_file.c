@@ -28,11 +28,11 @@ typedef enum e_obj
 	f
 }	t_obj;
 
-t_obj	get_obj_type(char *line);
-int		parse_vertex(char *line, int line_num, t_vector *vertex, t_vec3 *pos);
-int		parse_normal(char *line, int line_num, t_vector *normal_vec);
-int		parse_face(char *line, int line_num, t_vector *vertex, t_vector *normal, t_vector *uv, t_scene *scene);
-int		parse_texture(char *line, int line_num, t_vector *uv_vec);
+t_obj	get_obj_type(const char *line);
+int		parse_vertex(const char *line, int line_num, t_vector *vertex, t_vec3 *pos);
+int		parse_normal(const char *line, int line_num, t_vector *normal_vec);
+int		parse_face(const char *line, int line_num, t_vector *vertex, t_vector *normal, t_vector *uv, t_scene *scene);
+int		parse_texture(const char *line, int line_num, t_vector *uv_vec);
 
 int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 {
@@ -78,9 +78,9 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 	return (0);
 }
 
-t_obj	get_obj_type(char *line)
+t_obj	get_obj_type(const char *line)
 {
-	static char	*elem[] = {"vn", "vt", "v", "f", NULL};
+	static const char	*elem[] = {"vn", "vt", "v", "f", NULL};
 	int			i;
 
 	while (*line == ' ' || *line == '\t')
@@ -92,14 +92,14 @@ t_obj	get_obj_type(char *line)
 		{
 			if ((*(line + ft_strlen(elem[i])) == ' ')
 				|| (*(line + ft_strlen(elem[i])) == '\t'))
-				return (i + 1);
+				return ((t_obj) i + 1);
 		}
 		++i;
 	}
 	return (null);
 }
 
-int	parse_texture(char *line, int line_num, t_vector *uv_vec)
+int	parse_texture(const char *line, int line_num, t_vector *uv_vec)
 {
 	t_vec2	uv;
 
@@ -110,7 +110,7 @@ int	parse_texture(char *line, int line_num, t_vector *uv_vec)
 	return (0);
 }
 
-int	parse_vertex(char *line, int line_num, t_vector *vertex, t_vec3 *pos)
+int	parse_vertex(const char *line, int line_num, t_vector *vertex, t_vec3 *pos)
 {
 	t_vertex	v;
 
@@ -122,7 +122,7 @@ int	parse_vertex(char *line, int line_num, t_vector *vertex, t_vec3 *pos)
 	return (0);
 }
 
-int	parse_normal(char *line, int line_num, t_vector *normal_vec)
+int	parse_normal(const char *line, int line_num, t_vector *normal_vec)
 {
 	t_vec3	normal;
 
@@ -133,11 +133,11 @@ int	parse_normal(char *line, int line_num, t_vector *normal_vec)
 	return (0);
 }
 
-int	parse_face(char *line, int line_num, t_vector *vertex, t_vector *normal, t_vector *uv, t_scene *scene)
+int	parse_face(const char *line, int line_num, t_vector *vertex, t_vector *normal, t_vector *uv, t_scene *scene)
 {
-	int			vertex_id[3];
-	int			uv_id[3];
-	int			normal_id[3];
+	int		vertex_id[3];
+	int		uv_id[3];
+	int		normal_id[3];
 	t_object	*o;
 
 	o = create_object(scene, TRIANGLE);
@@ -148,12 +148,12 @@ int	parse_face(char *line, int line_num, t_vector *vertex, t_vector *normal, t_v
 		&vertex_id[1], &uv_id[1], &normal_id[1],
 		&vertex_id[2], &uv_id[2], &normal_id[2]))
 		return (-1);
-	o->triangle.p0 = *(t_vertex *)get_vector_value(vertex, vertex_id[0] - 1);
-	o->triangle.p1 = *(t_vertex *)get_vector_value(vertex, vertex_id[1] - 1);
-	o->triangle.p2 = *(t_vertex *)get_vector_value(vertex, vertex_id[2] - 1);
-	o->triangle.p0.norm = *(t_vec3 *)get_vector_value(normal, normal_id[0] - 1);
-	o->triangle.p1.norm = *(t_vec3 *)get_vector_value(normal, normal_id[1] - 1);
-	o->triangle.p2.norm = *(t_vec3 *)get_vector_value(normal, normal_id[2] - 1);
+	o->triangle.p0 = *(t_vertex *)get_vector_value(vertex, (size_t)vertex_id[0] - 1);
+	o->triangle.p1 = *(t_vertex *)get_vector_value(vertex, (size_t)vertex_id[1] - 1);
+	o->triangle.p2 = *(t_vertex *)get_vector_value(vertex, (size_t)vertex_id[2] - 1);
+	o->triangle.p0.norm = *(t_vec3 *)get_vector_value(normal, (size_t)normal_id[0] - 1);
+	o->triangle.p1.norm = *(t_vec3 *)get_vector_value(normal, (size_t)normal_id[1] - 1);
+	o->triangle.p2.norm = *(t_vec3 *)get_vector_value(normal, (size_t)normal_id[2] - 1);
 	(void) uv;
 	// o->triangle.p0.uv = *(t_vec2 *)get_vector_value(uv, uv_id[0] - 1);
 	// o->triangle.p1.uv = *(t_vec2 *)get_vector_value(uv, uv_id[1] - 1);

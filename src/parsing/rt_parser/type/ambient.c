@@ -16,7 +16,7 @@
 
 #define AMBIENT_FORMAT " *A  *%f[1]  *%8[255] *, *%8[255] *, *%8[255] *\n"
 
-int	ambient(char *line, int line_num, t_scene *scene)
+int	ambient(const char *line, int line_num, t_scene *scene)
 {
 	t_ambient	*ambient;
 	t_rgb_int	color;

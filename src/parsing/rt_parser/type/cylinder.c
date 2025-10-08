@@ -17,7 +17,7 @@
 #define CYLINDER_FORMAT " *cy  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *, *\
 %f[-1,1]  *%f  *%f  *%8[255] *, *%8[255] *, *%8[255] *\n"
 
-int	cylinder(char *line, int line_num, t_scene *scene)
+int	cylinder(const char *line, int line_num, t_scene *scene)
 {
 	t_cylinder	*cylinder;
 	t_vec3		*pos;
