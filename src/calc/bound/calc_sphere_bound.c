@@ -38,7 +38,7 @@ static void	get_sphere_vertice(t_vec3 vertices[VERTICES_COUNT],
 				t_sphere_bvh *bvh)
 {
 	float	val;
-	int		i;
+	float	i;
 	int		j;
 
 	i = 0;
@@ -46,16 +46,16 @@ static void	get_sphere_vertice(t_vec3 vertices[VERTICES_COUNT],
 	while (i < 16)
 	{
 		val = 0.0f;
-		while (val <= 2.0f * M_PI)
+		while (val <= 2.0f * M_PIf)
 		{
-			vertices[j].x = bvh->pos.x + (bvh->size * 1.02) * sinf(i * M_PI
-					/ 16) * cosf(val);
-			vertices[j].y = bvh->pos.y + (bvh->size * 1.02) * cosf(i * M_PI
-					/ 16);
-			vertices[j].z = bvh->pos.z + (bvh->size * 1.02) * sinf(i * M_PI
-					/ 16) * sinf(val);
+			vertices[j].x = bvh->pos.x + (bvh->size * 1.02f) *
+				sinf(i * M_PIf / 16) * cosf(val);
+			vertices[j].y = bvh->pos.y + (bvh->size * 1.02f) *
+				cosf(i * M_PIf / 16);
+			vertices[j].z = bvh->pos.z + (bvh->size * 1.02f) *
+				sinf(i * M_PIf / 16) * sinf(val);
 			++j;
-			val += 0.1;
+			val += 0.1f;
 		}
 		++i;
 	}
