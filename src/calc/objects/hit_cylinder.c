@@ -11,11 +11,12 @@
 /* ************************************************************************** */
 
 #include <math.h>
+#include <float.h>
 #include "render.h"
 
 int	hit_cylinder(t_ray *ray, t_object *o, float *t);
 
-inline int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
+int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
 {
 	t_vec3 oc = vec3_sub(ray->pos, o->cylinder.pos);
 	float card = vec3_dot(o->cylinder.rot, ray->dir);
@@ -30,10 +31,10 @@ inline int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
 	float discriminant = B * B - 4 * A * C;
 
 	if (discriminant < 0)
-		return 0;
+		return (0);
 
 	float sqrtD = sqrtf(discriminant);
-	float tmin = 1e30f;
+	float tmin = FLT_MAX;
 	for (int k = 0; k < 2; k++) {
 		float t = (-B + (k == 0 ? -sqrtD : sqrtD)) / (2.0f * A);
 		if (t > 1e-4f) {
@@ -44,6 +45,6 @@ inline int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
 	}
 
 	*t_out = tmin;
-	return (tmin < 1e30f);
+	return (tmin < FLT_MAX);
 }
 
