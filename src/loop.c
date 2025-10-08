@@ -35,18 +35,21 @@ static inline void	recalc_camera(t_camera *cam)
 
 static inline void  rewind_offsets_x(t_camera *cam, int force)
 {
-	cam->x_offset = vec3_sub(cam->x_offset, vec3_scale(cam->pixel_delta_u, force));
+	cam->x_offset = vec3_sub(cam->x_offset,
+		vec3_scale(cam->pixel_delta_u, (float)force));
 }
 
 
 static inline void	compute_offsets_x(t_camera *cam, int force)
 {
-	cam->x_offset =	vec3_add(cam->x_offset, vec3_scale(cam->pixel_delta_u, force));
+	cam->x_offset =	vec3_add(cam->x_offset,
+		vec3_scale(cam->pixel_delta_u, (float)force));
 }
 
 static inline void	compute_offsets_y(t_camera *cam, int force)
 {
-	cam->y_offset =	vec3_add(cam->y_offset, vec3_scale(cam->pixel_delta_v, force));
+	cam->y_offset =	vec3_add(cam->y_offset,
+		vec3_scale(cam->pixel_delta_v, (float)force));
 }
 
 static void	clear_old_screen(t_img_data *img, t_bound *bound)
@@ -56,7 +59,7 @@ static void	clear_old_screen(t_img_data *img, t_bound *bound)
 	i = bound->top;
 	while (i < bound->down + 1)
 	{
-		ft_fbzero(img->addr + (WIDTH * i + bound->left), (bound->right - bound->left + 1) * 4);
+		ft_fbzero(img->addr + (WIDTH * i + bound->left), (size_t)(bound->right - bound->left + 1) * 4);
 		++i;
 	}
 	i = 0;
@@ -133,7 +136,7 @@ void	sub_draw(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 	size.x = end.x - start.x;
 	size.y = end.y - start.y;
 	cam = &data->scene.camera;
-	cam->x_offset =	vec3_scale(cam->pixel_delta_u, start.x);
+	cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)start.x);
 	cam->x_offset = vec3_sub(cam->x_offset, vec3_scale(cam->pixel_delta_u, 0.25f));
 	cam->y_offset = vec3_sub(cam->y_offset, vec3_scale(cam->pixel_delta_v, 0.25f));
 	while (start.x < end.x)
@@ -164,12 +167,12 @@ void	sub_draw(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 			color[3] = ray_path(&ray, &data->scene, &hit);
 			cam->y_offset = temp_vec[1];
 			recalc_camera(cam);
-			ft_mlx_pixel_put(img, (t_vec2i) {{start.x, start.y}}, mix_color(color).rgb);
+			ft_mlx_pixel_put(img, (t_vec2i) {{start.x, start.y}}, (int)mix_color(color).rgb);
 			cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
 			++start.y;
 		}
 		start.y -= size.y;
-		cam->y_offset =	vec3_scale(cam->pixel_delta_v, start.y);
+		cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)start.y);
 		cam->x_offset = vec3_add(cam->x_offset, cam->pixel_delta_u);
 		++start.x;
 	}
@@ -187,8 +190,8 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 	size.x = end.x - start.x;
 	size.y = end.y - start.y;
 	cam = &data->scene.camera;
-	cam->x_offset = vec3_scale(cam->pixel_delta_u, start.x);
-	cam->y_offset = vec3_scale(cam->pixel_delta_v, start.y);
+	cam->x_offset = vec3_scale(cam->pixel_delta_u, (float)start.x);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, (float)start.y);
 	recalc_camera(cam);
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
@@ -206,7 +209,7 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 	ray_path(&ray, &data->scene, &corners[3]);
 
-	cam->y_offset = vec3_scale(cam->pixel_delta_v, start.y);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, (float)start.y);
 	recalc_camera_y(cam);
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
@@ -218,11 +221,11 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 	ray.pos = cam->pos;
 	ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 	ray_path(&ray, &data->scene, &corners[4]);
-	cam->y_offset = vec3_scale(cam->pixel_delta_v, start.y);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, (float)start.y);
 
 	if (!(corners[0] == corners[3] && corners[1] == corners[2] && corners[1] == corners[3] && corners[3] == corners[4]))
 	{
-		cam->x_offset =	vec3_scale(cam->pixel_delta_u, start.x);
+		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)start.x);
 		if (size.x <= SUPERSAMPLING_MIN || size.y <= SUPERSAMPLING_MIN)
 		{
 			sub_draw(img, start, end, data);
@@ -238,7 +241,7 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 	}
 	else if (corners[3] != NULL)
 	{
-		cam->x_offset =	vec3_scale(cam->pixel_delta_u, start.x);
+		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)start.x);
 		while (start.x < end.x)
 		{
 			cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
@@ -247,19 +250,19 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 				recalc_camera_y(cam);
 				ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 				ray.pos = cam->pos;
-				color = fake_path(&ray, &data->scene, corners[3]).rgb;
+				color = (int)fake_path(&ray, &data->scene, corners[3]).rgb;
 				ft_mlx_pixel_put(img, (t_vec2i) {{start.x, start.y}}, color);
 				cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
 				++start.y;
 			}
 			start.y -= size.y;
-			cam->y_offset =	vec3_scale(cam->pixel_delta_v, start.y);
+			cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)start.y);
 			cam->x_offset = vec3_add(cam->x_offset, cam->pixel_delta_u);
 			++start.x;
 		}
 	}
 	else
-		cam->x_offset = vec3_scale(cam->pixel_delta_u, size.x);
+		cam->x_offset = vec3_scale(cam->pixel_delta_u, (float)size.x);
 }
 
 void	normal_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
@@ -267,12 +270,12 @@ void	normal_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
 	t_ray		ray;
 	t_object	*obj;
 
-	cam->x_offset =	vec3_scale(cam->pixel_delta_u, data->scene.bvh.bound.left);
+	cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)data->scene.bvh.bound.left);
 	pixel.x = data->scene.bvh.bound.left;
 	while (pixel.x < data->scene.bvh.bound.right)
 	{
 		pixel.y = data->scene.bvh.bound.top;
-		cam->y_offset =	vec3_scale(cam->pixel_delta_v, pixel.y);
+		cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)pixel.y);
 		cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
 		while (pixel.y < data->scene.bvh.bound.down)
 		{
@@ -280,11 +283,11 @@ void	normal_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
 			ray.pos = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 			ft_mlx_pixel_put(img, pixel,
-				ray_path(&ray, &data->scene, &obj).rgb);
+				(int)ray_path(&ray, &data->scene, &obj).rgb);
 			cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
 			++pixel.y;
 		}
-		cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x);
+		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)pixel.x);
 		++pixel.x;
 	}
 }
@@ -297,7 +300,7 @@ t_vec2i	get_obj_rasterize_size(t_object *obj, t_camera *cam)
         t_vec3 cam_to_sphere = vec3_sub(obj->sphere.pos, cam->pos);
 
         // Calculate distance from camera to sphere center
-        float distance = sqrt(vec3_dot(cam_to_sphere, cam_to_sphere)) * 2;
+        float distance = sqrtf(vec3_dot(cam_to_sphere, cam_to_sphere)) * 2;
 
         float cam_z = vec3_dot(cam_to_sphere, cam->camera_forward);
         if (cam_z > 0 && distance > obj->sphere.diameter)
@@ -321,10 +324,10 @@ t_vec2i	get_obj_rasterize_size(t_object *obj, t_camera *cam)
         }
 
         // Calculate the angular size of the sphere
-        float angular_radius = asin(obj->sphere.diameter / distance);
+        float angular_radius = asinf(obj->sphere.diameter / distance);
 
         // Convert angular size to viewport coordinates
-        float viewport_radius_y = angular_radius * cam->viewport_height / (2.0f * tan(cam->theta / 2.0f));
+        float viewport_radius_y = angular_radius * cam->viewport_height / (2.0f * tanf(cam->theta / 2.0f));
         float viewport_radius_x = viewport_radius_y;  // Assuming square pixels
 
         // Convert viewport coordinates to pixel coordinates
@@ -437,7 +440,7 @@ void	compute(t_data *data)
 		data->params.supersampling_y = 74;
 	}
 	pixel.y = scene->bvh.bound.top;
-	cam->y_offset = vec3_scale(cam->pixel_delta_v, pixel.y);
+	cam->y_offset = vec3_scale(cam->pixel_delta_v, (float)pixel.y);
 	if (data->params.supersampling_x == 1)
 	{
 		normal_draw(&data->mlx->img, pixel, cam, data);
@@ -447,7 +450,7 @@ void	compute(t_data *data)
 		while (pixel.y < scene->bvh.bound.down)
 		{
 			pixel.x = scene->bvh.bound.left;
-			cam->x_offset =	vec3_scale(cam->pixel_delta_u, pixel.x);
+			cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)pixel.x);
 			while (pixel.x < scene->bvh.bound.right)
 			{
 				draw_zone(&data->mlx->img, pixel,
@@ -512,7 +515,6 @@ void	compute(t_data *data)
 // }
 
 void	update_fps(t_data *data);
-void	draw_text(t_text *text);
 
 // 84 fps no multi threading
 // maximum theorique : 1680 fps PTDR
