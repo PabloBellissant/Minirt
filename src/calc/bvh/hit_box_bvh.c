@@ -6,49 +6,38 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 23:23:39 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/06 03:50:43 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 03:50:43 by pabellis         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
-#include <float.h>
+#include "float.h"
 #include "bvh.h"
 #include "calc.h"
 
-static inline void bvh_check(float t1, float t2, float *t_min, float *t_max)
+static inline t_vec3	vec3_divide(const t_vec3 a, const t_vec3 b)
 {
-	*t_min = fmaxf(fminf(t1, t2), *t_min);
-	*t_max = fminf(fmaxf(t1, t2), *t_max);
+	return ((t_vec3){{a.x / b.x, a.y / b.y, a.z / b.z}});
 }
 
 bool	hit_box(t_ray *ray, t_aabb_bvh *bvh)
 {
-	float	t_max;
 	float	t_min;
-	uint8_t	i;
+	float	t_max;
+	t_vec3	min;
+	t_vec3	max;
 
-	t_min = -FLT_MAX;
-	t_max = FLT_MAX;
-	i = 0;
-	while (i < 3)
-	{
-		if (ray->dir.data[i] == .0f)
-		{
-			if (ray->pos.data[i] < bvh->min.data[i] ||
-				ray->pos.data[i] > bvh->max.data[i])
-			{
-				return (false);
-			}
-		}
-		else
-		{
-			bvh_check((bvh->min.data[i] - ray->pos.data[i]) / ray->dir.data[i],
-				(bvh->max.data[i] - ray->pos.data[i]) / ray->dir.data[i],
-				&t_min, &t_max);
-			if (t_min > t_max)
-				return (false);
-		}
-		i++;
-	}
+	min = vec3_divide(vec3_sub(bvh->min, ray->pos), ray->dir);
+	max = vec3_divide(vec3_sub(bvh->max, ray->pos), ray->dir);
+	t_min = fminf(min.x, max.x);
+	t_max = fmaxf(min.x, max.x);
+	t_min = fmaxf(fminf(min.y, max.y), t_min);
+	t_max = fminf(fmaxf(min.y, max.y), t_max);
+	if (t_min > t_max)
+		return (false);
+	t_min = fmaxf(fminf(min.z, max.z), t_min);
+	t_max = fminf(fmaxf(min.z, max.z), t_max);
+	if (t_min > t_max)
+		return (false);
 	return (true);
 }
