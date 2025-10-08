@@ -31,9 +31,9 @@ static t_vec3	get_center(t_object *o)
 	}
 	if (o->type == TRIANGLE)
 	{
-		min.x = o->triangle.p0.pos.x + o->triangle.p1.pos.x + o->triangle.p2.pos.x / 3.0f;
-		min.y = o->triangle.p0.pos.y + o->triangle.p1.pos.y + o->triangle.p2.pos.y / 3.0f;
-		min.z = o->triangle.p0.pos.z + o->triangle.p1.pos.z + o->triangle.p2.pos.z / 3.0f;
+		min.x = (o->triangle.p0.pos.x + o->triangle.p1.pos.x + o->triangle.p2.pos.x) / 3.0f;
+		min.y = (o->triangle.p0.pos.y + o->triangle.p1.pos.y + o->triangle.p2.pos.y) / 3.0f;
+		min.z = (o->triangle.p0.pos.z + o->triangle.p1.pos.z + o->triangle.p2.pos.z) / 3.0f;
 	}
 	if (o->type == CYLINDER)
 	{
@@ -119,11 +119,71 @@ int	sort_object_ptr(t_vector *vec, int axis)
 	return (0);
 }
 
+
 static int	imax(int a, int b)
 {
 	if (a > b)
 		return (a);
 	return (b);
+}
+
+static int	imin(int a, int b)
+{
+	if (a < b)
+		return (a);
+	return (b);
+}
+
+# define QUALIBRATION 1
+
+int	get_cut_index(t_vector *object_ptr, t_aabb_bvh *bvh)
+{
+	float		middle_value;
+	float		actual_value;
+	int			axis;
+	int			i;
+	int			end;
+	t_object	**object;
+
+	axis = get_cut_axis(bvh);
+	object = (t_object **)object_ptr->data;
+	middle_value = (bvh->max.data[axis] + bvh->min.data[axis]) / 2;
+	i = imax(0, (int)(object_ptr->num_elements / 2) - QUALIBRATION);
+	end = imin((int)(object_ptr->num_elements / 2) + QUALIBRATION, (int)object_ptr->num_elements);
+	while (i < end)
+	{
+		actual_value = get_center(object[i]).data[axis];
+		if (actual_value >= middle_value)
+			break;
+		++i;
+	}
+	if (i == 0)
+		i = 1;
+	else if (i == (int)object_ptr->num_elements)
+		i = (int)object_ptr->num_elements - 1;
+	return (i);
+}
+
+int	divide_half_left(t_vector *new_ptr, t_vector *old_ptr, t_aabb_bvh *bvh)
+{
+	int	cut_index;
+
+	new_ptr->num_elements = 0;
+	dprintf(2, "%zu\n", old_ptr->num_elements);
+	(void) bvh;
+	cut_index = get_cut_index(old_ptr, bvh);
+	return (vector_add(new_ptr, old_ptr->data, (size_t)cut_index));
+}
+
+int	divide_half_right(t_vector *new_ptr, t_vector *old_ptr)
+{
+	size_t	cut_index;
+	void	*src;
+
+	cut_index = old_ptr->num_elements - new_ptr->num_elements;
+	src = (char *)old_ptr->data + old_ptr->element_size * new_ptr->num_elements;
+	new_ptr->num_elements = 0;
+	return (vector_add(new_ptr, src, cut_index));
 }
 
 int	subdivise(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *objects_vec)
@@ -132,19 +192,20 @@ int	subdivise(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *objects_vec)
 	t_vector	new_object_ptr;
 	int			temp_depth;
 
+	ft_bzero(bvh, sizeof(t_aabb_bvh));
+	vector_init(&new_object_ptr, sizeof(t_object *));
+	set_size(bvh, objects_vec);
 	if (objects_vec->num_elements > 1)
 	{
-		set_size(bvh, objects_vec);
-		sort_object_ptr(objects_vec, get_cut_axis(bvh));
+		int	cut_axis = get_cut_axis(bvh);
+		sort_object_ptr(objects_vec, cut_axis);
 		vector_add(bvh_vec, &temp, 1);
 		bvh->next_a = get_last_vector_value(bvh_vec);
-		vector_init(&new_object_ptr, sizeof(t_object *));
-		vector_add(&new_object_ptr, objects_vec->data, objects_vec->num_elements / 2);
+		divide_half_left(&new_object_ptr, objects_vec, bvh);
 		bvh->depth = subdivise(bvh->next_a, bvh_vec, &new_object_ptr);
 		vector_add(bvh_vec, &temp, 1);
 		bvh->next_b = get_last_vector_value(bvh_vec);
-		new_object_ptr.num_elements = 0;
-		vector_add(&new_object_ptr, (char *)objects_vec->data + (objects_vec->element_size * (objects_vec->num_elements / 2)), (objects_vec->num_elements + 1) / 2); // to secu
+		divide_half_right(&new_object_ptr, objects_vec);
 		temp_depth = subdivise(bvh->next_b, bvh_vec, &new_object_ptr);
 		bvh->depth = imax(temp_depth, bvh->depth) + 1;
 		return (bvh->depth);
