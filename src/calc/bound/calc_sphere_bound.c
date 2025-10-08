@@ -48,12 +48,12 @@ static void	get_sphere_vertice(t_vec3 vertices[VERTICES_COUNT],
 		val = 0.0f;
 		while (val <= 2.0f * M_PIf)
 		{
-			vertices[j].x = bvh->pos.x + (bvh->size * 1.02f) *
-				sinf(i * M_PIf / 16) * cosf(val);
-			vertices[j].y = bvh->pos.y + (bvh->size * 1.02f) *
-				cosf(i * M_PIf / 16);
-			vertices[j].z = bvh->pos.z + (bvh->size * 1.02f) *
-				sinf(i * M_PIf / 16) * sinf(val);
+			vertices[j].x = bvh->pos.x + (bvh->size * 1.02f)
+				* sinf(i * M_PIf / 16) * cosf(val);
+			vertices[j].y = bvh->pos.y + (bvh->size * 1.02f)
+				* cosf(i * M_PIf / 16);
+			vertices[j].z = bvh->pos.z + (bvh->size * 1.02f)
+				* sinf(i * M_PIf / 16) * sinf(val);
 			++j;
 			val += 0.1f;
 		}
