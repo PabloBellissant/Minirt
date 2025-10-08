@@ -70,8 +70,8 @@ static void	create_focal_distance_viewport(t_camera *cam)
 void	fill_camera(t_camera *cam)
 {
 	cam->focal_length = 1.0f;
-	cam->theta = (cam->fov * M_PI) / 180.0f;
-	cam->viewport_height = 2.0f * tan(cam->theta / 2.0f) * cam->focal_length;
+	cam->theta = (float)(cam->fov * M_PI) / 180.0f;
+	cam->viewport_height = 2.0f * tanf(cam->theta / 2.0f) * cam->focal_length;
 	cam->aspect_ratio = (float)WIDTH / (float)HEIGHT;
 	cam->viewport_width = cam->viewport_height * cam->aspect_ratio;
 	apply_rotations(cam);
