@@ -13,6 +13,13 @@
 #include "libft.h"
 #include "bvh.h"
 
+static int	imax(int a, int b)
+{
+	if (a > b)
+		return (a);
+	return (b);
+}
+
 void	merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 {
 	t_sphere_bvh	bvh;
@@ -22,7 +29,7 @@ void	merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 
 	a = get_vector_value(bvh_vec, a_index);
 	b = get_vector_value(bvh_vec, b_index);
-	bvh.depth = fmaxf(a->depth, b->depth) + 1;
+	bvh.depth = imax(a->depth, b->depth) + 1;
 	bvh.next_a = a;
 	bvh.next_b = b;
 	dir = vec3_sub(b->pos, a->pos);
