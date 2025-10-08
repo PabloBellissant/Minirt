@@ -34,6 +34,6 @@ int	fill_by_type(t_scene *scene)
 		++i;
 	}
 	scene->planes = plane_vec.data;
-	scene->plane_count = plane_vec.num_elements;
+	scene->plane_count = (int)plane_vec.num_elements;
 	return (0);
 }
