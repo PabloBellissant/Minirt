@@ -15,7 +15,7 @@
 
 int	hit_plane(t_ray *restrict ray, t_object *restrict o, float *t);
 
-inline int	hit_plane(t_ray *restrict ray, t_object *restrict o, float *t)
+int	hit_plane(t_ray *restrict ray, t_object *restrict o, float *t)
 {
 	float	denom;
 

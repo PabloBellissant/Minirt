@@ -14,7 +14,7 @@
 
 int	hit_triangle(t_ray *ray, t_object *o, float *t);
 
-inline int	hit_triangle(t_ray *ray, t_object *o, float *t)
+int	hit_triangle(t_ray *ray, t_object *o, float *t)
 {
 	t_vec3	edge1;
 	t_vec3	edge2;

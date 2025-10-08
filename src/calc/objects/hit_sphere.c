@@ -15,7 +15,7 @@
 
 int	hit_sphere(t_ray *ray, t_object *o, float *t);
 
-inline int	hit_sphere(t_ray *restrict ray, t_object *restrict o, float *t)
+int	hit_sphere(t_ray *restrict ray, t_object *restrict o, float *t)
 {
 	t_vec3	oc;
 	float	b;
