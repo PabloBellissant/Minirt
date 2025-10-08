@@ -18,34 +18,34 @@
 
 static void	update_min_max(t_object *o, t_vec3 *min, t_vec3 *max);
 
-static t_vec3	get_min(t_object *o)
+static t_vec3	get_center(t_object *o)
 {
-	t_vec3	temp;
+	//t_vec3	temp;
 	t_vec3	min;
 
 	if (o->type == SPHERE)
 	{
-		min.x = o->sphere.pos.x - (o->sphere.diameter / 2);
-		min.y = o->sphere.pos.y - (o->sphere.diameter / 2);
-		min.z = o->sphere.pos.z - (o->sphere.diameter / 2);
+		min.x = o->sphere.pos.x;
+		min.y = o->sphere.pos.y;
+		min.z = o->sphere.pos.z;
 	}
 	if (o->type == TRIANGLE)
 	{
-		min.x = fminf(fminf(o->triangle.p0.pos.x, o->triangle.p1.pos.x), o->triangle.p2.pos.x);
-		min.y = fminf(fminf(o->triangle.p0.pos.y, o->triangle.p1.pos.y), o->triangle.p2.pos.y);
-		min.z = fminf(fminf(o->triangle.p0.pos.z, o->triangle.p1.pos.z), o->triangle.p2.pos.z);
+		min.x = o->triangle.p0.pos.x + o->triangle.p1.pos.x + o->triangle.p2.pos.x / 3.0f;
+		min.y = o->triangle.p0.pos.y + o->triangle.p1.pos.y + o->triangle.p2.pos.y / 3.0f;
+		min.z = o->triangle.p0.pos.z + o->triangle.p1.pos.z + o->triangle.p2.pos.z / 3.0f;
 	}
 	if (o->type == CYLINDER)
 	{
-		t_vec3 P2 = vec3_add(o->cylinder.pos, vec3_scale(o->cylinder.rot, o->cylinder.height));
-
-		temp.x = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.x * o->cylinder.rot.x);
-		temp.y = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.y * o->cylinder.rot.y);
-		temp.z = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.z * o->cylinder.rot.z);
-
-		min.x = fminf(o->cylinder.pos.x - temp.x, P2.x - temp.x);
-		min.y = fminf(o->cylinder.pos.y - temp.y, P2.y - temp.y);
-		min.z = fminf(o->cylinder.pos.z - temp.z, P2.z - temp.z);
+		// t_vec3 P2 = vec3_add(o->cylinder.pos, vec3_scale(o->cylinder.rot, o->cylinder.height));
+		//
+		// temp.x = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.x * o->cylinder.rot.x);
+		// temp.y = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.y * o->cylinder.rot.y);
+		// temp.z = o->cylinder.radius * sqrtf(1.0f - o->cylinder.rot.z * o->cylinder.rot.z);
+		//
+		// min.x = fminf(o->cylinder.pos.x - temp.x, P2.x - temp.x);
+		// min.y = fminf(o->cylinder.pos.y - temp.y, P2.y - temp.y);
+		// min.z = fminf(o->cylinder.pos.z - temp.z, P2.z - temp.z);
 	}
 	return (min);
 }
@@ -60,8 +60,7 @@ void	set_size(t_aabb_bvh *bvh, t_vector *objects_vec)
 	bvh->min = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
 	bvh->max = vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	objects = objects_vec->data;
-	i
-	= 0;
+	i = 0;
 	while (i < objects_vec->num_elements)
 	{
 		if (objects[i]->type != PLANE && objects[i]->type != LIGHT)
@@ -107,7 +106,7 @@ int	sort_object_ptr(t_vector *vec, int axis)
 		j = 0;
 		while (j < vec->num_elements - 1 - i)
 		{
-			if (get_min(object[j]).data[axis] > get_min(object[j + 1]).data[axis])
+			if (get_center(object[j]).data[axis] > get_center(object[j + 1]).data[axis])
 			{
 				temp_ptr = object[j];
 				object[j] = object[j + 1];
@@ -120,30 +119,37 @@ int	sort_object_ptr(t_vector *vec, int axis)
 	return (0);
 }
 
+static int	imax(int a, int b)
+{
+	if (a > b)
+		return (a);
+	return (b);
+}
+
 int	subdivise(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *objects_vec)
 {
 	t_aabb_bvh	temp;
 	t_vector	new_object_ptr;
+	int			temp_depth;
 
-	set_size(bvh, objects_vec);
 	if (objects_vec->num_elements > 1)
 	{
+		set_size(bvh, objects_vec);
 		sort_object_ptr(objects_vec, get_cut_axis(bvh));
 		vector_add(bvh_vec, &temp, 1);
 		bvh->next_a = get_last_vector_value(bvh_vec);
 		vector_init(&new_object_ptr, sizeof(t_object *));
-		vector_add(&new_object_ptr, objects_vec->data, objects_vec->num_elements / 2); // to secu
+		vector_add(&new_object_ptr, objects_vec->data, objects_vec->num_elements / 2);
 		bvh->depth = subdivise(bvh->next_a, bvh_vec, &new_object_ptr);
-		free_vector(&new_object_ptr);
 		vector_add(bvh_vec, &temp, 1);
 		bvh->next_b = get_last_vector_value(bvh_vec);
-		vector_init(&new_object_ptr, sizeof(t_object *));
-		vector_add(&new_object_ptr, objects_vec->data + (objects_vec->element_size * (objects_vec->num_elements / 2)), (objects_vec->num_elements + 1) / 2); // to secu
-		bvh->depth = fmaxf(subdivise(bvh->next_b, bvh_vec, &new_object_ptr), bvh->depth) + 1;
+		new_object_ptr.num_elements = 0;
+		vector_add(&new_object_ptr, (char *)objects_vec->data + (objects_vec->element_size * (objects_vec->num_elements / 2)), (objects_vec->num_elements + 1) / 2); // to secu
+		temp_depth = subdivise(bvh->next_b, bvh_vec, &new_object_ptr);
+		bvh->depth = imax(temp_depth, bvh->depth) + 1;
 		return (bvh->depth);
 	}
-	bvh->object = *(t_object **)objects_vec->data;
-	dprintf(2, "%f\n", bvh->object->sphere.pos.x);
+	bvh->object_a = *(t_object **)objects_vec->data;
 	bvh->depth = 0;
 	return (0);
 }
@@ -199,22 +205,6 @@ static void	update_min_max(t_object *o, t_vec3 *min, t_vec3 *max)
 	}
 }
 
-void	init_index(t_vector *index_vec, t_vector *objects_vec)
-{
-	size_t		i;
-	t_object	*object;
-
-	vector_init(index_vec, sizeof(int));
-	object = objects_vec->data;
-	i = 0;
-	while (i < objects_vec->num_elements)
-	{
-		if (object[i].type != PLANE && object[i].type != LIGHT)
-			vector_add(index_vec, &i, 1);
-		++i;
-	}
-}
-
 int	fill_pointer(t_vector *object_vec, t_vector *pointer_vec)
 {
 	size_t		i;
@@ -226,15 +216,26 @@ int	fill_pointer(t_vector *object_vec, t_vector *pointer_vec)
 	i = 0;
 	while (i < object_vec->num_elements)
 	{
-		if (object[i].type != PLANE && object[i].type != LIGHT)
-		{
-			actual = &object[i];
-			if (vector_add(pointer_vec, &actual, 1) == -1)
-				return (-1);
-		}
+		actual = &object[i];
+		if (vector_add(pointer_vec, &actual, 1) == -1)
+			return (-1);
 		++i;
 	}
 	return (0);
+}
+
+void	cut_bvh_leaf(t_aabb_bvh *bvh)
+{
+	if (bvh->depth == 1)
+	{
+		bvh->object_a = bvh->next_a->object_a;
+		bvh->object_b = bvh->next_b->object_a;
+	}
+	if (bvh->depth > 1)
+	{
+		cut_bvh_leaf(bvh->next_a);
+		cut_bvh_leaf(bvh->next_b);
+	}
 }
 
 int	create_aabb_bvh(t_scene *scene)
@@ -256,5 +257,6 @@ int	create_aabb_bvh(t_scene *scene)
 	create_root_bvh(&bvh_vec, &objects_pointer);
 	subdivise(get_last_vector_value(&bvh_vec), &bvh_vec, &objects_pointer);
 	scene->bvh.aabb_bvh = bvh_vec.data;
+	cut_bvh_leaf(scene->bvh.aabb_bvh);
 	return (0);
 }
