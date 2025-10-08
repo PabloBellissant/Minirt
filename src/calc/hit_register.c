@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   hit_register.c									 :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: pabellis <pabellis@student.forty2.fr>	  +#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2025/08/08 02:48:48 by pabellis		  #+#	#+#			 */
-/*   Updated: 2025/08/19 23:37:29 by pabellis		 ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   hit_register.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/22 00:47:55 by pabellis          #+#    #+#             */
+/*   Updated: 2025/10/06 03:21:06 by pabellis         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include <float.h>
@@ -19,30 +19,36 @@
 
 unsigned int sample_texture(t_scene *scene, float u, float v)
 {
-	int x = (int)(u * (scene->tex_width - 1));
-	int y = (int)(v * (scene->tex_height - 1));
+	const int x = (int)(u * (float)(scene->tex_width - 1));
+	const int y = (int)(v * (float)(scene->tex_height - 1));
+	const int offset = y * scene->tex_size_line + x * (scene->tex_bpp / 8);
+	unsigned int	color;
 
-	int offset = y * scene->tex_size_line + x * (scene->tex_bpp / 8);
-
-	return *(unsigned int *)(scene->pixels + offset);
+	ft_memcpy(&color, scene->pixels + offset, sizeof(unsigned int));
+	return (color);
 }
 
 t_vec3 texture_to_vec3(unsigned int color)
 {
 	t_vec3 result;
 
-	result.x = ((color >> 16) & 0xFF) / 255.0f;
-	result.y = ((color >> 8) & 0xFF) / 255.0f;
-	result.z = (color & 0xFF) / 255.0f;
+	result.x = (float)((color >> 16) & 0xFF) / 255.0f;
+	result.y = (float)((color >> 8) & 0xFF) / 255.0f;
+	result.z = (float)(color & 0xFF) / 255.0f;
 
 	return result;
 }
-# define NORMAL_DEBUG 0
+
+# define SMOOTH_SHADING 1
+# define NORMAL_DEBUG 1
+# define TEXTURE 0
+
 void    hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
 {
-    t_vec3 hit_point;
-    t_vec3 axis;
-    t_vec3 to_hit;
+    t_vec3	hit_point;
+    t_vec3	axis;
+    t_vec3	to_hit;
+	t_vec2	uv;
 
     hit_point = vec3_scale(ray->dir, o->t);
     hit_point = vec3_add(ray->pos, hit_point);
@@ -50,18 +56,15 @@ void    hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *sce
     {
        ray->hit_normal = vec3_sub(hit_point, o->sphere.pos);
        ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
+    	uv.x = 0.5f + atan2f(ray->hit_normal.z, ray->hit_normal.x) / (2.0f * (float)M_PI);
+    	uv.y = 0.5f - asinf(ray->hit_normal.y) / (float)M_PI;
 
-       float u = 0.5f + atan2f(ray->hit_normal.z, ray->hit_normal.x) / (2.0f * M_PI);
-       float v = 0.5f - asinf(ray->hit_normal.y) / M_PI;
-
-       ray->hit_rgb = texture_to_vec3(sample_texture(scene, u, v));
+       ray->hit_rgb = texture_to_vec3(sample_texture(scene, uv.x, uv.y));
     }
     else if (o->type == PLANE)
     {
        ray->hit_normal = o->plane.normal;
 
-       // ✅ Calcul des UV pour le plan
-       // Crée deux vecteurs perpendiculaires au plan pour former une base 2D
        t_vec3 tangent, bitangent;
 
        // Trouve un vecteur perpendiculaire à la normale
@@ -91,40 +94,44 @@ void    hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *sce
     }
     else if (o->type == TRIANGLE)
     {
-       t_vec3 v0v1 = vec3_sub(o->triangle.p1.pos, o->triangle.p0.pos);
-       t_vec3 v0v2 = vec3_sub(o->triangle.p2.pos, o->triangle.p0.pos);
-       t_vec3 v0p = vec3_sub(hit_point, o->triangle.p0.pos);
+    	t_vec3	n0, n1, n2;
+    	if (TEXTURE || SMOOTH_SHADING)
+    	{
+    		t_vec3 v0v1 = vec3_sub(o->triangle.p1.pos, o->triangle.p0.pos);
+    		t_vec3 v0v2 = vec3_sub(o->triangle.p2.pos, o->triangle.p0.pos);
+    		t_vec3 v0p = vec3_sub(hit_point, o->triangle.p0.pos);
 
-       float d00 = vec3_dot(v0v1, v0v1);
-       float d01 = vec3_dot(v0v1, v0v2);
-       float d11 = vec3_dot(v0v2, v0v2);
-       float d20 = vec3_dot(v0p, v0v1);
-       float d21 = vec3_dot(v0p, v0v2);
+    		float d00 = vec3_dot(v0v1, v0v1);
+    		float d01 = vec3_dot(v0v1, v0v2);
+    		float d11 = vec3_dot(v0v2, v0v2);
+    		float d20 = vec3_dot(v0p, v0v1);
+    		float d21 = vec3_dot(v0p, v0v2);
 
-       float denom = d00 * d11 - d01 * d01;
-    	// Calcul des coordonnées barycentriques (UNE SEULE FOIS)
-    	float bary_v = (d11 * d20 - d01 * d21) / denom;
-    	float bary_w = (d00 * d21 - d01 * d20) / denom;
-    	float bary_u = 1.0f - bary_v - bary_w;
+    		float denom = d00 * d11 - d01 * d01;
+    		// Calcul des coordonnées barycentriques (UNE SEULE FOIS)
+    		float bary_v = (d11 * d20 - d01 * d21) / denom;
+    		float bary_w = (d00 * d21 - d01 * d20) / denom;
+    		float bary_u = 1.0f - bary_v - bary_w;
 
-    	// Interpolate texture coordinates
-    	float u_tex = bary_u * o->triangle.p0.uv.x +
-					  bary_v * o->triangle.p1.uv.x +
-					  bary_w * o->triangle.p2.uv.x;
+    		// Interpolate texture coordinates
+    		float u_tex = bary_u * o->triangle.p0.uv.x +
+						  bary_v * o->triangle.p1.uv.x +
+						  bary_w * o->triangle.p2.uv.x;
 
-    	float v_tex = bary_u * o->triangle.p0.uv.y +
-					  bary_v * o->triangle.p1.uv.y +
-					  bary_w * o->triangle.p2.uv.y;
+    		float v_tex = bary_u * o->triangle.p0.uv.y +
+						  bary_v * o->triangle.p1.uv.y +
+						  bary_w * o->triangle.p2.uv.y;
 
-    	unsigned int tex_color = sample_texture(scene, u_tex, v_tex);
-    	ray->hit_rgb = texture_to_vec3(tex_color);
+    		unsigned int tex_color = sample_texture(scene, u_tex, v_tex);
+    		ray->hit_rgb = texture_to_vec3(tex_color);
 
-    	// Interpolate vertex normals (avec les VRAIES coordonnées barycentriques)
-    	t_vec3 n0 = vec3_scale(o->triangle.p0.norm, bary_u);
-    	t_vec3 n1 = vec3_scale(o->triangle.p1.norm, bary_v);
-    	t_vec3 n2 = vec3_scale(o->triangle.p2.norm, bary_w);
-
-    	ray->hit_normal = vec3_add(n0, vec3_add(n1, n2));
+    		n0 = vec3_scale(o->triangle.p0.norm, bary_u);
+    		n1 = vec3_scale(o->triangle.p1.norm, bary_v);
+    		n2 = vec3_scale(o->triangle.p2.norm, bary_w);
+    		ray->hit_normal = vec3_add(n0, vec3_add(n1, n2));
+    	}
+    	else
+    		ray->hit_normal = vec3_add(o->triangle.p0.norm, vec3_add(o->triangle.p1.norm, o->triangle.p2.norm));
     	ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
 
     	if (NORMAL_DEBUG)
@@ -133,6 +140,8 @@ void    hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *sce
     		ray->hit_rgb.y = ray->hit_normal.y * 0.5f + 0.5f;
     		ray->hit_rgb.z = ray->hit_normal.z * 0.5f + 0.5f;
     	}
+    	else if (!TEXTURE)
+    		ray->hit_rgb = texture_to_vec3(0xFFFFFF);
     }
     else if (o->type == CYLINDER)
     {
@@ -168,7 +177,7 @@ float	   hit_register(t_ray *ray, t_scene *scene, t_object **hit_object)
 		if (!(*hit_object) || bvh_ret->t < (*hit_object)->t)
 			(*hit_object) = bvh_ret;
 	}
-	else if (!(*hit_object) || (*hit_object)->t == FLT_MAX)
+	else if (!(*hit_object) || (*hit_object)->t >= FLT_MAX)
 		return (0);
 	hit_register_obj(ray, (*hit_object), scene);
 	return ((*hit_object)->t);
