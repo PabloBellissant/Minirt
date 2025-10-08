@@ -65,7 +65,7 @@ static void	ft_itoal(int n, char *str)
 
 void	update_fps(t_data *data)
 {
-	ft_itoal(data->mlx->fps, data->font_env->fps->content);
+	ft_itoal((int)data->mlx->fps, data->font_env->fps->content);
 }
 
 int	init_fps(t_rast_env *env, t_ttf_font *font)
@@ -106,7 +106,10 @@ t_rast_env	*init_font_rasterizer(t_mlx *mlx)
 
 int	init_graphics(t_data *data)
 {
-	data->mlx = init_mlx(WIDTH, HEIGHT, TITLE);
+	char	title[sizeof(TITLE)];
+
+	ft_strlcpy(title, TITLE, sizeof(title));
+	data->mlx = init_mlx(WIDTH, HEIGHT, title);
 	if (!data->mlx)
 		return (-1);
 	data->font_env = init_font_rasterizer(data->mlx);
