@@ -43,7 +43,7 @@ int	check_float(t_object_type type, int actual_line)
 
 static void	print_already_type(t_object_type type, int actual_line)
 {
-	static char	*type_name[] = {"Undefined",
+	static const char	*type_name[] = {"Undefined",
 		"Ambient", "Camera", "Light", "Sphere", "Plane", "Cylinder"};
 
 	ft_putstr_fd("Error\nMultiple assignation for type '", 2);
