@@ -36,9 +36,9 @@ inline t_object	*get_nearest_2(t_ray *ray, t_aabb_bvh *bvh)
 	return (object[1]);
 }
 
-t_object	*hit_triangle_bvh(t_ray *ray, t_aabb_bvh *bvh);
+t_object	*hit_direct_object(t_ray *ray, t_aabb_bvh *bvh);
 
-inline t_object	*hit_triangle_bvh(t_ray *ray, t_aabb_bvh *bvh)
+inline t_object	*hit_direct_object(t_ray *ray, t_aabb_bvh *bvh)
 {
 	t_object	*object_a;
 	t_object	*object_b;
@@ -51,10 +51,10 @@ inline t_object	*hit_triangle_bvh(t_ray *ray, t_aabb_bvh *bvh)
 			return (NULL);
 		return (bvh->object_a);
 	}
-	object_a = hit_triangle_bvh(ray, bvh->next_a);
+	object_a = hit_direct_object(ray, bvh->next_a);
 	if (!object_a)
-		return (hit_triangle_bvh(ray, bvh->next_b));
-	object_b = hit_triangle_bvh(ray, bvh->next_b);
+		return (hit_direct_object(ray, bvh->next_b));
+	object_b = hit_direct_object(ray, bvh->next_b);
 	if (object_b != NULL)
 	{
 		if (object_a->t < object_b->t)
@@ -64,63 +64,16 @@ inline t_object	*hit_triangle_bvh(t_ray *ray, t_aabb_bvh *bvh)
 	return (object_a);
 }
 
-
-static inline void bvh_check(float t1, float t2, float *t_min, float *t_max)
-{
-	*t_min = fmaxf(fminf(t1, t2), *t_min);
-	*t_max = fminf(fmaxf(t1, t2), *t_max);
-}
-
-#include <float.h>
-float	_hit_box(t_ray *ray, t_aabb_bvh *bvh)
-{
-	float	t_max;
-	float	t_min;
-	uint8_t	i;
-
-	t_min = -FLT_MAX;
-	t_max = FLT_MAX;
-	i = 0;
-	while (i < 3)
-	{
-		if (ray->dir.data[i] == .0f)
-		{
-			if (ray->pos.data[i] < bvh->min.data[i] ||
-				ray->pos.data[i] > bvh->max.data[i])
-			{
-				return (FLT_MAX);
-			}
-		}
-		else
-		{
-			bvh_check((bvh->min.data[i] - ray->pos.data[i]) / ray->dir.data[i],
-				(bvh->max.data[i] - ray->pos.data[i]) / ray->dir.data[i],
-				&t_min, &t_max);
-			if (t_min > t_max)
-				return (FLT_MAX);
-		}
-		i++;
-	}
-	return (t_min);
-}
-
-
 // define when the bvh will start iterate objects instead of box itself.
 #define STOP_HIT_BVH 2
 
 inline t_object *hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh)
 {
-	t_object   *object_a;
-	t_object   *object_b;
+	t_object	*object_a;
+	t_object	*object_b;
 
 	if (bvh->depth < STOP_HIT_BVH)
-		return (hit_triangle_bvh(ray, bvh));
-	if (bvh->depth == 0)
-	{
-		if (bvh->object_a->f(ray, bvh->object_a, &bvh->object_a->t) == 0)
-			return (NULL);
-		return (bvh->object_a);
-	}
+		return (hit_direct_object(ray, bvh));
 	if (!hit_box(ray, bvh))
 		return (NULL);
 	object_a = hit_aabb_bvh(ray, bvh->next_a);
@@ -136,83 +89,3 @@ inline t_object *hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh)
 	return (object_a);
 }
 
-
-
-// static inline void bvh_check(float t1, float t2, float *t_min, float *t_max)
-// {
-// 	*t_min = fmaxf(fminf(t1, t2), *t_min);
-// 	*t_max = fminf(fmaxf(t1, t2), *t_max);
-// }
-//
-// #include <float.h>
-// float	_hit_box(t_ray *ray, t_aabb_bvh *bvh)
-// {
-// 	float	t_max;
-// 	float	t_min;
-// 	uint8_t	i;
-//
-// 	t_min = -FLT_MAX;
-// 	t_max = FLT_MAX;
-// 	i = 0;
-// 	while (i < 3)
-// 	{
-// 		if (ray->dir.data[i] == .0f)
-// 		{
-// 			if (ray->pos.data[i] < bvh->min.data[i] ||
-// 				ray->pos.data[i] > bvh->max.data[i])
-// 			{
-// 				return (FLT_MAX);
-// 			}
-// 		}
-// 		else
-// 		{
-// 			bvh_check((bvh->min.data[i] - ray->pos.data[i]) / ray->dir.data[i],
-// 				(bvh->max.data[i] - ray->pos.data[i]) / ray->dir.data[i],
-// 				&t_min, &t_max);
-// 			if (t_min > t_max)
-// 				return (FLT_MAX);
-// 		}
-// 		i++;
-// 	}
-// 	return (t_min);
-// }
-//
-//
-// // define when the bvh will start iterate objects instead of box itself.
-// #define STOP_HIT_BVH 2
-//
-// inline t_object	*hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh)
-// {
-// 	t_object	*object;
-// 	float		distance_a;
-// 	float		distance_b;
-//
-// 	if (bvh->depth < STOP_HIT_BVH)
-// 		return (hit_triangle_bvh(ray, bvh));
-// 	distance_a = _hit_box(ray, bvh->next_a);
-// 	distance_b = _hit_box(ray, bvh->next_b);
-//
-// 	if (distance_a < distance_b)
-// 	{
-// 		object = hit_aabb_bvh(ray, bvh->next_a);
-// 		if (!object)
-// 		{
-// 			if (distance_b != FLT_MAX)
-// 				return (hit_aabb_bvh(ray, bvh->next_b));
-// 			return (NULL);
-// 		}
-// 		return (object);
-// 	}
-// 	if (distance_b < distance_a)
-// 	{
-// 		object = hit_aabb_bvh(ray, bvh->next_b);
-// 		if (!object)
-// 		{
-// 			if (distance_a != FLT_MAX)
-// 				return (hit_aabb_bvh(ray, bvh->next_a));
-// 			return (NULL);
-// 		}
-// 		return (object);
-// 	}
-// 	return (NULL);
-// }
