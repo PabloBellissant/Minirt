@@ -53,7 +53,11 @@ typedef struct s_aabb_bvh
 			t_aabb_bvh	*next_a;
 			t_aabb_bvh	*next_b;
 		};
-		t_object	*object;
+		struct
+		{
+			t_object	*object_a;
+			t_object	*object_b;
+		};
 	};
 }	t_aabb_bvh;
 
