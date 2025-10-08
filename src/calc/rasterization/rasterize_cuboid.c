@@ -23,7 +23,7 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_vec3	vertices[8];
 
 	get_cuboid_vertice(vertices, cuboid);
-	draw_vertices(img, vertices, color.rgb, camera);
+	draw_vertices(img, vertices, (int)color.rgb, camera);
 	return (0);
 }
 
