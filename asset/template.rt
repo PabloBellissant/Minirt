@@ -1,9 +1,12 @@
-C 0,0,0 0,0,0 70
+C -.5,1,0 0,0,0 70
 
 L 0,50,50 1 0,0,255
 # L 200,0,50 1 255,0,0
 # L -200,0,-50 1 0,255,0
 
-A 0.2 255,255,255
-//sp -1.5,-.5,-1 1 0,255,255
-obj asset/sphere.obj 0,0,-3
+A 0.1 255,255,255
+#sp 10, 10, -3 1 0,255,255
+# obj asset/bench.obj -1,0,-3
+ obj asset/dragon/dragon_low_poly.obj -0.3,0.52,-2.4
+# obj asset/sphere.obj 1,1,1
+#obj asset/teapot/teapot.obj -1, -20, -100
