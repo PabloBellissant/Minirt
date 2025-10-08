@@ -19,7 +19,7 @@ void	rasterize_aabb_bvh(t_aabb_bvh *bvh, t_params *p, int total_depth, t_data *d
 
 static inline t_rgb_int	rgb_to_rgb_int(float r, float g, float b)
 {
-	return ((t_rgb_int) {{r * 255.0f, g * 255.0f, b * 255.0f}});
+	return ((t_rgb_int) {{(uint8_t)(r * 255.0f + 0.5f), (uint8_t)(g * 255.0f + 0.5f), (uint8_t)(b * 255.0f + 0.5f)}});
 }
 
 t_rgb_int float_to_rainbow(float f)
