@@ -70,9 +70,10 @@ int	main(int argc, char **argv)
 		return (3); //free mlx;
 	init_threads(data.queue);
 	data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
-	data.scene.tex = mlx_xpm_file_to_image(data.mlx->mlx, "asset/pabellis.xpm", &data.scene.tex_width, &data.scene.tex_height);
+	char *tempstr = strdup("asset/pabellis.xpm");
+	data.scene.tex = mlx_xpm_file_to_image(data.mlx->mlx, tempstr, &data.scene.tex_width, &data.scene.tex_height);
 	data.scene.pixels = mlx_get_data_addr(data.scene.tex, &data.scene.tex_bpp, &data.scene.tex_size_line, &data.scene.tex_endian);
-	loop_hook(&data);
+	//loop_hook(&data);
 	free_data(data);
 	kill_threads(data.queue, NPROC);
 	return (0);
