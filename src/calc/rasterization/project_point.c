@@ -12,6 +12,7 @@
 
 #include "vectors_types.h"
 #include "render.h"
+#include "minirt.h"
 
 t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 {
@@ -27,7 +28,7 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 		return ((t_vec2i) {{-1, -1}});
 	cam_space.x = vec3_dot(temp, camera->camera_right);
 	cam_space.y = vec3_dot(temp, camera->camera_up);
-	fov_scale = 1.0f / tanf((camera->fov * (M_PI / 180.0f)) / 2.0f);
+	fov_scale = 1.0f / tanf(((float)camera->fov * (M_PIf / 180.0f)) / 2.0f);
 	projected.x = (cam_space.x * fov_scale) / (fabsf(cam_space.z)
 			* camera->aspect_ratio);
 	projected.y = (cam_space.y * fov_scale) / fabsf(cam_space.z);
