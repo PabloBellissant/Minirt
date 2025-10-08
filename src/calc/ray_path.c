@@ -70,7 +70,7 @@ float	light_hit_register(t_ray *ray, t_scene *scene)
 			if (t_current < t_min)
 			{
 				t_min = t_current;
-				hit_light_idx = i;
+				hit_light_idx = (int)i;
 			}
 		}
 		++i;
@@ -81,34 +81,22 @@ float	light_hit_register(t_ray *ray, t_scene *scene)
 	return (t_min);
 }
 
-t_rgb_int	render_light_hollow_circle(t_ray *ray)
-{
-	const float	rim_factor = 1.0f - fabs(vec3_dot(ray->dir, ray->hit_normal));
-
-	if (rim_factor)
-		return (rgb_int(255 * rim_factor, 127 * rim_factor, 0));
-	return (rgb_int(0, 0, 0));
-}
-
+# define NORMAL_DEBUG 1
 t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object)
 {
 	float		hit_distance;
-	float		hit_distance_light;
 	t_rgb_int	final_color = rgb_int(0, 0, 0);
-	t_ray		og;
 
-	og = *ray;
 	hit_distance = hit_register(ray, scene, hit_object);
-	hit_distance_light = light_hit_register(&og, scene);
-	if ((hit_distance_light > 0) && ((hit_distance == 0)
-			|| (hit_distance_light < hit_distance)))
-		final_color = render_light_hollow_circle(&og);
 	if ((final_color.r <= 200) && (final_color.g <= 100))
 	{
-		if (hit_distance == 0)
+		if (hit_distance <= 0)
 			return (rgb_int(0, 0, 0));
 		fill_phong(ray, scene);
-		final_color = rgb_ftoi(phong_path(scene, ray));
+		if (NORMAL_DEBUG)
+			final_color = rgb_ftoi(ray->hit_rgb);
+		else
+			final_color = rgb_ftoi(phong_path(scene, ray));
 	}
 	return (final_color);
 }
@@ -117,23 +105,19 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects, t_scene *
 
 t_rgb_int	fake_path(t_ray *ray, t_scene *scene, t_object *hit_object)
 {
-	float		hit_distance_light;
 	t_rgb_int	final_color = rgb_int(0, 0, 0);
-	t_ray		og;
 
-	og = *ray;
 	hit_object->f(ray, hit_object, &hit_object->t);
 	hit_register_obj(ray, hit_object, scene);
-	hit_distance_light = light_hit_register(&og, scene);
-	if ((hit_distance_light > 0) && ((hit_object->t == 0)
-			|| (hit_distance_light < hit_object->t)))
-		final_color = render_light_hollow_circle(&og);
 	if ((final_color.r <= 200) && (final_color.g <= 100))
 	{
-		if (hit_object->t == 0)
+		if (hit_object->t <= 0)
 			return (rgb_int(0, 0, 0));
 		fill_phong(ray, scene);
-		final_color = rgb_ftoi(phong_path(scene, ray));
+		if (NORMAL_DEBUG)
+			final_color = rgb_ftoi(ray->hit_rgb);
+		else
+			final_color = rgb_ftoi(phong_path(scene, ray));
 	}
 	return (final_color);
 }
