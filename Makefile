@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/09/09 01:46:35 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/10/09 19:46:42 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,7 @@ INCDIR		= include
 OBJDIR		= .obj
 DEPDIR		= .dep
 
+XCERRCALDIR	= $(LIBDIR)/xcerrcal
 LIBFTDIR	= $(LIBDIR)/libft
 MLXDIR		= $(LIBDIR)/minilibx-linux
 MLXWDIR		= $(LIBDIR)/mlx_wrapper
@@ -40,11 +41,12 @@ FONT_RENDIR	= $(LIBDIR)/font_renderer
 
 # Output
 NAME		= MiniRT
+XCERRCAL	= $(XCERRCALDIR)/libxcerrcal.a
 LIBFT		= $(LIBFTDIR)/libft.a
 MLX			= $(MLXDIR)/libmlx.a
 MLXW		= $(MLXWDIR)/libmlx-wrapper.a
 FONT_RENDER	= $(FONT_RENDIR)/libfont-renderer.a
-ARCHIVES	= $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)
+ARCHIVES	= $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT) $(XCERRCAL)
 
 # Compiler and flags
 CC			= cc
@@ -54,11 +56,11 @@ CFLAGS		= -Wall -Werror -Wextra \
 
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 
-IFLAGS		= -I$(INCDIR) -I$(FONT_RENDIR)/include -I$(MLXWDIR)/include \
+IFLAGS		= -I$(INCDIR) -I$(XCERRCALDIR)/include -I$(FONT_RENDIR)/include -I$(MLXWDIR)/include \
 			  -I$(LIBFTDIR)/include -I$(MLXDIR)
 
-LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) \
-			  -lfont-renderer -lmlx-wrapper -lmlx -lft \
+LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) -L$(XCERRCALDIR)\
+			  -lfont-renderer -lmlx-wrapper -lmlx -lft -lxcerrcal \
 			  -lXext -lX11 -lXrandr -lm
 
 VARS		= DEBUG=$(DEBUG) \
@@ -92,10 +94,13 @@ all:	$(NAME)
 fast:	$(NAME)
 debug:	$(NAME)
 
-$(NAME): $(FONT_RENDER) $(OBJS) $(INCLUDES)
+$(NAME): $(XCERRCAL) $(FONT_RENDER) $(OBJS) $(INCLUDES)
 	$(call bin-link-msg)
-	@$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
+	$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
 	$(call bin-finish-msg)
+
+$(XCERRCAL):
+	@$(MAKE) -s -C $(XCERRCALDIR) $(RULE) $(VARS) ROOTDIR=../..
 
 $(FONT_RENDER): $(MLXW) $(MLX) $(LIBFT)
 	@$(MAKE) -s -C $(FONT_RENDIR) $(RULE)  $(VARS) ROOTDIR=../..
