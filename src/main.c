@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/09 19:50:59 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/11 20:30:39 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ int	main(int argc, char **argv)
 	t_queue	queue;
 
 	register_lft_errors();
+	register_mlxw_errors();
 	(void)argv;
 	if (argc < 2)
 		return (1);
