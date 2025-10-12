@@ -81,6 +81,22 @@ float	light_hit_register(t_ray *ray, t_scene *scene)
 	return (t_min);
 }
 
+unsigned int sample_texture(t_texture *texture, float u, float v);
+t_vec3 texture_to_vec3(unsigned int color);
+#include "minirt.h"
+
+t_rgb_int	draw_skybox(t_scene *scene, t_vec3 *dir)
+{
+	float	u;
+	float	v;
+
+	if (!scene->skybox)
+		return (rgb_int(0, 0, 0));
+	u = 0.5f + atan2f(dir->z, dir->x) / (2.0f * M_PIf);
+	v = 0.5f - asinf(dir->y) / M_PIf;
+	return (rgb_ftoi(texture_to_vec3(sample_texture(scene->skybox, u, v))));
+}
+
 # define NORMAL_DEBUG 1
 t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object)
 {
@@ -91,7 +107,7 @@ t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object)
 	if ((final_color.r <= 200) && (final_color.g <= 100))
 	{
 		if (hit_distance <= 0)
-			return (rgb_int(0, 0, 0));
+			return (draw_skybox(scene, &ray->dir));
 		fill_phong(ray, scene);
 		if (NORMAL_DEBUG)
 			final_color = rgb_ftoi(ray->hit_rgb);
@@ -112,7 +128,7 @@ t_rgb_int	fake_path(t_ray *ray, t_scene *scene, t_object *hit_object)
 	if ((final_color.r <= 200) && (final_color.g <= 100))
 	{
 		if (hit_object->t <= 0)
-			return (rgb_int(0, 0, 0));
+			return (draw_skybox(scene, &ray->dir));
 		fill_phong(ray, scene);
 		if (NORMAL_DEBUG)
 			final_color = rgb_ftoi(ray->hit_rgb);
