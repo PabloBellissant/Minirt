@@ -27,23 +27,20 @@ void	merge_nearest_sphere_bvh(t_vector *bvh_vec, int *parents)
 	i[0] = 0;
 	while (i[0] < bvh_vec->num_elements)
 	{
-		if (parents[i[0]] == 0)
+		i[1] = i[0] + 1;
+		while (i[1] < bvh_vec->num_elements)
 		{
-			i[1] = i[0] + 1;
-			while (i[1] < bvh_vec->num_elements)
+			if (parents[i[0]] == 0 && parents[i[1]] == 0)
 			{
-				if (parents[i[1]] == 0)
+				actual_area = get_next_sphere_bvh_area(&bvh[i[0]], &bvh[i[1]]);
+				if (actual_area < min_area)
 				{
-					actual_area = get_next_sphere_bvh_area(&bvh[i[0]], &bvh[i[1]]);
-					if (actual_area < min_area)
-					{
-						min_area = actual_area;
-						best[0] = i[0];
-						best[1] = i[1];
-					}
+					min_area = actual_area;
+					best[0] = i[0];
+					best[1] = i[1];
 				}
-				++i[1];
 			}
+			++i[1];
 		}
 		++i[0];
 	}
