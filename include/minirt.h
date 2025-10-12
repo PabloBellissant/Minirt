@@ -6,15 +6,23 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/09 02:39:52 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/12 21:37:30 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
+
+# include <stdint.h>
+# include "xcerrcal.h"
+# include "rt_xcerrcal.h"
+# include "mlx_int.h"
+# include "libft.h"
+# include "parsing.h"
+# include "vectors.h"
+# include "render.h"
+# include "font_renderer.h"
 # include "mlx_wrapper.h"
-
-
 
 # define BOUNCE_MAX 10
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
@@ -23,14 +31,6 @@
 # define EPSILON 1e-6f
 # define M_PIf 3.14159265358979323846f
 
-# include <stdint.h>
-# include "mlx_int.h"
-# include "libft.h"
-# include "parsing.h"
-# include "vectors.h"
-# include "render.h"
-# include "font_renderer.h"
-# include "mlx_wrapper.h"
 
 typedef struct s_keys
 {
