@@ -52,7 +52,8 @@ static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 			point.z = s->pos.z + s->diameter / 2.0f * sinf(val)
 				* sinf(i * 2.0f * M_PIf / V_COUNT);
 			if (val != 0.0f)
-				draw_only_visible(img, &point, &prev_point, (int)color.rgb, camera);
+				draw_only_visible(img, &(t_3d_line){point, prev_point},
+					(int)color.rgb, camera);
 			prev_point = point;
 			val += STEP;
 		}
@@ -80,7 +81,8 @@ static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 			point.z = s->pos.z + s->diameter / 2.0f * sinf(i * M_PIf
 					/ H_COUNT) * sinf(val);
 			if (val != 0.0f)
-				draw_only_visible(img, &prev_point, &point, (int)color.rgb, camera);
+				draw_only_visible(img, &(t_3d_line){point, prev_point},
+					(int)color.rgb, camera);
 			prev_point = point;
 			val += STEP;
 		}
