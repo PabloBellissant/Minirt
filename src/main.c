@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/11 20:30:39 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/12 21:22:52 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,19 @@ void	free_data(t_data data)
 	free_scene(data.scene);
 }
 
+void	register_unit_errors(void)
+{
+	register_lft_errors();
+	register_mlxw_errors();
+	register_frdr_errors();
+	//register_bin_errors();
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
 	t_queue	queue;
 
-	register_lft_errors();
-	register_mlxw_errors();
-	(void)argv;
 	if (argc < 2)
 		return (1);
 	ft_bzero(&data, sizeof(t_data));
