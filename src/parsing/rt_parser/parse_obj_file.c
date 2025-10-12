@@ -43,9 +43,11 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 	t_vector	uv_vec;
 	int			line_num;
 	t_obj		type;
+	int			triangle_count;
 
 	if (fd == -1)
 		return (-1);
+	triangle_count = 0;
 	vector_init(&vertex_vec, sizeof(t_vertex));
 	vector_init(&normal_vec, sizeof(t_vec3));
 	vector_init(&triangle_vec, sizeof(t_triangle));
@@ -55,19 +57,15 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 	while (line != NULL)
 	{
 		type = get_obj_type(line);
-		// if (type == UNDEFINED)
-		// {
-		// 	free(vertex_vec.data);
-		// 	free(normal_vec.data);
-		// 	free(triangle_vec.data);
-		// 	return (-1);
-		// }
 		if (type == v)
 			parse_vertex(line, line_num, &vertex_vec, pos);
 		else if (type == vn)
 			parse_normal(line, line_num, &normal_vec);
 		else if (type == f)
+		{
+			++triangle_count;
 			parse_face(line, line_num, &vertex_vec, &normal_vec, &uv_vec, scene);
+		}
 		else if (type == vt)
 			parse_texture(line, line_num, &uv_vec);
 		++line_num;
@@ -75,6 +73,7 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 	}
 	free(vertex_vec.data);
 	free(normal_vec.data);
+	ft_printf("Triangle count : %d\n", triangle_count);
 	return (0);
 }
 
