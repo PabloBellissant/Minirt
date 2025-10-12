@@ -24,5 +24,7 @@ int			hit_cylinder(t_ray *ray, t_object *o, float *t);
 int			hit_plane(t_ray *restrict ray, t_object *restrict o, float *t);
 int			hit_triangle(t_ray *ray, t_object *o, float *t);
 void		calc_bvh_bound(t_camera *cam, t_bound *bound, t_bvh_main *bvh, int mode);
+int			imax(int a, int b);
+int			imin(int a, int b);
 
 #endif

@@ -97,6 +97,13 @@ void			merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index);
 t_sphere_bvh	*get_sphere_root(t_vector *bvh_vec, int *parents);
 int				load_bvh(int mode, t_scene *scene);
 int				apply_bound(t_vec2i *proj, t_bound *bound);
+void			get_min_max(t_object *o, t_vec3 *min, t_vec3 *max);
+void			set_size(t_aabb_bvh *bvh, t_vector *objects_vec);
+int				get_cut_index(t_vector *object_ptr, t_aabb_bvh *bvh, int axis);
+int				get_cut_axis(t_aabb_bvh *parent);
+int				subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec,
+				t_vector *obj_vec);
+t_vec3			get_center(const t_object *o);
 
 #endif
 
