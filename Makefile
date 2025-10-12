@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/10/09 19:46:42 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/10/11 01:12:44 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,8 @@ ROOTDIR		= .
 include $(ROOTDIR)/mkidir/make_utils.mk
 
 # Variables
+# :w
+#
 NPROC		= $(shell nproc)
 WINDOWLESS	= 0
 FULLSCREEN	= 0
