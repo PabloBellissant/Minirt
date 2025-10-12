@@ -77,6 +77,16 @@ typedef struct s_bvh_main
 	int			bvh_mode;
 }	t_bvh_main;
 
+typedef struct s_texture
+{
+	char		*pixels;
+	int			tex_bpp;
+	int			tex_size_line;
+	int			width;
+	int			height;
+	char		*name;
+}	t_texture;
+
 typedef struct s_scene
 {
 	t_ambient	ambient;
@@ -88,14 +98,16 @@ typedef struct s_scene
 	t_object	*planes;
 	int			plane_count;
 	t_bvh_main	bvh;
-	t_img		*tex;
-	int			tex_bpp;
-	int			tex_size_line;
-	int			tex_endian;
-	char		*pixels;
-	int			tex_width;
-	int			tex_height;
+	t_vector	texture;
+	t_mlx		*mlx;
+	t_texture	*skybox;
 }				t_scene;
+
+typedef struct s_3d_line
+{
+	t_vec3	pos1;
+	t_vec3	pos2;
+}	t_3d_line;
 
 typedef struct s_data t_data;
 typedef struct s_params t_params;
@@ -107,7 +119,8 @@ int		rasterize_sphere(t_sphere *s, t_img_data *img,
 void	rasterize_bvh(void *bvh, t_params *p, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
-void	draw_only_visible(t_img_data *img, t_vec3 *v1, t_vec3 *v2, int color, t_camera *camera);
+void	draw_only_visible(t_img_data *img, t_3d_line *line,
+	int color, t_camera *camera);
 void	draw_bound(t_bound *bound, t_img_data *img);
 void	draw_supersampling(t_bound *bound, t_vec2i force, t_img_data *img);
 
