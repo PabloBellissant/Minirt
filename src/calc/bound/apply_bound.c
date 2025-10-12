@@ -12,9 +12,7 @@
 
 #include "vectors_types.h"
 #include "bvh.h"
-
-static int	imax(int a, int b);
-static int	imin(int a, int b);
+#include "calc.h"
 
 int	apply_bound(t_vec2i *proj, t_bound *bound)
 {
@@ -35,18 +33,4 @@ int	apply_bound(t_vec2i *proj, t_bound *bound)
 	if (proj->x > bound->right)
 		bound->right = imin(proj->x, WIDTH - 1);
 	return (0);
-}
-
-static int	imax(int a, int b)
-{
-	if (a > b)
-		return (a);
-	return (b);
-}
-
-static int	imin(int a, int b)
-{
-	if (a < b)
-		return (a);
-	return (b);
 }

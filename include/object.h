@@ -82,6 +82,7 @@ typedef struct s_ray	t_ray;
 typedef struct s_object
 {
 	char			*name;
+	t_texture		*texture;
 	t_object_type	type;
 	int				(*f)(t_ray *, t_object *, float *);
 	float			t;

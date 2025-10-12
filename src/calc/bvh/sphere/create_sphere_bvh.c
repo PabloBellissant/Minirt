@@ -14,11 +14,11 @@
 #include "minirt.h"
 
 static int	create_object_sphere_bvh(t_scene *scene, t_vector *bvh_vec);
-static void	set_sphere_bvh_size(t_object *object, t_vec3 *pos, float *radius);
+static void	set_sphere_bvh_size(t_object *obj, t_vec3 *pos, float *radius);
 
 int	init_sphere_bvh(t_vector *bvh_vec, t_scene *scene)
 {
-	size_t		volume_count;
+	size_t	volume_count;
 
 	vector_init(bvh_vec, sizeof(t_sphere_bvh));
 	volume_count = get_bvh_count(&scene->objects);
@@ -62,7 +62,8 @@ static int	create_object_sphere_bvh(t_scene *scene, t_vector *bvh_vec)
 	{
 		if (object[i].type != PLANE && object[i].type != LIGHT)
 		{
-			set_sphere_bvh_size(&(object[i]), &single_bvh.pos, &single_bvh.size);
+			set_sphere_bvh_size(&(object[i]),
+				&single_bvh.pos, &single_bvh.size);
 			single_bvh.object = &(object[i]);
 			vector_add(bvh_vec, &single_bvh, 1);
 		}
@@ -71,33 +72,31 @@ static int	create_object_sphere_bvh(t_scene *scene, t_vector *bvh_vec)
 	return (0);
 }
 
-static void	set_sphere_bvh_size(t_object *object, t_vec3 *pos, float *radius)
+static void	set_sphere_bvh_size(t_object *obj, t_vec3 *pos, float *radius)
 {
 	t_vec3	temp;
 
-	if (object->type == SPHERE)
+	if (obj->type == SPHERE)
 	{
-		*pos = object->sphere.pos;
-		*radius = object->sphere.diameter / 2;
+		*pos = obj->sphere.pos;
+		*radius = obj->sphere.diameter / 2;
 	}
-	if (object->type == TRIANGLE)
+	if (obj->type == TRIANGLE)
 	{
-		pos->x = (object->triangle.p0.pos.x + object->triangle.p1.pos.x + object->triangle.p2.pos.x) / 3.0f;
-		pos->y = (object->triangle.p0.pos.y + object->triangle.p1.pos.y + object->triangle.p2.pos.y) / 3.0f;
-		pos->z = (object->triangle.p0.pos.z + object->triangle.p1.pos.z + object->triangle.p2.pos.z) / 3.0f;
-		temp.x = vec3_length(vec3_sub(object->triangle.p0.pos, *pos));
-		temp.y = vec3_length(vec3_sub(object->triangle.p1.pos, *pos));
-		temp.z = vec3_length(vec3_sub(object->triangle.p2.pos, *pos));
+		*pos = vec3_add(vec3_add(obj->triangle.p0.pos, obj->triangle.p1.pos),
+				obj->triangle.p2.pos);
+		*pos = vec3_div_scalar(*pos, 3);
+		temp.x = vec3_length(vec3_sub(obj->triangle.p0.pos, *pos));
+		temp.y = vec3_length(vec3_sub(obj->triangle.p1.pos, *pos));
+		temp.z = vec3_length(vec3_sub(obj->triangle.p2.pos, *pos));
 		*radius = fmaxf(fmaxf(temp.x, temp.y), temp.z);
 	}
-	if (object->type == CYLINDER)
+	if (obj->type == CYLINDER)
 	{
-		// min->x = object->cylinder.pos.x - fmaxf(object->cylinder.radius, object->cylinder.height);
-		// min->y = object->cylinder.pos.y - fmaxf(object->cylinder.radius, object->cylinder.height);
-		// min->z = object->cylinder.pos.z - fmaxf(object->cylinder.radius, object->cylinder.height);
-		// max->x = min->x + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
-		// max->y = min->y + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
-		// max->z = min->z + fmaxf(object->cylinder.radius, object->cylinder.height) * 2;
+		temp.data[0] = obj->cylinder.height / 2.0f;
+		*pos = vec3_add(obj->cylinder.pos,
+				vec3_scale(obj->cylinder.rot, temp.data[0]));
+		*radius = sqrtf(temp.data[0] * temp.data[0]
+				+ obj->cylinder.radius * obj->cylinder.radius);
 	}
 }
-

@@ -178,6 +178,7 @@ void	sub_draw(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 	}
 }
 # define SUPERSAMPLING_MIN 5
+t_rgb_int	draw_skybox(t_scene *scene, t_vec3 *dir);
 
 void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 {
@@ -239,7 +240,7 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 			draw_zone(img, (t_vec2i) {{start.x, start.y + size.y / 2}}, (t_vec2i) {{end.x - size.x / 2, end.y}}, data);
 		}
 	}
-	else if (corners[3] != NULL)
+	else
 	{
 		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)start.x);
 		while (start.x < end.x)
@@ -250,7 +251,10 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 				recalc_camera_y(cam);
 				ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 				ray.pos = cam->pos;
-				color = (int)fake_path(&ray, &data->scene, corners[3]).rgb;
+				if (corners[3] != NULL)
+					color = (int)fake_path(&ray, &data->scene, corners[3]).rgb;
+				else
+					color = (int)draw_skybox(&data->scene, &ray.dir).rgb;
 				ft_mlx_pixel_put(img, (t_vec2i) {{start.x, start.y}}, color);
 				cam->y_offset = vec3_add(cam->y_offset, cam->pixel_delta_v);
 				++start.y;
@@ -261,8 +265,6 @@ void	draw_zone(t_img_data *img, t_vec2i start, t_vec2i end, t_data *data)
 			++start.x;
 		}
 	}
-	else
-		cam->x_offset = vec3_scale(cam->pixel_delta_u, (float)size.x);
 }
 
 void	normal_draw(t_img_data *img, t_vec2i pixel, t_camera *cam, t_data *data)
@@ -405,13 +407,6 @@ void	set_shortest_object(t_vector *objects, t_camera *cam, int *x, int *y)
 	}
 }
 
-static int	imin(int a, int b)
-{
-	if (a < b)
-		return (a);
-	return (b);
-}
-
 void	compute(t_data *data)
 {
 	t_camera	*cam;
@@ -421,7 +416,7 @@ void	compute(t_data *data)
 	scene = &data->scene;
 	cam = &data->scene.camera;
 	fill_camera(cam);
-	if (scene->plane_count == 0)
+	if (scene->plane_count == 0 && !data->scene.skybox)
 	{
 		clear_old_screen(&data->mlx->img, &scene->bvh.bound);
 		calc_bvh_bound(&data->scene.camera, &scene->bvh.bound, &data->scene.bvh, scene->bvh.bvh_mode);

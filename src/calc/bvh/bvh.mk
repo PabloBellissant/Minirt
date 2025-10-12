@@ -17,7 +17,10 @@ BVH_DIR		= $(CALC_DIR)/bvh
 BVH_SRCS	= hit_box_bvh.c \
 			  get_bvh_count.c \
 			  is_bvh_full.c \
-			  load_bvh.c
+			  load_bvh.c \
+			  get_min_max.c \
+			  quick_sort.c \
+			  compare_function.c
 
 SRCS		+= $(addprefix $(BVH_DIR)/, $(BVH_SRCS))
 

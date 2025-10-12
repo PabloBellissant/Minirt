@@ -15,7 +15,7 @@
 
 t_sphere_bvh	*get_sphere_root(t_vector *bvh_vec, int *parents)
 {
-	size_t		i;
+	size_t			i;
 	t_sphere_bvh	*bvh;
 
 	bvh = bvh_vec->data;

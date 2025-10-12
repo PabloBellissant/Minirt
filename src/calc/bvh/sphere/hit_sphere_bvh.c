@@ -14,7 +14,8 @@
 #include "bvh.h"
 #include "render.h"
 
-static inline int	_hit_sphere(t_ray *ray, t_vec3 *pos, float radius_squared)
+static inline int	hit_sphere_bound(t_ray *ray, t_vec3 *pos,
+	float radius_squared)
 {
 	t_vec3	oc;
 	float	b;
@@ -47,7 +48,7 @@ t_object	*hit_sphere_bvh(t_ray *ray, t_sphere_bvh *bvh)
 			return (NULL);
 		return (bvh->object);
 	}
-	if (!_hit_sphere(ray, &bvh->pos, (bvh->size * bvh->size)))
+	if (!hit_sphere_bound(ray, &bvh->pos, (bvh->size * bvh->size)))
 		return (NULL);
 	object_a = hit_sphere_bvh(ray, bvh->next_a);
 	if (!object_a)

@@ -13,13 +13,14 @@
 #include "vectors_types.h"
 #include "minirt.h"
 
-void	draw_only_visible(t_img_data *img, t_vec3 *v1, t_vec3 *v2, int color, t_camera *camera)
+void	draw_only_visible(t_img_data *img, t_3d_line *line,
+	int color, t_camera *camera)
 {
 	t_vec2i	proj1;
 	t_vec2i	proj2;
 
-	proj1 = project_point(v1, camera);
-	proj2 = project_point(v2, camera);
+	proj1 = project_point(&line->pos1, camera);
+	proj2 = project_point(&line->pos2, camera);
 	if (proj1.x != -1 && proj2.x != -1)
 		ft_mlx_line_put(img, proj1, proj2, color);
 }

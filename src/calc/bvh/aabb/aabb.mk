@@ -15,7 +15,12 @@ AABB_DIR		= $(BVH_DIR)/aabb
 
 # Source files
 AABB_SRCS	= create_bvh.c \
-			  hit_bvh.c
+			  hit_bvh.c \
+			  set_size.c \
+			  divide.c \
+			  get_cut_axis.c \
+			  get_cut_index.c \
+			  get_center.c
 
 SRCS		+= $(addprefix $(AABB_DIR)/, $(AABB_SRCS))
 

@@ -12,13 +12,7 @@
 
 #include "libft.h"
 #include "bvh.h"
-
-static int	imax(int a, int b)
-{
-	if (a > b)
-		return (a);
-	return (b);
-}
+#include "calc.h"
 
 void	merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 {
@@ -34,6 +28,7 @@ void	merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 	bvh.next_b = b;
 	dir = vec3_sub(b->pos, a->pos);
 	bvh.size = (vec3_length(dir) + a->size + b->size) / 2.0f;
-	bvh.pos = vec3_add(a->pos, vec3_scale(vec3_normalize(dir), bvh.size - a->size));
+	bvh.pos = vec3_add(a->pos, vec3_scale(vec3_normalize(dir),
+				bvh.size - a->size));
 	vector_add(bvh_vec, &bvh, 1);
 }

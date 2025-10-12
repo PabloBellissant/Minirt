@@ -15,7 +15,8 @@
 #include "render.h"
 #include "mlx_wrapper.h"
 
-static void	draw_vertices(t_img_data *img, t_vec3 vertices[8], int color, t_camera *camera);
+static void	draw_vertices(t_img_data *img, t_vec3 vertices[8],
+				int color, t_camera *cam);
 
 int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_camera *camera, t_rgb_int color)
@@ -27,18 +28,20 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	return (0);
 }
 
-static void	draw_vertices(t_img_data *img, t_vec3 vertices[8], int color, t_camera *camera)
+static void	draw_vertices(t_img_data *img, t_vec3 vertices[8],
+	int color, t_camera *cam)
 {
-	draw_only_visible(img, &vertices[0], &vertices[1], color, camera);
-	draw_only_visible(img, &vertices[1], &vertices[2], color, camera);
-	draw_only_visible(img, &vertices[2], &vertices[3], color, camera);
-	draw_only_visible(img, &vertices[3], &vertices[0], color, camera);
-	draw_only_visible(img, &vertices[4], &vertices[5], color, camera);
-	draw_only_visible(img, &vertices[5], &vertices[6], color, camera);
-	draw_only_visible(img, &vertices[6], &vertices[7], color, camera);
-	draw_only_visible(img, &vertices[7], &vertices[4], color, camera);
-	draw_only_visible(img, &vertices[0], &vertices[4], color, camera);
-	draw_only_visible(img, &vertices[1], &vertices[5], color, camera);
-	draw_only_visible(img, &vertices[2], &vertices[6], color, camera);
-	draw_only_visible(img, &vertices[3], &vertices[7], color, camera);
+	draw_only_visible(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[1], vertices[2]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[2], vertices[3]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[3], vertices[0]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[4], vertices[5]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[5], vertices[6]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[6], vertices[7]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[7], vertices[4]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[0], vertices[4]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[1], vertices[5]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[2], vertices[6]}, color, cam);
+	draw_only_visible(img, &(t_3d_line){vertices[3], vertices[7]}, color, cam);
 }

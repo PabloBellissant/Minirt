@@ -19,7 +19,7 @@ static void	print_unrecognized_identifier(const char *token, int actual_line);
 t_object_type	get_type(const char *line, int actual_line)
 {
 	static const char	*elem[] = {"A", "C", "L", "sp", "pl",
-		"cy", "obj", NULL};
+		"cy", "obj", "tex", "sky", NULL};
 	int			i;
 
 	while (*line == ' ' || *line == '\t')

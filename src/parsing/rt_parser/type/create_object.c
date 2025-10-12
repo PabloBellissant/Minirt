@@ -23,5 +23,5 @@ t_object	*create_object(t_scene *scene, t_object_type type)
 	object.type = type;
 	if (vector_add(&scene->objects, &object, 1) == -1)
 		return (NULL);
-	return (get_vector_value(&scene->objects, scene->objects.num_elements - 1));
+	return (get_last_vector_value(&scene->objects));
 }
