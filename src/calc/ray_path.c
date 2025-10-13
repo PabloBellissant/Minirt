@@ -85,6 +85,29 @@ unsigned int sample_texture(t_texture *texture, float u, float v);
 t_vec3 texture_to_vec3(unsigned int color);
 #include "minirt.h"
 
+
+
+float fast_atan2f(float y, float x)
+{
+	float	r;
+	float	angle;
+	float	abs_y;
+
+	abs_y = fabsf(y) + 1e-10f;
+	if (x < 0.0f) {
+		r = (x + abs_y) / (abs_y - x);
+		angle = 3.0f * M_PIf / 4.0f;
+	} else {
+		r = (x - abs_y) / (x + abs_y);
+		angle = M_PIf / 4.0f;
+	}
+
+	angle += (0.1963f * r * r - 0.9817f) * r;
+	if (y < 0.0f)
+		return (-angle);
+	return (angle);
+}
+
 t_rgb_int	draw_skybox(t_scene *scene, t_vec3 *dir)
 {
 	float	u;
@@ -92,12 +115,12 @@ t_rgb_int	draw_skybox(t_scene *scene, t_vec3 *dir)
 
 	if (!scene->skybox)
 		return (rgb_int(0, 0, 0));
-	u = 0.5f + atan2f(dir->z, dir->x) / (2.0f * M_PIf);
+	u = 0.5f + fast_atan2f(dir->z, dir->x) / (2.0f * M_PIf);
 	v = 0.5f - asinf(dir->y) / M_PIf;
 	return (rgb_ftoi(texture_to_vec3(sample_texture(scene->skybox, u, v))));
 }
 
-# define NORMAL_DEBUG 1
+# define NORMAL_DEBUG 0
 t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object)
 {
 	float		hit_distance;
