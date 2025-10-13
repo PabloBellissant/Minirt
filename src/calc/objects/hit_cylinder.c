@@ -10,41 +10,49 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <math.h>
 #include <float.h>
 #include "render.h"
+#include "calc.h"
 
-int	hit_cylinder(t_ray *ray, t_object *o, float *t);
+static void	init_cylinder_quadratic(t_quadratic *q, t_cylinder *cyl, t_ray *r)
+{
+	const t_vec3	oc = vec3_sub(r->pos, cyl->pos);
+
+	q->dd = vec3_dot(r->dir, cyl->rot);
+	q->oo = vec3_dot(oc, cyl->rot);
+	q->a = vec3_dot(r->dir, r->dir) - q->dd * q->dd;
+	q->b = 2.0f * (vec3_dot(r->dir, oc) - q->dd * q->oo);
+	q->c = vec3_dot(oc, oc) - q->oo * q->oo - cyl->radius * cyl->radius;
+}
 
 int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
 {
-	t_vec3 oc = vec3_sub(ray->pos, o->cylinder.pos);
-	float card = vec3_dot(o->cylinder.rot, ray->dir);
-	float caoc = vec3_dot(o->cylinder.rot, oc);
+	t_quadratic	q;
+	float		tmin;
+	float		y;
 
-	t_vec3 xdir = vec3_sub(ray->dir, vec3_scale(o->cylinder.rot, card));
-	t_vec3 xoc  = vec3_sub(oc, vec3_scale(o->cylinder.rot, caoc));
-
-	float A = vec3_dot(xdir, xdir);
-	float B = 2.0f * vec3_dot(xdir, xoc);
-	float C = vec3_dot(xoc, xoc) - o->cylinder.radius * o->cylinder.radius;
-	float discriminant = B * B - 4 * A * C;
-
-	if (discriminant < 0)
+	init_cylinder_quadratic(&q, &o->cylinder, ray);
+	if (!solve_quadratic(&q))
 		return (0);
-
-	float sqrtD = sqrtf(discriminant);
-	float tmin = FLT_MAX;
-	for (int k = 0; k < 2; k++) {
-		float t = (-B + (k == 0 ? -sqrtD : sqrtD)) / (2.0f * A);
-		if (t > 1e-4f) {
-			float y = caoc + t * card;
-			if (y >= 0.0f && y <= o->cylinder.height && t < tmin)
-				tmin = t;
+	tmin = FLT_MAX;
+	if (q.t_min > 0)
+	{
+		y = q.oo + q.t_min * q.dd;
+		if (y >= 0.0f && y <= o->cylinder.height)
+			tmin = q.t_min;
+	}
+	if (q.t_max > 0)
+	{
+		y = q.oo + q.t_max * q.dd;
+		if (y >= 0.0f && y <= o->cylinder.height && q.t_max < tmin)
+		{
+			*t_out = q.t_max;
+			return (1);
 		}
 	}
-
+	if (tmin >= FLT_MAX)
+		return (0);
 	*t_out = tmin;
-	return (tmin < FLT_MAX);
+	return (1);
 }
 
