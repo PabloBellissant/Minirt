@@ -17,7 +17,8 @@ OBJECTS_DIR		= $(CALC_DIR)/objects
 OBJECTS_SRCS	= hit_cylinder.c \
 				  hit_sphere.c \
 				  hit_plane.c \
-				  hit_triangle.c
+				  hit_triangle.c \
+				  solve_quadratic.c
 SRCS			+= $(addprefix $(OBJECTS_DIR)/, $(OBJECTS_SRCS))
 
 # VPATH
