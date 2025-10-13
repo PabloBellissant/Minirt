@@ -72,8 +72,11 @@ t_object	*hit_direct_object(t_ray *ray, t_aabb_bvh *bvh)
 		return (get_nearest_2(ray, bvh));
 	if (bvh->depth == 0)
 	{
-		if (bvh->object_a->f(ray, bvh->object_a, &bvh->object_a->t) == 0)
+		if (bvh->object_a
+			&& bvh->object_a->f(ray, bvh->object_a, &bvh->object_a->t) == 0)
+		{
 			return (NULL);
+		}
 		return (bvh->object_a);
 	}
 	object_a = hit_direct_object(ray, bvh->next_a);
