@@ -16,7 +16,33 @@
 #include "render.h"
 #include "calc.h"
 
-int	create_root_bvh(t_vector *bvh, t_vector *objects)
+static int	create_root_bvh(t_vector *bvh, t_vector *objects);
+static int	fill_pointer(t_vector *object_vec, t_vector *pointer_vec);
+static void	cut_bvh_leaf(t_aabb_bvh *bvh);
+
+int	create_aabb_bvh(t_scene *scene)
+{
+	t_vector	bvh_vec;
+	size_t		volume_count;
+	t_vector	objects_pointer;
+
+	volume_count = get_bvh_count(&scene->objects);
+	vector_init(&bvh_vec, sizeof(t_aabb_bvh));
+	if (set_vector_size(&bvh_vec, volume_count) != 0)
+		return (-1);
+	if (fill_pointer(&scene->objects, &objects_pointer) != 0)
+	{
+		free_vector(&bvh_vec);
+		return (-1);
+	}
+	create_root_bvh(&bvh_vec, &objects_pointer);
+	subdivide(get_last_vector_value(&bvh_vec), &bvh_vec, &objects_pointer);
+	scene->bvh.aabb_bvh = bvh_vec.data;
+	cut_bvh_leaf(scene->bvh.aabb_bvh);
+	return (0);
+}
+
+static int	create_root_bvh(t_vector *bvh, t_vector *objects)
 {
 	t_aabb_bvh	root_bvh;
 
@@ -28,7 +54,7 @@ int	create_root_bvh(t_vector *bvh, t_vector *objects)
 	return (0);
 }
 
-int	fill_pointer(t_vector *object_vec, t_vector *pointer_vec)
+static int	fill_pointer(t_vector *object_vec, t_vector *pointer_vec)
 {
 	size_t		i;
 	t_object	*object;
@@ -50,7 +76,7 @@ int	fill_pointer(t_vector *object_vec, t_vector *pointer_vec)
 	return (0);
 }
 
-void	cut_bvh_leaf(t_aabb_bvh *bvh)
+static void	cut_bvh_leaf(t_aabb_bvh *bvh)
 {
 	if (bvh->depth == 1)
 	{
@@ -62,27 +88,4 @@ void	cut_bvh_leaf(t_aabb_bvh *bvh)
 		cut_bvh_leaf(bvh->next_a);
 		cut_bvh_leaf(bvh->next_b);
 	}
-}
-
-int	create_aabb_bvh(t_scene *scene)
-{
-	t_vector	bvh_vec;
-	size_t		volume_count;
-	t_vector	objects_pointer;
-
-	volume_count = get_bvh_count(&scene->objects);
-	vector_init(&bvh_vec, sizeof(t_aabb_bvh));
-	if (set_vector_size(&bvh_vec, volume_count) != 0)
-		return (-1);
-	if (fill_pointer(&scene->objects, &objects_pointer) != 0)
-	{
-		free_vector(&bvh_vec);
-		return (-1);
-	}
-	create_root_bvh(&bvh_vec, &objects_pointer);
-	if (volume_count > 1)
-		subdivide(get_last_vector_value(&bvh_vec), &bvh_vec, &objects_pointer);
-	scene->bvh.aabb_bvh = bvh_vec.data;
-	cut_bvh_leaf(scene->bvh.aabb_bvh);
-	return (0);
 }
