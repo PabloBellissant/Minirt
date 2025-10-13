@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include <float.h>
 
 #include "vectors.h"
@@ -47,7 +46,7 @@ t_vec3 texture_to_vec3(unsigned int color)
 }
 
 # define SMOOTH_SHADING 1
-# define NORMAL_DEBUG 1
+# define NORMAL_DEBUG 0
 # define TEXTURE 0
 
 void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
