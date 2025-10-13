@@ -85,8 +85,6 @@ unsigned int sample_texture(t_texture *texture, float u, float v);
 t_vec3 texture_to_vec3(unsigned int color);
 #include "minirt.h"
 
-
-
 float fast_atan2f(float y, float x)
 {
 	float	r;
