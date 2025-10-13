@@ -134,9 +134,9 @@ int	parse_normal(const char *line, int line_num, t_vector *normal_vec)
 
 int	parse_face(const char *line, int line_num, t_vector *vertex, t_vector *normal, t_vector *uv, t_scene *scene)
 {
-	int		vertex_id[3];
-	int		uv_id[3];
-	int		normal_id[3];
+	int			vertex_id[3];
+	int			uv_id[3];
+	int			normal_id[3];
 	t_object	*o;
 
 	o = create_object(scene, TRIANGLE);
@@ -158,6 +158,8 @@ int	parse_face(const char *line, int line_num, t_vector *vertex, t_vector *norma
 	// o->triangle.p1.uv = *(t_vec2 *)get_vector_value(uv, uv_id[1] - 1);
 	// o->triangle.p2.uv = *(t_vec2 *)get_vector_value(uv, uv_id[2] - 1);
 	o->triangle.rgb = vec3(1,0,1);
+	o->triangle.edge_1 = vec3_sub(o->triangle.p1.pos, o->triangle.p0.pos);
+	o->triangle.edge_2 = vec3_sub(o->triangle.p2.pos, o->triangle.p0.pos);
 	o->f = hit_triangle;
 	return (0);
 }
