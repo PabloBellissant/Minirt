@@ -74,6 +74,8 @@ typedef struct s_triangle
 	t_vertex	p0;
 	t_vertex	p1;
 	t_vertex	p2;
+	t_vec3		edge_1;
+	t_vec3		edge_2;
 	t_rgb		rgb;
 }	t_triangle;
 
