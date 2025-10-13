@@ -12,7 +12,7 @@
 
 #include "vectors_types.h"
 #include "render.h"
-#include "minirt.h"
+#include "calc.h"
 
 t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 {
