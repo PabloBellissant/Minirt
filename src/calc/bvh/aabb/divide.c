@@ -39,6 +39,13 @@ int	divide_half_right(t_vector *new_ptr, t_vector *old_ptr)
 	return (vector_add(new_ptr, src, cut_index));
 }
 
+t_object	*get_object(t_vector *obj_vec)
+{
+	if (obj_vec->max_elements != 0)
+		return (*(t_object **)get_last_vector_value(obj_vec));
+	return (NULL);
+}
+
 int	subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *obj_vec)
 {
 	t_aabb_bvh	temp;
@@ -63,7 +70,7 @@ int	subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *obj_vec)
 		bvh->depth = imax(temp_depth, bvh->depth) + 1;
 		return (bvh->depth);
 	}
-	bvh->object_a = *(t_object **)obj_vec->data;
 	bvh->depth = 0;
+	bvh->object_a = get_object(obj_vec);
 	return (0);
 }
