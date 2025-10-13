@@ -13,29 +13,30 @@
 #include "calc.h"
 #include "minirt.h"
 
-int hit_triangle(t_ray *ray, t_object *o, float *t)
+/*
+	MollerTrumbore algorithm.
+*/
+int	hit_triangle(t_ray *ray, t_object *o, float *t)
 {
 	t_vec3	h;
-	float	a;
 	float	f;
 	t_vec3	s;
 	float	u;
-	t_vec3	q;
 	float	v;
 
 	h = vec3_cross(ray->dir, o->triangle.edge_2);
-	a = vec3_dot(o->triangle.edge_1, h);
-	if (fabsf(a) < EPSILON)
+	f = vec3_dot(o->triangle.edge_1, h);
+	if (fabsf(f) < EPSILON)
 		return (0);
-	f = 1.0f / a;
+	f = 1.0f / f;
 	s = vec3_sub(ray->pos, o->triangle.p0.pos);
 	u = f * vec3_dot(s, h);
 	if (u < 0.0f || u > 1.0f)
 		return (0);
-	q = vec3_cross(s, o->triangle.edge_1);
-	v = f * vec3_dot(ray->dir, q);
+	s = vec3_cross(s, o->triangle.edge_1);
+	v = f * vec3_dot(ray->dir, s);
 	if (v < 0.0f || u + v > 1.0f)
-		return 0;
-	*t = f * vec3_dot(o->triangle.edge_2, q);
+		return (0);
+	*t = f * vec3_dot(o->triangle.edge_2, s);
 	return (*t > EPSILON);
 }

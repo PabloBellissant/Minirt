@@ -25,7 +25,7 @@ static void	init_cylinder_quadratic(t_quadratic *q, t_cylinder *cyl, t_ray *r)
 	q->c = vec3_dot(oc, oc) - q->oo * q->oo - cyl->radius * cyl->radius;
 }
 
-int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
+int	hit_cylinder(t_ray *ray, t_object *o, float *t_out)
 {
 	t_quadratic	q;
 	float		tmin;
@@ -55,4 +55,3 @@ int hit_cylinder(t_ray *ray, t_object *o, float *t_out)
 	*t_out = tmin;
 	return (1);
 }
-
