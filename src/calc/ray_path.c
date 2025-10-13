@@ -94,14 +94,16 @@ float fast_atan2f(float y, float x)
 	float	abs_y;
 
 	abs_y = fabsf(y) + 1e-10f;
-	if (x < 0.0f) {
+	if (x < 0.0f)
+	{
 		r = (x + abs_y) / (abs_y - x);
 		angle = 3.0f * M_PIf / 4.0f;
-	} else {
+	}
+	else
+	{
 		r = (x - abs_y) / (x + abs_y);
 		angle = M_PIf / 4.0f;
 	}
-
 	angle += (0.1963f * r * r - 0.9817f) * r;
 	if (y < 0.0f)
 		return (-angle);
