@@ -4,6 +4,10 @@ L 0,50,50 1 0,0,255
 # L 200,0,50 1 255,0,0
 # L -200,0,-50 1 0,255,0
 
+tex sky asset/texture/nebula.ppm
+
+sky sky
+
 A 0.1 255,255,255
 #sp 10, 10, -3 1 0,255,255
 # obj asset/bench.obj -1,0,-3
