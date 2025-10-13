@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 02:01:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/24 04:32:05 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/12 21:39:20 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,14 @@ t_rast_env	*init_font_rasterizer(t_mlx *mlx)
 
 	font = NULL;
 	if (init_ttf(FONT_PATH, &font))
-		return (NULL);
+	{
+		register_complex_err_msg(FRDR_E_MSG_TTF, FONT_PATH);
+		return (nul_error(pack_err(FRDR_ID, FRDR_E_TTF), FL, LN, FC));
+	}
 	env = ft_calloc(sizeof(t_rast_env), 1);
 	if (!env)
 		return (NULL);
 	env->mlx = mlx;
-	if (!env->mlx)
-		return (NULL);
 	if (init_fps(env, font) != 0)
 		return (NULL);
 	return (env);
@@ -111,7 +112,7 @@ int	init_graphics(t_data *data)
 	ft_strlcpy(title, TITLE, sizeof(title));
 	data->mlx = init_mlx(WIDTH, HEIGHT, title);
 	if (!data->mlx)
-		return (-1);
+		return (error(pack_err(MLXW_ID, MLXW_E_INITF), FL, LN, FC));
 	data->font_env = init_font_rasterizer(data->mlx);
 	if (!data->font_env)
 		return (-1);

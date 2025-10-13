@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/11 20:30:39 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/12 22:23:24 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,28 +53,46 @@ void	free_data(t_data data)
 	free_scene(data.scene);
 }
 
+void	register_unit_errors(void)
+{
+	register_lft_errors();
+	register_mlxw_errors();
+	register_frdr_errors();
+	//register_rt_errors();
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
 	t_queue	queue;
+	int		ret;
 
-	register_lft_errors();
-	register_mlxw_errors();
-	(void)argv;
+	ret = 0;
+	register_unit_errors();
 	if (argc < 2)
-		return (1);
-	ft_bzero(&data, sizeof(t_data));
-	ft_bzero(&queue, sizeof(t_queue));
-	data.queue = &queue;
-	if (init_graphics(&data) == -1)
-		return (2);
-	data.scene.mlx = data.mlx;
-	if (parse_scene(argv[1], &data.scene) != 0)
-		return (3); //free mlx;
-	init_threads(data.queue);
-	data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
-	loop_hook(&data);
-	free_data(data);
-	kill_threads(data.queue, NPROC);
-	return (0);
+		ret = 1;
+	else
+	{
+		ft_bzero(&data, sizeof(t_data));
+		ft_bzero(&queue, sizeof(t_queue));
+		data.queue = &queue;
+		if (init_graphics(&data) == -1)
+			ret = 2;
+		else
+		{
+			data.scene.mlx = data.mlx;
+			if (parse_scene(argv[1], &data.scene) != 0)
+				ret = 3; //free mlx;
+			else
+			{
+				init_threads(data.queue);
+				data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
+				loop_hook(&data);
+				free_data(data);
+				kill_threads(data.queue, NPROC);
+			}
+		}
+	}
+	print_errs();
+	return (ret);
 }

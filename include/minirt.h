@@ -20,7 +20,12 @@
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
 
+# define EPSILON 1e-6f
+# define M_PIf 3.14159265358979323846f
+
 # include <stdint.h>
+# include "xcerrcal.h"
+# include "rt_xcerrcal.h"
 # include "mlx_int.h"
 # include "libft.h"
 # include "parsing.h"
