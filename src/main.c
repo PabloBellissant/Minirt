@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/12 22:23:24 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/13 18:43:15 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	register_unit_errors(void)
 	register_lft_errors();
 	register_mlxw_errors();
 	register_frdr_errors();
-	//register_rt_errors();
+	register_rt_errors();
 }
 
 int	main(int argc, char **argv)
@@ -69,20 +69,27 @@ int	main(int argc, char **argv)
 
 	ret = 0;
 	register_unit_errors();
-	if (argc < 2)
-		ret = 1;
+	if (argc != 2)
+	{
+		register_complex_err_msg(RT_E_MSG_ARGS, argv[0], argc);
+		ret = error(pack_err(RT_ID, RT_E_ARGS), FL, LN, FC);
+	}
 	else
 	{
 		ft_bzero(&data, sizeof(t_data));
 		ft_bzero(&queue, sizeof(t_queue));
 		data.queue = &queue;
 		if (init_graphics(&data) == -1)
-			ret = 2;
+			ret = error(pack_err(RT_ID, RT_E_GRAPHICS), FL, LN, FC);
 		else
 		{
 			data.scene.mlx = data.mlx;
 			if (parse_scene(argv[1], &data.scene) != 0)
-				ret = 3; //free mlx;
+			{
+				kill_mlx(data.mlx);
+				register_complex_err_msg(RT_E_MSG_PARSING, argv[1]);
+				ret = error(pack_err(RT_ID, RT_E_PARSING), FL, LN, FC);
+			}
 			else
 			{
 				init_threads(data.queue);
