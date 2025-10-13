@@ -12,26 +12,27 @@
 
 #include <math.h>
 #include "render.h"
+#include "calc.h"
 
-int	hit_sphere(t_ray *ray, t_object *o, float *t);
-
-int	hit_sphere(t_ray *restrict ray, t_object *restrict o, float *t)
+static void init_sphere_quadratic(t_quadratic *q, t_sphere *sp, t_ray *ray)
 {
-	t_vec3	oc;
-	float	b;
-	float	c;
-	float	discriminant;
+	const t_vec3 oc = vec3_sub(ray->pos, sp->pos);
 
-	oc = vec3_sub(ray->pos, o->sphere.pos);
-	b = vec3_dot(ray->dir, oc) * 2;
-	c = vec3_dot(oc, oc) - o->sphere.radius_squared;
-	discriminant = b * b - 4 * c;
-	if (discriminant < 0)
+	q->a = vec3_dot(ray->dir, ray->dir);
+	q->b = 2.0f * vec3_dot(ray->dir, oc);
+	q->c = vec3_dot(oc, oc) - sp->radius_squared;
+}
+
+
+int hit_sphere(t_ray *restrict ray, t_object *restrict o, float *t_out)
+{
+	t_quadratic	q;
+
+	init_sphere_quadratic(&q, &o->sphere, ray);
+	if (!solve_quadratic(&q))
 		return (0);
-	c = sqrtf(discriminant);
-	*t = -b - c;
-	if (*t < 0)
-		*t = -b + c;
-	*t /= 2;
-	return (*t >= 0);
+	*t_out = fminf(q.t_min, q.t_max);
+	if (*t_out <= 0)
+		*t_out = fmaxf(q.t_min, q.t_max);
+	return (*t_out > EPSILON);
 }
