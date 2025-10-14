@@ -71,8 +71,8 @@ int	main(int argc, char **argv)
 	register_unit_errors();
 	if (argc != 2)
 	{
-		register_complex_err_msg(RT_E_MSG_ARGS, argv[0], argc);
-		ret = error(pack_err(RT_ID, RT_E_ARGS), FL, LN, FC);
+		register_complex_err_msg(RT_E_MSG_ARGC, argv[0], argc);
+		ret = error(pack_err(RT_ID, RT_E_ARGC), FL, LN, FC);
 	}
 	else
 	{
@@ -84,9 +84,12 @@ int	main(int argc, char **argv)
 		else
 		{
 			data.scene.mlx = data.mlx;
+			errno = 0;
 			if (parse_scene(argv[1], &data.scene) != 0)
 			{
+				ret = errno;
 				kill_mlx(data.mlx);
+				errno = ret;
 				register_complex_err_msg(RT_E_MSG_PARSING, argv[1]);
 				ret = error(pack_err(RT_ID, RT_E_PARSING), FL, LN, FC);
 			}

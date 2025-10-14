@@ -57,17 +57,16 @@ int	rt_parser(int fd, t_scene *scene)
 	{
 		if (parse_line(scene, line, line_num) != 0)
 			return_val = -1;
-		errno = 0;
 		free(line);
+		if (return_val == -1)
+			return (-1);
+		errno = 0;
 		line = get_next_line(fd);
 		++line_num;
 	}
 	if (errno != 0)
-	{
-		return_val = -1;
-		perror("Minirt");
-	}
-	else if (return_val == 0)
+		return (-1);
+	if (return_val == 0)
 		return_val = init_phong(scene);
 	return (return_val);
 }
