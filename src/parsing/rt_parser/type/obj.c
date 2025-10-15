@@ -25,7 +25,7 @@ int	obj(const char *line, int line_num, t_scene *scene)
 	t_vec3	pos;
 
 	if (ft_scan(line_num, OBJ_FORMAT, line, &obj_directory, &pos.x,
-		&pos.y, &pos.z))
+			&pos.y, &pos.z))
 	{
 		return (error(pack_err(RT_ID, RT_E_OBJ), FL, LN, FC));
 	}

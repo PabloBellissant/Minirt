@@ -12,7 +12,6 @@
 
 #include "libft.h"
 #include "render.h"
-#include "vectors.h"
 #include "rt_xcerrcal.h"
 
 #define AMBIENT_FORMAT " *A  *%f[1]  *%8[255] *, *%8[255] *, *%8[255] *\n"
