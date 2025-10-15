@@ -24,7 +24,7 @@ int	parse_scene(char *file_name, t_scene *scene)
 	if (ft_strrncmp(file_name, ".rt", 3) != 0)
 	{
 		register_complex_err_msg(RT_E_MSG_ARGS, file_name);
-		return (error(pack_err(RT_ID, 0), FL, LN, FC));
+		return (error(pack_err(RT_ID, RT_E_ARGS), FL, LN, FC));
 	}
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
