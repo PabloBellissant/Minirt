@@ -24,6 +24,7 @@ typedef enum e_object_type
 	AMBIENT,
 	CAMERA,
 	LIGHT,
+	MULTI_LIGHT,
 	SPHERE,
 	PLANE,
 	CYLINDER,
@@ -35,8 +36,8 @@ int				parse_scene(char *file_name, t_scene *scene);
 int				rt_parser(int fd, t_scene *scene);
 int				fill_by_type(t_scene *scene);
 int				parse_line(t_scene *scene, const char *line, int actual_line);
-t_object_type	get_type(const char *line, int actual_line);
-int				check_float(t_object_type type, int actual_line);
+t_object_type	get_type(const char *line);
+int				check_double(t_object_type type);
 t_object		*create_object(t_scene *scene, t_object_type type);
 t_texture		*create_texture(t_scene *scene, char *texture_path);
 t_texture		*get_texture(t_scene *scene, char *texture_name);

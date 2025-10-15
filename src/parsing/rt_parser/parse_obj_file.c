@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "calc.h"
-#include "fcntl.h"
 #include "minirt.h"
 
 #define VERTEX_FORMAT " *v  *%f *%f *%f *"
@@ -44,35 +43,47 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 	int			line_num;
 	t_obj		type;
 	int			triangle_count;
+	int			ret_val;
 
 	if (fd == -1)
 		return (-1);
 	triangle_count = 0;
 	vector_init(&vertex_vec, sizeof(t_vertex));
 	vector_init(&normal_vec, sizeof(t_vec3));
-	vector_init(&triangle_vec, sizeof(t_triangle));
 	vector_init(&uv_vec, sizeof(t_vec2));
+	vector_init(&triangle_vec, sizeof(t_triangle));
 	line = get_next_line(fd);
 	line_num = 0;
+	ret_val = 0;
 	while (line != NULL)
 	{
 		type = get_obj_type(line);
 		if (type == v)
-			parse_vertex(line, line_num, &vertex_vec, pos);
+			ret_val = parse_vertex(line, line_num, &vertex_vec, pos);
 		else if (type == vn)
-			parse_normal(line, line_num, &normal_vec);
+			ret_val = parse_normal(line, line_num, &normal_vec);
 		else if (type == f)
 		{
 			++triangle_count;
-			parse_face(line, line_num, &vertex_vec, &normal_vec, &uv_vec, scene);
+			ret_val = parse_face(line, line_num, &vertex_vec, &normal_vec,
+				&uv_vec, scene);
 		}
 		else if (type == vt)
-			parse_texture(line, line_num, &uv_vec);
+			ret_val = parse_texture(line, line_num, &uv_vec);
 		++line_num;
 		line = get_next_line(fd);
+		if (ret_val == -1)
+		{
+			free(vertex_vec.data);
+			free(normal_vec.data);
+			free(uv_vec.data);
+			free(triangle_vec.data);
+			return (-1);
+		}
 	}
 	free(vertex_vec.data);
 	free(normal_vec.data);
+	free(uv_vec.data);
 	ft_printf("Triangle count : %d\n", triangle_count);
 	return (0);
 }

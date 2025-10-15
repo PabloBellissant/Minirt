@@ -6,13 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 00:40:54 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/07 09:47:09 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/14 08:12:41 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "render.h"
 #include "vectors.h"
+#include "rt_xcerrcal.h"
 
 #define LIGHT_FORMAT " *L  *%f *, *%f *, *%f  *%f[1]  *%8[255] *\
 , *%8[255] *, *%8[255] *\n"
@@ -42,7 +43,9 @@ int	light(const char *line, int line_num, t_scene *scene)
 	pos = &light->pos;
 	if (ft_scan(line_num, LIGHT_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&light->brightness, &color.r, &color.g, &color.b))
-		return (-1);
+	{
+		return (error(pack_err(RT_ID, RT_E_LIGHT), FL, LN, FC));
+	}
 	light->rgb = get_real_ratio(color, light->brightness);
 	return (0);
 }

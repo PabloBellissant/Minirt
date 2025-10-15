@@ -21,9 +21,7 @@ int	check_header(int fd, int *width, int *height, int *bit)
 	line = get_next_line(fd);
 	if (ft_strncmp(line, "P6", 2) != 0)
 	{
-		dprintf(2, "Line : '%s'\n", line);
 		free(line);
-		ft_putstr_fd("Error\n Unsupported .ppm texture\n", 2);
 		return (-1);
 	}
 	free(line);
@@ -44,7 +42,7 @@ int	check_header(int fd, int *width, int *height, int *bit)
 	return (0);
 }
 
-int get_data(int fd, t_texture *tex)
+int	get_data(int fd, t_texture *tex)
 {
 	ssize_t	ret_val;
 	size_t	size;
@@ -52,11 +50,9 @@ int get_data(int fd, t_texture *tex)
 	size = (size_t) tex->width * (size_t) tex->height * 3;
 	tex->tex_size_line = tex->width * 3;
 	tex->tex_bpp = 24;
-
 	tex->pixels = malloc(size);
 	if (!tex->pixels)
 		return (-1);
-
 	ret_val = read(fd, tex->pixels, size);
 	if (ret_val < 0)
 	{

@@ -10,28 +10,29 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "parsing.h"
+#include "xcerrcal.h"
+#include "rt_xcerrcal.h"
 
-static void	print_already_type(t_object_type type, int actual_line);
+#define FORBIDDEN_COUNT 2
 
-#define FORBIDEN_COUNT 2
-
-int	check_float(t_object_type type, int actual_line)
+int	check_double(t_object_type type)
 {
-	static t_object_type	forbidden_float[] = {AMBIENT, CAMERA};
-	static int				elem_count[OBJ_ENUM_SIZE];
-	unsigned long			i;
+	static const t_object_type	forbidden_double[] = {AMBIENT, CAMERA};
+	static int					elem_count[OBJ_ENUM_SIZE];
+	static const char			*type_name[] = {"Undefined",
+	"Ambient", "Camera", "Light", "Sphere", "Plane", "Cylinder"};
+	int							i;
 
 	i = 0;
-	while (i < FORBIDEN_COUNT)
+	while (i < FORBIDDEN_COUNT)
 	{
-		if (type == forbidden_float[i])
+		if (type == forbidden_double[i])
 		{
 			if (elem_count[type] == 1)
 			{
-				print_already_type(type, actual_line);
-				return (-1);
+				register_complex_err_msg(RT_E_MSG_FB_DOUBLE, type_name[type]);
+				return (error(pack_err(RT_ID, RT_E_FB_DOUBLE), FL, LN, FC));
 			}
 			elem_count[type] = 1;
 			return (0);
@@ -39,16 +40,4 @@ int	check_float(t_object_type type, int actual_line)
 		++i;
 	}
 	return (0);
-}
-
-static void	print_already_type(t_object_type type, int actual_line)
-{
-	static const char	*type_name[] = {"Undefined",
-		"Ambient", "Camera", "Light", "Sphere", "Plane", "Cylinder"};
-
-	ft_putstr_fd("Error\nMultiple assignation for type '", 2);
-	ft_putstr_fd(type_name[type], 2);
-	ft_putstr_fd("' is forbidden, line : '", 2);
-	ft_putnbr_fd(actual_line, 2);
-	ft_putstr_fd("'\n", 2);
 }

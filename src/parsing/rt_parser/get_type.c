@@ -13,14 +13,13 @@
 #include <unistd.h>
 #include "libft.h"
 #include "parsing.h"
+#include "rt_xcerrcal.h"
 
-static void	print_unrecognized_identifier(const char *token, int actual_line);
-
-t_object_type	get_type(const char *line, int actual_line)
+t_object_type	get_type(const char *line)
 {
 	static const char	*elem[] = {"A", "C", "L", "sp", "pl",
 		"cy", "obj", "tex", "sky", NULL};
-	int			i;
+	int					i;
 
 	while (*line == ' ' || *line == '\t')
 		++line;
@@ -35,20 +34,7 @@ t_object_type	get_type(const char *line, int actual_line)
 		}
 		++i;
 	}
-	print_unrecognized_identifier(line, actual_line);
+	register_complex_err_msg(RT_E_MSG_UNDEFINED_TYPE, *line);
+	error(pack_err(RT_ID, RT_E_UNDEFINED_TYPE), FL, LN, FC);
 	return (UNDEFINED);
-}
-
-static void	print_unrecognized_identifier(const char *token, int actual_line)
-{
-	size_t	len;
-
-	len = 0;
-	while (token[len] && (token[len] != ' ' && token[len] != '\n'))
-		++len;
-	ft_putstr_fd("Error\nUnrecognized identifier : '", 2);
-	(void) write(2, token, len);
-	ft_putstr_fd("', line : '", 2);
-	ft_putnbr_fd(actual_line, 2);
-	(void) write(2, "'\n", 2);
 }
