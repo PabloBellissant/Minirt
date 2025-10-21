@@ -158,15 +158,13 @@ void	bvh_color_changer(t_data *data, t_mlx *mlx)
 void	set_render_raytracing(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
-	data->params.function_id = 1;
-	data->params.render_func = ray_tracing_render;
+	data->params.render_mode = 1;
 }
 
 void	set_render_outline(t_data *data, t_mlx *mlx)
 {
 	(void) mlx;
-	data->params.function_id = 0;
-	data->params.render_func = outline_render;
+	data->params.render_mode = 0;
 }
 
 void	toggle_mouse_focus(void *v, t_mlx *mlx_data)
