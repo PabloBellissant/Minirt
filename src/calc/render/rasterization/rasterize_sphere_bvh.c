@@ -40,13 +40,12 @@ void	rasterize_sphere_bvh(t_sphere_bvh *bvh, t_params *p,
 	{
 		rasterize_sphere_bvh(bvh->next_a, p, total_depth, data);
 		rasterize_sphere_bvh(bvh->next_b, p, total_depth, data);
+		return ;
 	}
-	else
-	{
-		sphere.diameter = bvh->size * 2;
-		sphere.pos = bvh->pos;
-		rasterize_sphere(&sphere, &data->mlx->img, &data->scene.camera, color);
-	}
+	sphere.diameter = bvh->size * 2;
+	sphere.pos = bvh->pos;
+	rasterize_sphere_outline(&sphere, &data->mlx->img,
+		&data->scene.camera, color);
 }
 
 void	full_render_sphere(t_sphere_bvh *bvh, int target_depth,
@@ -59,7 +58,8 @@ void	full_render_sphere(t_sphere_bvh *bvh, int target_depth,
 	sphere.pos = bvh->pos;
 	rgb = depth_to_rgb_int(target_depth + data->params.bvh_color_offset,
 			total_depth);
-	rasterize_sphere(&sphere, &data->mlx->img, &data->scene.camera, rgb);
+	rasterize_sphere_outline(&sphere, &data->mlx->img,
+		&data->scene.camera, rgb);
 	if (bvh->depth > 0)
 	{
 		full_render_sphere(bvh->next_a, target_depth - 1, total_depth, data);

@@ -45,6 +45,8 @@ void	full_render_aabb(t_aabb_bvh *bvh, int target_depth,
 
 void	rasterize_bvh(void *bvh, t_params *p, int total_depth, t_data *data)
 {
+	if (!bvh)
+		return ;
 	if (data->scene.bvh.bvh_mode == 0)
 		rasterize_sphere_bvh(bvh, p, total_depth, data);
 	else if (data->scene.bvh.bvh_mode == 1)

@@ -407,7 +407,7 @@ void	set_shortest_object(t_vector *objects, t_camera *cam, int *x, int *y)
 	}
 }
 
-void	compute(t_data *data)
+void	ray_tracing_render(t_data *data)
 {
 	t_camera	*cam;
 	t_scene		*scene;
@@ -519,7 +519,7 @@ int	loop(t_data *data)
 {
 	update_fps(data);
 	handle_camera_move(data,&data->scene.camera, data->keys);
-	compute(data);
+	data->params.render_func(data);
 	draw_text(data->font_env->fps);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win,
 		data->mlx->img.img, 0, 0);

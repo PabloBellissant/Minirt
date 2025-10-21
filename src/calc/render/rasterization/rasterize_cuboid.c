@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 22:08:27 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/09 04:56:31 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/13 23:29:13 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,17 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 static void	draw_vertices(t_img_data *img, t_vec3 vertices[8],
 	int color, t_camera *cam)
 {
-	draw_only_visible(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[1], vertices[2]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[2], vertices[3]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[3], vertices[0]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[4], vertices[5]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[5], vertices[6]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[6], vertices[7]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[7], vertices[4]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[0], vertices[4]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[1], vertices[5]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[2], vertices[6]}, color, cam);
-	draw_only_visible(img, &(t_3d_line){vertices[3], vertices[7]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[1], vertices[2]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[2], vertices[3]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[3], vertices[0]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[4], vertices[5]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[5], vertices[6]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[6], vertices[7]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[7], vertices[4]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[0], vertices[4]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[1], vertices[5]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[2], vertices[6]}, color, cam);
+	rasterize_3d_line(img, &(t_3d_line){vertices[3], vertices[7]}, color, cam);
 }

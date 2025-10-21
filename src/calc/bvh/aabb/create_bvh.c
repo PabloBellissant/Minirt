@@ -47,9 +47,17 @@ static int	create_root_bvh(t_vector *bvh, t_vector *objects)
 	t_aabb_bvh	root_bvh;
 
 	ft_bzero(&root_bvh, sizeof(t_aabb_bvh));
-	root_bvh.min = (t_vec3){{FLT_MAX, FLT_MAX, FLT_MAX}};
-	root_bvh.max = (t_vec3){{-FLT_MAX, -FLT_MAX, -FLT_MAX}};
-	set_size(&root_bvh, objects);
+	if (objects->num_elements != 0)
+	{
+		root_bvh.min = (t_vec3){{FLT_MAX, FLT_MAX, FLT_MAX}};
+		root_bvh.max = (t_vec3){{-FLT_MAX, -FLT_MAX, -FLT_MAX}};
+		set_size(&root_bvh, objects);
+	}
+	else
+	{
+		root_bvh.min = (t_vec3){{0, 0, 0}};
+		root_bvh.max = (t_vec3){{0, 0, 0}};
+	}
 	vector_add(bvh, &root_bvh, 1);
 	return (0);
 }

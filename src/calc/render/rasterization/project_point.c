@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 00:38:46 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/09 03:45:49 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/13 23:29:13 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 
 	temp = vec3_sub(*p, camera->pos);
 	cam_space.z = vec3_dot(temp, camera->camera_forward);
-	if (cam_space.z > 0)
+	if (cam_space.z > -1e-2f)
 		return ((t_vec2i){{-1, -1}});
 	cam_space.x = vec3_dot(temp, camera->camera_right);
 	cam_space.y = vec3_dot(temp, camera->camera_up);
-	fov_scale = 1.0f / tanf(((float)camera->fov * (M_PIf / 180.0f)) / 2.0f);
+	fov_scale = 1.0f / tanf(camera->theta / 2.0f);
 	projected.x = (cam_space.x * fov_scale) / (fabsf(cam_space.z)
 			* camera->aspect_ratio);
 	projected.y = (cam_space.y * fov_scale) / fabsf(cam_space.z);
