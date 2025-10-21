@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw_only_visible.c                                :+:      :+:    :+:   */
+/*   rasterize_triangle_outline.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/11 00:59:30 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/11 00:59:32 by pabellis         ###   ########.fr       */
+/*   Created: 2025/10/15 23:02:49 by pabellis          #+#    #+#             */
+/*   Updated: 2025/10/15 23:24:29 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vectors_types.h"
 #include "minirt.h"
 
-void	draw_only_visible(t_img_data *img, t_3d_line *line,
+void	rasterize_triangle_outline(t_img_data *img, t_triangle *triangle,
 	int color, t_camera *camera)
 {
-	t_vec2i	proj1;
-	t_vec2i	proj2;
+	t_3d_line	line;
 
-	proj1 = project_point(&line->pos1, camera);
-	proj2 = project_point(&line->pos2, camera);
-	if (proj1.x != -1 && proj2.x != -1)
-		ft_mlx_line_put(img, proj1, proj2, color);
+	line = (t_3d_line){triangle->p0.pos, triangle->p1.pos};
+	rasterize_3d_line(img, &line, color, camera);
+	line = (t_3d_line){triangle->p1.pos, triangle->p2.pos};
+	rasterize_3d_line(img, &line, color, camera);
+	line = (t_3d_line){triangle->p2.pos, triangle->p0.pos};
+	rasterize_3d_line(img, &line, color, camera);
 }

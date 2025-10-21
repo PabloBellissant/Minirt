@@ -24,7 +24,6 @@ typedef enum e_object_type
 	AMBIENT,
 	CAMERA,
 	LIGHT,
-	MULTI_LIGHT,
 	SPHERE,
 	PLANE,
 	CYLINDER,

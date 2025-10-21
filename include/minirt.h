@@ -60,6 +60,7 @@ typedef struct s_supersampling
 
 typedef struct s_params
 {
+	int		render_mode;
 	int		bvh_depth;
 	int		bvh_color_offset;
 	bool	bvh_debug;

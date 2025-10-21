@@ -15,16 +15,16 @@
 #include "render.h"
 #include "mlx_wrapper.h"
 
-#define STEP 0.2f
-#define H_COUNT 16
-#define V_COUNT 24
+#define STEP 0.3f
+#define H_COUNT 8
+#define V_COUNT 12
 
 static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 				t_camera *camera, t_rgb_int color);
 static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 				t_camera *camera, t_rgb_int color);
 
-int	rasterize_sphere(t_sphere *s, t_img_data *img,
+int	rasterize_sphere_outline(t_sphere *s, t_img_data *img,
 	t_camera *camera, t_rgb_int color)
 {
 	draw_vertical_lines(s, img, camera, color);
@@ -52,7 +52,7 @@ static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 			point.z = s->pos.z + s->diameter / 2.0f * sinf(val)
 				* sinf(i * 2.0f * M_PIf / V_COUNT);
 			if (val != 0.0f)
-				draw_only_visible(img, &(t_3d_line){point, prev_point},
+				rasterize_3d_line(img, &(t_3d_line){point, prev_point},
 					(int)color.rgb, camera);
 			prev_point = point;
 			val += STEP;
@@ -81,7 +81,7 @@ static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 			point.z = s->pos.z + s->diameter / 2.0f * sinf(i * M_PIf
 					/ H_COUNT) * sinf(val);
 			if (val != 0.0f)
-				draw_only_visible(img, &(t_3d_line){point, prev_point},
+				rasterize_3d_line(img, &(t_3d_line){point, prev_point},
 					(int)color.rgb, camera);
 			prev_point = point;
 			val += STEP;
