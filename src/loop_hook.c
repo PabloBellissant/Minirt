@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/09 11:16:25 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/10/21 03:16:46 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,9 @@ static inline bool	is_b_key(int keycode)
 	return (keycode == XK_b);
 }
 
-static inline bool	is_1_key(int keycode)
+static inline bool	is_render_mode_key(int keycode)
 {
-	return (keycode == XK_1);
-}
-
-static inline bool	is_2_key(int keycode)
-{
-	return (keycode == XK_2);
+	return ((keycode == XK_1) || (keycode == XK_2));
 }
 
 void	setup_key_move_events(t_data *data)
@@ -155,16 +150,9 @@ void	bvh_color_changer(t_data *data, t_mlx *mlx)
 	printf("color offset: %d\n", data->params.bvh_color_offset);
 }
 
-void	set_render_raytracing(t_data *data, t_mlx *mlx)
+void	set_render_mode(t_data *data, t_mlx *mlx_data)
 {
-	(void) mlx;
-	data->params.render_mode = 1;
-}
-
-void	set_render_outline(t_data *data, t_mlx *mlx)
-{
-	(void) mlx;
-	data->params.render_mode = 0;
+	data->params.render_mode = mlx_data->key_input.keycode - XK_1;
 }
 
 void	toggle_mouse_focus(void *v, t_mlx *mlx_data)
@@ -184,8 +172,7 @@ void	setup_key_param_events(t_data *data)
 	add_func_key_hook(data->mlx, is_right_arrow, (void (*)(void *, t_mlx *))bvh_next_mode, data);
 	add_func_key_hook(data->mlx, is_left_arrow, (void (*)(void *, t_mlx *))bvh_prev_mode, data);
 	add_func_key_hook(data->mlx, is_c_key, (void (*)(void *, t_mlx *))bvh_color_changer, data);
-	add_func_key_hook(data->mlx, is_1_key, (void (*)(void *, t_mlx *))set_render_outline, data);
-	add_func_key_hook(data->mlx, is_2_key, (void (*)(void *, t_mlx *))set_render_raytracing, data);
+	add_func_key_hook(data->mlx, is_render_mode_key, (void (*)(void *, t_mlx *))set_render_mode, data);
 }
 
 /*
