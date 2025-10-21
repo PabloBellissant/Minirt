@@ -60,8 +60,7 @@ void	register_unit_errors(void)
 	register_frdr_errors();
 	register_rt_errors();
 }
-void	ray_tracing_render(t_data *data);
-void	outline_render(t_data *data);
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
@@ -98,7 +97,6 @@ int	main(int argc, char **argv)
 			{
 				init_threads(data.queue);
 				data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
-				data.params.render_func = outline_render;
 				loop_hook(&data);
 				free_data(data);
 				kill_threads(data.queue, NPROC);
