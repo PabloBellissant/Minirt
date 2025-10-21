@@ -14,6 +14,8 @@
 #include "render.h"
 #include "calc.h"
 
+#define MIN_DISTANCE_EPSILON -1e-2f
+
 t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 {
 	t_vec3	temp;
@@ -24,7 +26,7 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 
 	temp = vec3_sub(*p, camera->pos);
 	cam_space.z = vec3_dot(temp, camera->camera_forward);
-	if (cam_space.z > -1e-2f)
+	if (cam_space.z > MIN_DISTANCE_EPSILON)
 		return ((t_vec2i){{-1, -1}});
 	cam_space.x = vec3_dot(temp, camera->camera_right);
 	cam_space.y = vec3_dot(temp, camera->camera_up);
