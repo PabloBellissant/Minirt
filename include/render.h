@@ -138,7 +138,7 @@ void	rasterize_cylinder_outline(t_img_data *img, t_cylinder *cylinder,
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 	int color, t_camera *camera);
 
-void	outline_render(t_data *data);
+void	wireframe_render(t_data *data);
 void	ray_tracing_render(t_data *data);
 
 #endif
