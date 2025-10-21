@@ -517,9 +517,12 @@ void	update_fps(t_data *data);
 // et on as :
 int	loop(t_data *data)
 {
+	static void (*render_func[])(t_data *)
+		= {wireframe_render, ray_tracing_render};
+
 	update_fps(data);
-	handle_camera_move(data,&data->scene.camera, data->keys);
-	data->params.render_func(data);
+	handle_camera_move(data, &data->scene.camera, data->keys);
+	render_func[data->params.render_mode](data);
 	draw_text(data->font_env->fps);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win,
 		data->mlx->img.img, 0, 0);
