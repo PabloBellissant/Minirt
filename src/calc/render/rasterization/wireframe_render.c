@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   outline_loop.c                                     :+:      :+:    :+:   */
+/*   wireframe_render.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 23:16:06 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/15 23:20:07 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/10/21 02:56:56 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void	clear_old_screen(t_img_data *img);
 static void	rasterize_lights(t_img_data *img, t_vector lights, t_camera *cam);
 static void	rasterize_objects(t_img_data *img, t_vector objects, t_camera *cam);
 
-void	outline_render(t_data *data)
+void	wireframe_render(t_data *data)
 {
 	t_camera	*cam;
 	t_scene		*scene;

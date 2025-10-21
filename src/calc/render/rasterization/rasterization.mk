@@ -24,7 +24,7 @@ RASTERIZATION_SRCS	= rasterize_cuboid.c \
 					  float_to_rainbow.c \
 					  project_point.c \
 					  rasterize_triangle_outline.c \
-					  outline_render.c \
+					  wireframe_render.c \
 					  rasterize_outline_object.c \
 					  rasterize_light_outline.c \
 					  rasterize_plane_outline.c \
