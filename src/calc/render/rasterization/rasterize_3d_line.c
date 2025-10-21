@@ -26,7 +26,7 @@ void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 	proj2 = project_point(&line->pos2, camera);
 	if (!is_out_screen(img, &proj1, &proj2))
 		return ;
-	if (proj1.x == -1 || proj2.x == -1)
+	if ((proj1.x == -1) || (proj2.x == -1))
 		return ;
 	ft_mlx_line_put(img, proj1, proj2, color);
 }
