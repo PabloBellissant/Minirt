@@ -79,12 +79,29 @@ typedef struct s_triangle
 	t_rgb		rgb;
 }	t_triangle;
 
+typedef struct s_mat
+{
+	char		*name;
+	float		ns;
+	t_vec3		ka;
+	t_vec3		kd;
+	t_vec3		ks;
+	t_vec3		ke;
+	float		ni;
+	float		d;
+	int			illum;
+	t_texture	*normal_map;
+	t_texture	*map_kd;
+	t_texture	*roughness_map;
+	t_texture	*ambient_map;
+}	t_mat;
+
 typedef struct s_ray	t_ray;
 
 typedef struct s_object
 {
 	char			*name;
-	t_texture		*texture;
+	t_mat			mat;
 	t_object_type	type;
 	int				(*f)(t_ray *, t_object *, float *);
 	float			t;

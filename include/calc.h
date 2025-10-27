@@ -16,7 +16,7 @@
 # include "object.h"
 # include "render.h"
 
-# define EPSILON 1e-6f
+# define EPSILON 1e-3f
 # define M_PIf 3.14159265358979323846f
 
 typedef struct s_quadratic
@@ -31,8 +31,8 @@ typedef struct s_quadratic
 	float	dd;
 }	t_quadratic;
 
-t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object);
-float		hit_register(t_ray *restrict ray, t_scene *scene, t_object **hit_object);
+t_rgb_int	ray_path(t_ray *ray, t_data *data, t_object **hit_object);
+float		hit_register(t_ray *ray, t_data *data, t_object **hit_object);
 t_object	*hit_reg_plane(t_ray *ray, t_scene *scene, float t_min);
 int			hit_sphere(t_ray *ray, t_object *o, float *t);
 int			hit_cylinder(t_ray *ray, t_object *o, float *t);

@@ -18,7 +18,8 @@ PARSING_SRCS	= parse_scene.c \
 				  fill_by_type.c
 SRCS			+= $(addprefix $(PARSING_DIR)/, $(PARSING_SRCS))
 
-PARSING_MKS		= rt_parser/rt_parser.mk
+PARSING_MKS		= rt_parser/rt_parser.mk\
+				  ppm_parser/ppm_parser.mk
 include $(addprefix $(PARSING_DIR)/, $(PARSING_MKS))
 
 # VPATH
