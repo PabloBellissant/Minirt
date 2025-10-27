@@ -29,10 +29,14 @@ int	obj(const char *line, int line_num, t_scene *scene)
 	{
 		return (error(pack_err(RT_ID, RT_E_OBJ), FL, LN, FC));
 	}
-	if (parse_obj_file(open(obj_directory, O_RDONLY), scene, &pos) == -1)
+	if (ft_strlen(obj_directory) <= 4
+		|| ft_strrncmp(".obj", obj_directory, 4) != 0)
 	{
-		register_complex_err_msg(RT_E_MSG_OBJ_FAIL, obj_directory);
-		return (error(pack_err(RT_ID, RT_E_OBJ_FAIL), FL, LN, FC));
+		return (error(pack_err(RT_ID, RT_E_OBJ), FL, LN, FC));
 	}
+	register_complex_err_msg(RT_E_MSG_OBJ_FAIL, obj_directory);
+	if (parse_obj_file(open(obj_directory, O_RDONLY), scene, &pos) == -1)
+		return (error(pack_err(RT_ID, RT_E_OBJ_FAIL), FL, LN, FC));
 	return (0);
 }
+

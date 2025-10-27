@@ -25,33 +25,97 @@ unsigned int sample_texture(t_texture *texture, float u, float v)
 	int			y;
 	int			offset;
 
-	if (!texture)
-		return (0xFFFFFF);
-	x = (int)(u * (float)(texture->width - 1));
-	y = (int)(v * (float)(texture->height - 1));
+	x = (int)(u * (float)(texture->width));
+	y = (int)(v * (float)(texture->height));
 	offset = y * texture->tex_size_line + x * (texture->tex_bpp / 8);
 	ft_memcpy(&rgb.rgb, texture->pixels + offset, sizeof(unsigned int));
 	return (rgb.rgb);
 }
 
-t_vec3 texture_to_vec3(unsigned int color)
+float	sample_binary_texture(t_texture *texture, float u, float v)
+{
+	int				x;
+	int				y;
+	int				offset;
+	unsigned char	pixel;
+
+	x = (int)(u * (float)(texture->width));
+	y = (int)(v * (float)(texture->height));
+	offset = y * texture->tex_size_line + x;
+	pixel = texture->pixels[offset];
+	return ((float)pixel / 255.0f);
+}
+
+
+t_vec3	texture_to_vec3(unsigned int color)
 {
 	t_vec3 result;
 
-	result.y = (float)((color >> 16) & 0xFF) / 255.0f;
-	result.x = (float)((color >> 8) & 0xFF) / 255.0f;
-	result.z = (float)(color & 0xFF) / 255.0f;
+	result.z = (float)((color >> 16) & 0xFF) / 255.0f;
+	result.y = (float)((color >> 8) & 0xFF) / 255.0f;
+	result.x = (float)(color & 0xFF) / 255.0f;
 
 	return result;
 }
 
-# define SMOOTH_SHADING 1
-# define NORMAL_DEBUG 0
-# define TEXTURE 0
-
-void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
+t_vec3 apply_normalmap(t_vec3 hit_normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent)
 {
-	(void) scene;
+	t_vec3	n_tangent;
+
+	n_tangent = vec3_sub(vec3_scale(nmap, 2.0f), vec3(1, 1, 1));
+	t_vec3 tx = vec3_scale(tangent, n_tangent.x);
+	t_vec3 ty = vec3_scale(bitangent, n_tangent.y);
+	t_vec3 tz = vec3_scale(hit_normal, n_tangent.z);
+
+	t_vec3 n_world = vec3_add(vec3_add(tx, ty), tz);
+	n_world = vec3_normalize(n_world);
+
+	return n_world;
+}
+
+t_vec3	get_tangent(t_vec3 n)
+{
+	t_vec3 up;
+
+	if (fabsf(n.y) > 0.999f)
+		up = vec3(1, 0, 0);
+	else
+		up = vec3(0, 1, 0);
+	return (vec3_normalize(vec3_cross(up, n)));
+}
+
+t_vec3 get_bitangent(t_vec3 n, t_vec3 tangent)
+{
+	return (vec3_cross(n, tangent));
+}
+
+t_vec3	sample_mat(t_ray *ray, t_vec2 uv, t_mat *mat)
+{
+	t_vec3	hit_point = vec3(0,0,0);
+	t_rgb	nmap;
+	t_vec3	tangent;
+	t_vec3	new_normal;
+
+	if (mat->map_kd)
+	{
+		ray->hit_rgb = texture_to_vec3(sample_texture(mat->map_kd, uv.x, uv.y));
+		ray->hit_roughness = sample_binary_texture(mat->roughness_map, uv.x, uv.y);
+		ray->hit_ambient = sample_binary_texture(mat->ambient_map, uv.x, uv.y);
+		nmap = texture_to_vec3(sample_texture(mat->normal_map, uv.x, uv.y));
+		tangent = get_tangent(ray->hit_normal);
+		new_normal = apply_normalmap(ray->hit_normal, nmap, tangent, get_bitangent(ray->hit_normal, tangent));
+		ray->hit_normal = new_normal;
+	}
+	else
+	{
+		ray->hit_rgb = mat->kd;
+		ray->hit_roughness = 1.0f - mat->ks.x;
+	}
+	return (hit_point);
+}
+
+void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *params)
+{
 	t_vec3	hit_point;
 	t_vec3	axis;
 	t_vec3	to_hit;
@@ -62,7 +126,7 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
 	if (o->type == TRIANGLE)
 	{
 		t_vec3	n0, n1, n2;
-		if (TEXTURE || SMOOTH_SHADING)
+		if (params->texture || params->smooth_shading)
 		{
 			t_vec3 v0v1 = vec3_sub(o->triangle.p1.pos, o->triangle.p0.pos);
 			t_vec3 v0v2 = vec3_sub(o->triangle.p2.pos, o->triangle.p0.pos);
@@ -89,12 +153,16 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
 						  bary_v * o->triangle.p1.uv.y +
 						  bary_w * o->triangle.p2.uv.y;
 
+
 			unsigned int tex_color;
-			if (o->texture)
+			if (o->mat.map_kd && params->texture)
 			{
-				tex_color = sample_texture(o->texture, u_tex, v_tex);
+				tex_color = sample_texture(o->mat.map_kd, u_tex, 1 - v_tex);
 				ray->hit_rgb = texture_to_vec3(tex_color);
+				return ;
 			}
+			else
+				ray->hit_rgb = o->triangle.rgb;
 			n0 = vec3_scale(o->triangle.p0.norm, bary_u);
 			n1 = vec3_scale(o->triangle.p1.norm, bary_v);
 			n2 = vec3_scale(o->triangle.p2.norm, bary_w);
@@ -104,16 +172,17 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
 			ray->hit_normal = vec3_add(o->triangle.p0.norm, vec3_add(o->triangle.p1.norm, o->triangle.p2.norm));
 		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
 
-		if (NORMAL_DEBUG)
+		if (params->texture)
 		{
-			ray->hit_rgb.x = ray->hit_normal.x * 0.5f + 0.5f;
-			ray->hit_rgb.y = ray->hit_normal.y * 0.5f + 0.5f;
-			ray->hit_rgb.z = ray->hit_normal.z * 0.5f + 0.5f;
+			ray->hit_rgb = texture_to_vec3(sample_texture(o->mat.map_kd, uv.x, uv.y));
+			//ray->hit_roughness = sample_binary_texture(o->mat.roughness_map, uv.x, uv.y);
 		}
-		else if (!TEXTURE)
-			ray->hit_rgb = texture_to_vec3(0xFFFFFF);
 		else
-			ray->hit_rgb = o->triangle.rgb;
+		{
+			ray->hit_roughness = o->mat.ks.x;
+			ray->hit_rgb = o->mat.kd;
+		}
+		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
 	}
 	else if (o->type == SPHERE)
 	{
@@ -122,16 +191,8 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
 		uv.x = 0.5f + atan2f(ray->hit_normal.z, ray->hit_normal.x) / (2.0f * M_PIf);
 		uv.y = 0.5f - asinf(ray->hit_normal.y) / M_PIf;
 
-		if (NORMAL_DEBUG)
-		{
-			ray->hit_rgb.x = ray->hit_normal.x * 0.5f + 0.5f;
-			ray->hit_rgb.y = ray->hit_normal.y * 0.5f + 0.5f;
-			ray->hit_rgb.z = ray->hit_normal.z * 0.5f + 0.5f;
-		}
-		else if (o->texture)
-			ray->hit_rgb = texture_to_vec3(sample_texture(o->texture, uv.x, uv.y));
-		else
-			ray->hit_rgb = o->sphere.rgb;
+		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
+		sample_mat(ray, uv, &o->mat);
 	}
 	else if (o->type == PLANE)
 	{
@@ -139,35 +200,19 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
 
 		t_vec3 tangent, bitangent;
 
-		// Trouve un vecteur perpendiculaire à la normale
-		if (fabsf(o->plane.normal.y) > 0.9f)
-		  tangent = vec3_cross(o->plane.normal, vec3(1, 0, 0));
-		else
-		  tangent = vec3_cross(o->plane.normal, vec3(0, 1, 0));
-		tangent = unsafe_vec3_normalize(tangent);
-
-		bitangent = vec3_cross(o->plane.normal, tangent);
+		tangent = get_tangent(o->plane.normal);
+		bitangent = get_bitangent(o->plane.normal, tangent);
 		bitangent = unsafe_vec3_normalize(bitangent);
 
-		// Point relatif à la position du plan
 		t_vec3 local_point = vec3_sub(hit_point, o->plane.pos);
-
-		// Projette sur les axes tangent/bitangent et wrap pour répéter la texture
-		float u = vec3_dot(local_point, tangent) * 0.1f;  // 0.1 = scale de répétition
+		float u = vec3_dot(local_point, tangent) * 0.1f;
 		float v = vec3_dot(local_point, bitangent) * 0.1f;
 
-		// Wrap (modulo pour répéter la texture)
 		u = u - floorf(u);
 		v = v - floorf(v);
 
-		// Sample la texture
-		if (o->texture)
-		{
-			unsigned int tex_color = sample_texture(o->texture, u, v);
-			ray->hit_rgb = texture_to_vec3(tex_color);
-		}
-		else
-			ray->hit_rgb = o->plane.rgb;
+		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
+		sample_mat(ray, vec2(u, v), &o->mat);
 	}
 	else if (o->type == CYLINDER)
 	{
@@ -178,26 +223,27 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_scene *scene)
 		ray->hit_normal = vec3_sub(hit_point, axis);
 		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
 		ray->hit_rgb = o->cylinder.rgb;
+		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
 	}
 	ray->pos = hit_point;
+	if (params->normal_debug)
+		ray->hit_rgb = rgb_add_scalar(rgb_scale(ray->hit_normal, 0.5f), 0.5f);
 }
 
 t_object	*hit_sphere_bvh(t_ray *ray, t_sphere_bvh *bvh);
 
-float		hit_register(t_ray *ray, t_scene *scene, t_object **hit_object)
+float	hit_register(t_ray *ray, t_data *data, t_object **hit_object)
 {
 	t_object	*bvh_ret;
 
-	if (scene->bvh.bvh_mode == 0)
-		bvh_ret = hit_sphere_bvh(ray, scene->bvh.sphere_bvh);
-	else if (scene->bvh.bvh_mode == 1)
-		bvh_ret = hit_aabb_bvh(ray, scene->bvh.aabb_bvh);
+	if (data->scene.bvh.bvh_mode == 0)
+		bvh_ret = hit_sphere_bvh(ray, data->scene.bvh.sphere_bvh);
 	else
-		bvh_ret = hit_aabb_bvh(ray, scene->bvh.aabb_bvh); // will be obb.
+		bvh_ret = hit_aabb_bvh(ray, data->scene.bvh.aabb_bvh);
 	if (bvh_ret)
-		(*hit_object) = hit_reg_plane(ray, scene, bvh_ret->t);
+		(*hit_object) = hit_reg_plane(ray, &data->scene, bvh_ret->t);
 	else
-		(*hit_object) = hit_reg_plane(ray, scene, FLT_MAX);
+		(*hit_object) = hit_reg_plane(ray, &data->scene, FLT_MAX);
 	if (bvh_ret != NULL)
 	{
 		if (!(*hit_object) || bvh_ret->t < (*hit_object)->t)
@@ -205,6 +251,6 @@ float		hit_register(t_ray *ray, t_scene *scene, t_object **hit_object)
 	}
 	else if (!(*hit_object) || (*hit_object)->t >= FLT_MAX)
 		return (-1.f);
-	hit_register_obj(ray, (*hit_object), scene);
+	hit_register_obj(ray, (*hit_object), &data->params);
 	return ((*hit_object)->t);
 }

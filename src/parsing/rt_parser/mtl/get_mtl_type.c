@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_type.c                                         :+:      :+:    :+:   */
+/*   get_mtl_type.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/11 22:29:40 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:39:47 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/10/21 04:31:54 by pabellis          #+#    #+#             */
+/*   Updated: 2025/10/21 04:31:56 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include "libft.h"
-#include "parsing.h"
-#include "rt_xcerrcal.h"
+#include "render.h"
 
-t_object_type	get_type(const char *line)
+t_mtl	get_mtl_type(const char *line)
 {
-	static const char	*elem[] = {"A", "C", "L", "sp", "pl",
-		"cy", "obj", "tex", "sky", "mat", NULL};
-	int					i;
+	static const char	*elem[] = {"newmtl", "Ns", "Ka", "Kd", "Ks",
+			"map_Kd", NULL};
+	int			i;
 
 	while (*line == ' ' || *line == '\t')
 		++line;
@@ -30,11 +27,11 @@ t_object_type	get_type(const char *line)
 		{
 			if ((*(line + ft_strlen(elem[i])) == ' ')
 				|| (*(line + ft_strlen(elem[i])) == '\t'))
-				return ((t_object_type)i + 1);
+			{
+				return ((t_mtl) i + 1);
+			}
 		}
 		++i;
 	}
-	register_complex_err_msg(RT_E_MSG_UNDEFINED_TYPE, *line);
-	error(pack_err(RT_ID, RT_E_UNDEFINED_TYPE), FL, LN, FC);
-	return (UNDEFINED);
+	return (no_mtl);
 }

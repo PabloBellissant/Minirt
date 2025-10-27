@@ -46,6 +46,6 @@ int	light(const char *line, int line_num, t_scene *scene)
 	{
 		return (error(pack_err(RT_ID, RT_E_LIGHT), FL, LN, FC));
 	}
-	light->rgb = get_real_ratio(color, light->brightness);
+	light->rgb = get_real_ratio(color, light->brightness * 2.0f);
 	return (0);
 }

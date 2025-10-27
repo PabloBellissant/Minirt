@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_type.c                                         :+:      :+:    :+:   */
+/*   get_obj_type.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/11 22:29:40 by pabellis          #+#    #+#             */
-/*   Updated: 2025/07/31 20:39:47 by jaubry--         ###   ########lyon.fr   */
+/*   Created: 2025/10/21 18:29:08 by pabellis          #+#    #+#             */
+/*   Updated: 2025/10/21 18:29:10 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include "libft.h"
-#include "parsing.h"
-#include "rt_xcerrcal.h"
+#include "minirt.h"
 
-t_object_type	get_type(const char *line)
+t_obj	get_obj_type(const char *line)
 {
-	static const char	*elem[] = {"A", "C", "L", "sp", "pl",
-		"cy", "obj", "tex", "sky", "mat", NULL};
+	static const char	*elem[] = {"mtllib", "usemtl", "vn", "vt",
+			"v", "f", NULL};
 	int					i;
 
 	while (*line == ' ' || *line == '\t')
@@ -30,11 +27,9 @@ t_object_type	get_type(const char *line)
 		{
 			if ((*(line + ft_strlen(elem[i])) == ' ')
 				|| (*(line + ft_strlen(elem[i])) == '\t'))
-				return ((t_object_type)i + 1);
+				return ((t_obj) i + 1);
 		}
 		++i;
 	}
-	register_complex_err_msg(RT_E_MSG_UNDEFINED_TYPE, *line);
-	error(pack_err(RT_ID, RT_E_UNDEFINED_TYPE), FL, LN, FC);
-	return (UNDEFINED);
+	return (null);
 }
