@@ -14,74 +14,34 @@
 #include "minirt.h"
 #include "render.h"
 
-int	check_header(int fd, int *width, int *height, int *bit)
-{
-	char	*line;
+t_texture	*ppm_parser(int fd, t_texture *tex);
+t_texture	*pgm_parser(int fd, t_texture *tex);
+char		*skip_comment(int fd);
 
-	line = get_next_line(fd);
-	if (ft_strncmp(line, "P6", 2) != 0)
-	{
-		free(line);
-		return (-1);
-	}
-	free(line);
-	line = get_next_line(fd);
-	if (!line || ft_scan(2, " *%d  *%d *\n", line, width, height) != 0)
-	{
-		free(line);
-		return (-1);
-	}
-	free(line);
-	line = get_next_line(fd);
-	if (!line || ft_scan(3, " *%d *\n", line, bit) != 0)
-	{
-		free(line);
-		return (-1);
-	}
-	free(line);
-	return (0);
-}
-
-int	get_data(int fd, t_texture *tex)
-{
-	ssize_t	ret_val;
-	size_t	size;
-
-	size = (size_t) tex->width * (size_t) tex->height * 3;
-	tex->tex_size_line = tex->width * 3;
-	tex->tex_bpp = 24;
-	tex->pixels = malloc(size);
-	if (!tex->pixels)
-		return (-1);
-	ret_val = read(fd, tex->pixels, size);
-	if (ret_val < 0)
-	{
-		free(tex->pixels);
-		tex->pixels = NULL;
-		return (-1);
-	}
-	return (0);
-}
-
-t_texture	ppm_parser(char *texture_path)
+t_texture	texture_parser(char *texture_path)
 {
 	int			fd;
 	t_texture	tex;
+	char		*line;
 
 	ft_bzero(&tex, sizeof(t_texture));
 	fd = open(texture_path, O_RDONLY);
 	if (fd < 0)
 		return (tex);
-	if (check_header(fd, &tex.width, &tex.height, &tex.tex_bpp) == -1)
-	{
-		close(fd);
+	line = skip_comment(fd);
+	if (!line)
 		return (tex);
-	}
-	if (get_data(fd, &tex) == -1)
+	if (ft_strncmp(line, "P6", 2) == 0)
 	{
-		close(fd);
-		return (tex);
+		if (ppm_parser(fd, &tex) == NULL)
+			return (tex);
 	}
+	else if (ft_strncmp(line, "P5", 2) == 0)
+	{
+		if (pgm_parser(fd, &tex) == NULL)
+			return (tex);
+	}
+	free(line);
 	return (tex);
 }
 
@@ -94,7 +54,7 @@ t_texture	*create_texture(t_scene *scene, char *texture_path)
 	ft_bzero(&tex, sizeof(t_texture));
 	if (ft_strrncmp(texture_path, ".ppm", 4) == 0)
 	{
-		tex = ppm_parser(texture_path);
+		tex = texture_parser(texture_path);
 		if (!tex.pixels)
 			return (NULL);
 	}
