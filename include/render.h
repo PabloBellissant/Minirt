@@ -23,6 +23,9 @@ typedef struct s_ray
 	t_vec3	dir;
 	t_vec3	hit_normal;
 	t_rgb	hit_rgb;
+	float	hit_roughness;
+	float	hit_ambient;
+	t_mat	*hit_mat;
 }			t_ray;
 
 typedef struct s_phong
@@ -87,6 +90,23 @@ typedef struct s_texture
 	char		*name;
 }	t_texture;
 
+typedef enum e_mtl
+{
+	no_mtl = 0,
+	e_newmtl,
+	e_Ns,
+	e_Ka,
+	e_Kd,
+	e_Ks,
+	e_Ke,
+	e_Ni,
+	e_d,
+	e_illum,
+	e_normal,
+	e_map_kd,
+	e_map_d
+}	t_mtl;
+
 typedef struct s_scene
 {
 	t_ambient	ambient;
@@ -99,6 +119,7 @@ typedef struct s_scene
 	int			plane_count;
 	t_bvh_main	bvh;
 	t_vector	texture;
+	t_vector	mat;
 	t_mlx		*mlx;
 	t_texture	*skybox;
 }				t_scene;

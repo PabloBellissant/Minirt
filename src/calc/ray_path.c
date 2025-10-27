@@ -14,7 +14,7 @@
 #include "calc.h"
 #include "vectors.h"
 
-t_vec3		phong_path(t_scene *scene, t_ray *ray);
+t_vec3		phong_path(t_data *data, t_ray *ray);
 static void	fill_phong(t_ray *ray, t_scene *scene);
 
 #include <float.h>
@@ -108,55 +108,101 @@ float fast_atan2f(float y, float x)
 	return (angle);
 }
 
-t_rgb_int	draw_skybox(t_scene *scene, t_vec3 *dir)
+t_rgb	draw_skybox(t_scene *scene, t_vec3 *dir)
 {
 	float	u;
 	float	v;
 
 	if (!scene->skybox)
-		return (rgb_int(0, 0, 0));
+		return (rgb(0, 0, 0));
 	u = 0.5f + fast_atan2f(dir->z, dir->x) / (2.0f * M_PIf);
 	v = 0.5f - asinf(dir->y) / M_PIf;
-	return (rgb_ftoi(texture_to_vec3(sample_texture(scene->skybox, u, v))));
+	return (texture_to_vec3(sample_texture(scene->skybox, u, v)));
 }
 
-# define NORMAL_DEBUG 0
-t_rgb_int	ray_path(t_ray *ray, t_scene *scene, t_object **hit_object)
+t_vec3 vec3_reflect(t_vec3 ray, t_vec3 normal)
 {
-	float		hit_distance;
-	t_rgb_int	final_color = rgb_int(0, 0, 0);
-
-	hit_distance = hit_register(ray, scene, hit_object);
-	if ((final_color.r <= 200) && (final_color.g <= 100))
-	{
-		if (hit_distance <= 0)
-			return (draw_skybox(scene, &ray->dir));
-		fill_phong(ray, scene);
-		if (NORMAL_DEBUG)
-			final_color = rgb_ftoi(ray->hit_rgb);
-		else
-			final_color = rgb_ftoi(phong_path(scene, ray));
-	}
-	return (final_color);
+	t_vec3 scaled_normal = vec3_scale(normal, 2 * vec3_dot(ray, normal));
+	return (vec3_sub(ray, scaled_normal));
 }
 
-void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects, t_scene *scene);
+t_vec3	vec3_neg(t_vec3 v)
+{
+	t_vec3	res;
 
-t_rgb_int	fake_path(t_ray *ray, t_scene *scene, t_object *hit_object)
+	res.x = -v.x;
+	res.y = -v.y;
+	res.z = -v.z;
+	return (res);
+}
+//
+// float	get_reflect(t_vec3 ray_dir, t_vec3 normal, t_vec3 ks, float roughness)
+// {
+// 	float cos_theta;
+// 	float factor;
+// 	t_vec3 reflect;
+//
+// 	cos_theta = fabsf(vec3_dot(ray_dir, normal));;
+// 	factor = powf(1.0f - cos_theta, 5.0f);
+// 	t_vec3 one_minus_ks = vec3_sub(vec3(1.0f,1.0f,1.0f), ks);
+// 	reflect = vec3_add(ks, vec3_scale(one_minus_ks, factor));
+// 	return (reflect.x * (1.0f - roughness));
+// }
+
+float get_reflect(t_vec3 ray_dir, t_vec3 normal, float roughness, float F0)
+{
+	float cos_theta = fabsf(vec3_dot(ray_dir, normal));
+	float fresnel = F0 + (1.0f - F0) * powf(1.0f - cos_theta, 5.0f);
+	float glossy = fresnel * (1.0f - 0.9f * roughness * roughness);
+	return glossy;
+}
+
+
+t_rgb_int	ray_path(t_ray *ray, t_data *data, t_object **hit_object)
+{
+	float	hit_distance;
+	t_rgb	color;
+	float	reflect;
+	static int o = 0;
+
+	hit_distance = hit_register(ray, data, hit_object);
+	if (hit_distance <= 0)
+		return (rgb_ftoi(draw_skybox(&data->scene, &ray->dir)));
+	ray->hit_mat = &(*hit_object)->mat;
+	fill_phong(ray, &data->scene);
+	if (data->params.normal_debug)
+		return (rgb_ftoi(ray->hit_rgb));
+	else
+		color = phong_path(data, ray);
+	reflect = get_reflect(ray->dir, ray->hit_normal, ray->hit_roughness, ray->hit_mat->ks.r);
+	if (o < BOUNCE_MAX && reflect > 0.01f)
+	{
+		++o;
+		ray->dir = vec3_reflect(ray->dir, ray->hit_normal);
+		color = rgb_lerp(color, rgb_itof(ray_path(ray, data, hit_object)), reflect);
+		o = 0;
+	}
+	return (rgb_ftoi(color));
+}
+
+void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects, t_params *params);
+
+t_rgb_int	fake_path(t_ray *ray, t_data *data, t_object *hit_object)
 {
 	t_rgb_int	final_color = rgb_int(0, 0, 0);
 
 	hit_object->f(ray, hit_object, &hit_object->t);
-	hit_register_obj(ray, hit_object, scene);
+	hit_register_obj(ray, hit_object, &data->params);
 	if ((final_color.r <= 200) && (final_color.g <= 100))
 	{
 		if (hit_object->t <= 0)
-			return (draw_skybox(scene, &ray->dir));
-		fill_phong(ray, scene);
-		if (NORMAL_DEBUG)
+			return (rgb_ftoi(draw_skybox(&data->scene, &ray->dir)));
+		ray->hit_mat = &hit_object->mat;
+		fill_phong(ray, &data->scene);
+		if (data->params.normal_debug)
 			final_color = rgb_ftoi(ray->hit_rgb);
 		else
-			final_color = rgb_ftoi(phong_path(scene, ray));
+			final_color = rgb_ftoi(phong_path(data, ray));
 	}
 	return (final_color);
 }

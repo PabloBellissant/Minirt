@@ -30,6 +30,7 @@ typedef enum e_rt_err
 	RT_E_SKY,
 	RT_E_SPHERE,
 	RT_E_TEX,
+	RT_E_MAT,
 	RT_E_OBJ_FAIL,
 	RT_E_NO_TEX,
 	RT_E_NO_PARSER,
@@ -53,6 +54,7 @@ typedef enum e_rt_err
 #define RT_E_MSG_SKY "Skybox syntax invalid, expecting format: \"sky [path.ppm]\""
 #define RT_E_MSG_SPHERE "Sphere syntax invalid, expecting format: \"sp posX,Y,Z diameter R,G,B[0:255]\""
 #define RT_E_MSG_TEX "Texture syntax invalid, expecting format: \"tex 'name' 'path'\""
+#define RT_E_MSG_MAT "Material syntax invalid, expecting format: \"mat 'name' data\""
 #define RT_E_MSG_OBJ_FAIL ".obj extraction failed on \"%s\" file"
 #define RT_E_MSG_NO_TEX "Cannot parse \"%s\" texture"
 #define RT_E_MSG_NO_PARSER "Cannot parse this texture"
