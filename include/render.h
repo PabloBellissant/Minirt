@@ -22,9 +22,12 @@ typedef struct s_ray
 	t_vec3	pos;
 	t_vec3	dir;
 	t_vec3	hit_normal;
+	t_vec3	hit_tangent;
+	t_vec3	hit_bitangent;
 	t_rgb	hit_rgb;
 	float	hit_roughness;
 	float	hit_ambient;
+	float	hit_opacity;
 	t_mat	*hit_mat;
 }			t_ray;
 

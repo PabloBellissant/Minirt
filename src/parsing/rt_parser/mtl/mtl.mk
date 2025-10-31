@@ -23,7 +23,8 @@ MTL_SRCS	= create_mat.c \
 			  create_null_texture.c \
 			  create_null_nmap.c \
 			  create_null_roughness.c \
-			  create_null_ambient.c
+			  create_null_ambient.c \
+			  create_null_opacity.c
 
 SRCS		+= $(addprefix $(MTL_DIR)/, $(MTL_SRCS))
 

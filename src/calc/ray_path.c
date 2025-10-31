@@ -81,32 +81,9 @@ float	light_hit_register(t_ray *ray, t_scene *scene)
 	return (t_min);
 }
 
-unsigned int sample_texture(t_texture *texture, float u, float v);
+unsigned int sample_texture_coordinates(t_texture *texture, float u, float v);
 t_vec3 texture_to_vec3(unsigned int color);
 #include "minirt.h"
-
-float fast_atan2f(float y, float x)
-{
-	float	r;
-	float	angle;
-	float	abs_y;
-
-	abs_y = fabsf(y) + 1e-10f;
-	if (x < 0.0f)
-	{
-		r = (x + abs_y) / (abs_y - x);
-		angle = 3.0f * M_PIf / 4.0f;
-	}
-	else
-	{
-		r = (x - abs_y) / (x + abs_y);
-		angle = M_PIf / 4.0f;
-	}
-	angle += (0.1963f * r * r - 0.9817f) * r;
-	if (y < 0.0f)
-		return (-angle);
-	return (angle);
-}
 
 t_rgb	draw_skybox(t_scene *scene, t_vec3 *dir)
 {
@@ -115,9 +92,9 @@ t_rgb	draw_skybox(t_scene *scene, t_vec3 *dir)
 
 	if (!scene->skybox)
 		return (rgb(0, 0, 0));
-	u = 0.5f + fast_atan2f(dir->z, dir->x) / (2.0f * M_PIf);
+	u = 0.5f + atan2f(dir->z, dir->x) / (2.0f * M_PIf);
 	v = 0.5f - asinf(dir->y) / M_PIf;
-	return (texture_to_vec3(sample_texture(scene->skybox, u, v)));
+	return (texture_to_vec3(sample_texture_coordinates(scene->skybox, u, v)));
 }
 
 t_vec3 vec3_reflect(t_vec3 ray, t_vec3 normal)
@@ -157,55 +134,104 @@ float get_reflect(t_vec3 ray_dir, t_vec3 normal, float roughness, float F0)
 	return glossy;
 }
 
+t_vec3 vec3_refract(t_vec3 ray_dir, t_vec3 normal, float eta)
+{
+	float cosi = -vec3_dot(ray_dir, normal);
+	float cost2 = 1.0f - eta * eta * (1.0f - cosi * cosi);
+	if (cost2 < 0.0f)
+		return (ray_dir);
+	float cost = sqrtf(cost2);
+
+	t_vec3 refr_dir = vec3_add(
+		vec3_scale(ray_dir, eta),
+		vec3_scale(normal, eta * cosi - cost)
+	);
+	return (vec3_normalize(refr_dir));
+}
+
+t_rgb	handle_reflect(t_ray *ray, t_data *data, t_rgb *color)
+{
+	static int	reflect_count = 0;
+	t_object	*hit_object;
+	float		reflect;
+	t_rgb		result;
+
+
+	reflect = get_reflect(ray->dir, ray->hit_normal, ray->hit_roughness, ray->hit_mat->ks.r);
+	if (reflect_count < BOUNCE_MAX && reflect > 0.01f)
+	{
+		++reflect_count;
+		ray->dir = vec3_reflect(ray->dir, ray->hit_normal);
+		result = rgb_lerp(*color, rgb_itof(ray_path(ray, data, &hit_object)), reflect);
+		reflect_count = 0;
+		return (result);
+	}
+	return (*color);
+}
+
+float	get_cylinder_t_out(t_ray *ray, t_object *o);
+float	get_sphere_t_out(t_ray *ray, t_object *o);
+#define refraction 1.03f
+t_rgb	handle_refract(t_ray *ray, t_data *data, t_rgb *color, t_object *obj)
+{
+	static int	refract_count = 0;
+	t_object	*hit_object;
+	float		refract;
+	float		t_out;
+	float		transparency;
+	t_rgb		result;
+
+	transparency = 1.0f - ray->hit_opacity;
+	if (refract_count < BOUNCE_MAX && transparency > 0)
+	{
+		++refract_count;
+		if (obj->type != SPHERE && obj->type != CYLINDER)
+			ray->pos = vec3_add(ray->pos, vec3_scale(vec3_neg(ray->hit_normal), EPSILON));
+		else
+		{
+			refract = 1.0f / refraction;
+			ray->dir = vec3_refract(ray->dir, ray->hit_normal, refract);
+			if (obj->type == SPHERE)
+				t_out = get_sphere_t_out(ray, obj);
+			else
+				t_out = get_cylinder_t_out(ray, obj);
+			ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, t_out + EPSILON));
+			ray->hit_normal = vec3_normalize(vec3_sub(obj->sphere.pos, ray->pos));
+			refract = refraction / 1.0f;
+			ray->dir = vec3_refract(ray->dir, ray->hit_normal, refract);
+		}
+		result = rgb_lerp(*color, rgb_itof(ray_path(ray, data, &hit_object)), transparency);
+		refract_count = 0;
+		return (result);
+	}
+	return (*color);
+}
 
 t_rgb_int	ray_path(t_ray *ray, t_data *data, t_object **hit_object)
 {
 	float	hit_distance;
 	t_rgb	color;
-	float	reflect;
-	static int o = 0;
+	t_vec3	pos;
+	t_vec3	dir;
 
 	hit_distance = hit_register(ray, data, hit_object);
 	if (hit_distance <= 0)
 		return (rgb_ftoi(draw_skybox(&data->scene, &ray->dir)));
-	ray->hit_mat = &(*hit_object)->mat;
-	fill_phong(ray, &data->scene);
 	if (data->params.normal_debug)
 		return (rgb_ftoi(ray->hit_rgb));
-	else
-		color = phong_path(data, ray);
-	reflect = get_reflect(ray->dir, ray->hit_normal, ray->hit_roughness, ray->hit_mat->ks.r);
-	if (o < BOUNCE_MAX && reflect > 0.01f)
-	{
-		++o;
-		ray->dir = vec3_reflect(ray->dir, ray->hit_normal);
-		color = rgb_lerp(color, rgb_itof(ray_path(ray, data, hit_object)), reflect);
-		o = 0;
-	}
+	ray->hit_mat = &(*hit_object)->mat;
+	fill_phong(ray, &data->scene);
+	color = phong_path(data, ray);
+	pos = ray->pos;
+	dir = ray->dir;
+	color = handle_refract(ray, data, &color, *hit_object);
+	ray->pos = pos;
+	ray->dir = dir;
+	color = handle_reflect(ray, data, &color);
 	return (rgb_ftoi(color));
 }
 
 void	hit_register_obj(t_ray *restrict ray, t_object *restrict objects, t_params *params);
-
-t_rgb_int	fake_path(t_ray *ray, t_data *data, t_object *hit_object)
-{
-	t_rgb_int	final_color = rgb_int(0, 0, 0);
-
-	hit_object->f(ray, hit_object, &hit_object->t);
-	hit_register_obj(ray, hit_object, &data->params);
-	if ((final_color.r <= 200) && (final_color.g <= 100))
-	{
-		if (hit_object->t <= 0)
-			return (rgb_ftoi(draw_skybox(&data->scene, &ray->dir)));
-		ray->hit_mat = &hit_object->mat;
-		fill_phong(ray, &data->scene);
-		if (data->params.normal_debug)
-			final_color = rgb_ftoi(ray->hit_rgb);
-		else
-			final_color = rgb_ftoi(phong_path(data, ray));
-	}
-	return (final_color);
-}
 
 /*
 	Will return the reflection direction

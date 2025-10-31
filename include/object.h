@@ -42,6 +42,8 @@ typedef struct s_plane
 	t_rgb	rgb;
 	t_vec3	pos;
 	t_vec3	normal;
+	t_vec3	tangent;
+	t_vec3	bitangent;
 }			t_plane;
 
 typedef struct s_cylinder
@@ -86,14 +88,12 @@ typedef struct s_mat
 	t_vec3		ka;
 	t_vec3		kd;
 	t_vec3		ks;
-	t_vec3		ke;
-	float		ni;
-	float		d;
-	int			illum;
+	float		opacity;
 	t_texture	*normal_map;
-	t_texture	*map_kd;
+	t_texture	*kd_map;
 	t_texture	*roughness_map;
 	t_texture	*ambient_map;
+	t_texture	*opacity_map;
 }	t_mat;
 
 typedef struct s_ray	t_ray;

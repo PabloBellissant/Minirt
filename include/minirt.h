@@ -16,15 +16,13 @@
 
 
 
-# define BOUNCE_MAX 4
+# define BOUNCE_MAX 21
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
 
 # define TARGET_FPS 24
 # define MIN_QUALITY 20;
 # define MAX_SUBSAMPLING 3
-
-# define M_PIf 3.14159265358979323846f
 
 # include <stdint.h>
 # include "xcerrcal.h"
