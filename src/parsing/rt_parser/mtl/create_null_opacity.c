@@ -1,29 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_texture.c                                      :+:      :+:    :+:   */
+/*   create_null_opacity.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/10 00:11:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/10 00:11:07 by pabellis         ###   ########.fr       */
+/*   Created: 2025/10/26 22:39:52 by pabellis          #+#    #+#             */
+/*   Updated: 2025/10/26 22:39:53 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "render.h"
+#include "minirt.h"
 
-t_texture	*get_texture(t_scene *scene, char *texture_name)
+t_texture	*create_null_opacity(t_vector *vec)
 {
-	size_t		i;
-	t_texture	*actual;
+	t_texture			*tex;
 
-	actual = scene->texture.data;
-	i = 0;
-	while (i < scene->texture.num_elements)
-	{
-		if (actual[i].name && ft_strcmp(texture_name, actual[i].name) == 0)
-			return (&actual[i]);
-		++i;
-	}
-	return (NULL);
+	tex = create_binary_texture(vec, 255);
+	if (!tex)
+		return (NULL);
+	tex->name = ft_strdup("no_opacity");
+	if (!tex->name)
+		return (NULL);
+	return (tex);
 }

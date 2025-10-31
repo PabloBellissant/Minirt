@@ -13,14 +13,14 @@
 #include "libft.h"
 #include "render.h"
 
-t_mat	*create_mat(t_scene *scene)
+t_mat	*create_mat(t_vector *vec)
 {
 	t_mat	mat;
 
-	if (scene->mat.max_elements == 0)
-		vector_init(&scene->mat, sizeof(t_mat));
+	if (vec->max_elements == 0)
+		vector_init(vec, sizeof(t_mat));
 	ft_bzero(&mat, sizeof(t_mat));
-	if (vector_add(&scene->mat, &mat, 1) == -1)
+	if (vector_add(vec, &mat, 1) == -1)
 		return (NULL);
-	return (get_last_vector_value(&scene->mat));
+	return (get_last_vector_value(vec));
 }

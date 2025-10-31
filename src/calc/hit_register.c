@@ -16,13 +16,11 @@
 #include "calc.h"
 #include "minirt.h"
 
-#define OFFSET 0.001f
-
-unsigned int sample_texture(t_texture *texture, float u, float v)
+unsigned int sample_texture_coordinates(t_texture *texture, float u, float v)
 {
-	t_rgb_int	rgb;
 	int			x;
 	int			y;
+	t_rgb_int	rgb;
 	int			offset;
 
 	x = (int)(u * (float)(texture->width));
@@ -46,7 +44,6 @@ float	sample_binary_texture(t_texture *texture, float u, float v)
 	return ((float)pixel / 255.0f);
 }
 
-
 t_vec3	texture_to_vec3(unsigned int color)
 {
 	t_vec3 result;
@@ -62,18 +59,15 @@ t_vec3 apply_normalmap(t_vec3 hit_normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bi
 {
 	t_vec3	n_tangent;
 
-	n_tangent = vec3_sub(vec3_scale(nmap, 2.0f), vec3(1, 1, 1));
+	n_tangent = vec3_sub_scalar(vec3_scale(nmap, 2.0f), 1);
 	t_vec3 tx = vec3_scale(tangent, n_tangent.x);
 	t_vec3 ty = vec3_scale(bitangent, n_tangent.y);
 	t_vec3 tz = vec3_scale(hit_normal, n_tangent.z);
 
-	t_vec3 n_world = vec3_add(vec3_add(tx, ty), tz);
-	n_world = vec3_normalize(n_world);
-
-	return n_world;
+	return (vec3_add(vec3_add(tx, ty), tz));
 }
 
-t_vec3	get_tangent(t_vec3 n)
+static t_vec3	get_tangent(t_vec3 n)
 {
 	t_vec3 up;
 
@@ -84,34 +78,23 @@ t_vec3	get_tangent(t_vec3 n)
 	return (vec3_normalize(vec3_cross(up, n)));
 }
 
-t_vec3 get_bitangent(t_vec3 n, t_vec3 tangent)
+static t_vec3 get_bitangent(t_vec3 n, t_vec3 tangent)
 {
 	return (vec3_cross(n, tangent));
 }
 
-t_vec3	sample_mat(t_ray *ray, t_vec2 uv, t_mat *mat)
+void	sample_mat(t_ray *ray, t_vec2 uv, t_mat *mat)
 {
-	t_vec3	hit_point = vec3(0,0,0);
 	t_rgb	nmap;
-	t_vec3	tangent;
 	t_vec3	new_normal;
 
-	if (mat->map_kd)
-	{
-		ray->hit_rgb = texture_to_vec3(sample_texture(mat->map_kd, uv.x, uv.y));
-		ray->hit_roughness = sample_binary_texture(mat->roughness_map, uv.x, uv.y);
-		ray->hit_ambient = sample_binary_texture(mat->ambient_map, uv.x, uv.y);
-		nmap = texture_to_vec3(sample_texture(mat->normal_map, uv.x, uv.y));
-		tangent = get_tangent(ray->hit_normal);
-		new_normal = apply_normalmap(ray->hit_normal, nmap, tangent, get_bitangent(ray->hit_normal, tangent));
-		ray->hit_normal = new_normal;
-	}
-	else
-	{
-		ray->hit_rgb = mat->kd;
-		ray->hit_roughness = 1.0f - mat->ks.x;
-	}
-	return (hit_point);
+	ray->hit_rgb = texture_to_vec3(sample_texture_coordinates(mat->kd_map, uv.x, uv.y));
+	ray->hit_roughness = sample_binary_texture(mat->roughness_map, uv.x, uv.y);
+	ray->hit_ambient = sample_binary_texture(mat->ambient_map, uv.x, uv.y);
+	ray->hit_opacity = sample_binary_texture(mat->opacity_map, uv.x, uv.y);
+	nmap = texture_to_vec3(sample_texture_coordinates(mat->normal_map, uv.x, uv.y));
+	new_normal = apply_normalmap(ray->hit_normal, nmap, ray->hit_tangent, ray->hit_bitangent);
+	ray->hit_normal = new_normal;
 }
 
 void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *params)
@@ -155,14 +138,8 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 
 
 			unsigned int tex_color;
-			if (o->mat.map_kd && params->texture)
-			{
-				tex_color = sample_texture(o->mat.map_kd, u_tex, 1 - v_tex);
-				ray->hit_rgb = texture_to_vec3(tex_color);
-				return ;
-			}
-			else
-				ray->hit_rgb = o->triangle.rgb;
+			tex_color = sample_texture_coordinates(o->mat.kd_map, u_tex, 1 - v_tex);
+			ray->hit_rgb = texture_to_vec3(tex_color);
 			n0 = vec3_scale(o->triangle.p0.norm, bary_u);
 			n1 = vec3_scale(o->triangle.p1.norm, bary_v);
 			n2 = vec3_scale(o->triangle.p2.norm, bary_w);
@@ -172,16 +149,10 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 			ray->hit_normal = vec3_add(o->triangle.p0.norm, vec3_add(o->triangle.p1.norm, o->triangle.p2.norm));
 		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
 
-		if (params->texture)
-		{
-			ray->hit_rgb = texture_to_vec3(sample_texture(o->mat.map_kd, uv.x, uv.y));
-			//ray->hit_roughness = sample_binary_texture(o->mat.roughness_map, uv.x, uv.y);
-		}
-		else
-		{
-			ray->hit_roughness = o->mat.ks.x;
-			ray->hit_rgb = o->mat.kd;
-		}
+		ray->hit_tangent = get_tangent(ray->hit_normal);
+		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
+		ray->hit_rgb = texture_to_vec3(sample_texture_coordinates(o->mat.kd_map, uv.x, uv.y));
+		//ray->hit_roughness = sample_binary_texture(o->mat.roughness_map, uv.x, uv.y);
 		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
 	}
 	else if (o->type == SPHERE)
@@ -192,6 +163,8 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 		uv.y = 0.5f - asinf(ray->hit_normal.y) / M_PIf;
 
 		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
+		ray->hit_tangent = get_tangent(ray->hit_normal);
+		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
 		sample_mat(ray, uv, &o->mat);
 	}
 	else if (o->type == PLANE)
@@ -212,6 +185,8 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 		v = v - floorf(v);
 
 		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
+		ray->hit_tangent = tangent;
+		ray->hit_bitangent = bitangent;
 		sample_mat(ray, vec2(u, v), &o->mat);
 	}
 	else if (o->type == CYLINDER)
@@ -223,6 +198,8 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 		ray->hit_normal = vec3_sub(hit_point, axis);
 		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
 		ray->hit_rgb = o->cylinder.rgb;
+		ray->hit_tangent = get_tangent(ray->hit_normal);
+		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
 		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
 	}
 	ray->pos = hit_point;

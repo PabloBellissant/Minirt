@@ -25,33 +25,39 @@ static void	init_cylinder_quadratic(t_quadratic *q, t_cylinder *cyl, t_ray *r)
 	q->c = vec3_dot(oc, oc) - q->oo * q->oo - cyl->radius * cyl->radius;
 }
 
-int	hit_cylinder(t_ray *ray, t_object *o, float *t_out)
+int	hit_cylinder(t_ray *ray, t_object *o, float *t_in)
 {
 	t_quadratic	q;
-	float		tmin;
 	float		y;
 
 	init_cylinder_quadratic(&q, &o->cylinder, ray);
 	if (!solve_quadratic(&q))
 		return (0);
-	tmin = FLT_MAX;
+	*t_in = FLT_MAX;
 	if (q.t_min > 0)
 	{
 		y = q.oo + q.t_min * q.dd;
 		if (y >= 0.0f && y <= o->cylinder.height)
-			tmin = q.t_min;
+			*t_in = q.t_min;
 	}
 	if (q.t_max > 0)
 	{
 		y = q.oo + q.t_max * q.dd;
-		if (y >= 0.0f && y <= o->cylinder.height && q.t_max < tmin)
+		if (y >= 0.0f && y <= o->cylinder.height && q.t_max < *t_in)
 		{
-			*t_out = q.t_max;
+			*t_in = q.t_max;
 			return (1);
 		}
 	}
-	if (tmin >= FLT_MAX)
+	return (*t_in >= FLT_MAX);
+}
+
+float	get_cylinder_t_out(t_ray *ray, t_object *o)
+{
+	t_quadratic	q;
+
+	init_cylinder_quadratic(&q, &o->cylinder, ray);
+	if (!solve_quadratic(&q))
 		return (0);
-	*t_out = tmin;
-	return (1);
+	return (fmaxf(q.t_min, q.t_max));
 }

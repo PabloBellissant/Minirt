@@ -23,15 +23,27 @@ static void	init_sphere_quadratic(t_quadratic *q, t_sphere *sp, t_ray *ray)
 	q->c = vec3_dot(oc, oc) - sp->radius_squared;
 }
 
-int	hit_sphere(t_ray *restrict ray, t_object *restrict o, float *t_out)
+int	hit_sphere(t_ray *ray, t_object *o, float *t_in)
 {
 	t_quadratic	q;
 
 	init_sphere_quadratic(&q, &o->sphere, ray);
 	if (!solve_quadratic(&q))
 		return (0);
-	*t_out = fminf(q.t_min, q.t_max);
-	if (*t_out <= 0)
-		*t_out = fmaxf(q.t_min, q.t_max);
-	return (*t_out > EPSILON);
+	*t_in = fminf(q.t_min, q.t_max);
+	if (*t_in <= 0)
+		*t_in = fmaxf(q.t_min, q.t_max);
+	return (*t_in > EPSILON);
+}
+
+float	get_sphere_t_out(t_ray *ray, t_object *o)
+{
+	t_quadratic	q;
+	float		t_out;
+
+	init_sphere_quadratic(&q, &o->sphere, ray);
+	if (!solve_quadratic(&q))
+		return (0);
+	t_out = fmaxf(q.t_min, q.t_max);
+	return (t_out);
 }

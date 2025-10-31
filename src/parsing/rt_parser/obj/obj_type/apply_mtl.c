@@ -17,11 +17,13 @@
 
 int	apply_mtl(const char *line, t_scene *scene, t_mat **actual_mtl)
 {
-	char	*mat_name;
+	char		*mat_name;
+	t_rgb_int	color;
 
 	if (ft_scan(0, USEMTL_FORMAT, line, &mat_name))
 		return (-1);
-	*actual_mtl = get_mat(mat_name, &scene->mat);
+	color = rgb_int(0, 0, 0);
+	*actual_mtl = get_mat(mat_name, scene, &color);
 	if (!*actual_mtl)
 		return (-1);
 	return (0);

@@ -97,7 +97,7 @@ t_rgb phong_path(t_data *data, t_ray *ray)
 			continue ;
 		}
 		diffuse_m = vec3_mult(get_diffuse(data->scene.phong.l[m], data->scene.phong.d[m],
-				ray->hit_normal, ray->hit_mat->kd), ray->hit_rgb);
+				ray->hit_normal, ray->hit_rgb), ray->hit_rgb);
 		specular_m = get_specular(data->scene.phong.r[m], data->scene.phong.v, 1.0f - ray->hit_roughness, ray->hit_mat->ns);
 		specular_m = rgb_mult(specular_m, data->scene.phong.d[m]);
 		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));

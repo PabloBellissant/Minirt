@@ -19,7 +19,7 @@ int	newmtl(const char *line, t_scene *scene)
 {
 	t_mat	*mat;
 
-	mat = create_mat(scene);
+	mat = create_mat(&scene->mat);
 	if (!mat)
 		return (-1);
 	if (ft_scan(0, NEWMTL_FORMAT, line, &mat->name) == -1)

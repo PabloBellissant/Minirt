@@ -19,6 +19,9 @@
 #define PLANE_FORMAT " *pl  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *\
 , *%f[-1,1]  *%8[255] *, *%8[255] *, *%8[255](  *%s) *\n"
 
+static t_vec3	get_tangent(t_vec3 n);
+static t_vec3	get_bitangent(t_vec3 n, t_vec3 tangent);
+
 int	plane(const char *line, int line_num, t_scene *scene)
 {
 	t_vec3		*pos;
@@ -37,10 +40,25 @@ int	plane(const char *line, int line_num, t_scene *scene)
 	{
 		return (error(pack_err(RT_ID, RT_E_PLANE), FL, LN, FC));
 	}
-	if (*mat_name)
-		object->mat = *get_mat(mat_name, &scene->mat); // a secu
-	else
-		object->mat.kd = rgb_itof(color);
+	object->mat = *get_mat(mat_name, scene, &color);
 	object->f = hit_plane;
+	object->plane.tangent = get_tangent(*norm);
+	object->plane.bitangent = get_bitangent(*norm, object->plane.tangent);
 	return (0);
+}
+
+static t_vec3	get_tangent(t_vec3 n)
+{
+	t_vec3 up;
+
+	if (fabsf(n.y) > 0.999f)
+		up = vec3(1, 0, 0);
+	else
+		up = vec3(0, 1, 0);
+	return (vec3_normalize(vec3_cross(up, n)));
+}
+
+static t_vec3	get_bitangent(t_vec3 n, t_vec3 tangent)
+{
+	return (vec3_cross(n, tangent));
 }

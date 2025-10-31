@@ -23,8 +23,8 @@ int	map_kd(const char *line, t_scene *scene)
 	mat = get_last_vector_value(&scene->mat);
 	if (ft_scan(0, MAP_KD_FORMAT, line, &name))
 		return (-1);
-	mat->map_kd = create_texture(scene, name);
-	if (!mat->map_kd)
+	mat->kd_map = create_texture(&scene->texture);
+	if (!mat->kd_map)
 		return (-1);
 	return (0);
 }

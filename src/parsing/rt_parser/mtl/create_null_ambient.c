@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_null_texture.c                              :+:      :+:    :+:   */
+/*   create_null_ambient.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,29 +12,23 @@
 
 #include "minirt.h"
 
-t_texture	*create_null_ambient(t_scene *scene)
+t_texture	*create_null_ambient(t_vector *vec)
 {
-	t_texture			tex;
+	t_texture			*tex;
 
-	tex.pixels = malloc(1);
-	if (!tex.pixels)
+	tex = create_texture(vec);
+	if (!tex)
 		return (NULL);
-	tex.pixels[0] = (char) 255;
-	tex.tex_bpp = 8;
-	tex.tex_size_line = 1;
-	tex.width = 1;
-	tex.height = 1;
-	tex.name = ft_strdup("no_ambient");
-	if (!tex.name)
-	{
-		free(tex.pixels);
+	tex->pixels = malloc(1);
+	if (!tex->pixels)
 		return (NULL);
-	}
-	if (vector_add(&scene->texture, &tex, 1) == -1)
-	{
-		free(tex.name);
-		free(tex.pixels);
+	tex->pixels[0] = (char) 255;
+	tex->tex_bpp = 8;
+	tex->tex_size_line = 1;
+	tex->width = 1;
+	tex->height = 1;
+	tex->name = ft_strdup("no_ambient");
+	if (!tex->name)
 		return (NULL);
-	}
-	return (get_last_vector_value(&scene->texture));
+	return (tex);
 }

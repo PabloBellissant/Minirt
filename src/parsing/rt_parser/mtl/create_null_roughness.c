@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_null_texture.c                              :+:      :+:    :+:   */
+/*   create_null_roughness.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,29 +12,15 @@
 
 #include "minirt.h"
 
-t_texture	*create_null_roughness(t_scene *scene)
+t_texture	*create_null_roughness(t_vector *vec)
 {
-	t_texture			tex;
+	t_texture			*tex;
 
-	tex.pixels = malloc(1);
-	if (!tex.pixels)
+	tex = create_binary_texture(vec, 16);
+	if (!tex)
 		return (NULL);
-	tex.pixels[0] = (char) 16;
-	tex.tex_bpp = 8;
-	tex.tex_size_line = 1;
-	tex.width = 1;
-	tex.height = 1;
-	tex.name = ft_strdup("no_roughness");
-	if (!tex.name)
-	{
-		free(tex.pixels);
+	tex->name = ft_strdup("no_roughness");
+	if (!tex->name)
 		return (NULL);
-	}
-	if (vector_add(&scene->texture, &tex, 1) == -1)
-	{
-		free(tex.name);
-		free(tex.pixels);
-		return (NULL);
-	}
-	return (get_last_vector_value(&scene->texture));
+	return (tex);
 }

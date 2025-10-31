@@ -26,7 +26,7 @@ int	tex(const char *line, int line_num, t_scene *scene)
 	{
 		return (error(pack_err(RT_ID, RT_E_TEX), FL, LN, FC));
 	}
-	tex = create_texture(scene, path);
+	tex = parse_texture(scene, path);
 	if (!tex)
 	{
 		register_complex_err_msg(RT_E_MSG_NO_TEX, name);

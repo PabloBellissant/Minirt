@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_null_texture.c                              :+:      :+:    :+:   */
+/*   create_null_nmap.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,30 +12,17 @@
 
 #include "minirt.h"
 
-t_texture	*create_null_nmap(t_scene *scene)
+t_texture	*create_null_nmap(t_vector *vec)
 {
-	t_texture			tex;
-	const unsigned char	normal[3] = {128, 128, 255};
+	t_texture	*tex;
+	t_rgb_int	rgb;
 
-	tex.pixels = malloc(1 * 3);
-	if (!tex.pixels)
+	rgb = rgb_int(255, 128, 128);
+	tex = create_color_texture(vec, &rgb);
+	if (!tex)
 		return (NULL);
-	ft_memcpy(tex.pixels, normal, 3);
-	tex.tex_bpp = 24;
-	tex.tex_size_line = 1 * 3;
-	tex.width = 1;
-	tex.height = 1;
-	tex.name = ft_strdup("no_nmap");
-	if (!tex.name)
-	{
-		free(tex.pixels);
+	tex->name = ft_strdup("no_nmap");
+	if (!tex->name)
 		return (NULL);
-	}
-	if (vector_add(&scene->texture, &tex, 1) == -1)
-	{
-		free(tex.name);
-		free(tex.pixels);
-		return (NULL);
-	}
-	return (get_last_vector_value(&scene->texture));
+	return (tex);
 }
