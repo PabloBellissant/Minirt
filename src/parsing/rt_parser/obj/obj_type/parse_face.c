@@ -16,7 +16,7 @@
 
 #define FACE_FORMAT " *f  *%d */ *%d */ *%d  *%d */ *%d */ *%d  *%d */ *%d */ *%d  *\n"
 
-int	parse_face(const char *line, t_obj_vectors *vec, t_scene *scene, t_mat *m)
+int	parse_face(const char *line, t_obj_vectors *vec, t_scene *scene, int mat_id)
 {
 	int			vertex_id[3];
 	int			uv_id[3];
@@ -42,10 +42,7 @@ int	parse_face(const char *line, t_obj_vectors *vec, t_scene *scene, t_mat *m)
 	o->triangle.p2.uv = *(t_vec2 *)get_vector_value(&vec->uv, uv_id[2] - 1);
 	o->triangle.edge_1 = vec3_sub(o->triangle.p1.pos, o->triangle.p0.pos);
 	o->triangle.edge_2 = vec3_sub(o->triangle.p2.pos, o->triangle.p0.pos);
-	if (m)
-		o->mat = *m;
-	else
-		o->mat = create_default_mat();
+	o->mat_id = mat_id;
 	o->f = hit_triangle;
 	return (0);
 }

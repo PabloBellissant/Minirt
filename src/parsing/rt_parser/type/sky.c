@@ -25,8 +25,8 @@ int	sky(const char *line, int line_num, t_scene *scene)
 	{
 		return (error(pack_err(RT_ID, RT_E_SKY), FL, LN, FC));
 	}
-	scene->skybox = get_texture(scene, texture_name);
-	if (!scene->skybox)
+	scene->skybox_tex = get_texture(scene, texture_name);
+	if (scene->skybox_tex == -1)
 	{
 		register_complex_err_msg(RT_E_MSG_NO_TEX, texture_name);
 		return (error(pack_err(RT_ID, RT_E_NO_TEX), FL, LN, FC));

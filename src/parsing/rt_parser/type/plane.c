@@ -40,7 +40,7 @@ int	plane(const char *line, int line_num, t_scene *scene)
 	{
 		return (error(pack_err(RT_ID, RT_E_PLANE), FL, LN, FC));
 	}
-	object->mat = *get_mat(mat_name, scene, &color);
+	object->mat_id = get_mat(mat_name, scene, &color);
 	object->f = hit_plane;
 	object->plane.tangent = get_tangent(*norm);
 	object->plane.bitangent = get_bitangent(*norm, object->plane.tangent);
@@ -60,5 +60,5 @@ static t_vec3	get_tangent(t_vec3 n)
 
 static t_vec3	get_bitangent(t_vec3 n, t_vec3 tangent)
 {
-	return (vec3_cross(n, tangent));
+	return (vec3_normalize(vec3_cross(n, tangent)));
 }

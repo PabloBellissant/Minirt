@@ -12,7 +12,7 @@
 
 #include "render.h"
 
-t_texture	*get_texture(t_scene *scene, char *texture_name)
+int	get_texture(t_scene *scene, char *texture_name)
 {
 	size_t		i;
 	t_texture	*actual;
@@ -22,8 +22,8 @@ t_texture	*get_texture(t_scene *scene, char *texture_name)
 	while (i < scene->texture.num_elements)
 	{
 		if (actual[i].name && ft_strcmp(texture_name, actual[i].name) == 0)
-			return (&actual[i]);
+			return ((int) i);
 		++i;
 	}
-	return (NULL);
+	return (-1);
 }

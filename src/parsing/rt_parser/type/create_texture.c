@@ -75,38 +75,38 @@ t_texture	*create_texture(t_vector *vec)
 	return (get_last_vector_value(vec));
 }
 
-t_texture	*create_color_texture(t_vector *vec, t_rgb_int *color)
+int	create_color_texture(t_vector *vec, t_rgb_int *color)
 {
 	t_texture	*tex;
 
 	tex = create_texture(vec);
 	if (!tex)
-		return (NULL);
+		return (-1);
 	tex->pixels = malloc(1 * 3);
 	if (!tex->pixels)
-		return (NULL);
+		return (-1);
 	ft_memcpy(tex->pixels, &color->rgb, 3);
 	tex->tex_bpp = 24;
 	tex->tex_size_line = 1 * 3;
 	tex->width = 1;
 	tex->height = 1;
-	return (tex);
+	return ((int) vec->num_elements - 1);
 }
 
-t_texture	*create_binary_texture(t_vector *vec, unsigned char value)
+int	create_binary_texture(t_vector *vec, unsigned char value)
 {
 	t_texture	*tex;
 
 	tex = create_texture(vec);
 	if (!tex)
-		return (NULL);
+		return (-1);
 	tex->pixels = malloc(1);
 	if (!tex->pixels)
-		return (NULL);
+		return (-1);
 	ft_memcpy(tex->pixels, &value, 1);
 	tex->tex_bpp = 8;
 	tex->tex_size_line = 1;
 	tex->width = 1;
 	tex->height = 1;
-	return (tex);
+	return ((int) vec->num_elements - 1);
 }

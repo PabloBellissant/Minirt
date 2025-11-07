@@ -12,15 +12,17 @@
 
 #include "minirt.h"
 
-t_texture	*create_null_roughness(t_vector *vec)
+int	create_null_roughness(t_vector *vec)
 {
-	t_texture			*tex;
+	t_texture	*tex;
+	int			tex_id;
 
-	tex = create_binary_texture(vec, 16);
-	if (!tex)
-		return (NULL);
+	tex_id = create_binary_texture(vec, 16);
+	if (tex_id == -1)
+		return (-1);
+	tex = get_vector_value(vec, tex_id);
 	tex->name = ft_strdup("no_roughness");
 	if (!tex->name)
-		return (NULL);
-	return (tex);
+		return (-1);
+	return (tex_id);
 }

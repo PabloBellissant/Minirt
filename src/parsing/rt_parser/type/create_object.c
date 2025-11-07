@@ -21,7 +21,6 @@ t_object	*create_object(t_scene *scene, t_object_type type)
 		vector_init(&scene->objects, sizeof(t_object));
 	ft_bzero(&object, sizeof(t_object));
 	object.type = type;
-	object.mat = create_default_mat();
 	if (vector_add(&scene->objects, &object, 1) == -1)
 		return (NULL);
 	return (get_last_vector_value(&scene->objects));

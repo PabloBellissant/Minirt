@@ -26,6 +26,8 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 	vector_init(&vec.normal, sizeof(t_vec3));
 	vector_init(&vec.uv, sizeof(t_vec2));
 	vector_init(&vec.triangle, sizeof(t_triangle));
+	vec.tex = &scene->texture;
+	vec.mat = &scene->mat;
 	line = get_next_line(fd);
 	while (line != NULL)
 	{

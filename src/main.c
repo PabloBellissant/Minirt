@@ -12,7 +12,6 @@
 
 #include "parsing.h"
 #include "minirt.h"
-#include "threading.h"
 #include "font_renderer.h"
 
 void	free_ttf(t_ttf_font *font);
@@ -64,7 +63,6 @@ void	register_unit_errors(void)
 int	main(int argc, char **argv)
 {
 	t_data	data;
-	t_queue	queue;
 	int		ret;
 
 	ret = 0;
@@ -77,13 +75,12 @@ int	main(int argc, char **argv)
 	else
 	{
 		ft_bzero(&data, sizeof(t_data));
-		ft_bzero(&queue, sizeof(t_queue));
-		data.queue = &queue;
 		if (init_graphics(&data) == -1)
 			ret = error(pack_err(RT_ID, RT_E_GRAPHICS), FL, LN, FC);
 		else
 		{
 			data.scene.mlx = data.mlx;
+			data.scene.skybox_tex = -1;
 			errno = 0;
 			if (parse_scene(argv[1], &data.scene) != 0)
 			{
@@ -95,11 +92,9 @@ int	main(int argc, char **argv)
 			}
 			else
 			{
-				init_threads(data.queue);
 				data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
 				loop_hook(&data);
 				free_data(data);
-				kill_threads(data.queue, NPROC);
 			}
 		}
 	}

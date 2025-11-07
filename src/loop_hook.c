@@ -84,11 +84,6 @@ static inline bool	is_i_key(int keycode)
 	return (keycode == XK_i);
 }
 
-static inline bool	is_b_key(int keycode)
-{
-	return (keycode == XK_b);
-}
-
 static inline bool	is_return_key(int keycode)
 {
 	return (keycode == XK_Return);
@@ -185,8 +180,6 @@ void	setup_key_param_events(t_data *data)
 {
 	add_func_key_hook(data->mlx, is_k_key, toggle_mouse_focus, NULL);
 	add_status_key_hook(data->mlx, is_v_key, true, &(data->params.bvh_debug));
-	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.bound_debug));
-	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.supersampling_debug));
 	add_status_key_hook(data->mlx, is_n_key, true, &(data->params.normal_debug));
 	add_status_key_hook(data->mlx, is_t_key, true, &(data->params.texture));
 	add_status_key_hook(data->mlx, is_i_key, true, &(data->params.smooth_shading));

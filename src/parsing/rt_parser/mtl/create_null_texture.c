@@ -12,7 +12,7 @@
 
 #include "minirt.h"
 
-t_texture	*create_null_texture(t_vector *vec)
+int	create_null_texture(t_vector *vec)
 {
 	t_texture			*tex;
 	const unsigned char	magenta[3] = {0xFF, 0x00, 0xFF};
@@ -20,6 +20,8 @@ t_texture	*create_null_texture(t_vector *vec)
 
 	tex = create_texture(vec);
 	tex->pixels = malloc(4 * 3);
+	if (!tex->pixels)
+		return (-1);
 	ft_memcpy(tex->pixels + 0, magenta, 3);
 	ft_memcpy(tex->pixels + 3, black, 3);
 	ft_memcpy(tex->pixels + 6, black, 3);
@@ -30,6 +32,6 @@ t_texture	*create_null_texture(t_vector *vec)
 	tex->height = 2;
 	tex->name = ft_strdup("no_tex");
 	if (!tex->name)
-		return (NULL);
-	return (tex);
+		return (-1);
+	return ((int) vec->num_elements - 1);
 }

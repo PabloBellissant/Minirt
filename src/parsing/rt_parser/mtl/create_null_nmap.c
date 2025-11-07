@@ -12,17 +12,19 @@
 
 #include "minirt.h"
 
-t_texture	*create_null_nmap(t_vector *vec)
+int	create_null_nmap(t_vector *vec)
 {
-	t_texture	*tex;
+	int			tex_id;
 	t_rgb_int	rgb;
+	t_texture	*tex;
 
 	rgb = rgb_int(255, 128, 128);
-	tex = create_color_texture(vec, &rgb);
-	if (!tex)
-		return (NULL);
+	tex_id = create_color_texture(vec, &rgb);
+	if (tex_id == -1)
+		return (-1);
+	tex = get_vector_value(vec, tex_id);
 	tex->name = ft_strdup("no_nmap");
 	if (!tex->name)
-		return (NULL);
-	return (tex);
+		return (-1);
+	return (tex_id);
 }

@@ -19,14 +19,6 @@ typedef struct s_scene	t_scene;
 typedef struct s_object	t_object;
 typedef struct s_ray	t_ray;
 
-typedef struct	s_bound
-{
-	int	top;
-	int	right;
-	int	down;
-	int	left;
-}	t_bound;
-
 typedef struct s_cuboid
 {
 	t_vec3	min;
@@ -98,7 +90,6 @@ float			get_next_sphere_bvh_area(t_sphere_bvh *a, t_sphere_bvh *b);
 void			merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index);
 t_sphere_bvh	*get_sphere_root(t_vector *bvh_vec, int *parents);
 int				load_bvh(int mode, t_scene *scene);
-int				apply_bound(t_vec2i *proj, t_bound *bound);
 void			get_min_max(t_object *o, t_vec3 *min, t_vec3 *max);
 void			set_size(t_aabb_bvh *bvh, t_vector *objects_vec);
 int				get_cut_index(t_vector *object_ptr, t_aabb_bvh *bvh, int axis);

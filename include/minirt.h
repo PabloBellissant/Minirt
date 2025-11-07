@@ -16,12 +16,12 @@
 
 
 
-# define BOUNCE_MAX 21
+# define BOUNCE_MAX 3
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
 
-# define TARGET_FPS 24
-# define MIN_QUALITY 20;
+# define TARGET_FPS 10
+# define MIN_QUALITY 20
 # define MAX_SUBSAMPLING 3
 
 # include <stdint.h>
@@ -60,23 +60,11 @@ typedef struct s_params
 	int		supersampling_x;
 	int		supersampling_y;
 	bool	bvh_debug;
-	bool	bound_debug;
-	bool	supersampling_debug;
 	bool	normal_debug;
 	bool	smooth_shading;
 	bool	texture;
 	bool	quality_render;
 }			t_params;
-
-typedef struct	s_too_task
-{
-	t_data		*data;
-	t_ray		ray;
-	t_camera	cam;
-	int			y;
-}	t_to_task;
-
-#include "threading.h"
 
 typedef struct s_data
 {
@@ -88,9 +76,6 @@ typedef struct s_data
 	t_vec2i		screen;
 	t_scene		scene;
 	t_rast_env	*font_env;
-	t_queue		*queue;
-	t_to_task	to_task[HEIGHT];
-	t_task		task[HEIGHT];
 }				t_data;
 
 typedef enum e_obj

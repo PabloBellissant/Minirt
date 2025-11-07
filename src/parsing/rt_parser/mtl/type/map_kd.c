@@ -17,14 +17,15 @@
 
 int	map_kd(const char *line, t_scene *scene)
 {
-	t_mat	*mat;
-	char	*name;
+	t_mat		*mat;
+	char		*name;
 
 	mat = get_last_vector_value(&scene->mat);
 	if (ft_scan(0, MAP_KD_FORMAT, line, &name))
 		return (-1);
-	mat->kd_map = create_texture(&scene->texture);
-	if (!mat->kd_map)
+	create_texture(&scene->texture);
+	mat->kd_id = (int) scene->texture.num_elements - 1;
+	if (!mat->kd_id)
 		return (-1);
 	return (0);
 }

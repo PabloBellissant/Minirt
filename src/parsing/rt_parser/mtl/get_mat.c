@@ -12,9 +12,9 @@
 
 #include "minirt.h"
 
-t_mat	*gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color);
+int	gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color);
 
-t_mat	*get_mat(const char *mat_name, t_scene *scene, t_rgb_int *color)
+int	get_mat(const char *mat_name, t_scene *scene, t_rgb_int *color)
 {
 	size_t	i;
 	t_mat	*actual;
@@ -25,26 +25,30 @@ t_mat	*get_mat(const char *mat_name, t_scene *scene, t_rgb_int *color)
 	i = 0;
 	while (i < scene->mat.num_elements)
 	{
-		if (ft_strcmp(mat_name, actual[i].name) == 0)
-			return (&actual[i]);
+		if (actual[i].name && ft_strcmp(mat_name, actual[i].name) == 0)
+			return ((int) i);
 		++i;
 	}
-	return (NULL);
+	return (-1);
 }
 
-t_mat	*gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color)
+int	gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color)
 {
 	t_mat	*new;
 
 	new = create_mat(mat);
 	if (!new)
-		return (NULL);
+		return (-1);
 	*new = create_default_mat();
-	new->kd_map = create_color_texture(tex, color);
-	new->normal_map = create_null_nmap(tex);
-	new->roughness_map = create_null_roughness(tex);
-	new->ambient_map = create_null_ambient(tex);
-	if (!new->kd_map || !new->normal_map || !new->roughness_map || !new->ambient_map)
-		return (NULL);
-	return (new);
+	new->kd_id = create_color_texture(tex, color);
+	new->normal_id = create_null_nmap(tex);
+	new->roughness_id = create_null_roughness(tex);
+	new->ambient_id = create_null_ambient(tex);
+	new->opacity_id = create_null_opacity(tex);
+	if (new->kd_id == -1 || new->normal_id == -1 || new->roughness_id == -1
+		|| new->ambient_id == -1 || new->opacity_id == -1)
+	{
+		return (-1);
+	}
+	return ((int) mat->num_elements - 1);
 }

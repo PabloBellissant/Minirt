@@ -18,12 +18,12 @@
 #define MATERIAL_FORMAT " *mat  *%s  *%f[1] *, *%f[1] *, *%f[1]  *%f[1] *,\
 *%f[1] *, *%f[1]  *%f[1000]  *%f[1](  *%s  *%s  *%s  *%s  *%s) *\n"
 
-t_texture	*get_kd(t_scene *scene, char *texture_name);
-t_texture	*get_nmap(t_scene *scene, char *nmap_name);
-t_texture	*get_roughness(t_scene *scene, char *nmap_name);
-t_texture	*get_ambient(t_scene *scene, char *nmap_name);
-t_texture	*get_opacity(t_scene *scene, char *nmap_name);
-int			gen_map_by_mat(t_mat *mat, t_scene *scene);
+int	get_kd(t_scene *scene, char *texture_name);
+int	get_nmap(t_scene *scene, char *nmap_name);
+int	get_roughness(t_scene *scene, char *roughness_name);
+int	get_ambient(t_scene *scene, char *ambient_name);
+int	get_opacity(t_scene *scene, char *opacity_name);
+int	gen_map_by_mat(t_mat *mat, t_scene *scene);
 
 int	mat(const char *line, int line_num, t_scene *scene)
 {
@@ -46,13 +46,16 @@ int	mat(const char *line, int line_num, t_scene *scene)
 	}
 	if (*texture_name)
 	{
-		mat->kd_map = get_kd(scene, texture_name);
-		mat->normal_map = get_nmap(scene, nmap_name);
-		mat->roughness_map = get_roughness(scene, roughness_name);
-		mat->ambient_map = get_ambient(scene, ambient_name);
-		mat->opacity_map = get_opacity(scene, opacity_name);
-		if (!mat->kd_map || !mat->normal_map || !mat->roughness_map || !mat->ambient_map)
+		mat->kd_id = get_kd(scene, texture_name);
+		mat->normal_id = get_nmap(scene, nmap_name);
+		mat->roughness_id = get_roughness(scene, roughness_name);
+		mat->ambient_id = get_ambient(scene, ambient_name);
+		mat->opacity_id = get_opacity(scene, opacity_name);
+		if (mat->kd_id == -1 || mat->normal_id == -1 || mat->roughness_id == -1
+			|| mat->ambient_id == -1 || mat->opacity_id == -1)
+		{
 			return (-1);
+		}
 	}
 	else if (gen_map_by_mat(mat, scene) == -1)
 		return (-1);
@@ -64,87 +67,90 @@ int	gen_map_by_mat(t_mat *mat, t_scene *scene)
 	t_rgb_int	temp;
 
 	temp = rgb_ftoi(mat->kd);
-	mat->kd_map = create_color_texture(&scene->texture, &temp);
-	mat->normal_map = get_nmap(scene, "null");
-	mat->roughness_map = get_roughness(scene, "null");
-	mat->ambient_map = get_ambient(scene, "null");
-	mat->opacity_map = create_binary_texture(&scene->texture, (int)(mat->opacity * 255));
-	if (!mat->kd_map || !mat->normal_map || !mat->roughness_map || !mat->ambient_map)
+	mat->kd_id = create_color_texture(&scene->texture, &temp);
+	mat->normal_id = get_nmap(scene, "null");
+	mat->roughness_id = get_roughness(scene, "null");
+	mat->ambient_id = get_ambient(scene, "null");
+	mat->opacity_id = create_binary_texture(&scene->texture, (int)(mat->opacity * 255));
+	if (mat->kd_id == -1 || mat->normal_id == -1 || mat->roughness_id == -1
+		|| mat->ambient_id == -1 || mat->opacity_id == -1)
+	{
 		return (-1);
+	}
 	return (0);
 }
 
-t_texture	*get_kd(t_scene *scene, char *texture_name)
+int	get_kd(t_scene *scene, char *texture_name)
 {
-	t_texture	*tex;
+	int	tex_id;
 
 	if (ft_strcmp(texture_name, "null") == 0)
 	{
-		tex = get_texture(scene, "no_tex");
-		if (!tex)
-			tex = create_null_texture(&scene->texture);
-		return (tex);
+		tex_id = get_texture(scene, "no_tex");
+		if (tex_id == -1)
+			tex_id = create_null_texture(&scene->texture);
+		return (tex_id);
 	}
-	tex = get_texture(scene, texture_name);
-	return (tex);
+	tex_id = get_texture(scene, texture_name);
+	return (tex_id);
 }
 
-t_texture	*get_nmap(t_scene *scene, char *nmap_name)
+int	get_nmap(t_scene *scene, char *nmap_name)
 {
-	t_texture	*tex;
+	int	tex_id;
 
 	if (ft_strcmp(nmap_name, "null") == 0)
 	{
-		tex = get_texture(scene, "no_nmap");
-		if (!tex)
-			tex = create_null_nmap(&scene->texture);
-		return (tex);
+		tex_id = get_texture(scene, "no_nmap");
+		if (tex_id == -1)
+			tex_id = create_null_nmap(&scene->texture);
+		return (tex_id);
 	}
-	tex = get_texture(scene, nmap_name);
-	return (tex);
+	tex_id = get_texture(scene, nmap_name);
+	return (tex_id);
 }
 
-t_texture	*get_roughness(t_scene *scene, char *nmap_name)
+int	get_roughness(t_scene *scene, char *roughness_name)
 {
-	t_texture	*tex;
+	int	tex_id;
 
-	if (ft_strcmp(nmap_name, "null") == 0)
+	if (ft_strcmp(roughness_name, "null") == 0)
 	{
-		tex = get_texture(scene, "no_roughness");
-		if (!tex)
-			tex = create_null_roughness(&scene->texture);
-		return (tex);
+		tex_id = get_texture(scene, "no_roughness");
+		if (tex_id == -1)
+			tex_id = create_null_roughness(&scene->texture);
+		return (tex_id);
 	}
-	tex = get_texture(scene, nmap_name);
-	return (tex);
+	tex_id = get_texture(scene, roughness_name);
+	return (tex_id);
 }
 
-t_texture	*get_ambient(t_scene *scene, char *nmap_name)
+int	get_ambient(t_scene *scene, char *ambient_name)
 {
-	t_texture	*tex;
+	int	tex_id;
 
-	if (ft_strcmp(nmap_name, "null") == 0)
+	if (ft_strcmp(ambient_name, "null") == 0)
 	{
-		tex = get_texture(scene, "no_ambient");
-		if (!tex)
-			tex = create_null_ambient(&scene->texture);
-		return (tex);
+		tex_id = get_texture(scene, "no_ambient");
+		if (tex_id == -1)
+			tex_id = create_null_ambient(&scene->texture);
+		return (tex_id);
 	}
-	tex = get_texture(scene, nmap_name);
-	return (tex);
+	tex_id = get_texture(scene, ambient_name);
+	return (tex_id);
 }
 
-t_texture	*get_opacity(t_scene *scene, char *nmap_name)
+int	get_opacity(t_scene *scene, char *opacity_name)
 {
-	t_texture	*tex;
+	int	tex_id;
 
-	if (ft_strcmp(nmap_name, "null") == 0)
+	if (ft_strcmp(opacity_name, "null") == 0)
 	{
-		tex = get_texture(scene, "no_opacity");
-		if (!tex)
-			tex = create_null_opacity(&scene->texture);
-		return (tex);
+		tex_id = get_texture(scene, "no_opacity");
+		if (tex_id == -1)
+			tex_id = create_null_opacity(&scene->texture);
+		return (tex_id);
 	}
-	tex = get_texture(scene, nmap_name);
-	return (tex);
+	tex_id = get_texture(scene, opacity_name);
+	return (tex_id);
 }
