@@ -94,6 +94,8 @@ typedef struct s_mat
 	int		roughness_id;
 	int		ambient_id;
 	int		opacity_id;
+	float	kr;
+	float	ni;
 }	t_mat;
 
 typedef struct s_ray	t_ray;

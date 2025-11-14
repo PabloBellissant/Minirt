@@ -36,6 +36,8 @@ typedef enum e_object_type
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
+typedef struct s_vertex t_vertex;
+
 typedef struct s_obj_vectors
 {
 	t_vector	*tex;
@@ -88,6 +90,9 @@ int				ka(const char *line, t_scene *scene);
 int				kd(const char *line, t_scene *scene);
 int				ks(const char *line, t_scene *scene);
 int				map_kd(const char *line, t_scene *scene);
+int				d(const char *line, t_scene *scene);
+int				kr(const char *line, t_scene *scene);
+int				ni(const char *line, t_scene *scene);
 
 
 #endif

@@ -79,7 +79,6 @@ typedef struct s_bvh_main
 		t_aabb_bvh		*aabb_bvh;
 		t_sphere_bvh	*sphere_bvh;
 	};
-	t_bound		bound;
 	int			bvh_mode;
 }	t_bvh_main;
 
@@ -124,7 +123,7 @@ typedef struct s_scene
 	t_vector	texture;
 	t_vector	mat;
 	t_mlx		*mlx;
-	t_texture	*skybox;
+	int			skybox_tex;
 }				t_scene;
 
 typedef struct s_3d_line
@@ -145,8 +144,6 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 	int color, t_camera *camera);
-void	draw_bound(t_bound *bound, t_img_data *img);
-void	draw_supersampling(t_bound *bound, t_vec2i force, t_img_data *img);
 
 void	rasterize_triangle_outline(t_img_data *img, t_triangle *triangle,
 	int color, t_camera *camera);
