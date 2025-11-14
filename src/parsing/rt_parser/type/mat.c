@@ -16,9 +16,9 @@
 #include "parsing.h"
 
 #define MATERIAL_FORMAT " *mat  *%s  *%f[1] *, *%f[1] *, *%f[1]  *%f[1] *,\
-*%f[1] *, *%f[1]  *%f[1000]  *%f[1](  *%s  *%s  *%s  *%s  *%s) *\n"
+*%f[1] *, *%f[1]  *%f[1000]  *%f[1]  *%f[1](  *%s  *%s  *%s  *%s  *%s) *\n"
 
-int	get_kd(t_scene *scene, char *texture_name);
+int	get_kd(t_scene *scene, char *texture_name, t_rgb *color);
 int	get_nmap(t_scene *scene, char *nmap_name);
 int	get_roughness(t_scene *scene, char *roughness_name);
 int	get_ambient(t_scene *scene, char *ambient_name);
@@ -39,23 +39,28 @@ int	mat(const char *line, int line_num, t_scene *scene)
 		return (-1);
 	if (ft_scan(line_num, MATERIAL_FORMAT, line, &mat->name,
 		&mat->kd.r, &mat->kd.g, &mat->kd.b, &mat->ks.r, &mat->ks.g, &mat->ks.b,
-		&mat->ns, &mat->opacity, &texture_name, &nmap_name, &roughness_name,
+		&mat->ns, &mat->opacity, &mat->kr, &texture_name, &nmap_name, &roughness_name,
 		&ambient_name, &opacity_name))
 	{
 		return (error(pack_err(RT_ID, RT_E_MAT), FL, LN, FC));
 	}
 	if (*texture_name)
 	{
-		mat->kd_id = get_kd(scene, texture_name);
-		mat->normal_id = get_nmap(scene, nmap_name);
-		mat->roughness_id = get_roughness(scene, roughness_name);
-		mat->ambient_id = get_ambient(scene, ambient_name);
-		mat->opacity_id = get_opacity(scene, opacity_name);
-		if (mat->kd_id == -1 || mat->normal_id == -1 || mat->roughness_id == -1
-			|| mat->ambient_id == -1 || mat->opacity_id == -1)
-		{
+		mat->kd_id = get_kd(scene, texture_name, &mat->kd);
+		if (mat->kd_id == -1)
 			return (-1);
-		}
+		mat->normal_id = get_nmap(scene, nmap_name);
+		if (mat->normal_id == -1)
+			return (-1);
+		mat->roughness_id = get_roughness(scene, roughness_name);
+		if (mat->roughness_id == -1)
+			return (-1);
+		mat->ambient_id = get_ambient(scene, ambient_name);
+		if (mat->ambient_id == -1)
+			return (-1);
+		mat->opacity_id = get_opacity(scene, opacity_name);
+		if (mat->opacity_id == -1)
+			return (-1);
 	}
 	else if (gen_map_by_mat(mat, scene) == -1)
 		return (-1);
@@ -68,21 +73,27 @@ int	gen_map_by_mat(t_mat *mat, t_scene *scene)
 
 	temp = rgb_ftoi(mat->kd);
 	mat->kd_id = create_color_texture(&scene->texture, &temp);
-	mat->normal_id = get_nmap(scene, "null");
-	mat->roughness_id = get_roughness(scene, "null");
-	mat->ambient_id = get_ambient(scene, "null");
-	mat->opacity_id = create_binary_texture(&scene->texture, (int)(mat->opacity * 255));
-	if (mat->kd_id == -1 || mat->normal_id == -1 || mat->roughness_id == -1
-		|| mat->ambient_id == -1 || mat->opacity_id == -1)
-	{
+	if (mat->kd_id == -1)
 		return (-1);
-	}
+	mat->normal_id = get_nmap(scene, "null");
+	if (mat->normal_id == -1)
+		return (-1);
+	mat->roughness_id = get_roughness(scene, "null");
+	if (mat->roughness_id == -1)
+		return (-1);
+	mat->ambient_id = get_ambient(scene, "null");
+	if (mat->ambient_id == -1)
+		return (-1);
+	mat->opacity_id = create_binary_texture(&scene->texture, (int)(mat->opacity * 255));
+	if (mat->opacity_id == -1)
+		return (-1);
 	return (0);
 }
 
-int	get_kd(t_scene *scene, char *texture_name)
+int	get_kd(t_scene *scene, char *texture_name, t_rgb *color)
 {
-	int	tex_id;
+	int			tex_id;
+	t_rgb_int	temp;
 
 	if (ft_strcmp(texture_name, "null") == 0)
 	{
@@ -91,7 +102,18 @@ int	get_kd(t_scene *scene, char *texture_name)
 			tex_id = create_null_texture(&scene->texture);
 		return (tex_id);
 	}
+	if (ft_strcmp(texture_name, "self") == 0)
+	{
+		temp = rgb_ftoi(*color);
+		tex_id = create_color_texture(&scene->texture, &temp);
+		return (tex_id);
+	}
 	tex_id = get_texture(scene, texture_name);
+	if (tex_id == -1)
+	{
+		register_complex_err_msg(RT_E_MSG_UNKNOW_TEX, texture_name);
+		return (error(pack_err(RT_ID, RT_E_UNKNOW_TEX), FL, LN, FC));
+	}
 	return (tex_id);
 }
 
@@ -107,6 +129,11 @@ int	get_nmap(t_scene *scene, char *nmap_name)
 		return (tex_id);
 	}
 	tex_id = get_texture(scene, nmap_name);
+	if (tex_id == -1)
+	{
+		register_complex_err_msg(RT_E_MSG_UNKNOW_NMAP, nmap_name);
+		return (error(pack_err(RT_ID, RT_E_UNKNOW_NMAP), FL, LN, FC));
+	}
 	return (tex_id);
 }
 
@@ -122,6 +149,11 @@ int	get_roughness(t_scene *scene, char *roughness_name)
 		return (tex_id);
 	}
 	tex_id = get_texture(scene, roughness_name);
+	if (tex_id == -1)
+	{
+		register_complex_err_msg(RT_E_MSG_UNKNOW_ROUGHNESS, roughness_name);
+		return (error(pack_err(RT_ID, RT_E_UNKNOW_ROUGHNESS), FL, LN, FC));
+	}
 	return (tex_id);
 }
 
@@ -137,6 +169,11 @@ int	get_ambient(t_scene *scene, char *ambient_name)
 		return (tex_id);
 	}
 	tex_id = get_texture(scene, ambient_name);
+	if (tex_id == -1)
+	{
+		register_complex_err_msg(RT_E_MSG_UNKNOW_AMBIENT, ambient_name);
+		return (error(pack_err(RT_ID, RT_E_UNKNOW_AMBIENT), FL, LN, FC));
+	}
 	return (tex_id);
 }
 
@@ -152,5 +189,10 @@ int	get_opacity(t_scene *scene, char *opacity_name)
 		return (tex_id);
 	}
 	tex_id = get_texture(scene, opacity_name);
+	if (tex_id == -1)
+	{
+		register_complex_err_msg(RT_E_MSG_UNKNOW_OPACITY, opacity_name);
+		return (error(pack_err(RT_ID, RT_E_UNKNOW_OPACITY), FL, LN, FC));
+	}
 	return (tex_id);
 }

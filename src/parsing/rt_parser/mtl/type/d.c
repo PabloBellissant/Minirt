@@ -1,31 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   calc_aabb_bound.c                                  :+:      :+:    :+:   */
+/*   d.c                                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/27 00:40:39 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/27 00:40:39 by pabellis         ###   ########.fr       */
+/*   Created: 2025/11/11 19:30:32 by pabellis          #+#    #+#             */
+/*   Updated: 2025/11/11 19:30:34 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "bvh.h"
 #include "render.h"
 
-void	calc_aabb_bound(t_camera *cam, t_bound *bound, t_aabb_bvh *bvh)
-{
-	t_vec3	vertices[8];
-	t_vec2i	proj;
-	int		i;
+#define D_FORMAT " *d  *%f[1] *\n"
 
-	get_cuboid_vertice(vertices, &bvh->cuboid);
-	i = 0;
-	while (i < 8)
-	{
-		proj = project_point(&vertices[i], cam);
-		if (apply_bound(&proj, bound) == -1)
-			return ;
-		++i;
-	}
+int	d(const char *line, t_scene *scene)
+{
+	t_mat	*mat;
+
+	mat = get_last_vector_value(&scene->mat);
+	if (ft_scan(0, D_FORMAT, line, &mat->opacity) == -1)
+		return (-1);
+	mat->opacity_id = create_binary_texture(&scene->texture,
+		(int)(mat->opacity * 255));
+	if (mat->opacity_id == -1)
+		return (-1);
+	return (0);
 }

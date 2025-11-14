@@ -19,7 +19,10 @@ MTL_TYPE_SRCS	= newmtl.c \
 			  ka.c \
 			  kd.c \
 			  ks.c \
-			  map_kd.c
+			  map_kd.c \
+			  d.c \
+			  kr.c \
+			  ni.c
 
 SRCS		+= $(addprefix $(MTL_TYPE_DIR)/, $(MTL_TYPE_SRCS))
 

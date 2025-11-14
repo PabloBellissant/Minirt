@@ -39,7 +39,7 @@ static t_rgb	get_diffuse(const t_vec3 l_m, const t_rgb i_d, const t_vec3 n, cons
 	return (vec3_scale(vec3_mult(k_d, i_d), surface_faces_light));
 }
 
-static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v, const float k_s, const float n_s)
+static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v, t_vec3 k_s, const float n_s)
 {
 	float	surface_faces_camera;
 
@@ -47,8 +47,9 @@ static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v, const float k_s, con
 	if (surface_faces_camera <= 0)
 		return (rgb(0, 0, 0));
 	surface_faces_camera = powf(surface_faces_camera, n_s);
-	return (vec3_scale(vec3_scale(i_s, k_s), surface_faces_camera));
+	return (vec3_scale(k_s, surface_faces_camera));
 }
+
 t_rgb	hit_register_light(t_ray *ray, t_data *data, t_vec3 light_pos);
 
 static t_rgb	get_color_through(t_data *data, t_vec3 hit_point,
@@ -91,7 +92,7 @@ t_rgb	phong_path(t_data *data, t_ray *ray)
 		data->scene.phong.d[m] = rgb_mult(data->scene.phong.d[m], color_through);
 		diffuse_m = vec3_mult(get_diffuse(data->scene.phong.l[m], data->scene.phong.d[m],
 				ray->hit_normal, ray->hit_rgb), ray->hit_rgb);
-		specular_m = get_specular(data->scene.phong.r[m], data->scene.phong.v, 1.0f - ray->hit_roughness, ray->hit_mat->ns);
+		specular_m = get_specular(data->scene.phong.r[m], data->scene.phong.v, ray->hit_mat->ks, ray->hit_mat->ns);
 		specular_m = rgb_mult(specular_m, vec3_mult(data->scene.phong.d[m], color_through));
 		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));
 		m++;

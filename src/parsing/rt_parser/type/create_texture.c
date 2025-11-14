@@ -58,6 +58,8 @@ t_texture	*parse_texture(t_scene *scene, char *texture_path)
 		if (!tex.pixels)
 			return (NULL);
 	}
+	else
+		return (NULL);
 	if (vector_add(&scene->texture, &tex, 1) == -1)
 		return (NULL);
 	return (get_last_vector_value(&scene->texture));

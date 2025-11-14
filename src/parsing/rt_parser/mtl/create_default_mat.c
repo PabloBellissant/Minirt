@@ -21,5 +21,6 @@ t_mat	create_default_mat(void)
 	mat.kd = vec3(0.752f, 0.606f, 0.226f);
 	mat.ks = vec3(0.628f, 0.556f, 0.366f);
 	mat.ns = 55.2f;
+	mat.ni = 2.3f;
 	return (mat);
 }

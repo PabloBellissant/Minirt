@@ -12,7 +12,7 @@
 
 #include "render.h"
 
-#define NS_FORMAT " *Ns  *%f[1] *\n"
+#define NS_FORMAT " *Ns  *%f *\n"
 
 int	ns(const char *line, t_scene *scene)
 {

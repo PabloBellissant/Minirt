@@ -29,7 +29,8 @@ int	get_mat(const char *mat_name, t_scene *scene, t_rgb_int *color)
 			return ((int) i);
 		++i;
 	}
-	return (-1);
+	register_complex_err_msg(RT_E_MSG_UNKNOW_MAT, mat_name);
+	return (error(pack_err(RT_ID, RT_E_UNKNOW_MAT), FL, LN, FC));
 }
 
 int	gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color)

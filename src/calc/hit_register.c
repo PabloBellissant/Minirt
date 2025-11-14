@@ -16,29 +16,35 @@
 #include "calc.h"
 #include "minirt.h"
 
-t_rgb	sample_texture(t_texture *texture_list, int id, float u, float v)
+t_rgb	sample_texture(const t_texture *texture_list, int id, float u, float v)
 {
 	int			x;
 	int			y;
-	t_rgb_int	rgb;
+	t_rgb_int	color;
 	int			offset;
 
+	u = u - floorf(u);
+	v = v - floorf(v);
+	v = 1.0f - v;
 	x = (int)(u * (float)(texture_list[id].width));
 	y = (int)(v * (float)(texture_list[id].height));
 	offset = y * texture_list[id].tex_size_line + x * (texture_list[id].tex_bpp / 8);
-	rgb.r = texture_list[id].pixels[offset];
-	rgb.g = texture_list[id].pixels[offset + 1];
-	rgb.b = texture_list[id].pixels[offset + 2];
-	return (rgb_itof(rgb));
+	color.r = texture_list[id].pixels[offset];
+	color.g = texture_list[id].pixels[offset + 1];
+	color.b = texture_list[id].pixels[offset + 2];
+	return (rgb_itof(color));
 }
 
-float	sample_binary_texture(t_texture *texture_list, int id, float u, float v)
+float	sample_binary_texture(const t_texture *texture_list, int id, float u, float v)
 {
 	int				x;
 	int				y;
 	int				offset;
 	unsigned char	pixel;
 
+	u = u - floorf(u);
+	v = v - floorf(v);
+	v = 1.0f - v;
 	x = (int)(u * (float)(texture_list[id].width));
 	y = (int)(v * (float)(texture_list[id].height));
 	offset = y * texture_list[id].tex_size_line + x;
@@ -77,36 +83,35 @@ static t_vec3 get_bitangent(t_vec3 n, t_vec3 tangent)
 
 void	sample_mat(t_ray *ray, t_vec2 uv, t_data *data, int mat_id)
 {
-	t_rgb		nmap;
-	t_vec3		new_normal;
-	t_texture	*list = data->scene.texture.data;
-	t_mat		*mat = data->scene.mat.data;
+	t_rgb			nmap;
+	t_vec3			new_normal;
+	const t_texture	*tex = data->scene.texture.data;
+	const t_mat		*mat = data->scene.mat.data;
 
-	ray->hit_rgb = sample_texture(list, mat[mat_id].kd_id, uv.x, uv.y);
-	ray->hit_roughness = sample_binary_texture(list, mat[mat_id].normal_id, uv.x, uv.y);
-	ray->hit_ambient = sample_binary_texture(list, mat[mat_id].ambient_id, uv.x, uv.y);
-	ray->hit_opacity = sample_binary_texture(list, mat[mat_id].opacity_id, uv.x, uv.y);
-	nmap = sample_texture(list, mat[mat_id].normal_id, uv.x, uv.y);
+	ray->hit_rgb = sample_texture(tex, mat[mat_id].kd_id, uv.x, uv.y);
+	ray->hit_roughness = sample_binary_texture(tex, mat[mat_id].roughness_id, uv.x, uv.y);
+	ray->hit_ambient = sample_binary_texture(tex, mat[mat_id].ambient_id, uv.x, uv.y);
+	ray->hit_opacity = sample_binary_texture(tex, mat[mat_id].opacity_id, uv.x, uv.y);
+	nmap = sample_texture(tex, mat[mat_id].normal_id, uv.x, uv.y);
 	new_normal = apply_normalmap(ray->hit_normal, nmap, ray->hit_tangent, ray->hit_bitangent);
 	ray->hit_normal = new_normal;
 }
 
-void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *params, t_data *data)
+void	apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_data *data)
 {
 	t_vec3	hit_point;
-	t_vec3	axis;
-	t_vec3	to_hit;
+	// t_vec3	axis;
+	// t_vec3	to_hit;
 	t_vec2	uv;
 
 	hit_point = vec3_scale(ray->dir, o->t);
 	hit_point = vec3_add(ray->pos, hit_point);
-	t_mat	*mat = data->scene.mat.data;
-	t_texture	*tex = data->scene.texture.data;
 	if (o->type == TRIANGLE)
 	{
 		t_vec3	n0, n1, n2;
-		t_vec3 v0v1 = vec3_sub(o->triangle.p1.pos, o->triangle.p0.pos);
-		t_vec3 v0v2 = vec3_sub(o->triangle.p2.pos, o->triangle.p0.pos);
+
+		t_vec3 v0v1 = o->triangle.edge_1;
+		t_vec3 v0v2 = o->triangle.edge_2;
 		t_vec3 v0p = vec3_sub(hit_point, o->triangle.p0.pos);
 		float d00 = vec3_dot(v0v1, v0v1);
 		float d01 = vec3_dot(v0v1, v0v2);
@@ -119,7 +124,6 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 		float bary_w = (d00 * d21 - d01 * d20) / denom;
 		float bary_u = 1.0f - bary_v - bary_w;
 
-		// Interpolate texture coordinates
 		uv.x = bary_u * o->triangle.p0.uv.x +
 					  bary_v * o->triangle.p1.uv.x +
 					  bary_w * o->triangle.p2.uv.x;
@@ -129,7 +133,6 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 					  bary_w * o->triangle.p2.uv.y;
 		if (params->smooth_shading)
 		{
-			ray->hit_rgb = sample_texture(tex, mat[o->mat_id].kd_id, uv.x, 1 - uv.y);
 			n0 = vec3_scale(o->triangle.p0.norm, bary_u);
 			n1 = vec3_scale(o->triangle.p1.norm, bary_v);
 			n2 = vec3_scale(o->triangle.p2.norm, bary_w);
@@ -138,7 +141,6 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 		else
 			ray->hit_normal = vec3_add(o->triangle.p0.norm, vec3_add(o->triangle.p1.norm, o->triangle.p2.norm));
 		ray->hit_normal = vec3_normalize(ray->hit_normal);
-
 		ray->hit_tangent = get_tangent(ray->hit_normal);
 		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
 		sample_mat(ray, uv, data, o->mat_id);
@@ -148,7 +150,7 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 		ray->hit_normal = vec3_sub(hit_point, o->sphere.pos);
 		ray->hit_normal = vec3_normalize(ray->hit_normal);
 		uv.x = 0.5f + atan2f(ray->hit_normal.z, ray->hit_normal.x) / (2.0f * M_PIf);
-		uv.y = 0.5f - asinf(ray->hit_normal.y) / M_PIf;
+		uv.y = 0.5f + asinf(ray->hit_normal.y) / M_PIf;
 
 		ray->hit_tangent = get_tangent(ray->hit_normal);
 		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
@@ -161,26 +163,22 @@ void	hit_register_obj(t_ray *restrict ray, t_object *restrict o, t_params *param
 		ray->hit_bitangent = o->plane.bitangent;
 
 		t_vec3 local_point = vec3_sub(hit_point, o->plane.pos);
-		float u = vec3_dot(local_point, ray->hit_tangent) * 0.1f;
-		float v = vec3_dot(local_point, ray->hit_bitangent) * 0.1f;
-
-		u = u - floorf(u);
-		v = v - floorf(v);
-
-		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, 0.1f));
-		sample_mat(ray, vec2(u, v), data, o->mat_id);
+		uv.x = vec3_dot(local_point, ray->hit_tangent) * 0.1f;
+		uv.y = vec3_dot(local_point, ray->hit_bitangent) * 0.1f;
+		hit_point = vec3_add(hit_point, vec3_scale(ray->hit_normal, EPSILON));
+		sample_mat(ray, uv, data, o->mat_id);
 	}
 	else if (o->type == CYLINDER)
 	{
-		axis = o->cylinder.rot;
-		to_hit = vec3_sub(hit_point, o->cylinder.pos);
-		axis = vec3_scale(axis, vec3_dot(to_hit, axis));
-		axis = vec3_add(o->cylinder.pos, axis);
-		ray->hit_normal = vec3_sub(hit_point, axis);
-		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
-		ray->hit_rgb = o->cylinder.rgb;
-		ray->hit_tangent = get_tangent(ray->hit_normal);
-		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
+		// axis = o->cylinder.rot;
+		// to_hit = vec3_sub(hit_point, o->cylinder.pos);
+		// axis = vec3_scale(axis, vec3_dot(to_hit, axis));
+		// axis = vec3_add(o->cylinder.pos, axis);
+		// ray->hit_normal = vec3_sub(hit_point, axis);
+		// ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
+		// ray->hit_rgb = o->cylinder.rgb;
+		// ray->hit_tangent = get_tangent(ray->hit_normal);
+		// ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
 	}
 	ray->pos = hit_point;
 	if (params->normal_debug)
@@ -208,40 +206,32 @@ t_object	*hit_register(t_ray *ray, t_data *data)
 	return (hit_reg_plane(ray, &data->scene, FLT_MAX));
 }
 
-float	old_register(t_ray *ray, t_data *data, t_object **hit_object)
-{
-	*hit_object = hit_register(ray, data);
-	if (!*hit_object)
-		return (-1.0f);
-	hit_register_obj(ray, (*hit_object), &data->params, data);
-	return ((*hit_object)->t);
-}
-
 float	pass_through_no_refract(t_ray *ray, t_object *obj);
 
 t_rgb	hit_register_light(t_ray *ray, t_data *data, t_vec3 light_pos)
 {
 	t_rgb		transparency;
 	float		light_distance;
-	float		t;
 	t_object	*object;
 
 	transparency = rgb(1, 1, 1);
 	light_distance = vec3_length(vec3_sub(light_pos, ray->pos));
-	t = old_register(ray, data, &object);
-	if (t < 0.0f)
+	object = hit_register(ray, data);
+	if (!object)
 		return (transparency);
-	light_distance -= t;
+	light_distance -= object->t + EPSILON;
+	apply_mat(ray, object, &data->params, data);
 	while (light_distance > 0)
 	{
 		t_rgb	temp = ray->hit_rgb;
 		temp = rgb_scale(temp, 1 - ray->hit_opacity);
 		transparency = rgb_mult(transparency, temp);
-		t = old_register(ray, data, &object);
-		if (t < 0.0f)
+		object = hit_register(ray, data);
+		if (!object)
 			return (transparency);
-		t += pass_through_no_refract(ray, object);
-		light_distance -= t;
+		apply_mat(ray, object, &data->params, data);
+		object->t += pass_through_no_refract(ray, object);
+		light_distance -= object->t + EPSILON;
 	}
 	return (transparency);
 }

@@ -41,6 +41,8 @@ int	plane(const char *line, int line_num, t_scene *scene)
 		return (error(pack_err(RT_ID, RT_E_PLANE), FL, LN, FC));
 	}
 	object->mat_id = get_mat(mat_name, scene, &color);
+	if (object->mat_id == -1)
+		return (-1);
 	object->f = hit_plane;
 	object->plane.tangent = get_tangent(*norm);
 	object->plane.bitangent = get_bitangent(*norm, object->plane.tangent);

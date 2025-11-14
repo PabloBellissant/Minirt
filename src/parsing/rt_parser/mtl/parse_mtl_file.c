@@ -12,6 +12,8 @@
 
 #include "render.h"
 
+int	gen_map_by_mat(t_mat *mat, t_scene *scene);
+
 int	parse_mtl_file(int fd, t_scene *scene)
 {
 	char	*line;

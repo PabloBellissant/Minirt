@@ -15,7 +15,7 @@
 t_mtl	get_mtl_type(const char *line)
 {
 	static const char	*elem[] = {"newmtl", "Ns", "Ka", "Kd", "Ks",
-			"map_Kd", NULL};
+			"map_Kd", "d", "Kr", "Ni", NULL};
 	int			i;
 
 	while (*line == ' ' || *line == '\t')

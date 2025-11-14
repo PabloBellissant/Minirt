@@ -25,29 +25,26 @@ int	gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color);
 int	parse_obj_type(const char *line, t_scene *scene, t_vec3 *pos, t_obj_vectors *vec)
 {
 	t_obj			type;
-	int				ret_val;
 	static int		mat_id = -1;
 
 	if (line[0] == '#' || (line[0] == '/' && line[1] == '/') || line[0] == '\n')
 		return (0);
-	if (mat_id == -1)
-	{
-		t_rgb_int rgbb = rgb_int(255, 255, 0);
-		mat_id = gen_mat_by_color(vec->mat, vec->tex, &rgbb);
-	}
 	type = get_obj_type(line);
-	ret_val = 0;
 	if (type == mtllib)
-		ret_val = parse_mtllib(line, scene);
-	else if (type == usemtl)
-		ret_val = apply_mtl(line, scene, &mat_id);
-	else if (type == v)
-		ret_val = parse_vertex(line, &vec->vertex, pos);
-	else if (type == vn)
-		ret_val = parse_normal(line, &vec->normal);
-	else if (type == f)
-		ret_val = parse_face(line, vec, scene, 0);
-	else if (type == vt)
-		ret_val = parse_uv(line, &vec->uv);
-	return (ret_val);
+		return (parse_mtllib(line, scene));
+	if (type == usemtl)
+		return(apply_mtl(line, scene, &mat_id));
+	if (type == v)
+		return(parse_vertex(line, &vec->vertex, pos));
+	if (type == vn)
+		return(parse_normal(line, &vec->normal));
+	if (type == f)
+	{
+		if (mat_id == -1)
+			return (error(pack_err(RT_ID, RT_E_OBJ_NO_MAT), FL, LN, FC));
+		return(parse_face(line, vec, scene, mat_id));
+	}
+	if (type == vt)
+		return(parse_uv(line, &vec->uv));
+	return (0);
 }
