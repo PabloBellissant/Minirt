@@ -27,15 +27,18 @@ int	sphere(const char *line, int line_num, t_scene *scene)
 
 	object = create_object(scene, SPHERE);
 	pos = &object->sphere.pos;
+	mat_name = NULL;
 	if (ft_scan(line_num, SPHERE_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&object->sphere.diameter, &color.r, &color.g, &color.b,
 			&mat_name))
 	{
+		free(mat_name);
 		return (error(pack_err(RT_ID, RT_E_SPHERE), FL, LN, FC));
 	}
 	object->sphere.radius_squared = (object->sphere.diameter / 2.f)
 		* (object->sphere.diameter / 2.f);
 	object->mat_id = get_mat(mat_name, scene, &color);
+	free(mat_name);
 	if (object->mat_id == -1)
 		return (-1);
 	object->f = hit_sphere;

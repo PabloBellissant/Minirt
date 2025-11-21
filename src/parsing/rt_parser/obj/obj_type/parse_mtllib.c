@@ -22,6 +22,7 @@ int	parse_mtllib(const char *line, t_scene *scene)
 	if (ft_scan(0, MTLLIB_FORMAT, line, &str))
 		return (-1);
 	fd = open(str, O_RDONLY);
+	free(str);
 	if (fd == -1)
 		return (-1);
 	return (parse_mtl_file(fd, scene));

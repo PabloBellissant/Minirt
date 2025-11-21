@@ -13,9 +13,9 @@
 #include "calc.h"
 #include "minirt.h"
 
-int	parse_obj_type(const char *line, t_scene *scene, t_vec3 *pos, t_obj_vectors *vec);
+int	parse_obj_type(const char *line, t_scene *scene, t_pos_attribute *attr, t_obj_vectors *vec);
 
-int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
+int	parse_obj_file(int fd, t_scene *scene, t_pos_attribute *attr)
 {
 	char			*line;
 	t_obj_vectors	vec;
@@ -31,7 +31,7 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 	line = get_next_line(fd);
 	while (line != NULL)
 	{
-		if (parse_obj_type(line, scene, pos, &vec) == -1)
+		if (parse_obj_type(line, scene, attr, &vec) == -1)
 		{
 			free(vec.vertex.data);
 			free(vec.normal.data);
@@ -39,6 +39,7 @@ int	parse_obj_file(int fd, t_scene *scene, t_vec3 *pos)
 			free(vec.triangle.data);
 			return (-1);
 		}
+		free(line);
 		line = get_next_line(fd);
 	}
 	free(vec.vertex.data);

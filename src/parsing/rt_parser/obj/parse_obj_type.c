@@ -14,7 +14,7 @@
 
 t_obj	get_obj_type(const char *line);
 
-int	parse_vertex(const char *line, t_vector *vertex, t_vec3 *pos);
+int	parse_vertex(const char *line, t_vector *vertex, t_pos_attribute *attr);
 int	parse_normal(const char *line, t_vector *normal_vec);
 int	parse_face(const char *line, t_obj_vectors *vec, t_scene *scene, int mat_id);
 int	parse_uv(const char *line, t_vector *uv_vec);
@@ -22,7 +22,7 @@ int	parse_mtllib(const char *line, t_scene *scene);
 int	apply_mtl(const char *line, t_scene *scene, int *mat_id);
 int	gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color);
 
-int	parse_obj_type(const char *line, t_scene *scene, t_vec3 *pos, t_obj_vectors *vec)
+int	parse_obj_type(const char *line, t_scene *scene, t_pos_attribute *attr, t_obj_vectors *vec)
 {
 	t_obj			type;
 	static int		mat_id = -1;
@@ -35,7 +35,7 @@ int	parse_obj_type(const char *line, t_scene *scene, t_vec3 *pos, t_obj_vectors 
 	if (type == usemtl)
 		return(apply_mtl(line, scene, &mat_id));
 	if (type == v)
-		return(parse_vertex(line, &vec->vertex, pos));
+		return(parse_vertex(line, &vec->vertex, attr));
 	if (type == vn)
 		return(parse_normal(line, &vec->normal));
 	if (type == f)

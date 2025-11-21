@@ -60,36 +60,6 @@ int	get_subsampling(t_vec2 pixel, t_camera *cam, int ray_count, t_data *data)
 	return ((int)rgb_ftoi(color).rgb);
 }
 
-#define RAY_COUNT 3
-
-void	subsampling_draw(t_img_data *img, t_camera *cam, t_data *data)
-{
-	t_ray		ray;
-	int			color;
-	t_vec2i		pixel;
-
-	dprintf(2, "start subsampling\n");
-	pixel.x = 0;
-	while (pixel.x < img->width)
-	{
-		pixel.y = 0;
-		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)pixel.x);
-		cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
-		while (pixel.y < img->height)
-		{
-			cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)pixel.y);
-			recalc_camera_y(cam);
-			ray.pos = cam->pos;
-			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-			color = get_subsampling(vec2((float)pixel.x, (float)pixel.y), cam, RAY_COUNT, data);
-			ft_mlx_pixel_put(img, pixel, color);
-			++pixel.y;;
-		}
-		++pixel.x;
-	}
-	dprintf(2, "end subsampling\n");
-}
-
 void	draw_zone(t_img_data *img, t_vec2i pos, int color, int size)
 {
 	t_vec2i	pixel;
@@ -113,15 +83,35 @@ void	draw(t_img_data *img, t_camera *cam, t_data *data, int pixel_size)
 	t_object	*obj;
 	t_vec2i		pixel;
 
-	if (pixel_size < 1)
-	{
-		subsampling_draw(img, cam, data);
-		return ;
-	}
 	pixel.x = 0;
 	while (pixel.x < img->width)
 	{
 		pixel.y = 0;
+		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)pixel.x + pixel_size / 2);
+		cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
+		while (pixel.y < img->height)
+		{
+			cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)pixel.y + pixel_size / 2);
+			recalc_camera_y(cam);
+			ray.pos = cam->pos;
+			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
+			draw_zone(img, pixel, (int)rgb_ftoi(ray_path(&ray, data, &obj)).rgb, pixel_size);
+			pixel.y += pixel_size;
+		}
+		pixel.x += pixel_size;
+	}
+}
+
+void	draw_individual(t_img_data *img, t_camera *cam, t_data *data, int pixel_size, int actual_pixel)
+{
+	t_ray		ray;
+	int			color;
+	t_vec2i		pixel;
+
+	pixel.x = actual_pixel % pixel_size;
+	while (pixel.x < img->width)
+	{
+		pixel.y = actual_pixel / pixel_size;
 		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)pixel.x);
 		cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
 		while (pixel.y < img->height)
@@ -130,7 +120,8 @@ void	draw(t_img_data *img, t_camera *cam, t_data *data, int pixel_size)
 			recalc_camera_y(cam);
 			ray.pos = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-			draw_zone(img, pixel, (int)rgb_ftoi(ray_path(&ray, data, &obj)).rgb, pixel_size);
+			color = get_subsampling(vec2((float)pixel.x, (float)pixel.y), cam, SUB_PIXEL_QUANTITY, data);
+			ft_mlx_pixel_put(img, pixel, color);
 			pixel.y += pixel_size;
 		}
 		pixel.x += pixel_size;
@@ -197,36 +188,52 @@ int	get_smooth_size(t_camera *cam, t_data *data)
 	return (imin(min, optimal));
 }
 
+bool	cam_has_moved(t_camera *camera)
+{
+	static t_vec3	pos;
+	static t_vec3	rot;
+	static int		fov;
+
+	if (ft_memcmp(&camera->pos, &pos, sizeof(t_vec3)) != 0
+		|| ft_memcmp(&camera->rot, &rot, sizeof(t_vec3)) != 0
+		|| fov != camera->fov)
+	{
+		pos = camera->pos;
+		rot = camera->rot;
+		fov = camera->fov;
+		return (true);
+	}
+	return (false);
+}
+int	export_to_ppm(t_data *data, t_mlx *mlx);
 void	ray_tracing_render(t_data *data)
 {
 	t_camera	*cam;
-	t_scene		*scene;
 	static int	pixel_size;
-	static int	is_full_render;
+	static int	actual_pixel;
 
-	if (!data->params.quality_render)
-		is_full_render = 0;
-	scene = &data->scene;
+	if (data->params.exporting)
+	{
+		export_to_ppm(data, data->mlx);
+		return ;
+	}
 	cam = &data->scene.camera;
 	fill_camera(cam);
-	if (is_full_render == 1)
+	if (!cam_has_moved(&data->scene.camera) && data->params.quality_render)
 	{
-		pixel_size /= 2;
-		pixel_size = 1;
-		draw(&data->mlx->img, cam, data, pixel_size);
+		if (actual_pixel == pixel_size * pixel_size)
+			actual_pixel = 0;
+		draw_individual(&data->mlx->img, cam, data, pixel_size, actual_pixel);
+		++actual_pixel;
 	}
 	else
 	{
+		actual_pixel = 0;
 		pixel_size = get_smooth_size(cam, data);
 		draw(&data->mlx->img, cam, data, pixel_size);
 	}
-	if (!data->params.quality_render)
-	{
-		if (data->params.bvh_debug && data->scene.bvh.bvh)
-			rasterize_bvh(scene->bvh.bvh, &data->params, scene->bvh.sphere_bvh->depth, data);
-	}
-	else
-		is_full_render = 1;
+	if (data->params.bvh_debug && data->scene.bvh.bvh)
+		rasterize_bvh(data->scene.bvh.bvh, &data->params, data->scene.bvh.sphere_bvh->depth, data);
 }
 
 void	update_fps(t_data *data);
@@ -238,7 +245,8 @@ int	loop(t_data *data)
 	update_fps(data);
 	handle_camera_move(data, &data->scene.camera, data->keys);
 	render_func[data->params.render_mode](data);
-	draw_text(data->font_env->fps);
+	if (data->params.render_mode == 0 || !data->params.quality_render)
+		draw_text(data->font_env->fps);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win,
 		data->mlx->img.img, 0, 0);
 	return (0);

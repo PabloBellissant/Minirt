@@ -41,14 +41,17 @@ static char	*read_by_char(const int fd)
 	{
 		if (vector_add(&vec, &read_char, 1) == -1)
 		{
-			free(vec.data);
+			free_vector(&vec);
 			return (NULL);
 		}
 		if (read(fd, &read_char, 1) == -1)
 		{
-			free(vec.data);
+			free_vector(&vec);
 			return (NULL);
 		}
 	}
+	read_char = 0;
+	if (vector_add(&vec, &read_char, 1) == -1)
+		free_vector(&vec);
 	return (vec.data);
 }

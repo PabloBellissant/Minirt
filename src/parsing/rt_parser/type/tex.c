@@ -22,13 +22,19 @@ int	tex(const char *line, int line_num, t_scene *scene)
 	char		*name;
 	char		*path;
 
+	name = NULL;
+	path = NULL;
 	if (ft_scan(line_num, TEXTURE_FORMAT, line, &name, &path))
 	{
+		free(name);
+		free(path);
 		return (error(pack_err(RT_ID, RT_E_TEX), FL, LN, FC));
 	}
 	tex = parse_texture(scene, path);
+	free(path);
 	if (!tex)
 	{
+		free(name);
 		register_complex_err_msg(RT_E_MSG_NO_TEX, name);
 		return (error(pack_err(RT_ID, RT_E_NO_TEX), FL, LN, FC));
 	}

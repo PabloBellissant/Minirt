@@ -24,6 +24,7 @@ int	apply_mtl(const char *line, t_scene *scene, int	*mat_id)
 		return (-1);
 	color = rgb_int(0, 0, 0);
 	*mat_id = get_mat(mat_name, scene, &color);
+	free(mat_name);
 	if (*mat_id == -1)
 		return (-1);
 	return (0);
