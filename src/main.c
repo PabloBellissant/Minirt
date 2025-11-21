@@ -39,17 +39,55 @@ void	free_phong(t_phong phong)
 	ft_free(phong.d);
 }
 
-void	free_scene(t_scene scene)
+void	free_textures(t_vector *vec)
 {
-	free_phong(scene.phong);
-	free_vector(&scene.lights);
-	free_vector(&scene.objects);
+	size_t		i;
+	t_texture	*texture;
+
+	texture = vec->data;
+	i = 0;
+	while (i < vec->num_elements)
+	{
+		free(texture[i].pixels);
+		free(texture[i].name);
+		++i;
+	}
+	free_vector(vec);
 }
 
-void	free_data(t_data data)
+void	free_mats(t_vector *vec)
 {
-	free_rast_env(data.font_env);
-	free_scene(data.scene);
+	size_t		i;
+	t_mat		*mat;
+
+	mat = vec->data;
+	i = 0;
+	while (i < vec->num_elements)
+	{
+		free(mat[i].name);
+		++i;
+	}
+	free_vector(vec);
+}
+
+void	free_scene(t_scene *scene)
+{
+	free_phong(scene->phong);
+	free_vector(&scene->lights);
+	free_vector(&scene->objects);
+	free(scene->planes);
+	free_textures(&scene->texture);
+	free_mats(&scene->mat);
+	free(scene->bvh.bvh_pointer);
+}
+
+void	free_data(t_data *data)
+{
+	free_rast_env(data->font_env);
+	free_scene(&data->scene);
+	if (data->export_fd != -1)
+		close(data->export_fd);
+	//kill_mlx(data->mlx);
 }
 
 void	register_unit_errors(void)
@@ -81,6 +119,7 @@ int	main(int argc, char **argv)
 		{
 			data.scene.mlx = data.mlx;
 			data.scene.skybox_tex = -1;
+			data.export_fd = -1;
 			errno = 0;
 			if (parse_scene(argv[1], &data.scene) != 0)
 			{
@@ -94,7 +133,7 @@ int	main(int argc, char **argv)
 			{
 				data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
 				loop_hook(&data);
-				free_data(data);
+				free_data(&data);
 			}
 		}
 	}

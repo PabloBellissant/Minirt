@@ -68,6 +68,7 @@ int	subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *obj_vec)
 		divide_half_right(&new_object_ptr, obj_vec);
 		temp_depth = subdivide(bvh->next_b, bvh_vec, &new_object_ptr);
 		bvh->depth = imax(temp_depth, bvh->depth) + 1;
+		free_vector(&new_object_ptr);
 		return (bvh->depth);
 	}
 	bvh->depth = 0;
