@@ -48,6 +48,13 @@ typedef struct s_obj_vectors
 	t_vector	triangle;
 }	t_obj_vectors;
 
+typedef struct s_pos_attribute
+{
+	t_vec3	pos;
+	t_vec3	dir;
+	t_vec3	scale;
+}	t_pos_attribute;
+
 typedef union u_rgb_int t_rgb_int;
 
 int				parse_scene(char *file_name, t_scene *scene);

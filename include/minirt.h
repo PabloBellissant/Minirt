@@ -14,16 +14,19 @@
 # define MINIRT_H
 # include "mlx_wrapper.h"
 
-
-
 # define BOUNCE_MAX 2
 # define REFRACT_MAX 5
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
 
-# define TARGET_FPS 10
-# define MIN_QUALITY 15
-# define MAX_SUBSAMPLING 3
+# define SUB_PIXEL_QUANTITY 1
+# define TARGET_FPS 30
+# define MIN_QUALITY 25
+
+_Static_assert(SUB_PIXEL_QUANTITY > 0, "SUB_PIXEL_QUANTITY");
+_Static_assert(TARGET_FPS > 0, "TARGET_FPS");
+_Static_assert(MIN_QUALITY > 0, "MIN_QUALITY");
+
 
 # include <stdint.h>
 # include "xcerrcal.h"
@@ -58,13 +61,11 @@ typedef struct s_params
 	int		render_mode;
 	int		bvh_depth;
 	int		bvh_color_offset;
-	int		supersampling_x;
-	int		supersampling_y;
 	bool	bvh_debug;
 	bool	normal_debug;
 	bool	smooth_shading;
-	bool	texture;
 	bool	quality_render;
+	bool	exporting;
 }			t_params;
 
 typedef struct s_data
@@ -77,6 +78,7 @@ typedef struct s_data
 	t_vec2i		screen;
 	t_scene		scene;
 	t_rast_env	*font_env;
+	int			export_fd;
 }				t_data;
 
 typedef enum e_obj

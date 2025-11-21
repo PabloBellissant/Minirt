@@ -18,7 +18,8 @@ MINIRT_SRCS	= main.c \
 			  loop.c loop_hook.c \
 			  camera_utils.c camera_move.c \
 			  clear_scene.c \
-			  register_rt_errors.c
+			  register_rt_errors.c \
+			  export_to_ppm.c
 
 INIT_SRCS	= init_graphics.c
 SRCS		+= $(addprefix $(SRCDIR)/, $(MINIRT_SRCS)) \
