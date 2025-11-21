@@ -48,6 +48,7 @@ t_vec3	rotate_point(t_vec3 pos, t_vec3 rot)
 	t_vec3			rotation_axis;
 	float			angle;
 
+	rot = vec3_normalize(rot);
 	rotation_axis = vec3_cross(z_axis, rot);
 	rotation_axis = vec3_normalize(rotation_axis);
 	angle = acosf(vec3_dot(z_axis, rot));
