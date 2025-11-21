@@ -37,33 +37,47 @@ int	mat(const char *line, int line_num, t_scene *scene)
 	mat = create_mat(&scene->mat);
 	if (!mat)
 		return (-1);
+	texture_name = NULL;
+	nmap_name = NULL;
+	roughness_name = NULL;
+	ambient_name = NULL;
+	opacity_name = NULL;
 	if (ft_scan(line_num, MATERIAL_FORMAT, line, &mat->name,
 		&mat->kd.r, &mat->kd.g, &mat->kd.b, &mat->ks.r, &mat->ks.g, &mat->ks.b,
 		&mat->ns, &mat->opacity, &mat->kr, &texture_name, &nmap_name, &roughness_name,
 		&ambient_name, &opacity_name))
 	{
+		free(texture_name);
+		free(nmap_name);
+		free(roughness_name);
+		free(ambient_name);
+		free(opacity_name);
 		return (error(pack_err(RT_ID, RT_E_MAT), FL, LN, FC));
 	}
 	if (*texture_name)
 	{
 		mat->kd_id = get_kd(scene, texture_name, &mat->kd);
-		if (mat->kd_id == -1)
-			return (-1);
 		mat->normal_id = get_nmap(scene, nmap_name);
-		if (mat->normal_id == -1)
-			return (-1);
 		mat->roughness_id = get_roughness(scene, roughness_name);
-		if (mat->roughness_id == -1)
-			return (-1);
 		mat->ambient_id = get_ambient(scene, ambient_name);
-		if (mat->ambient_id == -1)
-			return (-1);
 		mat->opacity_id = get_opacity(scene, opacity_name);
-		if (mat->opacity_id == -1)
+		free(texture_name);
+		free(nmap_name);
+		free(roughness_name);
+		free(ambient_name);
+		free(opacity_name);
+		if (mat->kd_id == -1 || mat->normal_id == -1 || mat->roughness_id == -1
+			|| mat->ambient_id == -1 || mat->opacity_id == -1)
+		{
+			return (-1);
+		}
+	}
+	else
+	{
+		free(texture_name);
+		if (gen_map_by_mat(mat, scene) == -1)
 			return (-1);
 	}
-	else if (gen_map_by_mat(mat, scene) == -1)
-		return (-1);
 	return (0);
 }
 

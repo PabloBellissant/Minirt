@@ -147,7 +147,7 @@ t_ray	*pass_through_triangle(t_ray *ray, t_data *data, t_object *obj)
 		ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, EPSILON));
 		return (ray);
 	}
-	ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, next->t + EPSILON));
+	ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, EPSILON));
 	ray->hit_normal = vec3_neg(ray->hit_normal);
 	ray->dir = vec3_refract(ray->dir, ray->hit_normal, ray->hit_mat->ni / 1.0f);
 	return (ray);
@@ -208,7 +208,7 @@ t_rgb	ray_path(t_ray *ray, t_data *data, t_object **hit_object)
 		return (draw_skybox(&data->scene, &ray->dir));
 	apply_mat(ray, (*hit_object), &data->params, data);
 	if (data->params.normal_debug)
-		return (ray->hit_rgb);
+		return (rgb_add_scalar(rgb_scale(ray->hit_normal, 0.5f), 0.5f));
 	ray->hit_mat = get_vector_value(&data->scene.mat, (*hit_object)->mat_id);
 	fill_phong(ray, &data->scene);
 	color = phong_path(data, ray);
@@ -241,6 +241,12 @@ t_rgb	ray_path(t_ray *ray, t_data *data, t_object **hit_object)
 	needs the normalized normal and normalized direction to light
 */
 
+static t_vec3	reflection(const t_vec3 normal, const t_vec3 light_dir)
+{
+	const float	r = vec3_dot(light_dir, normal) * 2;
+
+	return (vec3_sub(vec3_scale(normal, r), light_dir));
+}
 
 static void	fill_phong(t_ray *ray, t_scene *scene)
 {
@@ -255,7 +261,7 @@ static void	fill_phong(t_ray *ray, t_scene *scene)
 		scene->phong.d[m] = lights[m].light.rgb;
 		scene->phong.l[m] = vec3_normalize(vec3_sub(lights[m].light.pos,
 					ray->pos));
-		scene->phong.r[m] = vec3_reflect(scene->phong.l[m], ray->hit_normal);
+		scene->phong.r[m] = reflection(ray->hit_normal, scene->phong.l[m]);
 		m++;
 	}
 }
