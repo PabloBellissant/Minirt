@@ -51,13 +51,30 @@ t_vec3	vec3_neg(t_vec3 v)
 	return (res);
 }
 
-float get_reflect(t_vec3 ray_dir, t_vec3 normal, float roughness, float F0)
+static inline t_vec3	rgb3_lerp(const t_vec3 a, const t_vec3 b, const t_vec3 t)
 {
-	float cos_theta = fabsf(vec3_dot(ray_dir, normal));
-	float fresnel = F0 + (1.0f - F0) * powf(1.0f - cos_theta, 5.0f);
-	float glossy = fresnel * (1.0f - 0.9f * roughness * roughness);
-	return glossy;
+	return ((t_vec3){{
+				a.x * (1.0f - t.x) + b.x * t.x,
+				a.y * (1.0f - t.y) + b.y * t.y,
+				a.z * (1.0f - t.z) + b.z * t.z
+			}});
 }
+
+t_vec3 get_reflect(t_vec3 ray_dir, t_vec3 normal, float roughness, t_vec3 F0)
+{
+	t_vec3	fresnel;
+	float	cos_theta;
+	float	glossy_factor;
+	t_vec3	specular;
+
+	cos_theta = fabsf(vec3_dot(ray_dir, normal));
+	fresnel = vec3_scale(vec3_sub(vec3(1, 1, 1), F0), powf(1.0f - cos_theta, 5.0f));
+	fresnel = vec3_add(F0, fresnel);
+	glossy_factor = 1.0f - 0.9f * roughness * roughness;
+	specular = vec3_scale(fresnel, glossy_factor);
+	return (specular);
+}
+
 
 t_vec3 vec3_refract(t_vec3 ray_dir, t_vec3 normal, float eta)
 {
@@ -78,15 +95,15 @@ void	handle_reflect(t_ray *ray, t_data *data, t_rgb *color)
 {
 	static int	reflect_count = 0;
 	t_object	*hit_object;
-	float		reflect;
+	t_vec3		reflect;
 
 	if (reflect_count < BOUNCE_MAX)
 	{
 		reflect_count++;
-		reflect = get_reflect(ray->dir, ray->hit_normal, ray->hit_roughness, ray->hit_mat->kr);
+		reflect = get_reflect(ray->dir, ray->hit_normal, ray->hit_roughness, ray->hit_mat->ks);
 		ray->dir = vec3_reflect(ray->dir, ray->hit_normal);
 		ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, EPSILON));
-		*color = rgb_lerp(*color, ray_path(ray, data, &hit_object), reflect);
+		*color = rgb3_lerp(*color, ray_path(ray, data, &hit_object), reflect);
 		reflect_count--;
 	}
 }

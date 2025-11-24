@@ -1,47 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   map_kd.c                                           :+:      :+:    :+:   */
+/*   map_pr.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/21 05:14:38 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/21 05:14:50 by pabellis         ###   ########.fr       */
+/*   Created: 2025/11/23 23:10:16 by pabellis          #+#    #+#             */
+/*   Updated: 2025/11/23 23:10:29 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "render.h"
 #include "parsing.h"
 
-#define MAP_KD_FORMAT " *map_Kd  *%s *\n"
+#define MAP_PR_FORMAT " *map_Pr  *%s *\n"
 
-static void	scale_tex(t_texture *tex, t_vec3 *scale);
+static void	scale_pr(t_texture *tex, float scale);
 
-int	map_kd(const char *line, t_scene *scene)
+int	map_pr(const char *line, t_scene *scene)
 {
 	t_mat		*mat;
 	char		*name;
 
 	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, MAP_KD_FORMAT, line, &name))
+	if (ft_scan(0, MAP_PR_FORMAT, line, &name))
 		return (-1);
 	if (!parse_texture(scene, name))
 		return (-1);
-	scale_tex(get_last_vector_value(&scene->texture), &mat->kd);
-	mat->kd_id = (int) scene->texture.num_elements - 1;
+	scale_pr(get_last_vector_value(&scene->texture), mat->pr);
+	mat->roughness_id = (int) scene->texture.num_elements - 1;
 	return (0);
 }
 
-static void	scale_tex(t_texture *tex, t_vec3 *scale)
+static void	scale_pr(t_texture *tex, float scale)
 {
 	int	i;
+	int	temp;
 
 	i = 0;
 	while (i < tex->width * tex->height * (tex->tex_bpp / 8))
 	{
-		tex->pixels[i] *= scale->b;
-		tex->pixels[i + 1] *= scale->g;
-		tex->pixels[i + 2] *= scale->r;
-		i += 3;
+		temp = (int) tex->pixels[i];
+		temp *= scale;
+		if (temp > 255)
+			temp = 255;
+		tex->pixels[i] = temp;
+		++i;
 	}
 }
+

@@ -18,7 +18,7 @@
 t_object_type	get_type(const char *line)
 {
 	static const char	*elem[] = {"A", "C", "L", "sp", "pl",
-		"cy", "obj", "tex", "sky", "mat", NULL};
+		"cy", "obj", "tex", "sky", "mtl", NULL};
 	int					i;
 
 	while (*line == ' ' || *line == '\t')

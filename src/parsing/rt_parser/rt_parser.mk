@@ -29,7 +29,7 @@ RT_TYPE_SRCS	= ambient.c \
 				  sphere.c \
 				  obj.c \
 				  tex.c \
-				  mat.c \
+				  mtl.c \
 				  sky.c \
 				  create_object.c \
 				  create_texture.c

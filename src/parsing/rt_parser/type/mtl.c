@@ -1,30 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ka.c                                               :+:      :+:    :+:   */
+/*   mtl.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/21 05:00:36 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/21 05:00:44 by pabellis         ###   ########.fr       */
+/*   Created: 2025/11/23 22:56:29 by pabellis          #+#    #+#             */
+/*   Updated: 2025/11/23 22:56:32 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "render.h"
+#include "parsing.h"
+#include <fcntl.h>
 
-#define KA_FORMAT " *Ka  *%f[1]  *%f[1]  *%f[1] *\n"
+#define MTL_FORMAT " *mtl  *%s *\n"
 
-int	ka(const char *line, t_scene *scene)
+int	mtl(const char *line, int line_num, t_scene *scene)
 {
-	t_mat		*mat;
-	t_rgb_int	temp;
+	char	*mtl_path;
+	int		fd;
 
-	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, KA_FORMAT, line, &mat->ka.r, &mat->ka.g, &mat->ka.b) == -1)
+	if (ft_scan(line_num, MTL_FORMAT, line, &mtl_path) == -1)
 		return (-1);
-	temp = rgb_ftoi(mat->ka);
-	mat->ambient_id = create_color_texture(&scene->texture, &temp);
-	if (mat->ambient_id == -1)
+	fd = open(mtl_path, O_RDONLY);
+	free(mtl_path);
+	if (fd == -1)
 		return (-1);
-	return (0);
+	return (parse_mtl_file(fd, scene));
 }

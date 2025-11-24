@@ -22,6 +22,8 @@ t_mat	*create_mat(t_vector *vec)
 	ft_bzero(&mat, sizeof(t_mat));
 	mat.ni = 2.3f;
 	mat.kd = vec3(1, 1, 1);
+	mat.opacity = 1;
+	mat.pr = 1;
 	if (vector_add(vec, &mat, 1) == -1)
 		return (NULL);
 	return (get_last_vector_value(vec));

@@ -84,12 +84,12 @@ typedef struct s_bvh_main
 
 typedef struct s_texture
 {
-	char		*pixels;
-	int			tex_bpp;
-	int			tex_size_line;
-	int			width;
-	int			height;
-	char		*name;
+	unsigned char	*pixels;
+	int				tex_bpp;
+	int				tex_size_line;
+	int				width;
+	int				height;
+	char			*name;
 }	t_texture;
 
 typedef enum e_mtl
@@ -106,7 +106,7 @@ typedef enum e_mtl
 	e_illum,
 	e_normal,
 	e_map_kd,
-	e_map_d
+	e_map_d // to fix
 }	t_mtl;
 
 typedef struct s_scene

@@ -18,12 +18,12 @@ int	parse_mtl_type(const char *line, t_scene *scene)
 {
 	t_mtl		type;
 	static int	(*f[])(const char *, t_scene *)
-		= {newmtl, ns, ka, kd, ks, map_kd, d, kr, ni};
+		= {newmtl, ns, ka, kd, ks, map_kd, map_bump, map_pr, map_ka, map_d, d, kr, ni, pr};
 
 	if (line[0] == '#' || (line[0] == '/' && line[1] == '/') || line[0] == '\n')
 		return (0);
 	type = get_mtl_type(line);
-	if (type == UNDEFINED)
+	if (type == no_mtl)
 		return (0);
 	return (f[type - 1](line, scene));
 }

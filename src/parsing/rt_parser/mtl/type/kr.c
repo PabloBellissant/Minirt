@@ -18,6 +18,7 @@ int	kr(const char *line, t_scene *scene)
 {
 	t_mat	*mat;
 
+	exit(1);
 	mat = get_last_vector_value(&scene->mat);
 	if (ft_scan(0, KR_FORMAT, line, &mat->kr) == -1)
 		return (-1);

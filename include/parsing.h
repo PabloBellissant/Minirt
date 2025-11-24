@@ -87,7 +87,7 @@ int				cylinder(const char *line, int line_num, t_scene *scene);
 int				obj(const char *line, int line_num, t_scene *scene);
 int				tex(const char *line, int line_num, t_scene *scene);
 int				sky(const char *line, int line_num, t_scene *scene);
-int				mat(const char *line, int line_num, t_scene *scene);
+int				mtl(const char *line, int line_num, t_scene *scene);
 
 int				parse_mtl_file(int fd, t_scene *scene);
 int				parse_mtl_type(const char *line, t_scene *scene);
@@ -97,9 +97,14 @@ int				ka(const char *line, t_scene *scene);
 int				kd(const char *line, t_scene *scene);
 int				ks(const char *line, t_scene *scene);
 int				map_kd(const char *line, t_scene *scene);
+int				map_bump(const char *line, t_scene *scene);
+int				map_pr(const char *line, t_scene *scene);
+int				map_ka(const char *line, t_scene *scene);
+int				map_d(const char *line, t_scene *scene);
 int				d(const char *line, t_scene *scene);
 int				kr(const char *line, t_scene *scene);
 int				ni(const char *line, t_scene *scene);
+int				pr(const char *line, t_scene *scene);
 
 
 #endif

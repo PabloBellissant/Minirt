@@ -24,7 +24,7 @@ int	kd(const char *line, t_scene *scene)
 		return (-1);
 	temp = rgb_ftoi(mat->kd);
 	mat->kd_id = create_color_texture(&scene->texture, &temp);
-	if (!mat->kd_id)
+	if (mat->kd_id == -1)
 		return (-1);
 	return (0);
 }
