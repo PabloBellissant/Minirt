@@ -1,6 +1,7 @@
 # Blender v3.0.1 OBJ File: ''
 # www.blender.org
-mtllib bunny_mid_poly.mtl
+mtllib asset/bunny/bunny_high_poly.mtl
+usemtl Default_OBJ
 o bunny
 v -0.627288 1.510735 -0.542893
 v -0.620478 1.505057 -0.542313
@@ -47206,7 +47207,6 @@ vn -0.0272 -0.7993 -0.6003
 vn -0.2748 -0.9531 -0.1268
 vn -0.0848 -0.9913 -0.1006
 vn 0.2951 -0.9431 -0.1532
-usemtl Default_OBJ
 s 1
 f 3/1/1 4/2/2 5/3/3
 f 5/3/3 4/2/2 6/4/4

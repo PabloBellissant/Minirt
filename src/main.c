@@ -131,7 +131,7 @@ int	main(int argc, char **argv)
 			}
 			else
 			{
-				data.params.bvh_depth = data.scene.bvh.aabb_bvh->depth;
+
 				loop_hook(&data);
 				free_data(&data);
 			}

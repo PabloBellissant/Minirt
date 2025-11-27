@@ -1,6 +1,6 @@
 # Blender v3.0.1 OBJ File: ''
 # www.blender.org
-mtllib bunny_high_poly.mtl
+mtllib asset/bunny/bunny_high_poly.mtl
 o bunny
 v -0.630100 1.499700 -0.541100
 v -0.620500 1.505400 -0.542300

@@ -27,6 +27,7 @@ MTL_TYPE_SRCS	= newmtl.c \
 			  d.c \
 			  kr.c \
 			  pr.c \
+			  ke.c \
 			  ni.c
 
 SRCS		+= $(addprefix $(MTL_TYPE_DIR)/, $(MTL_TYPE_SRCS))
