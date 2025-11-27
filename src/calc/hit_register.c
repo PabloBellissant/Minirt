@@ -51,15 +51,7 @@ float	sample_binary_texture(const t_texture *texture_list, int id, float u, floa
 	pixel = texture_list[id].pixels[offset];
 	return ((float)pixel / 255.0f);
 }
-t_vec3	vec3_negf(t_vec3 v)
-{
-	t_vec3	res;
 
-	res.x = -v.x;
-	res.y = -v.y;
-	res.z = -v.z;
-	return (res);
-}
 t_vec3	apply_normalmap(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent)
 {
     t_vec3	world_normal;
