@@ -45,7 +45,6 @@ typedef struct s_obj_vectors
 	t_vector	vertex;
 	t_vector	normal;
 	t_vector	uv;
-	t_vector	triangle;
 }	t_obj_vectors;
 
 typedef struct s_pos_attribute
@@ -105,6 +104,7 @@ int				d(const char *line, t_scene *scene);
 int				kr(const char *line, t_scene *scene);
 int				ni(const char *line, t_scene *scene);
 int				pr(const char *line, t_scene *scene);
+int				ke(const char *line, t_scene *scene);
 
 
 #endif

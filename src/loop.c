@@ -242,6 +242,16 @@ int	loop(t_data *data)
 {
 	static void (*render_func[])(t_data *)
 		= {wireframe_render, ray_tracing_render};
+	if (data->params.render_mode == 1)
+	{
+		if (!data->scene.bvh.bvh_pointer)
+		{
+			data->scene.bvh.bvh_mode = 1;
+			if (load_bvh(data->scene.bvh.bvh_mode, &data->scene) == -1)
+				return (-1);
+			data->params.bvh_depth = data->scene.bvh.aabb_bvh->depth;
+		}
+	}
 	update_fps(data);
 	handle_camera_move(data, &data->scene.camera, data->keys);
 	render_func[data->params.render_mode](data);

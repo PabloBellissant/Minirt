@@ -18,7 +18,7 @@ int	parse_mtl_type(const char *line, t_scene *scene)
 {
 	t_mtl		type;
 	static int	(*f[])(const char *, t_scene *)
-		= {newmtl, ns, ka, kd, ks, map_kd, map_bump, map_pr, map_ka, map_d, d, kr, ni, pr};
+		= {newmtl, ns, ka, kd, ks, map_kd, map_bump, map_pr, map_ka, map_d, d, kr, ni, pr, ke};
 
 	if (line[0] == '#' || (line[0] == '/' && line[1] == '/') || line[0] == '\n')
 		return (0);

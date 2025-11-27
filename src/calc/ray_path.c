@@ -70,7 +70,7 @@ t_vec3 get_reflect(t_vec3 ray_dir, t_vec3 normal, float roughness, t_vec3 F0)
 	cos_theta = fabsf(vec3_dot(ray_dir, normal));
 	fresnel = vec3_scale(vec3_sub(vec3(1, 1, 1), F0), powf(1.0f - cos_theta, 5.0f));
 	fresnel = vec3_add(F0, fresnel);
-	glossy_factor = 1.0f - 0.9f * roughness * roughness;
+	glossy_factor = 1.0f - (roughness * roughness);
 	specular = vec3_scale(fresnel, glossy_factor);
 	return (specular);
 }

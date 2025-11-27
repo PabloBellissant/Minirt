@@ -97,5 +97,5 @@ t_rgb	phong_path(t_data *data, t_ray *ray)
 		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));
 		m++;
 	}
-	return (vec3_add(i_p, ambient));
+	return (vec3_add(vec3_add(i_p, ambient), ray->hit_mat->ke));
 }

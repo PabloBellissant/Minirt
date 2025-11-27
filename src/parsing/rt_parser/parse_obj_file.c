@@ -25,7 +25,6 @@ int	parse_obj_file(int fd, t_scene *scene, t_pos_attribute *attr)
 	vector_init(&vec.vertex, sizeof(t_vertex));
 	vector_init(&vec.normal, sizeof(t_vec3));
 	vector_init(&vec.uv, sizeof(t_vec2));
-	vector_init(&vec.triangle, sizeof(t_triangle));
 	vec.tex = &scene->texture;
 	vec.mat = &scene->mat;
 	line = get_next_line(fd);
@@ -36,7 +35,6 @@ int	parse_obj_file(int fd, t_scene *scene, t_pos_attribute *attr)
 			free(vec.vertex.data);
 			free(vec.normal.data);
 			free(vec.uv.data);
-			free(vec.triangle.data);
 			return (-1);
 		}
 		free(line);

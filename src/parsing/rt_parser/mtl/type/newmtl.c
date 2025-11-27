@@ -102,5 +102,8 @@ int	base_mat(t_mat *mat, t_scene *scene)
 	mat->ambient_id = get_ambient(scene, "null");
 	if (mat->ambient_id == -1)
 		return (-1);
+	mat->opacity_id = get_ambient(scene, "null");
+	if (mat->opacity_id == -1)
+		return (-1);
 	return (0);
 }

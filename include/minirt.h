@@ -19,7 +19,7 @@
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
 
-# define SUB_PIXEL_QUANTITY 2
+# define SUB_PIXEL_QUANTITY 3
 # define TARGET_FPS 30
 # define MIN_QUALITY 25
 
