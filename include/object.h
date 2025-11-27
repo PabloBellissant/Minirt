@@ -88,6 +88,7 @@ typedef struct s_mat
 	t_vec3	ka;
 	t_vec3	kd;
 	t_vec3	ks;
+	t_vec3	ke;
 	float	opacity;
 	int		kd_id;
 	int		normal_id;
