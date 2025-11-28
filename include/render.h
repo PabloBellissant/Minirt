@@ -22,7 +22,13 @@ typedef struct s_ray
 	t_vec3	pos;
 	t_vec3	dir;
 	t_vec3	hit_normal;
+	t_vec3	hit_tangent;
+	t_vec3	hit_bitangent;
 	t_rgb	hit_rgb;
+	float	hit_roughness;
+	float	hit_ambient;
+	float	hit_opacity;
+	t_mat	*hit_mat;
 }			t_ray;
 
 typedef struct s_phong
@@ -73,19 +79,35 @@ typedef struct s_bvh_main
 		t_aabb_bvh		*aabb_bvh;
 		t_sphere_bvh	*sphere_bvh;
 	};
-	t_bound		bound;
 	int			bvh_mode;
 }	t_bvh_main;
 
 typedef struct s_texture
 {
-	char		*pixels;
-	int			tex_bpp;
-	int			tex_size_line;
-	int			width;
-	int			height;
-	char		*name;
+	unsigned char	*pixels;
+	int				tex_bpp;
+	int				tex_size_line;
+	int				width;
+	int				height;
+	char			*name;
 }	t_texture;
+
+typedef enum e_mtl
+{
+	no_mtl = 0,
+	e_newmtl,
+	e_Ns,
+	e_Ka,
+	e_Kd,
+	e_Ks,
+	e_Ke,
+	e_Ni,
+	e_d,
+	e_illum,
+	e_normal,
+	e_map_kd,
+	e_map_d // to fix
+}	t_mtl;
 
 typedef struct s_scene
 {
@@ -99,8 +121,9 @@ typedef struct s_scene
 	int			plane_count;
 	t_bvh_main	bvh;
 	t_vector	texture;
+	t_vector	mat;
 	t_mlx		*mlx;
-	t_texture	*skybox;
+	int			skybox_tex;
 }				t_scene;
 
 typedef struct s_3d_line
@@ -121,8 +144,6 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 	int color, t_camera *camera);
-void	draw_bound(t_bound *bound, t_img_data *img);
-void	draw_supersampling(t_bound *bound, t_vec2i force, t_img_data *img);
 
 void	rasterize_triangle_outline(t_img_data *img, t_triangle *triangle,
 	int color, t_camera *camera);

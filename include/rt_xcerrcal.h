@@ -31,8 +31,15 @@ typedef enum e_rt_err
 	RT_E_SPHERE,
 	RT_E_TEX,
 	RT_E_OBJ_FAIL,
+	RT_E_OBJ_NO_MAT,
 	RT_E_NO_TEX,
 	RT_E_NO_PARSER,
+	RT_E_UNKNOW_MAT,
+	RT_E_UNKNOW_TEX,
+	RT_E_UNKNOW_NMAP,
+	RT_E_UNKNOW_ROUGHNESS,
+	RT_E_UNKNOW_AMBIENT,
+	RT_E_UNKNOW_OPACITY,
 	RT_E_FB_DOUBLE,
 	RT_E_FB_NO,
 	RT_E_UNDEFINED_TYPE,
@@ -46,7 +53,7 @@ typedef enum e_rt_err
 
 #define RT_E_MSG_AMBIENT "Ambient syntax invalid, expecting format: \"A ratio[0:1] R,G,B[0:255]\""
 #define RT_E_MSG_CAMERA "Camera syntax invalid, expecting format: \"C posX,Y,Z rotX,Y,Z\""
-#define RT_E_MSG_CYLINDER "Cylinder syntax invalid, expecting format: \"cy posX,Y,Z rotX,Y,Z radius height\""
+#define RT_E_MSG_CYLINDER "Cylinder syntax invalid, expecting format: \"cy posX,Y,Z rotX,Y,Z radius height R,G,B[0:255]\""
 #define RT_E_MSG_LIGHT "Light syntax invalid, expecting format: \"L posX,Y,Z brightness[0:1] R,G,B[0:255]\""
 #define RT_E_MSG_OBJ "Object syntax invalid, expecting format: \"obj 'path.obj' posX,Y,Z\""
 #define RT_E_MSG_PLANE "Plane syntax invalid, expecting format: \"pl posX,Y,Z normX,Y,Z[-1:1] R,G,B[0:255]\""
@@ -54,8 +61,17 @@ typedef enum e_rt_err
 #define RT_E_MSG_SPHERE "Sphere syntax invalid, expecting format: \"sp posX,Y,Z diameter R,G,B[0:255]\""
 #define RT_E_MSG_TEX "Texture syntax invalid, expecting format: \"tex 'name' 'path'\""
 #define RT_E_MSG_OBJ_FAIL ".obj extraction failed on \"%s\" file"
+#define RT_E_MSG_OBJ_NO_MAT "No materials defined before face definition"
 #define RT_E_MSG_NO_TEX "Cannot parse \"%s\" texture"
 #define RT_E_MSG_NO_PARSER "Cannot parse this texture"
+
+#define RT_E_MSG_UNKNOW_MAT "Unknow material \"%s\""
+
+#define RT_E_MSG_UNKNOW_TEX "Unknow texture \"%s\""
+#define RT_E_MSG_UNKNOW_NMAP "Unknow normal map \"%s\""
+#define RT_E_MSG_UNKNOW_ROUGHNESS "Unknow roughness map \"%s\""
+#define RT_E_MSG_UNKNOW_AMBIENT "Unknow ambient map \"%s\""
+#define RT_E_MSG_UNKNOW_OPACITY "Unknow opacity map \"%s\""
 
 #define RT_E_MSG_FB_DOUBLE "Cannot instance type \"%s\" twice"
 #define RT_E_MSG_FB_NO "Cannot find needed type \"%s\""

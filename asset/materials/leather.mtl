@@ -1,0 +1,13 @@
+# MiniRT MTL File
+
+newmtl leather
+Ns 200.0
+Ka 0.8 0.8 0.8
+Kd 1.0 1.0 1.0
+Ks 0.05 0.05 0.05
+Ni 1.0
+d 1.0
+Pr 1
+map_Kd asset/texture/leather/texture.ppm
+map_bump asset/texture/leather/normal.ppm
+map_Pr asset/texture/leather/roughness.ppm

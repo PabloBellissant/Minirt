@@ -14,14 +14,19 @@
 # define MINIRT_H
 # include "mlx_wrapper.h"
 
-
-
-# define BOUNCE_MAX 10
+# define BOUNCE_MAX 2
+# define REFRACT_MAX 5
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "Mini rt by Pabellis and Jaubry--"
 
-# define EPSILON 1e-6f
-# define M_PIf 3.14159265358979323846f
+# define SUB_PIXEL_QUANTITY 1
+# define TARGET_FPS 30
+# define MIN_QUALITY 25
+
+_Static_assert(SUB_PIXEL_QUANTITY > 0, "SUB_PIXEL_QUANTITY");
+_Static_assert(TARGET_FPS > 0, "TARGET_FPS");
+_Static_assert(MIN_QUALITY > 0, "MIN_QUALITY");
+
 
 # include <stdint.h>
 # include "xcerrcal.h"
@@ -51,34 +56,17 @@ typedef struct s_mouse
 	float	current_pitch;
 }			t_mouse;
 
-typedef struct s_supersampling
-{
-	int	force;
-	int	half_up;
-	int	half_down;
-}	t_supersampling;
-
 typedef struct s_params
 {
 	int		render_mode;
 	int		bvh_depth;
 	int		bvh_color_offset;
 	bool	bvh_debug;
-	bool	bound_debug;
-	bool	supersampling_debug;
-	int		supersampling_x;
-	int		supersampling_y;
+	bool	normal_debug;
+	bool	smooth_shading;
+	bool	quality_render;
+	bool	exporting;
 }			t_params;
-
-typedef struct	s_too_task
-{
-	t_data		*data;
-	t_ray		ray;
-	t_camera	cam;
-	int			y;
-}	t_to_task;
-
-#include "threading.h"
 
 typedef struct s_data
 {
@@ -90,11 +78,19 @@ typedef struct s_data
 	t_vec2i		screen;
 	t_scene		scene;
 	t_rast_env	*font_env;
-	t_queue		*queue;
-	t_to_task	to_task[HEIGHT];
-	t_task		task[HEIGHT];
+	int			export_fd;
 }				t_data;
 
+typedef enum e_obj
+{
+	null = 0,
+	mtllib,
+	usemtl,
+	vn,
+	vt,
+	v,
+	f
+}	t_obj;
 
 int		init_graphics(t_data *data);
 void	clear_scene(t_scene *scene);

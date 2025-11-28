@@ -1,0 +1,14 @@
+# MiniRT MTL File
+
+newmtl fence
+Ns 800.0
+Ka 0.1 0.1 0.1
+Kd 1.0 1.0 1.0
+Ks 0.4 0.4 0.4
+Ni 1.0
+d 1.0
+Pr 1
+map_Kd asset/texture/fence/texture.ppm
+map_bump asset/texture/fence/normal.ppm
+map_Pr asset/texture/fence/roughness.ppm
+map_d asset/texture/fence/opacity.ppm

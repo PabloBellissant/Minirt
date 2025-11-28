@@ -24,6 +24,12 @@ void	quick_sort(void *array, size_t elem_count, size_t elem_size,
 		compare_function);
 }
 
+void	semi_sort(void *array, size_t elem_count, size_t elem_size,
+	int (*compare_function)(const void *, const void *))
+{
+	partition(array, elem_count, elem_size, compare_function);
+}
+
 void	quick_sort_recur(void *array, ssize_t high, ssize_t elem_size,
 	int (*compare_function)(const void *, const void *))
 {

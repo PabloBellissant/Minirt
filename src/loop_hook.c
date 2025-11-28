@@ -69,9 +69,24 @@ static inline bool	is_c_key(int keycode)
 	return (keycode == XK_c);
 }
 
-static inline bool	is_b_key(int keycode)
+static inline bool	is_n_key(int keycode)
 {
-	return (keycode == XK_b);
+	return (keycode == XK_n);
+}
+
+static inline bool	is_f12_key(int keycode)
+{
+	return (keycode == XK_F12);
+}
+
+static inline bool	is_i_key(int keycode)
+{
+	return (keycode == XK_i);
+}
+
+static inline bool	is_return_key(int keycode)
+{
+	return (keycode == XK_Return);
 }
 
 static inline bool	is_render_mode_key(int keycode)
@@ -165,8 +180,12 @@ void	setup_key_param_events(t_data *data)
 {
 	add_func_key_hook(data->mlx, is_k_key, toggle_mouse_focus, NULL);
 	add_status_key_hook(data->mlx, is_v_key, true, &(data->params.bvh_debug));
-	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.bound_debug));
-	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.supersampling_debug));
+	add_status_key_hook(data->mlx, is_n_key, true, &(data->params.normal_debug));
+	add_status_key_hook(data->mlx, is_i_key, true, &(data->params.smooth_shading));
+	add_status_key_hook(data->mlx, is_return_key, true, &(data->params.quality_render));
+	add_status_key_hook(data->mlx, is_f12_key, true, &(data->params.exporting));
+	add_func_key_hook(data->mlx, is_return_key, toggle_mouse_focus, NULL);
+	add_func_key_hook(data->mlx, is_f12_key, toggle_mouse_focus, NULL);
 	add_func_key_hook(data->mlx, is_up_arrow, (void (*)(void *, t_mlx *))bvh_depth_increase, data);
 	add_func_key_hook(data->mlx, is_down_arrow, (void (*)(void *, t_mlx *))bvh_depth_decrease, data);
 	add_func_key_hook(data->mlx, is_right_arrow, (void (*)(void *, t_mlx *))bvh_next_mode, data);

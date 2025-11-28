@@ -46,6 +46,9 @@ t_object	*get_object(t_vector *obj_vec)
 	return (NULL);
 }
 
+void	semi_sort(void *array, size_t elem_count, size_t elem_size,
+	int (*compare_function)(const void *, const void *));
+
 int	subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *obj_vec)
 {
 	t_aabb_bvh	temp;
@@ -57,7 +60,7 @@ int	subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *obj_vec)
 	if (obj_vec->num_elements > 1)
 	{
 		axis = get_cut_axis(bvh);
-		quick_sort(obj_vec->data, obj_vec->num_elements - 1,
+		semi_sort(obj_vec->data, obj_vec->num_elements - 1,
 			sizeof(t_object *), get_axis_function(axis));
 		vector_add(bvh_vec, &temp, 1);
 		bvh->next_a = get_last_vector_value(bvh_vec);
@@ -68,6 +71,7 @@ int	subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *obj_vec)
 		divide_half_right(&new_object_ptr, obj_vec);
 		temp_depth = subdivide(bvh->next_b, bvh_vec, &new_object_ptr);
 		bvh->depth = imax(temp_depth, bvh->depth) + 1;
+		free_vector(&new_object_ptr);
 		return (bvh->depth);
 	}
 	bvh->depth = 0;

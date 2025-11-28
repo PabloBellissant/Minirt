@@ -19,8 +19,8 @@ RT_PARSER_SRCS	= check_double.c \
 				  get_type.c \
 				  parse_line.c \
 				  rt_parser.c \
-				  parse_obj_file.c \
-				  get_texture.c
+				  get_texture.c \
+				  parse_obj_file.c
 RT_TYPE_SRCS	= ambient.c \
 				  camera.c \
 				  cylinder.c \
@@ -29,11 +29,17 @@ RT_TYPE_SRCS	= ambient.c \
 				  sphere.c \
 				  obj.c \
 				  tex.c \
+				  mtl.c \
 				  sky.c \
 				  create_object.c \
 				  create_texture.c
+
 SRCS			+= $(addprefix $(RT_PARSER_DIR)/, $(RT_PARSER_SRCS)) \
 				   $(addprefix $(RT_TYPE_DIR)/, $(RT_TYPE_SRCS))
+
+RT_PARSER_MKS		= mtl/mtl.mk \
+					  obj/obj.mk
+include $(addprefix $(RT_PARSER_DIR)/, $(RT_PARSER_MKS))
 
 # VPATH
 vpath %.c $(RT_PARSER_DIR) $(RT_TYPE_DIR)

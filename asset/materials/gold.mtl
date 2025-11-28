@@ -1,0 +1,15 @@
+# MiniRT MTL File
+
+newmtl gold
+Ns 800.0
+Ka 0.4 0.4 0.4
+Kd 1.0 1.0 1.0
+Ks 1.0 0.766 0.336
+Ni 1.0
+d 1.0
+Pr 0.5
+map_Kd asset/texture/gold/texture.ppm
+map_bump asset/texture/gold/normal.ppm
+map_Pr asset/texture/gold/roughness.ppm
+
+

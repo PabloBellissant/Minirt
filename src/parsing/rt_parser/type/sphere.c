@@ -20,29 +20,27 @@
 
 int	sphere(const char *line, int line_num, t_scene *scene)
 {
-	t_sphere	*sp;
 	t_vec3		*pos;
 	t_rgb_int	color;
 	t_object	*object;
-	char		*texture_name;
+	char		*mat_name;
 
 	object = create_object(scene, SPHERE);
-	sp = &object->sphere;
-	pos = &sp->pos;
+	pos = &object->sphere.pos;
+	mat_name = NULL;
 	if (ft_scan(line_num, SPHERE_FORMAT, line, &pos->x, &pos->y, &pos->z,
-			&sp->diameter, &color.r, &color.g, &color.b, &texture_name))
-		return (error(pack_err(RT_ID, RT_E_SPHERE), FL, LN, FC));
-	if (*texture_name != 0)
+			&object->sphere.diameter, &color.r, &color.g, &color.b,
+			&mat_name))
 	{
-		object->texture = get_texture(scene, texture_name);
-		if (!object->texture)
-		{
-			register_complex_err_msg(RT_E_MSG_NO_TEX, texture_name);
-			return (error(pack_err(RT_ID, RT_E_NO_TEX), FL, LN, FC));
-		}
+		free(mat_name);
+		return (error(pack_err(RT_ID, RT_E_SPHERE), FL, LN, FC));
 	}
-	sp->radius_squared = (sp->diameter / 2.f) * (sp->diameter / 2.f);
+	object->sphere.radius_squared = (object->sphere.diameter / 2.f)
+		* (object->sphere.diameter / 2.f);
+	object->mat_id = get_mat(mat_name, scene, &color);
+	free(mat_name);
+	if (object->mat_id == -1)
+		return (-1);
 	object->f = hit_sphere;
-	sp->rgb = rgb_itof(color);
 	return (0);
 }

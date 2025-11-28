@@ -37,7 +37,9 @@ int	create_aabb_bvh(t_scene *scene)
 	}
 	create_root_bvh(&bvh_vec, &objects_pointer);
 	subdivide(get_last_vector_value(&bvh_vec), &bvh_vec, &objects_pointer);
+	free_vector(&objects_pointer);
 	scene->bvh.aabb_bvh = bvh_vec.data;
+	scene->bvh.bvh_pointer = bvh_vec.data;
 	cut_bvh_leaf(scene->bvh.aabb_bvh);
 	return (0);
 }

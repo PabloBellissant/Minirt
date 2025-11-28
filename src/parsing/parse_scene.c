@@ -36,9 +36,6 @@ int	parse_scene(char *file_name, t_scene *scene)
 		return (-1);
 	}
 	close(fd);
-	scene->bvh.bvh_mode = 1;
-	if (load_bvh(scene->bvh.bvh_mode, scene) == -1)
-		return (-1);
 	if (fill_by_type(scene) == -1)
 		return (-1); //free
 	return (0);

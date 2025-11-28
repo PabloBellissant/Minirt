@@ -42,6 +42,8 @@ typedef struct s_plane
 	t_rgb	rgb;
 	t_vec3	pos;
 	t_vec3	normal;
+	t_vec3	tangent;
+	t_vec3	bitangent;
 }			t_plane;
 
 typedef struct s_cylinder
@@ -79,12 +81,31 @@ typedef struct s_triangle
 	t_rgb		rgb;
 }	t_triangle;
 
+typedef struct s_mat
+{
+	char	*name;
+	float	ns;
+	t_vec3	ka;
+	t_vec3	kd;
+	t_vec3	ks;
+	t_vec3	ke;
+	float	opacity;
+	int		kd_id;
+	int		normal_id;
+	int		roughness_id;
+	int		ambient_id;
+	int		opacity_id;
+	float	kr;
+	float	ni;
+	float	pr;
+}	t_mat;
+
 typedef struct s_ray	t_ray;
 
 typedef struct s_object
 {
 	char			*name;
-	t_texture		*texture;
+	int				mat_id;
 	t_object_type	type;
 	int				(*f)(t_ray *, t_object *, float *);
 	float			t;
