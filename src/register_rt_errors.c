@@ -32,7 +32,6 @@ void	register_rt_errors(void)
 		RT_E_MSG_SKY,
 		RT_E_MSG_SPHERE,
 		RT_E_MSG_TEX,
-		RT_E_MSG_MAT,
 		RT_E_MSG_OBJ_FAIL,
 		RT_E_MSG_OBJ_NO_MAT,
 		RT_E_MSG_NO_TEX,

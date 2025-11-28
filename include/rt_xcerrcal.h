@@ -30,7 +30,6 @@ typedef enum e_rt_err
 	RT_E_SKY,
 	RT_E_SPHERE,
 	RT_E_TEX,
-	RT_E_MAT,
 	RT_E_OBJ_FAIL,
 	RT_E_OBJ_NO_MAT,
 	RT_E_NO_TEX,
@@ -54,14 +53,13 @@ typedef enum e_rt_err
 
 #define RT_E_MSG_AMBIENT "Ambient syntax invalid, expecting format: \"A ratio[0:1] R,G,B[0:255]\""
 #define RT_E_MSG_CAMERA "Camera syntax invalid, expecting format: \"C posX,Y,Z rotX,Y,Z\""
-#define RT_E_MSG_CYLINDER "Cylinder syntax invalid, expecting format: \"cy posX,Y,Z rotX,Y,Z radius height\""
+#define RT_E_MSG_CYLINDER "Cylinder syntax invalid, expecting format: \"cy posX,Y,Z rotX,Y,Z radius height R,G,B[0:255]\""
 #define RT_E_MSG_LIGHT "Light syntax invalid, expecting format: \"L posX,Y,Z brightness[0:1] R,G,B[0:255]\""
 #define RT_E_MSG_OBJ "Object syntax invalid, expecting format: \"obj 'path.obj' posX,Y,Z\""
 #define RT_E_MSG_PLANE "Plane syntax invalid, expecting format: \"pl posX,Y,Z normX,Y,Z[-1:1] R,G,B[0:255]\""
 #define RT_E_MSG_SKY "Skybox syntax invalid, expecting format: \"sky [path.ppm]\""
 #define RT_E_MSG_SPHERE "Sphere syntax invalid, expecting format: \"sp posX,Y,Z diameter R,G,B[0:255]\""
 #define RT_E_MSG_TEX "Texture syntax invalid, expecting format: \"tex 'name' 'path'\""
-#define RT_E_MSG_MAT "Material syntax invalid, expecting format: \"mat 'name' data\""
 #define RT_E_MSG_OBJ_FAIL ".obj extraction failed on \"%s\" file"
 #define RT_E_MSG_OBJ_NO_MAT "No materials defined before face definition"
 #define RT_E_MSG_NO_TEX "Cannot parse \"%s\" texture"

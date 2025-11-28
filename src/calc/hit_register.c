@@ -100,8 +100,6 @@ void	sample_mat(t_ray *ray, t_vec2 uv, t_data *data, int mat_id)
 void	apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_data *data)
 {
 	t_vec3	hit_point;
-	// t_vec3	axis;
-	// t_vec3	to_hit;
 	t_vec2	uv;
 
 	hit_point = vec3_scale(ray->dir, o->t);
@@ -170,15 +168,17 @@ void	apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_da
 	}
 	else if (o->type == CYLINDER)
 	{
-		// axis = o->cylinder.rot;
-		// to_hit = vec3_sub(hit_point, o->cylinder.pos);
-		// axis = vec3_scale(axis, vec3_dot(to_hit, axis));
-		// axis = vec3_add(o->cylinder.pos, axis);
-		// ray->hit_normal = vec3_sub(hit_point, axis);
-		// ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
-		// ray->hit_rgb = o->cylinder.rgb;
-		// ray->hit_tangent = get_tangent(ray->hit_normal);
-		// ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
+		t_vec3	axis;
+		t_vec3	to_hit;
+		axis = o->cylinder.rot;
+		to_hit = vec3_sub(hit_point, o->cylinder.pos);
+		axis = vec3_scale(axis, vec3_dot(to_hit, axis));
+		axis = vec3_add(o->cylinder.pos, axis);
+		ray->hit_normal = vec3_sub(hit_point, axis);
+		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
+		ray->hit_rgb = o->cylinder.rgb;
+		ray->hit_tangent = get_tangent(ray->hit_normal);
+		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
 	}
 	ray->pos = hit_point;
 }
