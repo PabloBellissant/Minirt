@@ -16,26 +16,29 @@
 #include "rt_xcerrcal.h"
 
 #define CYLINDER_FORMAT " *cy  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *, *\
-%f[-1,1]  *%f  *%f  *%8[255] *, *%8[255] *, *%8[255] *\n"
+%f[-1,1]  *%f  *%f  *%8[255] *, *%8[255] *, *%8[255](  *%s) *\n\n"
 
 int	cylinder(const char *line, int line_num, t_scene *scene)
 {
 	t_cylinder	*cylinder;
-	t_vec3		*pos;
-	t_vec3		*rot;
 	t_rgb_int	color;
 	t_object	*object;
+	char		*mat_name;
 
 	object = create_object(scene, CYLINDER);
 	cylinder = &object->cylinder;
-	pos = &cylinder->pos;
-	rot = &cylinder->rot;
-	if (ft_scan(line_num, CYLINDER_FORMAT, line, &pos->x, &pos->y, &pos->z,
-			&rot->x, &rot->y, &rot->z, &cylinder->radius, &cylinder->height,
-			&color.r, &color.g, &color.b))
+	if (ft_scan(line_num, CYLINDER_FORMAT, line,
+			&cylinder->pos.x, &cylinder->pos.y, &cylinder->pos.z,
+			&cylinder->rot.x, &cylinder->rot.y, &cylinder->rot.z,
+			&cylinder->radius, &cylinder->height,
+			&color.r, &color.g, &color.b, &mat_name))
 	{
 		return (error(pack_err(RT_ID, RT_E_CYLINDER), FL, LN, FC));
 	}
+	object->mat_id = get_mat(mat_name, scene, &color);
+	free(mat_name);
+	if (object->mat_id == -1)
+		return (-1);
 	cylinder->radius /= 2;
 	cylinder->rot = vec3_normalize(cylinder->rot);
 	cylinder->rgb = rgb_itof(color);
