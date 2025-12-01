@@ -16,21 +16,21 @@
 
 void	free_ttf(t_ttf_font *font);
 
-void	free_rast_env(t_rast_env *env)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < env->text_num)
-	{
-		free_ttf(env->texts[i]->font);
-		free(env->texts[i]);
-		i++;
-	}
-	free_ttf(env->fps->font);
-	free(env->fps);
-	free(env);
-}
+// void	free_rast_env(t_rast_env *env)
+// {
+// 	size_t	i;
+//
+// 	i = 0;
+// 	while (i < env->text_num)
+// 	{
+// 		free_ttf(env->texts[i]->font);
+// 		free(env->texts[i]);
+// 		i++;
+// 	}
+// 	free_ttf(env->fps->font);
+// 	free(env->fps);
+// 	free(env);
+// }
 
 void	free_phong(t_phong phong)
 {
@@ -83,7 +83,7 @@ void	free_scene(t_scene *scene)
 
 void	free_data(t_data *data)
 {
-	free_rast_env(data->font_env);
+	//free_rast_env(data->font_env);
 	free_scene(&data->scene);
 	if (data->export_fd != -1)
 		close(data->export_fd);

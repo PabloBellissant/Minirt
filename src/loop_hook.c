@@ -214,9 +214,9 @@ static inline void	cam_move(t_data *data, t_mlx *mlx_data)
 
 void	setup_mouse_move_events(t_data *data)
 {
-	t_mouse_event	move_event;
+	t_move_event	move_event;
 
-	move_event = (t_mouse_event){.action = (void (*)(void *, t_mlx *))cam_move,
+	move_event = (t_move_event){.action = (void (*)(void *, t_mlx *))cam_move,
 		.arg = data};
 	vector_add(data->mlx->mouse_input.move_events, &move_event, 1);
 }

@@ -60,7 +60,7 @@ int	get_subsampling(t_vec2 pixel, t_camera *cam, int ray_count, t_data *data)
 	return ((int)rgb_ftoi(color).rgb);
 }
 
-void	draw_zone(t_img_data *img, t_vec2i pos, int color, int size)
+void	draw_zone(t_img_data *img, t_vec2i pos, t_rgb_int color, int size)
 {
 	t_vec2i	pixel;
 
@@ -95,7 +95,7 @@ void	draw(t_img_data *img, t_camera *cam, t_data *data, int pixel_size)
 			recalc_camera_y(cam);
 			ray.pos = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
-			draw_zone(img, pixel, (int)rgb_ftoi(ray_path(&ray, data, &obj)).rgb, pixel_size);
+			draw_zone(img, pixel, rgb_ftoi(ray_path(&ray, data, &obj)), pixel_size);
 			pixel.y += pixel_size;
 		}
 		pixel.x += pixel_size;
@@ -104,7 +104,7 @@ void	draw(t_img_data *img, t_camera *cam, t_data *data, int pixel_size)
 
 void	draw_individual(t_img_data *img, t_camera *cam, t_data *data, int pixel_size, int actual_pixel)
 {
-	int			color;
+	t_rgb_int	color;
 	t_vec2i		pixel;
 
 	pixel.x = actual_pixel % pixel_size;
@@ -117,7 +117,7 @@ void	draw_individual(t_img_data *img, t_camera *cam, t_data *data, int pixel_siz
 		{
 			cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)pixel.y);
 			recalc_camera_y(cam);
-			color = get_subsampling(vec2((float)pixel.x, (float)pixel.y), cam, SUB_PIXEL_QUANTITY, data);
+			color.rgb = get_subsampling(vec2((float)pixel.x, (float)pixel.y), cam, SUB_PIXEL_QUANTITY, data);
 			ft_mlx_pixel_put(img, pixel, color);
 			pixel.y += pixel_size;
 		}
@@ -233,8 +233,6 @@ void	ray_tracing_render(t_data *data)
 		rasterize_bvh(data->scene.bvh.bvh, &data->params, data->scene.bvh.sphere_bvh->depth, data);
 }
 
-void	update_fps(t_data *data);
-
 int	loop(t_data *data)
 {
 	static void (*render_func[])(t_data *)
@@ -249,11 +247,8 @@ int	loop(t_data *data)
 			data->params.bvh_depth = data->scene.bvh.aabb_bvh->depth;
 		}
 	}
-	update_fps(data);
 	handle_camera_move(data, &data->scene.camera, data->keys);
 	render_func[data->params.render_mode](data);
-	if (data->params.render_mode == 0 || !data->params.quality_render)
-		draw_text(data->font_env->fps);
 	mlx_put_image_to_window(data->mlx->mlx, data->mlx->win,
 		data->mlx->img.img, 0, 0);
 	return (0);

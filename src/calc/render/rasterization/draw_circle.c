@@ -12,9 +12,10 @@
 
 #include "minirt.h"
 
-static void	plot_circle(t_img_data *img, t_vec2i pos, t_vec2i plot, int color);
+static void	plot_circle(t_img_data *img, t_vec2i pos,
+				t_vec2i plot, t_rgb_int color);
 
-void	draw_circle(t_img_data *img, t_vec2i pos, int radius, int color)
+void	draw_circle(t_img_data *img, t_vec2i pos, int radius, t_rgb_int color)
 {
 	int	x;
 	int	y;
@@ -37,7 +38,8 @@ void	draw_circle(t_img_data *img, t_vec2i pos, int radius, int color)
 	}
 }
 
-static void	plot_circle(t_img_data *img, t_vec2i pos, t_vec2i plot, int color)
+static void	plot_circle(t_img_data *img, t_vec2i pos,
+	t_vec2i plot, t_rgb_int color)
 {
 	ft_mlx_safe_pixel_put(img, vec2i(pos.x + plot.x, pos.y + plot.y), color);
 	ft_mlx_safe_pixel_put(img, vec2i(pos.x - plot.x, pos.y + plot.y), color);

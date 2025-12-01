@@ -53,7 +53,7 @@ static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 				* sinf(i * 2.0f * M_PIf / V_COUNT);
 			if (val != 0.0f)
 				rasterize_3d_line(img, &(t_3d_line){point, prev_point},
-					(int)color.rgb, camera);
+					color, camera);
 			prev_point = point;
 			val += STEP;
 		}
@@ -82,7 +82,7 @@ static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 					/ H_COUNT) * sinf(val);
 			if (val != 0.0f)
 				rasterize_3d_line(img, &(t_3d_line){point, prev_point},
-					(int)color.rgb, camera);
+					color, camera);
 			prev_point = point;
 			val += STEP;
 		}

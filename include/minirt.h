@@ -77,7 +77,7 @@ typedef struct s_data
 	t_mlx		*mlx;
 	t_vec2i		screen;
 	t_scene		scene;
-	t_rast_env	*font_env;
+	//t_rast_env	*font_env;
 	int			export_fd;
 }				t_data;
 

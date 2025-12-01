@@ -16,7 +16,7 @@
 #include "mlx_wrapper.h"
 
 static void	draw_vertices(t_img_data *img, t_vec3 vertices[8],
-				int color, t_camera *cam);
+				t_rgb_int color, t_camera *cam);
 
 int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_camera *camera, t_rgb_int color)
@@ -24,12 +24,12 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 	t_vec3	vertices[8];
 
 	get_cuboid_vertice(vertices, cuboid);
-	draw_vertices(img, vertices, (int)color.rgb, camera);
+	draw_vertices(img, vertices, color, camera);
 	return (0);
 }
 
 static void	draw_vertices(t_img_data *img, t_vec3 vertices[8],
-	int color, t_camera *cam)
+	t_rgb_int color, t_camera *cam)
 {
 	rasterize_3d_line(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
 	rasterize_3d_line(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);

@@ -142,22 +142,20 @@ int		rasterize_sphere_outline(t_sphere *s, t_img_data *img,
 void	rasterize_bvh(void *bvh, t_params *p, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
-void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
-	int color, t_camera *camera);
 
 void	rasterize_triangle_outline(t_img_data *img, t_triangle *triangle,
-	int color, t_camera *camera);
+	t_rgb_int color, t_camera *camera);
 void	rasterize_outline_object(t_img_data *img, t_object *object,
 	t_camera *camera, t_rgb_int color);
-void	draw_circle(t_img_data *img, t_vec2i pos, int radius, int color);
+void	draw_circle(t_img_data *img, t_vec2i pos, int radius, t_rgb_int color);
 void	rasterize_light_outline(t_img_data *img, t_light *light,
 	t_camera *camera);
 void	rasterize_plane_outline(t_img_data *img, t_plane *plane,
-	int color, t_camera *camera);
+	t_rgb_int color, t_camera *camera);
 void	rasterize_cylinder_outline(t_img_data *img, t_cylinder *cylinder,
-	int color, t_camera *camera);
+		t_rgb_int color, t_camera *camera);
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
-	int color, t_camera *camera);
+	t_rgb_int color, t_camera *camera);
 
 void	wireframe_render(t_data *data);
 void	ray_tracing_render(t_data *data);

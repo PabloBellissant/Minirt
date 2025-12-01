@@ -18,12 +18,12 @@
 #define RESOLUTION 42
 
 static void	rasterize_caps(t_img_data *img, t_cylinder *cylinder,
-				int color, t_camera *camera);
+				t_rgb_int color, t_camera *camera);
 static void	rasterize_faces(t_img_data *img, t_cylinder *cylinder,
-				int color, t_camera *camera);
+				t_rgb_int color, t_camera *camera);
 
 void	rasterize_cylinder_outline(t_img_data *img, t_cylinder *cylinder,
-		int color, t_camera *camera)
+		t_rgb_int color, t_camera *camera)
 {
 	rasterize_faces(img, cylinder, color, camera);
 	rasterize_caps(img, cylinder, color, camera);
@@ -56,7 +56,7 @@ t_vec3	rotate_point(t_vec3 pos, t_vec3 rot)
 }
 
 static void	rasterize_faces(t_img_data *img, t_cylinder *cylinder,
-	int color, t_camera *camera)
+	t_rgb_int color, t_camera *camera)
 {
 	t_3d_line	line;
 	int			i;
@@ -79,7 +79,7 @@ static void	rasterize_faces(t_img_data *img, t_cylinder *cylinder,
 }
 
 static void	rasterize_caps(t_img_data *img, t_cylinder *cylinder,
-	int color, t_camera *camera)
+	t_rgb_int color, t_camera *camera)
 {
 	t_3d_line	line;
 	t_3d_line	rotated_line;

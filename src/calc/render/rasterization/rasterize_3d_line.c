@@ -17,7 +17,7 @@
 bool	is_out_screen(t_img_data *img, t_vec2i *a, t_vec2i *b);
 
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
-	int color, t_camera *camera)
+	t_rgb_int color, t_camera *camera)
 {
 	t_vec2i	proj1;
 	t_vec2i	proj2;
