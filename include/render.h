@@ -160,4 +160,6 @@ void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 void	wireframe_render(t_data *data);
 void	ray_tracing_render(t_data *data);
 
+int		export_to_ppm(t_data *data, t_mlx *mlx);
+
 #endif

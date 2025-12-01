@@ -126,6 +126,8 @@ int	write_binary(int fd, t_data *data, int actual_line)
 	return (0);
 }
 
+void	toggle_mouse_focus(void *v, t_mlx *mlx_data);
+
 int	export_to_ppm(t_data *data, t_mlx *mlx)
 {
 	static int	actual_line;
@@ -138,6 +140,7 @@ int	export_to_ppm(t_data *data, t_mlx *mlx)
 	}
 	if (actual_line == 0)
 	{
+		toggle_mouse_focus(data, mlx);
 		if (data->export_fd != -1)
 			close(data->export_fd);
 		data->export_fd = open("Minirt_render.ppm", O_CREAT | O_WRONLY | O_TRUNC, 0777);

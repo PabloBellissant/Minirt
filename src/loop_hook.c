@@ -184,8 +184,6 @@ void	setup_key_param_events(t_data *data)
 	add_status_key_hook(data->mlx, is_i_key, true, &(data->params.smooth_shading));
 	add_status_key_hook(data->mlx, is_return_key, true, &(data->params.quality_render));
 	add_status_key_hook(data->mlx, is_f12_key, true, &(data->params.exporting));
-	add_func_key_hook(data->mlx, is_return_key, toggle_mouse_focus, NULL);
-	add_func_key_hook(data->mlx, is_f12_key, toggle_mouse_focus, NULL);
 	add_func_key_hook(data->mlx, is_up_arrow, (void (*)(void *, t_mlx *))bvh_depth_increase, data);
 	add_func_key_hook(data->mlx, is_down_arrow, (void (*)(void *, t_mlx *))bvh_depth_decrease, data);
 	add_func_key_hook(data->mlx, is_right_arrow, (void (*)(void *, t_mlx *))bvh_next_mode, data);

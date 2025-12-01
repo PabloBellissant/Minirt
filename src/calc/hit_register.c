@@ -65,22 +65,6 @@ t_vec3	apply_normalmap(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitang
     return (vec3_normalize(world_normal));
 }
 
-static t_vec3	get_tangent(t_vec3 n)
-{
-	t_vec3	up;
-
-	if (fabsf(n.y) > 0.999f)
-		up = vec3(1, 0, 0);
-	else
-		up = vec3(0, 1, 0);
-	return (vec3_normalize(vec3_cross(up, n)));
-}
-
-static t_vec3 get_bitangent(t_vec3 n, t_vec3 tangent)
-{
-	return (vec3_cross(n, tangent));
-}
-
 void	sample_mat(t_ray *ray, t_vec2 uv, t_data *data, int mat_id)
 {
 	t_rgb			nmap;
@@ -175,7 +159,7 @@ void	apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_da
 		axis = vec3_scale(axis, vec3_dot(to_hit, axis));
 		axis = vec3_add(o->cylinder.pos, axis);
 		ray->hit_normal = vec3_sub(hit_point, axis);
-		ray->hit_normal = unsafe_vec3_normalize(ray->hit_normal);
+		ray->hit_normal = vec3_normalize(ray->hit_normal);
 		ray->hit_rgb = o->cylinder.rgb;
 		ray->hit_tangent = get_tangent(ray->hit_normal);
 		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);

@@ -202,7 +202,7 @@ bool	cam_has_moved(t_camera *camera)
 	}
 	return (false);
 }
-int	export_to_ppm(t_data *data, t_mlx *mlx);
+
 void	ray_tracing_render(t_data *data)
 {
 	t_camera	*cam;
