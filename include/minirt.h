@@ -17,7 +17,7 @@
 # define BOUNCE_MAX 2
 # define REFRACT_MAX 5
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
-# define TITLE "Mini rt by Pabellis and Jaubry--"
+# define TITLE "MiniRT Pabellis Jaubry--"
 
 # define SUB_PIXEL_QUANTITY 1
 # define TARGET_FPS 30
@@ -68,9 +68,19 @@ typedef struct s_params
 	bool	exporting;
 }			t_params;
 
+typedef struct s_buffers
+{
+	t_ray			*rays;
+	t_hit			*hits;
+	t_shadow_ray	*shadows;
+	t_shadow_result	*shadows_result;
+	int				hits_count;
+	int				*addr;
+}			t_buffers;
+
 typedef struct s_data
 {
-	int			*addr;
+	t_buffers	buffers;
 	t_params	params;
 	t_keys		keys;
 	t_mouse		mouse;

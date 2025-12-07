@@ -49,7 +49,7 @@ int	get_subsampling(t_vec2 pixel, t_camera *cam, int ray_count, t_data *data)
 		{
 			cam->y_offset =	vec3_scale(cam->pixel_delta_v, pixel.y + sub_pixel.y);
 			recalc_camera_y(cam);
-			ray.pos = cam->pos;
+			ray.origin = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 			color = rgb_add(color, ray_path(&ray, data, &obj));
 			sub_pixel.y += 1.0f / (float)ray_count;
@@ -93,7 +93,7 @@ void	draw(t_img_data *img, t_camera *cam, t_data *data, int pixel_size)
 		{
 			cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)pixel.y + pixel_size / 2);
 			recalc_camera_y(cam);
-			ray.pos = cam->pos;
+			ray.origin = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 			draw_zone(img, pixel, rgb_ftoi(ray_path(&ray, data, &obj)), pixel_size);
 			pixel.y += pixel_size;
@@ -155,7 +155,7 @@ ssize_t	simulate_low_quality(t_camera *cam, t_data *data)
 		{
 			cam->y_offset =	vec3_scale(cam->pixel_delta_v, (float)pixel.y);
 			recalc_camera_y(cam);
-			ray.pos = cam->pos;
+			ray.origin = cam->pos;
 			ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 			(void) ray_path(&ray, data, &obj);
 			pixel.y += LOW_QUALITY_SIMULATION;
@@ -203,6 +203,138 @@ bool	cam_has_moved(t_camera *camera)
 	return (false);
 }
 
+void	cast_rays(t_camera *cam, t_ray *buffer, int pixel);
+void	cast_ray_loop(t_camera *cam, t_ray *buffer)
+{
+	int		i;
+
+	i = 0;
+	while (i < WIDTH * HEIGHT * SUB_PIXEL_QUANTITY)
+	{
+		cast_rays(cam, buffer, i);
+		++i;
+	}
+}
+
+void	intersect_scene(t_ray *rays, t_hit *hits, t_scene *scene, int pixel);
+void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene)
+{
+	int	i;
+
+	i = 0;
+	while (i < WIDTH * HEIGHT * SUB_PIXEL_QUANTITY)
+	{
+		intersect_scene(rays, hits, scene, i);
+		++i;
+	}
+}
+
+void	draw_skybox(int pixel, t_buffers bu, int texture_id, t_texture *texture);
+void	draw_skybox_loop(t_buffers bu, int texture_id, t_texture *texture, int size)
+{
+	int	i;
+
+	i = size;
+	while (i < (WIDTH * HEIGHT * SUB_PIXEL_QUANTITY))
+	{
+		draw_skybox(i, bu, texture_id, texture);
+		++i;
+	}
+}
+
+int compact_hits_inplace(t_hit *buffer, int input_size)
+{
+	int		write_pos;
+	int		read_pos;
+	t_hit	temp;
+
+	write_pos = 0;
+	read_pos = 0;
+	while (read_pos < input_size)
+	{
+		if (buffer[read_pos].hit == true)
+		{
+			if (write_pos != read_pos)
+			{
+				temp = buffer[write_pos];
+				buffer[write_pos] = buffer[read_pos];
+				buffer[read_pos] = temp;
+			}
+			write_pos++;
+		}
+		++read_pos;
+	}
+	return (write_pos);
+}
+
+void	sample_materials(t_hit *hits, int pixel, t_texture *tex, t_mat *mat);
+void	sample_materials_loop(t_hit *hits, t_texture *tex, t_mat *mat, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		sample_materials(hits, i, tex, mat);
+		++i;
+	}
+}
+
+void	test_loop(t_hit *hits, t_img_data *img, int count)
+{
+	int			pixel;
+	int			x;
+	int			y;
+
+	pixel = 0;
+	while (pixel < count)
+	{
+		x = hits[pixel].id % WIDTH;
+		y = hits[pixel].id / WIDTH;
+		ft_mlx_pixel_put(img, vec2i(x, y), rgb_ftoi(hits[pixel].hit_rgb));
+		++pixel;
+	}
+}
+
+void	cast_shadow_rays(t_hit *hits, t_shadow_ray *shadows, int pixel, t_scene *scene);
+void	cast_shadow_loop(t_hit *hits, t_shadow_ray *shadows, int count, t_scene *scene)
+{
+	int			pixel;
+
+	pixel = 0;
+	while (pixel < count)
+	{
+		cast_shadow_rays(hits, shadows, pixel, scene);
+		++pixel;
+	}
+}
+
+void	intersect_shadow(t_hit *hits, t_shadow_result *results, t_scene *scene, int pixel);
+void	intersect_shadow_loop(t_hit *hits, t_shadow_result *results, t_scene *scene, int count)
+{
+	int			pixel;
+
+	pixel = 0;
+	while (pixel < count)
+	{
+		intersect_shadow(hits, results, scene, pixel);
+		++pixel;
+	}
+}
+
+void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data);
+void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count)
+{
+	int			pixel;
+
+	pixel = 0;
+	while (pixel < count)
+	{
+		shade(buffers, pixel, scene, data);
+		++pixel;
+	}
+}
+
 void	ray_tracing_render(t_data *data)
 {
 	t_camera	*cam;
@@ -216,7 +348,7 @@ void	ray_tracing_render(t_data *data)
 	}
 	cam = &data->scene.camera;
 	fill_camera(cam);
-	if (!cam_has_moved(&data->scene.camera) && data->params.quality_render)
+	if ((!cam_has_moved(&data->scene.camera) && data->params.quality_render))
 	{
 		if (actual_pixel == pixel_size * pixel_size)
 			actual_pixel = 0;
@@ -225,7 +357,15 @@ void	ray_tracing_render(t_data *data)
 	}
 	else
 	{
-		actual_pixel = 0;
+		// cast_ray_loop(cam, data->buffers.rays);
+		// intersect_loop(data->buffers.rays, data->buffers.hits, &data->scene);
+		// data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH * SUB_PIXEL_QUANTITY);
+		// draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
+		// sample_materials_loop(data->buffers.hits, data->scene.texture.data, data->scene.mat.data, data->buffers.hits_count);
+		// intersect_shadow_loop(data->buffers.hits, data->buffers.shadows_result, &data->scene, data->buffers.hits_count);
+		// shade_loop(&data->buffers, &data->scene, data, data->buffers.hits_count);
+
+		// actual_pixel = 0;
 		pixel_size = get_smooth_size(cam, data);
 		draw(&data->mlx->img, cam, data, pixel_size);
 	}

@@ -76,8 +76,8 @@ typedef struct s_triangle
 	t_vertex	p0;
 	t_vertex	p1;
 	t_vertex	p2;
-	t_vec3		edge_1;
-	t_vec3		edge_2;
+	t_vec3		edge_p1p0;
+	t_vec3		edge_p2p0;
 	t_rgb		rgb;
 }	t_triangle;
 
@@ -95,7 +95,6 @@ typedef struct s_mat
 	int		roughness_id;
 	int		ambient_id;
 	int		opacity_id;
-	float	kr;
 	float	ni;
 	float	pr;
 }	t_mat;

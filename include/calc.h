@@ -33,6 +33,7 @@ typedef struct s_quadratic
 
 t_rgb		ray_path(t_ray *ray, t_data *data, t_object **hit_object);
 t_object	*hit_reg_plane(t_ray *ray, t_scene *scene, float t_min);
+t_object	*hit_register(t_ray *ray, t_scene *scene);
 int			hit_sphere(t_ray *ray, t_object *o, float *t_in);
 int			hit_cylinder(t_ray *ray, t_object *o, float *t);
 int			hit_plane(t_ray *restrict ray, t_object *restrict o, float *t);

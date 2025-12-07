@@ -1,26 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   kr.c                                               :+:      :+:    :+:   */
+/*   draw_skybox.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/13 17:37:41 by pabellis          #+#    #+#             */
-/*   Updated: 2025/11/13 17:37:50 by pabellis         ###   ########.fr       */
+/*   Created: 2025/12/02 12:42:19 by pabellis          #+#    #+#             */
+/*   Updated: 2025/12/02 12:42:20 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "render.h"
+#include "minirt.h"
 
-#define KR_FORMAT " *Kr  *%f[1] *\n"
-
-int	kr(const char *line, t_scene *scene)
+void	draw_skybox(int pixel, t_buffers bu, int texture_id, t_texture *texture)
 {
-	t_mat	*mat;
+	t_rgb	color;
 
-	exit(1);
-	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, KR_FORMAT, line, &mat->kr) == -1)
-		return (-1);
-	return (0);
+	color = sample_texture(texture, texture_id, bu.hits[pixel].uv);
+	bu.addr[bu.hits[pixel].id] = rgb_ftoi(color).rgb;
 }

@@ -16,43 +16,43 @@
 #include "calc.h"
 #include "minirt.h"
 
-t_rgb	sample_texture(const t_texture *texture_list, int id, float u, float v)
+t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv)
 {
 	int			x;
 	int			y;
 	t_rgb_int	color;
 	int			offset;
 
-	u = u - floorf(u);
-	v = v - floorf(v);
-	v = 1.0f - v;
-	x = (int)(u * (float)(texture_list[id].width));
-	y = (int)(v * (float)(texture_list[id].height));
-	offset = y * texture_list[id].tex_size_line + x * (texture_list[id].tex_bpp / 8);
+	uv.u = uv.u - floorf(uv.u);
+	uv.v = uv.v - floorf(uv.v);
+	uv.v = 1.0f - uv.v;
+	x = (int)(uv.u * (float)(texture_list[id].width));
+	y = (int)(uv.v * (float)(texture_list[id].height));
+	offset = y * texture_list[id].tex_size_line + x * 3;
 	color.r = texture_list[id].pixels[offset];
 	color.g = texture_list[id].pixels[offset + 1];
 	color.b = texture_list[id].pixels[offset + 2];
 	return (rgb_itof(color));
 }
 
-float	sample_binary_texture(const t_texture *texture_list, int id, float u, float v)
+float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv)
 {
 	int				x;
 	int				y;
 	int				offset;
 	unsigned char	pixel;
 
-	u = u - floorf(u);
-	v = v - floorf(v);
-	v = 1.0f - v;
-	x = (int)(u * (float)(texture_list[id].width));
-	y = (int)(v * (float)(texture_list[id].height));
+	uv.u = uv.u - floorf(uv.u);
+	uv.v = uv.v - floorf(uv.v);
+	uv.v = 1.0f - uv.v;
+	x = (int)(uv.u * (float)(texture_list[id].width));
+	y = (int)(uv.v * (float)(texture_list[id].height));
 	offset = y * texture_list[id].tex_size_line + x;
 	pixel = texture_list[id].pixels[offset];
 	return ((float)pixel / 255.0f);
 }
 
-t_vec3	apply_normalmap(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent)
+t_vec3	apply_normal_map(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent)
 {
     t_vec3	world_normal;
 	t_vec3	n;
@@ -72,12 +72,12 @@ void	sample_mat(t_ray *ray, t_vec2 uv, t_data *data, int mat_id)
 	const t_texture	*tex = data->scene.texture.data;
 	const t_mat		*mat = data->scene.mat.data;
 
-	ray->hit_rgb = sample_texture(tex, mat[mat_id].kd_id, uv.x, uv.y);
-	ray->hit_roughness = sample_binary_texture(tex, mat[mat_id].roughness_id, uv.x, uv.y);
-	ray->hit_ambient = sample_binary_texture(tex, mat[mat_id].ambient_id, uv.x, uv.y);
-	ray->hit_opacity = sample_binary_texture(tex, mat[mat_id].opacity_id, uv.x, uv.y);
-	nmap = sample_texture(tex, mat[mat_id].normal_id, uv.x, uv.y);
-	new_normal = apply_normalmap(ray->hit_normal, nmap, ray->hit_tangent, ray->hit_bitangent);
+	ray->hit_rgb = sample_texture(tex, mat[mat_id].kd_id, uv);
+	ray->hit_roughness = sample_binary_texture(tex, mat[mat_id].roughness_id, uv);
+	ray->hit_ambient = sample_binary_texture(tex, mat[mat_id].ambient_id, uv);
+	ray->hit_opacity = sample_binary_texture(tex, mat[mat_id].opacity_id, uv);
+	nmap = sample_texture(tex, mat[mat_id].normal_id, uv);
+	new_normal = apply_normal_map(ray->hit_normal, nmap, ray->hit_tangent, ray->hit_bitangent);
 	ray->hit_normal = new_normal;
 }
 
@@ -87,13 +87,13 @@ void	apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_da
 	t_vec2	uv;
 
 	hit_point = vec3_scale(ray->dir, o->t);
-	hit_point = vec3_add(ray->pos, hit_point);
+	hit_point = vec3_add(ray->origin, hit_point);
 	if (o->type == TRIANGLE)
 	{
 		t_vec3	n0, n1, n2;
 
-		t_vec3 v0v1 = o->triangle.edge_1;
-		t_vec3 v0v2 = o->triangle.edge_2;
+		t_vec3 v0v1 = o->triangle.edge_p1p0;
+		t_vec3 v0v2 = o->triangle.edge_p2p0;
 		t_vec3 v0p = vec3_sub(hit_point, o->triangle.p0.pos);
 		float d00 = vec3_dot(v0v1, v0v1);
 		float d01 = vec3_dot(v0v1, v0v2);
@@ -164,28 +164,28 @@ void	apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_da
 		ray->hit_tangent = get_tangent(ray->hit_normal);
 		ray->hit_bitangent = get_bitangent(ray->hit_normal, ray->hit_tangent);
 	}
-	ray->pos = hit_point;
+	ray->origin = hit_point;
 }
 
 t_object	*hit_sphere_bvh(t_ray *ray, t_sphere_bvh *bvh);
 
-t_object	*hit_register(t_ray *ray, t_data *data)
+t_object	*hit_register(t_ray *ray, t_scene *scene)
 {
 	t_object	*bvh_ret;
 	t_object	*plane_hit;
 
-	if (data->scene.bvh.bvh_mode == 0)
-		bvh_ret = hit_sphere_bvh(ray, data->scene.bvh.sphere_bvh);
+	if (scene->bvh.bvh_mode == 0)
+		bvh_ret = hit_sphere_bvh(ray, scene->bvh.sphere_bvh);
 	else
-		bvh_ret = hit_aabb_bvh(ray, data->scene.bvh.aabb_bvh);
+		bvh_ret = hit_aabb_bvh(ray, scene->bvh.aabb_bvh);
 	if (bvh_ret)
 	{
-		plane_hit = hit_reg_plane(ray, &data->scene, bvh_ret->t);
+		plane_hit = hit_reg_plane(ray, scene, bvh_ret->t);
 		if (!plane_hit)
 			return (bvh_ret);
 		return (plane_hit);
 	}
-	return (hit_reg_plane(ray, &data->scene, FLT_MAX));
+	return (hit_reg_plane(ray, scene, FLT_MAX));
 }
 
 float	pass_through_no_refract(t_ray *ray, t_object *obj);
@@ -197,8 +197,8 @@ t_rgb	hit_register_light(t_ray *ray, t_data *data, t_vec3 light_pos)
 	t_object	*object;
 
 	transparency = rgb(1, 1, 1);
-	light_distance = vec3_length(vec3_sub(light_pos, ray->pos));
-	object = hit_register(ray, data);
+	light_distance = vec3_length(vec3_sub(light_pos, ray->origin));
+	object = hit_register(ray, &data->scene);
 	if (!object)
 		return (transparency);
 	light_distance -= object->t + EPSILON;
@@ -208,7 +208,7 @@ t_rgb	hit_register_light(t_ray *ray, t_data *data, t_vec3 light_pos)
 		t_rgb	temp = ray->hit_rgb;
 		temp = rgb_scale(temp, 1 - ray->hit_opacity);
 		transparency = rgb_mult(transparency, temp);
-		object = hit_register(ray, data);
+		object = hit_register(ray, &data->scene);
 		if (!object)
 			return (transparency);
 		apply_mat(ray, object, &data->params, data);

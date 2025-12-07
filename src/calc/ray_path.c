@@ -19,11 +19,10 @@ static void	fill_phong(t_ray *ray, t_scene *scene);
 
 #define OFFSET 0.001f
 
-t_rgb	sample_texture(t_texture *texture_list, int id, float u, float v);
 t_vec3 texture_to_vec3(unsigned int color);
 #include "minirt.h"
 
-t_rgb	draw_skybox(t_scene *scene, t_vec3 *dir)
+t_rgb	draw_skybox_old(t_scene *scene, t_vec3 *dir)
 {
 	float	u;
 	float	v;
@@ -32,10 +31,10 @@ t_rgb	draw_skybox(t_scene *scene, t_vec3 *dir)
 		return (rgb(0, 0, 0));
 	u = 0.5f + atan2f(dir->z, dir->x) / (2.0f * M_PIf);
 	v = 0.5f + asinf(dir->y) / M_PIf;
-	return (sample_texture(scene->texture.data, scene->skybox_tex, u, v));
+	return (sample_texture(scene->texture.data, scene->skybox_tex, vec2(u, v)));
 }
 
-t_vec3 vec3_reflect(t_vec3 ray, t_vec3 normal)
+t_vec3	vec3_reflect(t_vec3 ray, t_vec3 normal)
 {
 	t_vec3 scaled_normal = vec3_scale(normal, 2 * vec3_dot(ray, normal));
 	return (vec3_sub(ray, scaled_normal));
@@ -49,15 +48,6 @@ t_vec3	vec3_neg(t_vec3 v)
 	res.y = -v.y;
 	res.z = -v.z;
 	return (res);
-}
-
-static inline t_vec3	rgb3_lerp(const t_vec3 a, const t_vec3 b, const t_vec3 t)
-{
-	return ((t_vec3){{
-				a.x * (1.0f - t.x) + b.x * t.x,
-				a.y * (1.0f - t.y) + b.y * t.y,
-				a.z * (1.0f - t.z) + b.z * t.z
-			}});
 }
 
 t_vec3 get_reflect(t_vec3 ray_dir, t_vec3 normal, float roughness, t_vec3 F0)
@@ -102,20 +92,19 @@ void	handle_reflect(t_ray *ray, t_data *data, t_rgb *color)
 		reflect_count++;
 		reflect = get_reflect(ray->dir, ray->hit_normal, ray->hit_roughness, ray->hit_mat->ks);
 		ray->dir = vec3_reflect(ray->dir, ray->hit_normal);
-		ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, EPSILON));
+		ray->origin = vec3_add(ray->origin, vec3_scale(ray->dir, EPSILON));
 		*color = rgb3_lerp(*color, ray_path(ray, data, &hit_object), reflect);
 		reflect_count--;
 	}
 }
 
-t_object	*hit_register(t_ray *ray, t_data *data);
 void		apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_data *data);
 
 t_object	*get_next_triangle(t_ray *ray, t_data *data, t_object *actual)
 {
 	t_object	*object;
 
-	object = hit_register(ray, data);
+	object = hit_register(ray, &data->scene);
 	if (!object)
 		return (actual);
 	apply_mat(ray, object, &data->params, data);
@@ -131,15 +120,15 @@ t_ray	*pass_through_sphere(t_ray *ray, t_object *obj)
 
 	ray->dir = vec3_refract(ray->dir, ray->hit_normal, 1.0f / ray->hit_mat->ni);
 	t_out = get_sphere_t_out(ray, obj);
-	ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, t_out + EPSILON));
-	ray->hit_normal = vec3_normalize(vec3_sub(obj->sphere.pos, ray->pos));
+	ray->origin = vec3_add(ray->origin, vec3_scale(ray->dir, t_out + EPSILON));
+	ray->hit_normal = vec3_normalize(vec3_sub(obj->sphere.pos, ray->origin));
 	ray->dir = vec3_refract(ray->dir, ray->hit_normal, ray->hit_mat->ni / 1.0f);
 	return (ray);
 }
 
 t_ray	*pass_through_plane(t_ray *ray, t_object *obj)
 {
-	ray->pos = vec3_add(ray->pos, vec3_scale(obj->plane.normal, -EPSILON));
+	ray->origin = vec3_add(ray->origin, vec3_scale(obj->plane.normal, -EPSILON));
 	return (ray);
 }
 
@@ -161,10 +150,10 @@ t_ray	*pass_through_triangle(t_ray *ray, t_data *data, t_object *obj)
 	if (obj->mat_id != next->mat_id)
 	{
 		*ray = copy;
-		ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, EPSILON));
+		ray->origin = vec3_add(ray->origin, vec3_scale(ray->dir, EPSILON));
 		return (ray);
 	}
-	ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, EPSILON));
+	ray->origin = vec3_add(ray->origin, vec3_scale(ray->dir, EPSILON));
 	ray->hit_normal = vec3_neg(ray->hit_normal);
 	ray->dir = vec3_refract(ray->dir, ray->hit_normal, ray->hit_mat->ni / 1.0f);
 	return (ray);
@@ -193,7 +182,7 @@ float	pass_through_no_refract(t_ray *ray, t_object *obj)
 		t_out = get_cylinder_t_out(ray, obj);
 	else
 		t_out = 0;
-	ray->pos = vec3_add(ray->pos, vec3_scale(ray->dir, t_out + EPSILON));
+	ray->origin = vec3_add(ray->origin, vec3_scale(ray->dir, t_out + EPSILON));
 	return (t_out);
 }
 
@@ -213,16 +202,15 @@ void	handle_refract(t_ray ray, t_data *data, t_rgb *color, t_object *obj)
 	}
 }
 
-
 void	apply_mat(t_ray *restrict ray, t_object *restrict o, t_params *params, t_data *data);
 
 t_rgb	ray_path(t_ray *ray, t_data *data, t_object **hit_object)
 {
 	t_rgb	color;
 
-	*hit_object = hit_register(ray, data);
+	*hit_object = hit_register(ray, &data->scene);
 	if (!*hit_object)
-		return (draw_skybox(&data->scene, &ray->dir));
+		return (draw_skybox_old(&data->scene, &ray->dir));
 	apply_mat(ray, (*hit_object), &data->params, data);
 	if (data->params.normal_debug)
 		return (rgb_add_scalar(rgb_scale(ray->hit_normal, 0.5f), 0.5f));
@@ -270,14 +258,14 @@ static void	fill_phong(t_ray *ray, t_scene *scene)
 	t_object	*lights;
 	size_t		m;
 
-	scene->phong.v = vec3_normalize(vec3_sub(scene->camera.pos, ray->pos));
+	scene->phong.v = vec3_normalize(vec3_sub(scene->camera.pos, ray->origin));
 	m = 0;
 	lights = (t_object *)scene->lights.data;
 	while (m < scene->lights.num_elements)
 	{
 		scene->phong.d[m] = lights[m].light.rgb;
 		scene->phong.l[m] = vec3_normalize(vec3_sub(lights[m].light.pos,
-					ray->pos));
+					ray->origin));
 		scene->phong.r[m] = reflection(ray->hit_normal, scene->phong.l[m]);
 		m++;
 	}

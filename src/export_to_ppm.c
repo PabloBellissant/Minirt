@@ -105,7 +105,7 @@ int	draw_line(t_data *data, t_camera *cam, int actual_line, int fd)
 		cam->x_offset =	vec3_scale(cam->pixel_delta_u, (float)pixel / SUB_PIXEL_QUANTITY);
 		cam->pixel_center_x = vec3_add(cam->pixel00_loc, cam->x_offset);
 		cam->pixel_center = vec3_add(cam->pixel_center_x, cam->y_offset);
-		ray.pos = cam->pos;
+		ray.origin = cam->pos;
 		ray.dir = vec3_normalize(vec3_sub(cam->pixel_center, cam->pos));
 		if (write_color(rgb_ftoi(ray_path(&ray, data, &obj)), fd) == -1)
 			return (-1);

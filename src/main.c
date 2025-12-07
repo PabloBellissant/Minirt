@@ -131,7 +131,11 @@ int	main(int argc, char **argv)
 			}
 			else
 			{
-
+				data.buffers.rays = malloc(sizeof(t_ray) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
+				data.buffers.hits = malloc(sizeof(t_hit) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
+				data.buffers.shadows = malloc(sizeof(t_shadow_ray) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
+				data.buffers.shadows_result = malloc(sizeof(t_shadow_result) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
+				data.buffers.addr = data.mlx->img.addr;
 				loop_hook(&data);
 				free_data(&data);
 			}

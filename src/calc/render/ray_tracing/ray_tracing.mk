@@ -1,7 +1,7 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    type.mk                                            :+:      :+:    :+:    #
+#    ray_tracing.mk                                     :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
@@ -11,25 +11,18 @@
 # **************************************************************************** #
 
 # Directories
-MTL_TYPE_DIR	= $(MTL_DIR)/type
+RAY_TRACING_DIR	= $(RENDER_DIR)/ray_tracing
 
 # Source files
-MTL_TYPE_SRCS	= newmtl.c \
-			  ns.c \
-			  ka.c \
-			  kd.c \
-			  ks.c \
-			  map_kd.c \
-			  map_bump.c \
-			  map_pr.c \
-			  map_ka.c \
-			  map_d.c \
-			  d.c \
-			  pr.c \
-			  ke.c \
-			  ni.c
+RAY_TRACING_SRCS	= cast_rays.c \
+					  intersect.c \
+					  sample_materials.c \
+					  draw_skybox.c \
+					  cast_shadow_rays.c \
+					  intersect_shadow.c \
+					  shade.c
 
-SRCS		+= $(addprefix $(MTL_TYPE_DIR)/, $(MTL_TYPE_SRCS))
+SRCS				+= $(addprefix $(RAY_TRACING_DIR)/, $(RAY_TRACING_SRCS))
 
 # VPATH
-vpath %.c $(MTL_TYPE_DIR)
+vpath %.c $(RAY_TRACING_DIR)

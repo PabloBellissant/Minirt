@@ -19,8 +19,9 @@
 
 typedef struct s_ray
 {
-	t_vec3	pos;
+	t_vec3	origin;
 	t_vec3	dir;
+	int		id;
 	t_vec3	hit_normal;
 	t_vec3	hit_tangent;
 	t_vec3	hit_bitangent;
@@ -30,6 +31,40 @@ typedef struct s_ray
 	float	hit_opacity;
 	t_mat	*hit_mat;
 }			t_ray;
+
+typedef struct s_hit
+{
+	bool	hit;
+	int		id;
+	t_vec3	normal;
+	t_vec2	uv;
+	int		mat_id;
+	t_vec3	hit_point;
+	t_rgb	hit_rgb;
+	float	hit_roughness;
+	float	hit_ambient;
+	float	hit_opacity;
+	t_vec3	ks;
+	t_vec3	ke;
+	float	ns;
+	float	pr;
+	float	ni;
+}			t_hit;
+
+typedef struct s_shadow_ray
+{
+	t_ray	ray;
+	int		hit_id;
+	int		light_id;
+	float	light_distance;
+}			t_shadow_ray;
+
+typedef struct s_shadow_result
+{
+	t_rgb	color_through;
+	int		hit_id;
+	int		light_id;
+}			t_shadow_result;
 
 typedef struct s_phong
 {
@@ -161,5 +196,7 @@ void	wireframe_render(t_data *data);
 void	ray_tracing_render(t_data *data);
 
 int		export_to_ppm(t_data *data, t_mlx *mlx);
+
+t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv);
 
 #endif

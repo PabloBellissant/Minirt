@@ -18,7 +18,8 @@ RENDER_SRCS	=
 
 SRCS		+= $(addprefix $(RENDER_DIR)/, $(RENDER_SRCS))
 
-RENDER_MKS	= rasterization/rasterization.mk
+RENDER_MKS	= rasterization/rasterization.mk \
+			  ray_tracing/ray_tracing.mk
 
 include $(addprefix $(RENDER_DIR)/, $(RENDER_MKS))
 

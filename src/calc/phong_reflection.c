@@ -61,7 +61,7 @@ static t_rgb	get_color_through(t_data *data, t_vec3 hit_point,
 	t_vec3			to_light;
 	t_rgb			color_through;
 
-	ray.pos = offset_point;
+	ray.origin = offset_point;
 	to_light = vec3_sub(light_pos, offset_point);
 	ray.dir = vec3_normalize(to_light);
 	color_through = hit_register_light(&ray, data, light_pos);
@@ -86,7 +86,7 @@ t_rgb	phong_path(t_data *data, t_ray *ray)
 	i_p = rgb(0, 0, 0);
 	while (m < data->scene.lights.num_elements)
 	{
-		color_through = get_color_through(data, ray->pos,
+		color_through = get_color_through(data, ray->origin,
 				(((t_object *)(data->scene.lights.data))[m].light.pos),
 				ray->hit_normal);
 		data->scene.phong.d[m] = rgb_mult(data->scene.phong.d[m], color_through);

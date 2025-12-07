@@ -16,7 +16,7 @@
 
 static void	init_sphere_quadratic(t_quadratic *q, t_sphere *sp, t_ray *ray)
 {
-	const t_vec3	oc = vec3_sub(ray->pos, sp->pos);
+	const t_vec3	oc = vec3_sub(ray->origin, sp->pos);
 
 	q->a = vec3_dot(ray->dir, ray->dir);
 	q->b = 2.0f * vec3_dot(ray->dir, oc);

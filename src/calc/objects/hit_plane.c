@@ -22,6 +22,6 @@ int	hit_plane(t_ray *restrict ray, t_object *restrict o, float *t)
 	denom = vec3_dot(ray->dir, o->plane.normal);
 	if (fabsf(denom) < EPSILON)
 		return (0);
-	*t = vec3_dot(vec3_sub(o->plane.pos, ray->pos), o->plane.normal) / denom;
+	*t = vec3_dot(vec3_sub(o->plane.pos, ray->origin), o->plane.normal) / denom;
 	return (*t >= EPSILON);
 }

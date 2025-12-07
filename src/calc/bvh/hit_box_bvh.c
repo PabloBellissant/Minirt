@@ -27,8 +27,8 @@ bool	hit_box(t_ray *ray, t_aabb_bvh *bvh)
 	t_vec3	min;
 	t_vec3	max;
 
-	min = vec3_divide(vec3_sub(bvh->min, ray->pos), ray->dir);
-	max = vec3_divide(vec3_sub(bvh->max, ray->pos), ray->dir);
+	min = vec3_divide(vec3_sub(bvh->min, ray->origin), ray->dir);
+	max = vec3_divide(vec3_sub(bvh->max, ray->origin), ray->dir);
 	t_min = fminf(min.x, max.x);
 	t_max = fmaxf(min.x, max.x);
 	t_min = fmaxf(fminf(min.y, max.y), t_min);
