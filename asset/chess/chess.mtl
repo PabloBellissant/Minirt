@@ -1,0 +1,62 @@
+# Blender MTL File: 'chess.blend'
+# Material Count: 5
+
+newmtl Backside_pieces
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Kr 0.1
+illum 2
+map_Kd asset/texture/chess/19b2abc46bb64c6e984571146f3a2560_RGB_Backside_pieces_Backside_pieces_BaseColor.ppm
+
+newmtl Board
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Kr 0.2
+illum 2
+map_Kd asset/texture/chess/33cfd3418e8049d99b6155b3beed60e5_RGB_board_DefaultMaterial_BaseColor.ppm
+
+newmtl Pawn_8_combined
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Kr 0.1
+illum 2
+map_Kd asset/texture/chess/c6c10963b8b84a5f9cb8154af2c654cf_RGB_pawn_combined_Pawn_8_combined_BaseColor.ppm
+
+newmtl Pawn_combined_Black
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Kr 0.1
+illum 2
+map_Kd asset/texture/chess/af8f9559cf6e459fb5f59e29e3ebec37_RGB_pawn_combined_Pawn_8_combined_BaseColor.ppm
+
+newmtl backside_pieces_black
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Kr 0.1
+illum 2
+map_Kd asset/texture/chess/2d5cff50091342648e53ed6ed6844ad9_RGB_Backside_pieces_Backside_pieces_BaseColor.ppm

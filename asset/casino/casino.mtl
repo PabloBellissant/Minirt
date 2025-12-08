@@ -1,0 +1,79 @@
+# Blender MTL File: 'None'
+# Material Count: 6
+
+newmtl Casino
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.0 1.0 1.0
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Pr 0.5
+illum 2
+map_bump asset/casino/4e50717e49c44c778d88574a66ee3b9e_N_Casino_n.ppm
+map_Kd asset/casino/45041a5e54444a4f828e672310f42aa6_RGB_Casino_d.ppm
+
+newmtl Gaming_Rooms
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.0 1.0 1.0
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Pr 0.5
+illum 2
+map_bump asset/casino/8eb672ee0886481a97cae5d088ebd765_N_Gaming_Rooms_n.ppm
+map_Kd asset/casino/94c2f324303b4521be1fab2bc352bb63_RGB_Gaming_Rooms_d.ppm
+
+newmtl Gaming_Rooms_Glass
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.0 1.0 1.0
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Pr 0.5
+illum 3
+map_Kd asset/casino/a653ed8a1eea41c28b5c48ef36e69e93_RGB_Gaming_Rooms_Glass_d.ppm
+
+newmtl Lecture_Rooms
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.0 1.0 1.0
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Pr 0.5
+illum 2
+map_bump asset/casino/39172573ae014d4fb18f2928b9d8ac3a_N_Lecture_Rooms_n.ppm
+map_Kd asset/casino/68ba46c899ce41df85a6ece39c9c8dc9_RGB_Lecture_Rooms_d.ppm
+
+newmtl Opera_House
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.0 1.0 1.0
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Pr 0.5
+illum 2
+map_bump asset/casino/7facb1fb2cbf42599c38f0b3eecc6598_N_Opera_House_n.ppm
+map_Kd asset/casino/efc92760abba4800b6a7eed216e743b8_RGB_Opera_House_d.ppm
+
+newmtl Restaurant_Table
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.0 1.0 1.0
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+Pr 0.5
+illum 3
+map_bump asset/casino/e617a12552334823becb0a406272d23d_N_Restaurant_Table_n.ppm
+map_Kd asset/casino/af865810343c4edf9d12bbb3c27aff76_RGB_Restaurant_Table_d.ppm
