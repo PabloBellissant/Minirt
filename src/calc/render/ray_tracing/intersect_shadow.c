@@ -13,7 +13,7 @@
 #include "calc.h"
 #include "minirt.h"
 
-t_shadow_ray	cast_shadow_rays_(t_hit *hits, int pixel, t_object *light);
+t_shadow_ray	cast_shadow_rays(t_hit *hits, int pixel, t_object *light);
 
 void	intersect_shadow(t_hit *hits, t_shadow_result *results, t_scene *scene, int pixel)
 {
@@ -29,7 +29,7 @@ void	intersect_shadow(t_hit *hits, t_shadow_result *results, t_scene *scene, int
 	i = 0;
 	while (i < scene->lights.num_elements)
 	{
-		shadow = cast_shadow_rays_(hits, pixel, &lights[i]);
+		shadow = cast_shadow_rays(hits, pixel, lights + i);
 		bvh_hit = hit_aabb_bvh(&shadow.ray, scene->bvh.aabb_bvh);
 		if (bvh_hit && bvh_hit->t < shadow.light_distance)
 		{
@@ -43,10 +43,10 @@ void	intersect_shadow(t_hit *hits, t_shadow_result *results, t_scene *scene, int
 		}
 		++i;
 	}
-	results[pixel].color_through = rgb_clamp(color, 0.0f, 1.0f);
+	results[pixel].color_through = color;
 }
 
-t_shadow_ray	cast_shadow_rays_(t_hit *hits, int pixel, t_object *light)
+t_shadow_ray	cast_shadow_rays(t_hit *hits, int pixel, t_object *light)
 {
 	t_shadow_ray	shadow;
 
