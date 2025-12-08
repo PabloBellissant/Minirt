@@ -18,7 +18,6 @@ RAY_TRACING_SRCS	= cast_rays.c \
 					  intersect.c \
 					  sample_materials.c \
 					  draw_skybox.c \
-					  cast_shadow_rays.c \
 					  intersect_shadow.c \
 					  shade.c
 
