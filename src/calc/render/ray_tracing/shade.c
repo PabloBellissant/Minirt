@@ -44,15 +44,13 @@ void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data)
 	t_object	*lights;
 	size_t		m;
 
-	data->mlx->img.addr[buffers->hits[pixel].id] = rgb_ftoi(buffers->shadows_result[pixel].color_through).rgb;
-	return;
 	lights = scene->lights.data;
 	scene->phong.v = vec3_normalize(vec3_sub(scene->camera.pos, buffers->hits[pixel].hit_point));
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
-		scene->phong.d[m] = lights[m].light.rgb;
-		scene->phong.l[m] = buffers->shadows[pixel].ray.dir;
+		scene->phong.l[m] = vec3_normalize(vec3_sub(lights[m].light.pos,
+					buffers->hits[pixel].hit_point));
 		scene->phong.r[m] = reflection(buffers->hits[pixel].normal, scene->phong.l[m]);
 		m++;
 	}
@@ -62,16 +60,17 @@ void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data)
 	t_rgb		specular_m;
 	t_rgb		i_p;
 	t_rgb		color_through;
+	t_rgb		phong_d;
 	i_p = rgb(0, 0, 0);
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
 		color_through = buffers->shadows_result[pixel].color_through;
-		data->scene.phong.d[m] = rgb_mult(data->scene.phong.d[m], color_through);
-		diffuse_m = vec3_mult(get_diffuse(data->scene.phong.l[m], data->scene.phong.d[m],
+		phong_d = rgb_mult(lights[m].light.rgb, color_through);
+		diffuse_m = vec3_mult(get_diffuse(data->scene.phong.l[m], phong_d,
 				buffers->hits[pixel].normal, buffers->hits[pixel].hit_rgb), buffers->hits[pixel].hit_rgb);
 		specular_m = get_specular(data->scene.phong.r[m], data->scene.phong.v, buffers->hits[pixel].ks, buffers->hits[pixel].ns);
-		specular_m = rgb_mult(specular_m, vec3_mult(data->scene.phong.d[m], color_through));
+		specular_m = rgb_mult(specular_m, vec3_mult(phong_d, color_through));
 		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));
 		m++;
 	}
