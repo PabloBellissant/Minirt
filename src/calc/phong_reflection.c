@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 01:49:47 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/07 09:40:46 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/10 05:11:57 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v, t_vec3 k_s, const fl
 
 t_rgb	hit_register_light(t_ray *ray, t_data *data, t_vec3 light_pos);
 
-static t_rgb	get_color_through(t_data *data, t_vec3 hit_point,
+t_rgb	get_color_through(t_data *data, t_vec3 hit_point,
 		t_vec3 light_pos, t_vec3 normal)
 {
 	const t_vec3	offset_point = vec3_add(hit_point,

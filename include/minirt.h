@@ -73,7 +73,7 @@ typedef struct s_buffers
 	t_ray			*rays;
 	t_hit			*hits;
 	t_shadow_ray	*shadows;
-	t_shadow_result	*shadows_result;
+	t_light_result	*shadows_result;
 	int				hits_count;
 	int				*addr;
 }			t_buffers;

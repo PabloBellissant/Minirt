@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 23:16:06 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/21 02:56:56 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/10 03:55:49 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,5 @@ static void	rasterize_objects(t_img_data *img, t_vector objects, t_camera *cam)
 
 static void	clear_old_screen(t_img_data *img)
 {
-	int	i;
-
-	i = 0;
-	while (i < HEIGHT)
-	{
-		ft_fbzero(img->addr + (WIDTH * i), WIDTH * 4);
-		++i;
-	}
+	ft_fbzero(img->pixel, img->width * img->height * 4);
 }

@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/10/11 01:12:44 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/12/09 17:08:45 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,7 @@ ARCHIVES	= $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT) $(XCERRCAL)
 # Compiler and flags
 CC			= cc
 
-CFLAGS		= -Wall -Werror -Wextra \
+CFLAGS		= -g3 -Wall -Werror -Wextra \
 			  -std=gnu11
 
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d

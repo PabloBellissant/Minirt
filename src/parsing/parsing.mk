@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:54:33 by jaubry--          #+#    #+#              #
-#    Updated: 2025/07/31 20:27:48 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/12/09 15:43:16 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,8 +18,7 @@ PARSING_SRCS	= parse_scene.c \
 				  fill_by_type.c
 SRCS			+= $(addprefix $(PARSING_DIR)/, $(PARSING_SRCS))
 
-PARSING_MKS		= rt_parser/rt_parser.mk\
-				  ppm_parser/ppm_parser.mk
+PARSING_MKS		= rt_parser/rt_parser.mk
 include $(addprefix $(PARSING_DIR)/, $(PARSING_MKS))
 
 # VPATH

@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 19:55:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/09 19:55:10 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/11 06:52:57 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ t_texture	*parse_texture(t_scene *scene, char *texture_path)
 	if (ft_strrncmp(texture_path, ".ppm", 4) == 0)
 	{
 		tex = texture_parser(texture_path);
-		if (!tex.pixels)
+		if (!tex.addr)
 			return (NULL);
 	}
 	else
@@ -84,12 +84,12 @@ int	create_color_texture(t_vector *vec, t_rgb_int *color)
 	tex = create_texture(vec);
 	if (!tex)
 		return (-1);
-	tex->pixels = malloc(1 * 3);
-	if (!tex->pixels)
+	tex->addr = malloc(1 * 3);
+	if (!tex->addr)
 		return (-1);
-	ft_memcpy(tex->pixels, &color->rgb, 3);
-	tex->tex_bpp = 24;
-	tex->tex_size_line = 1 * 3;
+	ft_memcpy(tex->addr, &color->rgb, 3);
+	tex->byte_depth = 3;
+	tex->line_len = 1 * 3;
 	tex->width = 1;
 	tex->height = 1;
 	return ((int) vec->num_elements - 1);
@@ -102,12 +102,12 @@ int	create_binary_texture(t_vector *vec, unsigned char value)
 	tex = create_texture(vec);
 	if (!tex)
 		return (-1);
-	tex->pixels = malloc(1);
-	if (!tex->pixels)
+	tex->addr = malloc(1);
+	if (!tex->addr)
 		return (-1);
-	ft_memcpy(tex->pixels, &value, 1);
-	tex->tex_bpp = 8;
-	tex->tex_size_line = 1;
+	ft_memcpy(tex->addr, &value, 1);
+	tex->byte_depth = 1;
+	tex->line_len = 1;
 	tex->width = 1;
 	tex->height = 1;
 	return ((int) vec->num_elements - 1);

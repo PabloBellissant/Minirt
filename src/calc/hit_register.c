@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 00:47:55 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/09 22:45:48 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/10 01:07:03 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv)
 	uv.v = 1.0f - uv.v;
 	x = (int)(uv.u * (float)(texture_list[id].width));
 	y = (int)(uv.v * (float)(texture_list[id].height));
-	offset = y * texture_list[id].tex_size_line + x * 3;
-	color.r = texture_list[id].pixels[offset];
-	color.g = texture_list[id].pixels[offset + 1];
-	color.b = texture_list[id].pixels[offset + 2];
+	offset = y * texture_list[id].line_len + x * 3;
+	color.r = texture_list[id].pixel[offset];
+	color.g = texture_list[id].pixel[offset + 1];
+	color.b = texture_list[id].pixel[offset + 2];
 	return (rgb_itof(color));
 }
 
@@ -47,8 +47,8 @@ float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv)
 	uv.v = 1.0f - uv.v;
 	x = (int)(uv.u * (float)(texture_list[id].width));
 	y = (int)(uv.v * (float)(texture_list[id].height));
-	offset = y * texture_list[id].tex_size_line + x;
-	pixel = texture_list[id].pixels[offset];
+	offset = y * texture_list[id].line_len + x;
+	pixel = texture_list[id].pixel[offset];
 	return ((float)pixel / 255.0f);
 }
 

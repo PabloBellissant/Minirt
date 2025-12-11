@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/22 20:15:45 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/11 07:07:52 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@
 void	fill_camera(t_camera *cam);
 void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys);
 
+/*
 static inline void	recalc_camera_y(t_camera *cam)
 {
 	cam->pixel_center = vec3_add(cam->pixel_center_x, cam->y_offset);
 }
 
 #include "render.h"
-
 int	get_subsampling(t_vec2 pixel, t_camera *cam, int ray_count, t_data *data)
 {
 	t_ray		ray;
@@ -184,7 +184,7 @@ int	get_smooth_size(t_camera *cam, t_data *data)
 	min = MIN_QUALITY;
 	return (imin(min, optimal));
 }
-
+*/
 bool	cam_has_moved(t_camera *camera)
 {
 	static t_vec3	pos;
@@ -267,15 +267,15 @@ int compact_hits_inplace(t_hit *buffer, int input_size)
 	return (write_pos);
 }
 
-void	sample_materials(t_hit *hits, int pixel, t_texture *tex, t_mat *mat);
-void	sample_materials_loop(t_hit *hits, t_texture *tex, t_mat *mat, int count)
+void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat);
+void	sample_materials_loop(t_buffers *buffers, t_texture *tex, t_mat *mat, int count)
 {
 	int	i;
 
 	i = 0;
 	while (i < count)
 	{
-		sample_materials(hits, i, tex, mat);
+		sample_materials(buffers, i, tex, mat);
 		++i;
 	}
 }
@@ -292,19 +292,6 @@ void	test_loop(t_hit *hits, t_img_data *img, int count)
 		x = hits[pixel].id % WIDTH;
 		y = hits[pixel].id / WIDTH;
 		ft_mlx_pixel_put(img, vec2i(x, y), rgb_ftoi(hits[pixel].hit_rgb));
-		++pixel;
-	}
-}
-
-void	intersect_shadow(t_hit *hits, t_shadow_result *results, t_scene *scene, int pixel);
-void	intersect_shadow_loop(t_hit *hits, t_shadow_result *results, t_scene *scene, int count)
-{
-	int			pixel;
-
-	pixel = 0;
-	while (pixel < count)
-	{
-		intersect_shadow(hits, results, scene, pixel);
 		++pixel;
 	}
 }
@@ -330,7 +317,7 @@ void	ray_tracing_render(t_data *data)
 
 	if (data->params.exporting)
 	{
-		export_to_ppm(data, data->mlx);
+		//export_to_ppm(data, data->mlx);
 		return ;
 	}
 	cam = &data->scene.camera;
@@ -339,22 +326,21 @@ void	ray_tracing_render(t_data *data)
 	{
 		if (actual_pixel == pixel_size * pixel_size)
 			actual_pixel = 0;
-		draw_individual(&data->mlx->img, cam, data, pixel_size, actual_pixel);
+//		draw_individual(&data->mlx->img, cam, data, pixel_size, actual_pixel);
 		++actual_pixel;
 	}
 	else
 	{
-		// cast_ray_loop(cam, data->buffers.rays);
-		// intersect_loop(data->buffers.rays, data->buffers.hits, &data->scene);
-		// data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH * SUB_PIXEL_QUANTITY);
-		// draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
-		// sample_materials_loop(data->buffers.hits, data->scene.texture.data, data->scene.mat.data, data->buffers.hits_count);
-		// intersect_shadow_loop(data->buffers.hits, data->buffers.shadows_result, &data->scene, data->buffers.hits_count);
-		// shade_loop(&data->buffers, &data->scene, data, data->buffers.hits_count);
+		cast_ray_loop(cam, data->buffers.rays);
+		intersect_loop(data->buffers.rays, data->buffers.hits, &data->scene);
+		data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH * SUB_PIXEL_QUANTITY);
+		draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
+		sample_materials_loop(&data->buffers, data->scene.texture.data, data->scene.mat.data, data->buffers.hits_count);
+		shade_loop(&data->buffers, &data->scene, data, data->buffers.hits_count);
 
 		// actual_pixel = 0;
-		pixel_size = get_smooth_size(cam, data);
-		draw(&data->mlx->img, cam, data, pixel_size);
+		// pixel_size = get_smooth_size(cam, data);
+		// draw(&data->mlx->img, cam, data, pixel_size);
 	}
 	if (data->params.bvh_debug && data->scene.bvh.bvh)
 		rasterize_bvh(data->scene.bvh.bvh, &data->params, data->scene.bvh.sphere_bvh->depth, data);

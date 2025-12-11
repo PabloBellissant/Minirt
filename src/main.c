@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/13 18:43:15 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/11 01:06:25 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	free_textures(t_vector *vec)
 	i = 0;
 	while (i < vec->num_elements)
 	{
-		free(texture[i].pixels);
+		free(texture[i].addr);
 		free(texture[i].name);
 		++i;
 	}
@@ -134,7 +134,7 @@ int	main(int argc, char **argv)
 				data.buffers.rays = malloc(sizeof(t_ray) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
 				data.buffers.hits = malloc(sizeof(t_hit) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
 				data.buffers.shadows = malloc(sizeof(t_shadow_ray) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
-				data.buffers.shadows_result = malloc(sizeof(t_shadow_result) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
+				data.buffers.shadows_result = malloc(sizeof(t_light_result) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY);
 				data.buffers.addr = data.mlx->img.addr;
 				loop_hook(&data);
 				free_data(&data);

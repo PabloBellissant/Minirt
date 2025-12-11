@@ -15,7 +15,7 @@
 
 t_shadow_ray	cast_shadow_rays(t_hit *hits, int pixel, t_object *light);
 
-void	intersect_shadow(t_hit *hits, t_shadow_result *results, t_scene *scene, int pixel)
+void	intersect_shadow(t_hit *hits, t_light_result *results, t_scene *scene, int pixel)
 {
 	t_object		*bvh_hit;
 	t_object		*plane_hit;

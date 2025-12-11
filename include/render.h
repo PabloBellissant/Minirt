@@ -6,30 +6,27 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/09/04 06:14:38 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/11 06:16:35 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RENDER_H
 # define RENDER_H
+# include "colors_types.h"
 # include "libft.h"
 # include "mlx_wrapper.h"
 # include "object.h"
 # include "bvh.h"
+#include "vectors_types.h"
 
 typedef struct s_ray
 {
 	t_vec3	origin;
 	t_vec3	dir;
+	t_rgb	accumulated_color;
+	t_rgb	through_power;
 	int		id;
-	t_vec3	hit_normal;
-	t_vec3	hit_tangent;
-	t_vec3	hit_bitangent;
-	t_rgb	hit_rgb;
-	float	hit_roughness;
-	float	hit_ambient;
-	float	hit_opacity;
-	t_mat	*hit_mat;
+	int		iteration;
 }			t_ray;
 
 typedef struct s_hit
@@ -49,22 +46,21 @@ typedef struct s_hit
 	float	ns;
 	float	pr;
 	float	ni;
+	t_vec3	reflectivity;
 }			t_hit;
 
 typedef struct s_shadow_ray
 {
 	t_ray	ray;
-	int		hit_id;
-	int		light_id;
 	float	light_distance;
 }			t_shadow_ray;
 
-typedef struct s_shadow_result
+typedef struct s_light_result
 {
 	t_rgb	color_through;
 	int		hit_id;
 	int		light_id;
-}			t_shadow_result;
+}			t_light_result;
 
 typedef struct s_phong
 {
@@ -116,16 +112,6 @@ typedef struct s_bvh_main
 	};
 	int			bvh_mode;
 }	t_bvh_main;
-
-typedef struct s_texture
-{
-	unsigned char	*pixels;
-	int				tex_bpp;
-	int				tex_size_line;
-	int				width;
-	int				height;
-	char			*name;
-}	t_texture;
 
 typedef enum e_mtl
 {
