@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/11 07:07:52 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 01:18:03 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,26 +203,26 @@ bool	cam_has_moved(t_camera *camera)
 	return (false);
 }
 
-void	cast_rays(t_camera *cam, t_ray *buffer, int pixel);
-void	cast_ray_loop(t_camera *cam, t_ray *buffer)
+void	cast_rays(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel);
+void	cast_ray_loop(t_camera *cam, t_ray *buffer, t_hit *hits)
 {
 	int		i;
 
 	i = 0;
 	while (i < WIDTH * HEIGHT * SUB_PIXEL_QUANTITY)
 	{
-		cast_rays(cam, buffer, i);
+		cast_rays(cam, buffer, hits, i);
 		++i;
 	}
 }
 
 void	intersect_scene(t_ray *rays, t_hit *hits, t_scene *scene, int pixel);
-void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene)
+void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene, int count)
 {
 	int	i;
 
 	i = 0;
-	while (i < WIDTH * HEIGHT * SUB_PIXEL_QUANTITY)
+	while (i < count)
 	{
 		intersect_scene(rays, hits, scene, i);
 		++i;
@@ -309,6 +309,19 @@ void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count)
 	}
 }
 
+void    draw_on_screen(t_ray *rays, int *addr, int pixel);
+void	draw_screen_loop(t_ray *rays, int *addr)
+{
+	int			pixel;
+
+	pixel = 0;
+	while (pixel < WIDTH * HEIGHT * SUB_PIXEL_QUANTITY)
+	{
+		draw_on_screen(rays, addr, pixel);
+		++pixel;
+	}
+}
+
 void	ray_tracing_render(t_data *data)
 {
 	t_camera	*cam;
@@ -331,13 +344,18 @@ void	ray_tracing_render(t_data *data)
 	}
 	else
 	{
-		cast_ray_loop(cam, data->buffers.rays);
-		intersect_loop(data->buffers.rays, data->buffers.hits, &data->scene);
-		data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH * SUB_PIXEL_QUANTITY);
+		cast_ray_loop(cam, data->buffers.rays, data->buffers.hits);
+		data->buffers.hits_count = HEIGHT * WIDTH * SUB_PIXEL_QUANTITY;
+		while (data->buffers.hits_count > 0)
+		{
+			intersect_loop(data->buffers.rays, data->buffers.hits, &data->scene, data->buffers.hits_count);
+			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, data->buffers.hits_count);
+			sample_materials_loop(&data->buffers, data->scene.texture.data, data->scene.mat.data, data->buffers.hits_count);
+			shade_loop(&data->buffers, &data->scene, data, data->buffers.hits_count);
+			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, data->buffers.hits_count);
+		}
 		draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
-		sample_materials_loop(&data->buffers, data->scene.texture.data, data->scene.mat.data, data->buffers.hits_count);
-		shade_loop(&data->buffers, &data->scene, data, data->buffers.hits_count);
-
+		draw_screen_loop(data->buffers.rays, data->mlx->img.addr);
 		// actual_pixel = 0;
 		// pixel_size = get_smooth_size(cam, data);
 		// draw(&data->mlx->img, cam, data, pixel_size);

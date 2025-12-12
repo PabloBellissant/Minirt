@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/25 17:37:35 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/11 03:18:46 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 05:04:53 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ t_ray	*pass_through_sphere(t_ray *ray, t_object *obj)
 	t_out = get_sphere_t_out(ray, obj);
 	ray->origin = vec3_add(ray->origin, vec3_scale(ray->dir, t_out + EPSILON));
 	ray->hit_normal = vec3_normalize(vec3_sub(obj->sphere.pos, ray->origin));
-	ray->dir = vec3_refract(ray->dir, ray->hit_normal, ray->hit_mat->ni / 1.0f);
+	ray->dir = vec3_refract(ray->dir, vec3_neg(ray->hit_normal), ray->hit_mat->ni / 1.0f);
 	return (ray);
 }
 

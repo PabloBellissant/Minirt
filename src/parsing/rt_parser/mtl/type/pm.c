@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ni.c                                               :+:      :+:    :+:   */
+/*   pm.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:04:08 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/12 03:18:26 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 03:24:24 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "render.h"
 
-#define NI_FORMAT " *Ni  *%f[1,5] *\n"
+#define PM_FORMAT " *Pm  *%f[1] *\n"
 
-int	ni(const char *line, t_scene *scene)
+int	pm(const char *line, t_scene *scene)
 {
 	t_mat	*mat;
 
 	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, NI_FORMAT, line, &mat->ni) == -1)
+	if (ft_scan(0, PM_FORMAT, line, &mat->pm) == -1)
 		return (-1);
 	return (0);
 }

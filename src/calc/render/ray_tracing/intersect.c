@@ -6,13 +6,14 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 03:54:30 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/02 03:54:35 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 04:08:26 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <float.h>
 
 #include "calc.h"
+#include "vec3_operations.h"
 
 static void	fill_uv_normal(t_vec3 hit_point, t_object *object, t_vec2 *uv, t_vec3 *norm);
 static void	fill_skybox_uv(const t_vec3 *dir, t_vec2 *uv);
@@ -22,29 +23,28 @@ void	intersect_scene(t_ray *rays, t_hit *hits, t_scene *scene, int pixel)
 	t_object	*bvh_hit;
 	t_object	*plane_hit;
 
-	hits[pixel].id = pixel;
-	bvh_hit = hit_aabb_bvh(rays + pixel, scene->bvh.aabb_bvh);
+	bvh_hit = hit_aabb_bvh(&rays[hits[pixel].id], scene->bvh.aabb_bvh);
 	if (bvh_hit)
 	{
-		plane_hit = hit_reg_plane(rays + pixel, scene, bvh_hit->t);
+		plane_hit = hit_reg_plane(&rays[hits[pixel].id], scene, bvh_hit->t);
 		if (plane_hit)
 			bvh_hit = plane_hit;
 	}
 	else
-		bvh_hit = hit_reg_plane(rays + pixel, scene, FLT_MAX);
+		bvh_hit = hit_reg_plane(&rays[hits[pixel].id], scene, FLT_MAX);
 	if (bvh_hit)
 	{
+		hits[pixel].hit_obj = bvh_hit;
 		hits[pixel].hit = true;
 		hits[pixel].mat_id = bvh_hit->mat_id;
-		hits[pixel].hit_point = vec3_add(rays[pixel].origin,
-								 vec3_scale(rays[pixel].dir, bvh_hit->t));
+		hits[pixel].hit_point = vec3_add(rays[hits[pixel].id].origin,
+								 vec3_scale(rays[hits[pixel].id].dir, bvh_hit->t));
 		fill_uv_normal(hits[pixel].hit_point, bvh_hit,
 			&hits[pixel].uv, &hits[pixel].normal);
-		hits[pixel].hit_point = vec3_add(hits[pixel].hit_point, vec3_scale(hits[pixel].normal, 0.01f));
 		return ;
 	}
 	hits[pixel].hit = false;
-	fill_skybox_uv(&rays[pixel].dir, &hits[pixel].uv);
+	fill_skybox_uv(&rays[hits[pixel].id].dir, &hits[pixel].uv);
 }
 
 static void	fill_skybox_uv(const t_vec3 *dir, t_vec2 *uv)

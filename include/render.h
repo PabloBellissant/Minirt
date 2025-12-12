@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/12/11 06:16:35 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 04:16:26 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,28 @@
 # include "mlx_wrapper.h"
 # include "object.h"
 # include "bvh.h"
-#include "vectors_types.h"
+# include "vectors_types.h"
+
+# define MAX_ITER 5
+
+typedef struct s_refract_pos
+{
+	int		count;
+	t_vec3	origin[MAX_ITER];
+	t_vec3	dir[MAX_ITER];
+	t_rgb	through_power[MAX_ITER];
+}	t_refract_pos;
 
 typedef struct s_ray
 {
-	t_vec3	origin;
-	t_vec3	dir;
-	t_rgb	accumulated_color;
-	t_rgb	through_power;
-	int		id;
-	int		iteration;
+	t_vec3			origin;
+	t_vec3			dir;
+	t_rgb			accumulated_color;
+	t_rgb			through_power;
+	int				id;
+	int				iteration;
+	t_refract_pos	refract;
+	bool			is_in_refract;
 }			t_ray;
 
 typedef struct s_hit
@@ -38,7 +50,6 @@ typedef struct s_hit
 	int		mat_id;
 	t_vec3	hit_point;
 	t_rgb	hit_rgb;
-	float	hit_roughness;
 	float	hit_ambient;
 	float	hit_opacity;
 	t_vec3	ks;
@@ -47,6 +58,7 @@ typedef struct s_hit
 	float	pr;
 	float	ni;
 	t_vec3	reflectivity;
+	t_object	*hit_obj;
 }			t_hit;
 
 typedef struct s_shadow_ray

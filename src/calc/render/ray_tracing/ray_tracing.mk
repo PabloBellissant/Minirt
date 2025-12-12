@@ -6,7 +6,7 @@
 #    By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:41:28 by pabellis          #+#    #+#              #
-#    Updated: 2025/08/04 23:24:24 by pabellis         ###   ########lyon.fr    #
+#    Updated: 2025/12/11 18:52:54 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ RAY_TRACING_SRCS	= cast_rays.c \
 					  sample_materials.c \
 					  draw_skybox.c \
 					  intersect_shadow.c \
-					  shade.c
+					  shade.c \
+					  draw_on_screen.c
 
 SRCS				+= $(addprefix $(RAY_TRACING_DIR)/, $(RAY_TRACING_SRCS))
 

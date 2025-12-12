@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:44:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/09 16:26:19 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 03:19:19 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,6 @@ int				kr(const char *line, t_scene *scene);
 int				ni(const char *line, t_scene *scene);
 int				pr(const char *line, t_scene *scene);
 int				ke(const char *line, t_scene *scene);
-
+int				pm(const char *line, t_scene *scene);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 10:55:34 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/11 07:20:54 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 01:19:16 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,6 @@ void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data)
 		m++;
 	}
 	t_rgb	color = vec3_add(vec3_add(i_p, ambient), buffers->hits[pixel].ke);
-	buffers->rays[buffers->hits[pixel].id].accumulated_color = rgb_add(buffers->rays[buffers->hits[pixel].id].accumulated_color, rgb_mult(color, buffers->rays[buffers->hits[pixel].id].through_power));
-	data->mlx->img.addr[buffers->hits[pixel].id] = rgb_ftoi(buffers->rays[buffers->hits[pixel].id].accumulated_color).rgb;
+	buffers->rays[buffers->hits[pixel].id].accumulated_color = rgb_mult(color, rgb_add(buffers->rays[buffers->hits[pixel].id].accumulated_color, rgb_mult(color, buffers->rays[buffers->hits[pixel].id].through_power)));
+	buffers->rays[buffers->hits[pixel].id].through_power = vec3_mult(buffers->rays[buffers->hits[pixel].id].through_power, buffers->hits[pixel].reflectivity);
 }

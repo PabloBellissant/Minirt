@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:43:56 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/09/08 22:51:45 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/12 03:14:21 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ typedef struct s_mat
 	int		opacity_id;
 	float	ni;
 	float	pr;
+	float	pm;
 }	t_mat;
 
 typedef struct s_ray	t_ray;

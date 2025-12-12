@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 07:15:58 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/13 02:22:01 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/11 19:49:12 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "object.h"
 # include "render.h"
 
-# define EPSILON 1e-5f
+# define EPSILON 1e-4f
 # define M_PIf 3.14159265358979323846f
 
 typedef struct s_quadratic

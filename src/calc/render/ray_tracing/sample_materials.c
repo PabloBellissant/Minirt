@@ -6,13 +6,20 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 08:17:01 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/11 06:38:20 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 06:01:15 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "bvh.h"
+#include "colors_types.h"
 #include "minirt.h"
+#include "rasterizer.h"
+#include "rgb_special1.h"
 #include "vec3_operations.h"
+#include "vec3_scalar.h"
+#include "vec3_special1.h"
 #include "vec3_special2.h"
+#include "vectors_types.h"
 
 float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv);
 t_vec3	apply_normal_map(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent);
@@ -99,16 +106,93 @@ t_vec3	vec3_neg(t_vec3 v)
 	return (res);
 }
 
+t_vec3	vec3_make(float value)
+{
+	return (vec3(value, value, value));
+}
+
+t_rgb	get_f0(float metalness, float ior, t_rgb ks)
+{
+	float	no_metal_f0;
+
+	no_metal_f0 = ((ior - 1.0f) / (ior + 1.0f));
+	no_metal_f0 *= no_metal_f0;
+	return (rgb_lerp(vec3_make(no_metal_f0), ks, metalness));
+}
+
+
+t_vec3 vec3_refract(t_vec3 ray_dir, t_vec3 normal, float eta)
+{
+	float cosi = -vec3_dot(ray_dir, normal);
+	float cost2 = 1.0f - eta * eta * (1.0f - cosi * cosi);
+	if (cost2 < 0.0f)
+		return (ray_dir);
+	float cost = sqrtf(cost2);
+
+	t_vec3 refr_dir = vec3_add(
+		vec3_scale(ray_dir, eta),
+		vec3_scale(normal, eta * cosi - cost)
+	);
+	return (vec3_normalize(refr_dir));
+}
+
+#define EPSILON 0.001f
+float	get_sphere_t_out(t_ray *ray, t_object *o);
+
+void	pass_through_sphere(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
+{
+	float	t_out;
+	t_ray	temp;
+
+	*dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
+	temp.origin = hit->hit_point;
+	temp.dir = *dir;
+	*origin = temp.origin;
+	t_out = get_sphere_t_out(&temp, hit->hit_obj);
+	*origin = vec3_add(*origin, vec3_scale(*dir, t_out + EPSILON));
+	hit->normal = vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin));
+	*dir = vec3_refract(*dir, hit->normal, hit->ni / 1.0f);
+}
+
+void	pass_through_plane(t_vec3 *origin, t_hit *hit)
+{
+	*origin = vec3_add(hit->hit_point, vec3_scale(hit->hit_obj->plane.normal, -EPSILON));
+}
+
+void	pass_through_triangle(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
+{
+	//if (!ray->is_in_refract)
+		*dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
+//	else
+	{
+		hit->normal = vec3_neg(hit->normal);
+		*dir = vec3_refract(*dir, hit->normal, hit->ni / 1.0f);
+	}
+	*origin = vec3_add(hit->hit_point, vec3_scale(*dir, EPSILON));
+}
+
+void	pass_through(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
+{
+	if (hit->hit_obj->type == SPHERE)
+		pass_through_sphere(origin, dir, hit);
+	else if (hit->hit_obj->type == PLANE)
+		pass_through_plane(origin, hit);
+	else if (hit->hit_obj->type == TRIANGLE)
+		pass_through_triangle(origin, dir, hit);
+}
 
 void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat)
 {
 	t_vec3	tangent;
 	t_vec3	bitangent;
 	t_rgb	nmap;
+	t_rgb	f0;
+	float	roughness;
+	t_ray	*ray;
 
 	mat = mat + buffers->hits[pixel].mat_id;
+	ray = &buffers->rays[buffers->hits[pixel].id];
 	buffers->hits[pixel].hit_rgb = sample_texture(tex, mat->kd_id, buffers->hits[pixel].uv);
-	buffers->hits[pixel].hit_roughness = sample_binary_texture(tex, mat->roughness_id, buffers->hits[pixel].uv);
 	buffers->hits[pixel].hit_ambient = sample_binary_texture(tex, mat->ambient_id, buffers->hits[pixel].uv);
 	buffers->hits[pixel].hit_opacity = sample_binary_texture(tex, mat->opacity_id, buffers->hits[pixel].uv);
 	nmap = sample_texture(tex, mat->normal_id, buffers->hits[pixel].uv);
@@ -118,9 +202,22 @@ void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat)
 	buffers->hits[pixel].ks = mat->ks;
 	buffers->hits[pixel].ke = mat->ke;
 	buffers->hits[pixel].ns = mat->ns;
-	buffers->hits[pixel].reflectivity = get_reflect(buffers->rays[buffers->hits[pixel].id].dir, buffers->hits[pixel].normal, buffers->hits[pixel].hit_roughness, vec3(0.1,0.1,0.1));
+	buffers->hits[pixel].ni = mat->ni;
+	f0 = get_f0(mat->pm, buffers->hits[pixel].ni, buffers->hits[pixel].ks);
+	roughness = sample_binary_texture(tex, mat->roughness_id, buffers->hits[pixel].uv);
+	buffers->hits[pixel].reflectivity = get_reflect(ray->dir, buffers->hits[pixel].normal, roughness, f0);
 	buffers->hits[pixel].reflectivity = vec3_clamp(buffers->hits[pixel].reflectivity, 0.0f, 1.0f);
-	buffers->rays[buffers->hits[pixel].id].origin = buffers->hits[pixel].hit_point;
-	buffers->rays[buffers->hits[pixel].id].through_power = vec3_mult(buffers->rays[buffers->hits[pixel].id].through_power, buffers->hits[pixel].reflectivity);
-	buffers->rays[buffers->hits[pixel].id].dir = vec3_reflect(buffers->rays[buffers->hits[pixel].id].dir, buffers->hits[pixel].normal);
+	if (ray->iteration > MAX_ITER || vec3_length(buffers->hits[pixel].reflectivity) < 0.01f)
+		buffers->hits[pixel].hit = false;
+	else
+	{
+		ray->iteration++;
+		//buffers->rays[buffers->hits[pixel].id].origin = buffers->hits[pixel].hit_point;
+		//buffers->rays[buffers->hits[pixel].id].dir = vec3_reflect(buffers->rays[buffers->hits[pixel].id].dir, buffers->hits[pixel].normal);
+		ray->refract.dir[0] = ray->dir;
+		ray->refract.origin[0] = ray->origin;
+		pass_through(&ray->refract.origin[0], &ray->refract.dir[0], &buffers->hits[pixel]);
+		ray->dir = ray->refract.dir[0];
+		ray->origin = ray->refract.origin[0];
+	}
 }

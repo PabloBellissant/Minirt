@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_type.c                                       :+:      :+:    :+:   */
+/*   parse_mtl_type.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 04:40:26 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/21 06:32:28 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 03:19:36 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	parse_mtl_type(const char *line, t_scene *scene)
 {
 	t_mtl		type;
 	static int	(*f[])(const char *, t_scene *)
-		= {newmtl, ns, ka, kd, ks, map_kd, map_bump, map_pr, map_ka, map_d, d, ni, pr, ke};
+		= {newmtl, ns, ka, kd, ks, map_kd, map_bump, map_pr, map_ka, map_d, d, ni, pr, ke, pm};
 
 	if (line[0] == '#' || (line[0] == '/' && line[1] == '/') || line[0] == '\n')
 		return (0);

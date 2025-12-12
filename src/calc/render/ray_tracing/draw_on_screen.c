@@ -1,25 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ni.c                                               :+:      :+:    :+:   */
+/*   draw_on_screen.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/14 01:04:08 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/12 03:18:26 by pabellis         ###   ########.fr       */
+/*   Created: 2025/12/11 18:50:51 by pabellis          #+#    #+#             */
+/*   Updated: 2025/12/11 19:00:10 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "render.h"
 
-#define NI_FORMAT " *Ni  *%f[1,5] *\n"
-
-int	ni(const char *line, t_scene *scene)
+void	draw_on_screen(t_ray *rays, int *addr, int pixel)
 {
-	t_mat	*mat;
-
-	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, NI_FORMAT, line, &mat->ni) == -1)
-		return (-1);
-	return (0);
+	addr[pixel] = rgb_ftoi(rays[pixel].accumulated_color).rgb;
 }
+
