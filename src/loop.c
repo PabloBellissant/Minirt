@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/12 01:18:03 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 03:07:18 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -352,9 +352,9 @@ void	ray_tracing_render(t_data *data)
 			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, data->buffers.hits_count);
 			sample_materials_loop(&data->buffers, data->scene.texture.data, data->scene.mat.data, data->buffers.hits_count);
 			shade_loop(&data->buffers, &data->scene, data, data->buffers.hits_count);
-			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, data->buffers.hits_count);
+			draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
+			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH * SUB_PIXEL_QUANTITY);
 		}
-		draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
 		draw_screen_loop(data->buffers.rays, data->mlx->img.addr);
 		// actual_pixel = 0;
 		// pixel_size = get_smooth_size(cam, data);

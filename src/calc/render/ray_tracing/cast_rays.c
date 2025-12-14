@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 03:05:28 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/11 22:33:26 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 00:20:13 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,7 @@ void	cast_rays(t_camera *cam, t_ray *rays, t_hit *hits, int pixel)
 	rays[pixel].accumulated_color = rgb(0, 0, 0);
 	rays[pixel].iteration = 0;
 	rays[pixel].through_power = vec3(1, 1, 1);
+	rays[pixel].refract.count = 0;
+	rays[pixel].active = true;
 	hits[pixel].id = pixel;
 }

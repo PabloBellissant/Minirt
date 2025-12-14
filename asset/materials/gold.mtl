@@ -13,3 +13,13 @@ map_Kd asset/texture/gold/texture.ppm
 map_bump asset/texture/gold/normal.ppm
 map_Pr asset/texture/gold/roughness.ppm
 
+newmtl gold2
+Ns 800.0
+Ka 1 1 1
+Kd 1 0 1
+Ks 1 1 1
+Ni 2.3
+d 0.5
+Pr 0.
+Pm 1
+

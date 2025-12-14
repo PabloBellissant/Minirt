@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 08:17:01 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/12 06:01:15 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 03:23:53 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "vec3_special1.h"
 #include "vec3_special2.h"
 #include "vectors_types.h"
+#include <errno.h>
 
 float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv);
 t_vec3	apply_normal_map(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent);
@@ -32,9 +33,6 @@ t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv)
 	t_rgb_int	color;
 	int			offset;
 
-	uv.u = uv.u - floorf(uv.u);
-	uv.v = uv.v - floorf(uv.v);
-	uv.v = 1.0f - uv.v;
 	x = (int)(uv.u * (float)(texture_list[id].width));
 	y = (int)(uv.v * (float)(texture_list[id].height));
 	offset = y * texture_list[id].line_len + x * 3;
@@ -51,9 +49,6 @@ float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv)
 	int				offset;
 	unsigned char	pixel;
 
-	uv.u = uv.u - floorf(uv.u);
-	uv.v = uv.v - floorf(uv.v);
-	uv.v = 1.0f - uv.v;
 	x = (int)(uv.u * (float)(texture_list[id].width));
 	y = (int)(uv.v * (float)(texture_list[id].height));
 	offset = y * texture_list[id].line_len + x;
@@ -150,8 +145,8 @@ void	pass_through_sphere(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
 	*origin = temp.origin;
 	t_out = get_sphere_t_out(&temp, hit->hit_obj);
 	*origin = vec3_add(*origin, vec3_scale(*dir, t_out + EPSILON));
-	hit->normal = vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin));
-	*dir = vec3_refract(*dir, hit->normal, hit->ni / 1.0f);
+	//hit->normal = vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin));
+	*dir = vec3_refract(*dir, vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin)), hit->ni / 1.0f);
 }
 
 void	pass_through_plane(t_vec3 *origin, t_hit *hit)
@@ -161,14 +156,17 @@ void	pass_through_plane(t_vec3 *origin, t_hit *hit)
 
 void	pass_through_triangle(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
 {
+	(void) dir;
+*origin = vec3_add(hit->hit_point, vec3_scale(hit->hit_obj->plane.normal, -EPSILON));
+
 	//if (!ray->is_in_refract)
-		*dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
+		// *dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
 //	else
-	{
-		hit->normal = vec3_neg(hit->normal);
-		*dir = vec3_refract(*dir, hit->normal, hit->ni / 1.0f);
-	}
-	*origin = vec3_add(hit->hit_point, vec3_scale(*dir, EPSILON));
+	// {
+		// hit->normal = vec3_neg(hit->normal);
+		// *dir = vec3_refract(*dir, hit->normal, hit->ni / 1.0f);
+	// }
+	// *origin = vec3_add(hit->hit_point, vec3_scale(*dir, EPSILON));
 }
 
 void	pass_through(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
@@ -211,13 +209,14 @@ void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat)
 		buffers->hits[pixel].hit = false;
 	else
 	{
+		ray->refract.dir[ray->refract.count] = ray->dir;
+		ray->refract.origin[ray->refract.count] = ray->origin;
+		ray->refract.through_power[ray->refract.count] = vec3_scale(ray->through_power, 1.0f - buffers->hits[pixel].hit_opacity);
+		ray->through_power = vec3_sub(ray->through_power, ray->refract.through_power[ray->refract.count]);
+		pass_through(&ray->refract.origin[ray->refract.count], &ray->refract.dir[ray->refract.count], &buffers->hits[pixel]);
+		ray->origin = buffers->hits[pixel].hit_point;
+		ray->dir = vec3_reflect(ray->dir, buffers->hits[pixel].normal);
+		++ray->refract.count;
 		ray->iteration++;
-		//buffers->rays[buffers->hits[pixel].id].origin = buffers->hits[pixel].hit_point;
-		//buffers->rays[buffers->hits[pixel].id].dir = vec3_reflect(buffers->rays[buffers->hits[pixel].id].dir, buffers->hits[pixel].normal);
-		ray->refract.dir[0] = ray->dir;
-		ray->refract.origin[0] = ray->origin;
-		pass_through(&ray->refract.origin[0], &ray->refract.dir[0], &buffers->hits[pixel]);
-		ray->dir = ray->refract.dir[0];
-		ray->origin = ray->refract.origin[0];
 	}
 }

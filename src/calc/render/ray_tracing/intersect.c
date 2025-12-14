@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 03:54:30 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/12 04:08:26 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 00:06:30 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,34 +23,35 @@ void	intersect_scene(t_ray *rays, t_hit *hits, t_scene *scene, int pixel)
 	t_object	*bvh_hit;
 	t_object	*plane_hit;
 
-	bvh_hit = hit_aabb_bvh(&rays[hits[pixel].id], scene->bvh.aabb_bvh);
+	rays = &rays[hits[pixel].id];
+	bvh_hit = hit_aabb_bvh(rays, scene->bvh.aabb_bvh);
 	if (bvh_hit)
 	{
-		plane_hit = hit_reg_plane(&rays[hits[pixel].id], scene, bvh_hit->t);
+		plane_hit = hit_reg_plane(rays, scene, bvh_hit->t);
 		if (plane_hit)
 			bvh_hit = plane_hit;
 	}
 	else
-		bvh_hit = hit_reg_plane(&rays[hits[pixel].id], scene, FLT_MAX);
+		bvh_hit = hit_reg_plane(rays, scene, FLT_MAX);
 	if (bvh_hit)
 	{
 		hits[pixel].hit_obj = bvh_hit;
 		hits[pixel].hit = true;
 		hits[pixel].mat_id = bvh_hit->mat_id;
-		hits[pixel].hit_point = vec3_add(rays[hits[pixel].id].origin,
-								 vec3_scale(rays[hits[pixel].id].dir, bvh_hit->t));
+		hits[pixel].hit_point = vec3_add(rays->origin,
+								 vec3_scale(rays->dir, bvh_hit->t));
 		fill_uv_normal(hits[pixel].hit_point, bvh_hit,
 			&hits[pixel].uv, &hits[pixel].normal);
 		return ;
 	}
 	hits[pixel].hit = false;
-	fill_skybox_uv(&rays[hits[pixel].id].dir, &hits[pixel].uv);
+	fill_skybox_uv(&rays->dir, &hits[pixel].uv);
 }
 
 static void	fill_skybox_uv(const t_vec3 *dir, t_vec2 *uv)
 {
 	uv->u = 0.5f + atan2f(dir->z, dir->x) / (2.0f * M_PIf);
-	uv->v = 0.5f + asinf(dir->y) / M_PIf;
+	uv->v = 0.5f - asinf(dir->y) / M_PIf;
 }
 
 static void	fill_uv_normal(t_vec3 hit_point, t_object *object, t_vec2 *uv, t_vec3 *norm)
@@ -104,5 +105,8 @@ static void	fill_uv_normal(t_vec3 hit_point, t_object *object, t_vec2 *uv, t_vec
 		uv->u = 0.5f + atan2f(norm->z, norm->x) / (2.0f * M_PIf);
 		uv->v = 0.5f + asinf(norm->y) / M_PIf;
 	}
+	uv->u -= floor(uv->u); 
+	uv->v -= floor(uv->v);
+	uv->v = 1.0f - uv->v;
 }
 

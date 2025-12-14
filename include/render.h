@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/12/12 04:16:26 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 02:07:15 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_ray
 	int				id;
 	int				iteration;
 	t_refract_pos	refract;
+	bool			active;
 	bool			is_in_refract;
 }			t_ray;
 

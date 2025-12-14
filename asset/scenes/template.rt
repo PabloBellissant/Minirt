@@ -24,13 +24,11 @@ mtl asset/materials/gold.mtl
 #mtl asset/materials/uni/reflect.mtl
 mtl asset/materials/uni/mat.mtl
 
-sp 0,5,0 3 255,225,255 gold
-sp 0,5,5 3 255,225,255 mat_black
 A 0.6 255,255,255
 
 #obj asset/chess/chess.obj 0, 0, 0      0, 0, 5     1, 1, 1
 #obj asset/bunny/bunny_high_poly.obj 10,0,-15   0, 0, 5     1,1,1
-#obj asset/bmw/bmw.obj 37, 0, -8.5           0.8, 0, 5     0.8,0.8,0.8
+obj asset/bmw/bmw.obj 37, 0, -8.5           0.8, 0, 5     0.8,0.8,0.8
 #obj asset/casino/casino.obj 0, -4.1, -50           0, 0, 5     1, 1, 1
 #obj asset/porsche/porsche.obj 31, 0, 3 3, 0, 5     1, 1, 1
 #obj asset/jesko/jesko.obj 31, 0, 3 3, 0, 5     5,5,5
