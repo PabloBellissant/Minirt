@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 08:17:01 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/14 03:23:53 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 03:35:36 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,14 +209,17 @@ void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat)
 		buffers->hits[pixel].hit = false;
 	else
 	{
-		ray->refract.dir[ray->refract.count] = ray->dir;
-		ray->refract.origin[ray->refract.count] = ray->origin;
 		ray->refract.through_power[ray->refract.count] = vec3_scale(ray->through_power, 1.0f - buffers->hits[pixel].hit_opacity);
-		ray->through_power = vec3_sub(ray->through_power, ray->refract.through_power[ray->refract.count]);
-		pass_through(&ray->refract.origin[ray->refract.count], &ray->refract.dir[ray->refract.count], &buffers->hits[pixel]);
+		if (vec3_length(ray->refract.through_power[ray->refract.count]) > 0.05)
+		{
+			ray->refract.dir[ray->refract.count] = ray->dir;
+			ray->refract.origin[ray->refract.count] = ray->origin;
+			ray->through_power = vec3_sub(ray->through_power, ray->refract.through_power[ray->refract.count]);
+			pass_through(&ray->refract.origin[ray->refract.count], &ray->refract.dir[ray->refract.count], &buffers->hits[pixel]);
+			++ray->refract.count;
+		}
 		ray->origin = buffers->hits[pixel].hit_point;
 		ray->dir = vec3_reflect(ray->dir, buffers->hits[pixel].normal);
-		++ray->refract.count;
 		ray->iteration++;
 	}
 }
