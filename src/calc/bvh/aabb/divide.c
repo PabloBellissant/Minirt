@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 06:39:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/15 04:17:29 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/15 05:43:32 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,7 @@ int semi_sort_(t_object **obj, int input_size, int axis, float middle_val)
 	read_pos = 0;
 	while (read_pos < input_size)
 	{
-		//dprintf(2, "middle : %f, searchimg : %f\n", middle_val, get_center(obj[read_pos]).data[axis]);
-		if (get_center(obj[read_pos]).data[axis] < middle_val)
+		if (get_center(obj[read_pos]).data[axis] > middle_val)
 		{
 			if (write_pos != read_pos)
 			{
@@ -66,7 +65,7 @@ int semi_sort_(t_object **obj, int input_size, int axis, float middle_val)
 		}
 		++read_pos;
 	}
-	return (write_pos);
+	return (0);
 }
 
 // void	semi_sort(void *array, size_t elem_count, size_t elem_size,
@@ -83,10 +82,10 @@ int	subdivide(t_aabb_bvh *bvh, t_vector *bvh_vec, t_vector *obj_vec)
 	if (obj_vec->num_elements > 1)
 	{
 		axis = get_cut_axis(bvh);
-		//quick_sort(obj_vec->data, obj_vec->num_elements - 1,
+		// quick_sort(obj_vec->data, obj_vec->num_elements - 1,
 		// 	sizeof(t_object *), get_axis_function(axis));
-		int cut_index = semi_sort_(obj_vec->data, obj_vec->num_elements - 1, axis, (bvh->max.data[axis] + bvh->min.data[axis]) / 2);
-		cut_index = obj_vec->num_elements / 2;
+		semi_sort_(obj_vec->data, obj_vec->num_elements, axis, (bvh->max.data[axis] + bvh->min.data[axis]) / 2.0f);
+		int cut_index = obj_vec->num_elements / 2.0f;
 		vector_add(bvh_vec, &temp, 1);
 		bvh->next_a = get_last_vector_value(bvh_vec);
 		divide_half_left(&new_object_ptr, obj_vec, cut_index);

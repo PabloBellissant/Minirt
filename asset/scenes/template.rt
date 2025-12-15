@@ -6,7 +6,7 @@
 #    By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/14 06:02:30 by pabellis          #+#    #+#              #
-#    Updated: 2025/12/14 19:58:35 by pabellis         ###   ########.fr        #
+#    Updated: 2025/12/15 06:27:43 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,8 +41,8 @@ mtl asset/materials/uni/mat.mtl
 A 0.6 255,255,255
 
 #obj asset/chess/chess.obj 0, 0, 0      0, 0, 5     1, 1, 1
-#obj asset/bunny/bunny_low_poly.obj 10,0,-15   0, 0, 5     10,10,10
- obj asset/bmw/bmw.obj 37, 0, -8.5           0.8, 0, 5     0.8,0.8,0.8
+obj asset/bunny/bunny_low_poly.obj 10,0,-15   0, 0, 5     10,10,10
+# obj asset/bmw/bmw.obj 37, 0, -8.5           0.8, 0, 5     0.8,0.8,0.8
 #obj asset/casino/casino.obj 0, -4.1, -50           0, 0, 5     1, 1, 1
 #obj asset/porsche/porsche.obj 31, 0, 3 3, 0, 5     1, 1, 1
 #obj asset/jesko/jesko.obj 31, 0, 3 3, 0, 5     5,5,5
@@ -52,7 +52,8 @@ A 0.6 255,255,255
 #mat blue 0,0,1 1,1,1 80 1 0
 #mat transparent 0,0,1 1,1,1 80 0 0
 
-# pl 0,0,0 0,1,0 0,0,0 gold2
+ pl 0,0,0 0,1,0 0,0,0 gold2
+
 
 
 
