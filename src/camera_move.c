@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:24:03 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/28 10:38:26 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/12/15 04:33:03 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 }
 
 #define SENSITIVITY .001f
+#define ROLL_SENSITIVITY .01f
 #define MAX_PITCH 1.53938043117523193F
 
 void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y)
@@ -72,4 +73,9 @@ void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y)
 		data->scene.camera.rot.x = MAX_PITCH;
 	else if (data->scene.camera.rot.x < -MAX_PITCH)
 		data->scene.camera.rot.x = -MAX_PITCH;
+	if (data->keys.roll_left)
+		data->scene.camera.rot.z -= ROLL_SENSITIVITY;
+	if (data->keys.roll_right)
+		data->scene.camera.rot.z += ROLL_SENSITIVITY;
 }
+
