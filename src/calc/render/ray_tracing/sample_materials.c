@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 08:17:01 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/14 03:35:36 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 06:21:28 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,6 @@ void	pass_through_sphere(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
 	*origin = temp.origin;
 	t_out = get_sphere_t_out(&temp, hit->hit_obj);
 	*origin = vec3_add(*origin, vec3_scale(*dir, t_out + EPSILON));
-	//hit->normal = vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin));
 	*dir = vec3_refract(*dir, vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin)), hit->ni / 1.0f);
 }
 
@@ -157,16 +156,18 @@ void	pass_through_plane(t_vec3 *origin, t_hit *hit)
 void	pass_through_triangle(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
 {
 	(void) dir;
-*origin = vec3_add(hit->hit_point, vec3_scale(hit->hit_obj->plane.normal, -EPSILON));
+	//*origin = vec3_add(hit->hit_point, vec3_scale(*dir, -10));
+	(void) origin;
+	(void) hit;
 
-	//if (!ray->is_in_refract)
+	//if (!ray->is_in_refract
 		// *dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
 //	else
 	// {
 		// hit->normal = vec3_neg(hit->normal);
 		// *dir = vec3_refract(*dir, hit->normal, hit->ni / 1.0f);
 	// }
-	// *origin = vec3_add(hit->hit_point, vec3_scale(*dir, EPSILON));
+	*origin = vec3_add(hit->hit_point, vec3_scale(*dir, 20));
 }
 
 void	pass_through(t_vec3 *origin, t_vec3 *dir, t_hit *hit)

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/12/14 02:07:15 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/15 04:21:24 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ typedef struct s_camera
 	float	sin_pitch;
 	float	cos_yaw;
 	float	sin_yaw;
+	float	cos_roll;
+	float	sin_roll;
 	t_vec3	camera_forward;
 	t_vec3	camera_right;
 	t_vec3	camera_up;

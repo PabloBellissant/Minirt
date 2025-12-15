@@ -6,13 +6,14 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:15:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/21 03:16:46 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/15 04:44:06 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
 #include "mlx.h"
 #include "minirt.h"
+#include "mlx_key_input.h"
 
 static inline bool	is_left_key(int keycode)
 {
@@ -52,6 +53,21 @@ static inline bool	is_up_arrow(int keycode)
 static inline bool	is_down_arrow(int keycode)
 {
 	return (keycode == XK_Down);
+}
+
+static inline bool	is_e_key(int keycode)
+{
+	return (keycode == XK_e);
+}
+
+static inline bool	is_q_key(int keycode)
+{
+	return (keycode == XK_q);
+}
+
+static inline bool	is_roll_key(int keycode)
+{
+	return (keycode == XK_e || keycode == XK_q);
 }
 
 static inline bool	is_right_arrow(int keycode)
@@ -101,6 +117,8 @@ void	setup_key_move_events(t_data *data)
 	add_status_key_hook(data->mlx, is_forward_key, false, &(data->keys.forward));
 	add_status_key_hook(data->mlx, is_backward_key, false, &(data->keys.backward));
 	add_status_key_hook(data->mlx, is_space_key, false, &(data->keys.upward));
+	add_status_key_hook(data->mlx, is_q_key, false, &(data->keys.roll_left));
+	add_status_key_hook(data->mlx, is_e_key, false, &(data->keys.roll_right));
 }
 
 void	bvh_depth_increase(t_data *data, t_mlx *mlx)
@@ -176,6 +194,8 @@ void	toggle_mouse_focus(void *v, t_mlx *mlx_data)
 	update_mouse_focus_state(v, mlx_data);
 }
 
+static inline void	cam_move(t_data *data, t_mlx *mlx_data);
+
 void	setup_key_param_events(t_data *data)
 {
 	add_func_key_hook(data->mlx, is_k_key, toggle_mouse_focus, NULL);
@@ -190,6 +210,7 @@ void	setup_key_param_events(t_data *data)
 	add_func_key_hook(data->mlx, is_left_arrow, (void (*)(void *, t_mlx *))bvh_prev_mode, data);
 	add_func_key_hook(data->mlx, is_c_key, (void (*)(void *, t_mlx *))bvh_color_changer, data);
 	add_func_key_hook(data->mlx, is_render_mode_key, (void (*)(void *, t_mlx *))set_render_mode, data);
+	add_func_key_hook(data->mlx, is_roll_key, (void (*)(void *, t_mlx *))cam_move, data);
 }
 
 /*
