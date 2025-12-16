@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/12/15 04:21:24 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/16 00:51:04 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,9 @@ typedef struct s_ray
 	t_vec3			dir;
 	t_rgb			accumulated_color;
 	t_rgb			through_power;
-	int				id;
 	int				iteration;
 	t_refract_pos	refract;
 	bool			active;
-	bool			is_in_refract;
 }			t_ray;
 
 typedef struct s_hit

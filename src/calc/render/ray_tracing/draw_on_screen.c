@@ -12,8 +12,22 @@
 
 #include "render.h"
 
-void	draw_on_screen(t_ray *rays, int *addr, int pixel)
+void	draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size)
 {
-	addr[pixel] = rgb_ftoi(rays[pixel].accumulated_color).rgb;
+	t_vec2i		cube;
+	t_rgb_int	color;
+
+	cube.y = 0;
+	while (cube.y < pixel_size)
+	{
+		cube.x = 0;
+		while (cube.x < pixel_size)
+		{
+			color = rgb_ftoi(rays[pixel].accumulated_color);
+			addr[pixel + (cube.y * WIDTH + cube.x)] = color.rgb;
+			++cube.x;
+		}
+		++cube.y;
+	}
 }
 

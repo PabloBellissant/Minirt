@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 05:22:05 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/14 03:07:18 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/16 01:55:36 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,15 +204,20 @@ bool	cam_has_moved(t_camera *camera)
 }
 
 void	cast_rays(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel);
-void	cast_ray_loop(t_camera *cam, t_ray *buffer, t_hit *hits)
+void	cast_ray_loop(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel_size)
 {
-	int		i;
+	t_vec2i	pixel;
 
-	i = 0;
-	while (i < WIDTH * HEIGHT * SUB_PIXEL_QUANTITY)
+	pixel.y = 0;
+	while (pixel.y < HEIGHT * SUB_PIXEL_QUANTITY)
 	{
-		cast_rays(cam, buffer, hits, i);
-		++i;
+		pixel.x = 0;
+		while (pixel.x < WIDTH * SUB_PIXEL_QUANTITY)
+		{
+			cast_rays(cam, buffer, hits, (pixel.y * WIDTH + pixel.x));
+			pixel.x += pixel_size;
+		}
+		pixel.y += pixel_size;
 	}
 }
 
@@ -309,16 +314,21 @@ void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count)
 	}
 }
 
-void    draw_on_screen(t_ray *rays, int *addr, int pixel);
-void	draw_screen_loop(t_ray *rays, int *addr)
+void    draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size);
+void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size)
 {
-	int			pixel;
+	t_vec2i	pixel;
 
-	pixel = 0;
-	while (pixel < WIDTH * HEIGHT * SUB_PIXEL_QUANTITY)
+	pixel.y = 0;
+	while (pixel.y < HEIGHT * SUB_PIXEL_QUANTITY)
 	{
-		draw_on_screen(rays, addr, pixel);
-		++pixel;
+		pixel.x = 0;
+		while (pixel.x < WIDTH * SUB_PIXEL_QUANTITY)
+		{
+			draw_on_screen(rays, addr, (pixel.y * WIDTH + pixel.x), pixel_size);
+			pixel.x += pixel_size;
+		}
+		pixel.y += pixel_size;
 	}
 }
 
@@ -344,7 +354,8 @@ void	ray_tracing_render(t_data *data)
 	}
 	else
 	{
-		cast_ray_loop(cam, data->buffers.rays, data->buffers.hits);
+		pixel_size = 1;
+		cast_ray_loop(cam, data->buffers.rays, data->buffers.hits, pixel_size);
 		data->buffers.hits_count = HEIGHT * WIDTH * SUB_PIXEL_QUANTITY;
 		while (data->buffers.hits_count > 0)
 		{
@@ -355,7 +366,7 @@ void	ray_tracing_render(t_data *data)
 			draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
 			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH * SUB_PIXEL_QUANTITY);
 		}
-		draw_screen_loop(data->buffers.rays, data->mlx->img.addr);
+		draw_screen_loop(data->buffers.rays, data->mlx->img.addr, pixel_size);
 		// actual_pixel = 0;
 		// pixel_size = get_smooth_size(cam, data);
 		// draw(&data->mlx->img, cam, data, pixel_size);

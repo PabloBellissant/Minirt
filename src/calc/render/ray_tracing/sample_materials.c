@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sample_materials.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/02 08:17:01 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/14 06:21:28 by pabellis         ###   ########.fr       */
+/*   Created: 2025/12/16 02:08:32 by pabellis          #+#    #+#             */
+/*   Updated: 2025/12/16 02:08:32 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 
 float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv);
 t_vec3	apply_normal_map(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent);
-
 
 t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv)
 {
@@ -155,19 +154,14 @@ void	pass_through_plane(t_vec3 *origin, t_hit *hit)
 
 void	pass_through_triangle(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
 {
-	(void) dir;
-	//*origin = vec3_add(hit->hit_point, vec3_scale(*dir, -10));
-	(void) origin;
-	(void) hit;
-
-	//if (!ray->is_in_refract
-		// *dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
-//	else
-	// {
-		// hit->normal = vec3_neg(hit->normal);
-		// *dir = vec3_refract(*dir, hit->normal, hit->ni / 1.0f);
-	// }
-	*origin = vec3_add(hit->hit_point, vec3_scale(*dir, 20));
+    float	cos_theta;
+    
+	cos_theta = vec3_dot(*dir, hit->normal);	
+	if (cos_theta < 0.0f)
+    	*dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
+	else
+    	*dir = vec3_refract(*dir, vec3_neg(hit->normal), hit->ni / 1.0f);
+    *origin = vec3_add(hit->hit_point, vec3_scale(*dir, EPSILON));
 }
 
 void	pass_through(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
