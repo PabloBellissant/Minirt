@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "mlx_draw.h"
 #include "render.h"
 
 void	draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size)
@@ -24,7 +25,8 @@ void	draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size)
 		while (cube.x < pixel_size)
 		{
 			color = rgb_ftoi(rays[pixel].accumulated_color);
-			addr[pixel + (cube.y * WIDTH + cube.x)] = color.rgb;
+			if (cube.x + pixel % WIDTH < WIDTH && cube.y + pixel / WIDTH < HEIGHT)
+				addr[pixel + (cube.y * WIDTH + cube.x)] = color.rgb;
 			++cube.x;
 		}
 		++cube.y;

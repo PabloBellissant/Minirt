@@ -17,7 +17,7 @@
 #include "parsing.h"
 
 #define PLANE_FORMAT " *pl  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *\
-, *%f[-1,1]  *%8[255] *, *%8[255] *, *%8[255](  *%s) *\n"
+, *%f[-1,1]  *%8[255] *, *%8[255] *, *%8[255](  *%s %f) *\n"
 
 static t_vec3	get_tangent(t_vec3 n);
 static t_vec3	get_bitangent(t_vec3 n, t_vec3 tangent);
@@ -36,7 +36,7 @@ int	plane(const char *line, int line_num, t_scene *scene)
 	mat_name = NULL;
 	if (ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&norm->x, &norm->y, &norm->z, &color.r, &color.g, &color.b,
-					&mat_name))
+					&mat_name, &object->plane.texture_scaling))
 	{
 		free(mat_name);
 		return (error(pack_err(RT_ID, RT_E_PLANE), FL, LN, FC));

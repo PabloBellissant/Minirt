@@ -19,7 +19,7 @@
 # include "bvh.h"
 # include "vectors_types.h"
 
-# define MAX_ITER 5
+# define MAX_ITER  5
 
 typedef struct s_refract_pos
 {
@@ -33,6 +33,7 @@ typedef struct s_ray
 {
 	t_vec3			origin;
 	t_vec3			dir;
+	t_vec3			inv_dir;
 	t_rgb			accumulated_color;
 	t_rgb			through_power;
 	int				iteration;
@@ -50,28 +51,25 @@ typedef struct s_hit
 	t_vec3	hit_point;
 	t_rgb	hit_rgb;
 	float	hit_ambient;
-	float	hit_opacity;
 	t_vec3	ks;
 	t_vec3	ke;
 	float	ns;
-	float	pr;
-	float	ni;
 	t_vec3	reflectivity;
 	t_object	*hit_obj;
 }			t_hit;
 
-typedef struct s_shadow_ray
+typedef struct s_hit_mat_data
 {
-	t_ray	ray;
-	float	light_distance;
-}			t_shadow_ray;
-
-typedef struct s_light_result
-{
-	t_rgb	color_through;
-	int		hit_id;
-	int		light_id;
-}			t_light_result;
+	t_vec3	normal;
+	t_vec2	uv;
+	int		mat_id;
+	t_vec3	hit_point;
+	t_rgb	hit_rgb;
+	float	hit_ambient;
+	float	hit_opacity;
+	float	pr;
+	t_object	*hit_obj;
+}			t_hit_mat_data;
 
 typedef struct s_phong
 {

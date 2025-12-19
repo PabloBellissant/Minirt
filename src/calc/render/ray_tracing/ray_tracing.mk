@@ -18,10 +18,9 @@ RAY_TRACING_SRCS	= cast_rays.c \
 					  intersect.c \
 					  sample_materials.c \
 					  draw_skybox.c \
-					  intersect_shadow.c \
 					  shade.c \
-					  draw_on_screen.c
-
+					  draw_on_screen.c \
+					  get_color_through.c
 SRCS				+= $(addprefix $(RAY_TRACING_DIR)/, $(RAY_TRACING_SRCS))
 
 # VPATH

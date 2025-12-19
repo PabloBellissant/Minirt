@@ -44,6 +44,7 @@ typedef struct s_plane
 	t_vec3	normal;
 	t_vec3	tangent;
 	t_vec3	bitangent;
+	float	texture_scaling;
 }			t_plane;
 
 typedef struct s_cylinder

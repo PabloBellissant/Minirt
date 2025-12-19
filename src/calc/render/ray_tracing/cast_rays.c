@@ -12,6 +12,11 @@
 
 #include "minirt.h"
 
+t_vec3	vec3_inv(t_vec3 vec)
+{
+	return (vec3(1.0f / vec.x, 1.0f / vec.y, 1.0f / vec.z));
+}
+
 void	cast_rays(t_camera *cam, t_ray *rays, t_hit *hits, int pixel)
 {
 	int	x;
@@ -31,4 +36,5 @@ void	cast_rays(t_camera *cam, t_ray *rays, t_hit *hits, int pixel)
 	rays[pixel].refract.count = 0;
 	rays[pixel].active = true;
 	hits[pixel].id = pixel;
+	rays[pixel].inv_dir = vec3_inv(rays[pixel].dir);
 }

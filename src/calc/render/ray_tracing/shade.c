@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/* **********************l*************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   shade.c                                            :+:      :+:    :+:   */
@@ -45,6 +45,8 @@ static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v, t_vec3 k_s, const fl
 	return (vec3_scale(k_s, surface_faces_camera));
 }
 
+t_rgb	get_color_through_object(t_ray *ray, t_scene *scene, float light_distance);
+t_vec3	vec3_inv(t_vec3 vec);
 
 t_rgb	get_color_through(t_data *data, t_vec3 hit_point,
 		t_vec3 light_pos, t_vec3 normal)
@@ -58,8 +60,8 @@ t_rgb	get_color_through(t_data *data, t_vec3 hit_point,
 	ray.origin = offset_point;
 	to_light = vec3_sub(light_pos, offset_point);
 	ray.dir = vec3_normalize(to_light);
-	(void) data;
-	color_through = rgb(1,1,1);//hit_register_light(&ray, data, light_pos);
+	ray.inv_dir = vec3_inv(ray.dir);
+	color_through = get_color_through_object(&ray, &data->scene, vec3_length(to_light));
 	return (color_through);
 }
 
@@ -84,19 +86,19 @@ void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data)
 							  vec3_scale(scene->ambient.rgb, buffers->hits[pixel].hit_ambient));
 	t_rgb		diffuse_m;
 	t_rgb		specular_m;
-	t_rgb		i_p;
 	t_rgb		color_through;
+	t_rgb		i_p;
 	t_rgb		phong_d;
 	i_p = rgb(0, 0, 0);
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
-			color_through = get_color_through(data, buffers->hits[pixel].hit_point, lights[m].light.pos, buffers->hits[pixel].normal);
+		color_through = get_color_through(data, buffers->hits[pixel].hit_point, lights[m].light.pos, buffers->hits[pixel].normal);
 		phong_d = rgb_mult(lights[m].light.rgb, color_through);
 		diffuse_m = vec3_mult(get_diffuse(data->scene.phong.l[m], phong_d,
 				buffers->hits[pixel].normal, buffers->hits[pixel].hit_rgb), buffers->hits[pixel].hit_rgb);
 		specular_m = get_specular(data->scene.phong.r[m], data->scene.phong.v, buffers->hits[pixel].ks, buffers->hits[pixel].ns);
-		specular_m = rgb_mult(specular_m, vec3_mult(phong_d, color_through));
+		specular_m = rgb_mult(specular_m, phong_d);
 		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));
 		m++;
 	}

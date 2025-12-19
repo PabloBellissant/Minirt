@@ -180,12 +180,12 @@ t_object	*hit_register(t_ray *ray, t_scene *scene)
 		bvh_ret = hit_aabb_bvh(ray, scene->bvh.aabb_bvh);
 	if (bvh_ret)
 	{
-		plane_hit = hit_reg_plane(ray, scene, bvh_ret->t);
+		plane_hit = hit_niggers(ray, scene, bvh_ret->t);
 		if (!plane_hit)
 			return (bvh_ret);
 		return (plane_hit);
 	}
-	return (hit_reg_plane(ray, scene, FLT_MAX));
+	return (hit_niggers(ray, scene, FLT_MAX));
 }
 
 float	pass_through_no_refract(t_ray *ray, t_object *obj);

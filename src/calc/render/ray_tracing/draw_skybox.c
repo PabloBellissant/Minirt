@@ -16,6 +16,8 @@
 #include "vec3_operations.h"
 #include "vec3_scalar.h"
 
+t_vec3	vec3_inv(t_vec3 vec);
+
 void	draw_skybox(int pixel, t_buffers bu, int texture_id, t_texture *texture)
 {
 	t_rgb	color;
@@ -31,6 +33,7 @@ void	draw_skybox(int pixel, t_buffers bu, int texture_id, t_texture *texture)
 	}
 	--bu.rays[bu.hits[pixel].id].refract.count;
 	bu.rays[bu.hits[pixel].id].dir = bu.rays[bu.hits[pixel].id].refract.dir[bu.rays[bu.hits[pixel].id].refract.count];
+	bu.rays[bu.hits[pixel].id].inv_dir = vec3_inv(bu.rays[bu.hits[pixel].id].dir);
 	bu.rays[bu.hits[pixel].id].origin = bu.rays[bu.hits[pixel].id].refract.origin[bu.rays[bu.hits[pixel].id].refract.count];
 	bu.rays[bu.hits[pixel].id].through_power = bu.rays[bu.hits[pixel].id].refract.through_power[bu.rays[bu.hits[pixel].id].refract.count];
 	bu.hits[pixel].hit = true;

@@ -19,8 +19,8 @@
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
 # define TITLE "MiniRT Pabellis Jaubry--"
 
-# define SUB_PIXEL_QUANTITY 1
-# define TARGET_FPS 30
+# define SUB_PIXEL_QUANTITY 4
+# define TARGET_FPS 24
 # define MIN_QUALITY 25
 
 _Static_assert(SUB_PIXEL_QUANTITY > 0, "SUB_PIXEL_QUANTITY");
@@ -74,8 +74,6 @@ typedef struct s_buffers
 {
 	t_ray			*rays;
 	t_hit			*hits;
-	t_shadow_ray	*shadows;
-	t_light_result	*shadows_result;
 	int				hits_count;
 	int				*addr;
 }			t_buffers;

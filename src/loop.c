@@ -165,26 +165,34 @@ ssize_t	simulate_low_quality(t_camera *cam, t_data *data)
 	return (get_precise_time() - start_time);
 }
 
-int	optimal_radius(int frame_time_ms, int pixel_size)
-{
-	float	target_time;
-
-	target_time = 1000000.0f / TARGET_FPS;
-	return ((int)(pixel_size * sqrtf((float)frame_time_ms / target_time)));
-}
-
-int	get_smooth_size(t_camera *cam, t_data *data)
-{
-	int			low_quality_frame_time;
-	int			optimal;
-	int			min;
-
-	low_quality_frame_time = (int) simulate_low_quality(cam, data);
-	optimal = optimal_radius(low_quality_frame_time, LOW_QUALITY_SIMULATION);
-	min = MIN_QUALITY;
-	return (imin(min, optimal));
-}
 */
+
+ssize_t	get_max_frame_time()
+{
+	return (1000000.0f / TARGET_FPS);	
+}
+
+int	get_smooth_size(ssize_t frame_time, int old_quality)
+{
+	ssize_t		target_time;
+	int			min;
+	int			optimal;
+
+	target_time = get_max_frame_time();
+	if (frame_time * 0.9 < target_time && frame_time * 1.1 > target_time)
+		return (old_quality);
+	if (frame_time / 2 > target_time)
+		optimal = old_quality *= 2;
+	else if (frame_time < target_time / 2)
+		optimal = old_quality /= 2;
+	else if (frame_time > target_time)
+		optimal = old_quality + 1;
+	else
+	 	optimal = old_quality - 1;
+	min = MIN_QUALITY;
+	return (imax(imin(min, optimal), 1));
+}
+
 bool	cam_has_moved(t_camera *camera)
 {
 	static t_vec3	pos;
@@ -208,11 +216,13 @@ void	cast_ray_loop(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel_size)
 {
 	t_vec2i	pixel;
 
+	ft_bzero(buffer, WIDTH * HEIGHT * sizeof(t_ray));
+	ft_bzero(hits, WIDTH * HEIGHT * sizeof(t_hit));
 	pixel.y = 0;
-	while (pixel.y < HEIGHT * SUB_PIXEL_QUANTITY)
+	while (pixel.y < HEIGHT)
 	{
 		pixel.x = 0;
-		while (pixel.x < WIDTH * SUB_PIXEL_QUANTITY)
+		while (pixel.x < WIDTH)
 		{
 			cast_rays(cam, buffer, hits, (pixel.y * WIDTH + pixel.x));
 			pixel.x += pixel_size;
@@ -240,7 +250,7 @@ void	draw_skybox_loop(t_buffers bu, int texture_id, t_texture *texture, int size
 	int	i;
 
 	i = size;
-	while (i < (WIDTH * HEIGHT * SUB_PIXEL_QUANTITY))
+	while (i < (WIDTH * HEIGHT))
 	{
 		draw_skybox(i, bu, texture_id, texture);
 		++i;
@@ -285,22 +295,6 @@ void	sample_materials_loop(t_buffers *buffers, t_texture *tex, t_mat *mat, int c
 	}
 }
 
-void	test_loop(t_hit *hits, t_img_data *img, int count)
-{
-	int			pixel;
-	int			x;
-	int			y;
-
-	pixel = 0;
-	while (pixel < count)
-	{
-		x = hits[pixel].id % WIDTH;
-		y = hits[pixel].id / WIDTH;
-		ft_mlx_pixel_put(img, vec2i(x, y), rgb_ftoi(hits[pixel].hit_rgb));
-		++pixel;
-	}
-}
-
 void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data);
 void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count)
 {
@@ -320,10 +314,10 @@ void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size)
 	t_vec2i	pixel;
 
 	pixel.y = 0;
-	while (pixel.y < HEIGHT * SUB_PIXEL_QUANTITY)
+	while (pixel.y < HEIGHT)
 	{
 		pixel.x = 0;
-		while (pixel.x < WIDTH * SUB_PIXEL_QUANTITY)
+		while (pixel.x < WIDTH)
 		{
 			draw_on_screen(rays, addr, (pixel.y * WIDTH + pixel.x), pixel_size);
 			pixel.x += pixel_size;
@@ -332,10 +326,19 @@ void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size)
 	}
 }
 
+ssize_t	get_precise_time(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) == -1)
+		return (-1);
+	return ((ssize_t)time.tv_sec * 1000000L) + (ssize_t)time.tv_usec;
+}
+
 void	ray_tracing_render(t_data *data)
 {
 	t_camera	*cam;
-	static int	pixel_size;
+	static int	pixel_size = 10;
 	static int	actual_pixel;
 
 	if (data->params.exporting)
@@ -354,9 +357,13 @@ void	ray_tracing_render(t_data *data)
 	}
 	else
 	{
-		pixel_size = 1;
+		ssize_t		start_time;
+		
+		if (data->params.quality_render)
+			pixel_size = 1;
+		start_time = get_precise_time();
 		cast_ray_loop(cam, data->buffers.rays, data->buffers.hits, pixel_size);
-		data->buffers.hits_count = HEIGHT * WIDTH * SUB_PIXEL_QUANTITY;
+		data->buffers.hits_count = HEIGHT * WIDTH;
 		while (data->buffers.hits_count > 0)
 		{
 			intersect_loop(data->buffers.rays, data->buffers.hits, &data->scene, data->buffers.hits_count);
@@ -364,16 +371,14 @@ void	ray_tracing_render(t_data *data)
 			sample_materials_loop(&data->buffers, data->scene.texture.data, data->scene.mat.data, data->buffers.hits_count);
 			shade_loop(&data->buffers, &data->scene, data, data->buffers.hits_count);
 			draw_skybox_loop(data->buffers, data->scene.skybox_tex, data->scene.texture.data, data->buffers.hits_count);
-			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH * SUB_PIXEL_QUANTITY);
+			data->buffers.hits_count = compact_hits_inplace(data->buffers.hits, HEIGHT * WIDTH);
 		}
 		draw_screen_loop(data->buffers.rays, data->mlx->img.addr, pixel_size);
 		// actual_pixel = 0;
-		// pixel_size = get_smooth_size(cam, data);
-		// draw(&data->mlx->img, cam, data, pixel_size);
+		pixel_size = get_smooth_size(get_precise_time() - start_time, pixel_size);
 	}
 	if (data->params.bvh_debug && data->scene.bvh.bvh)
-		rasterize_bvh(data->scene.bvh.bvh, &data->params, data->scene.bvh.sphere_bvh->depth, data);
-}
+		rasterize_bvh(data->scene.bvh.bvh, &data->params, data->scene.bvh.sphere_bvh->depth, data); }
 
 int	loop(t_data *data)
 {

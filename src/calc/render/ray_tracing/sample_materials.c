@@ -14,6 +14,7 @@
 #include "colors_types.h"
 #include "minirt.h"
 #include "rasterizer.h"
+#include "render.h"
 #include "rgb_special1.h"
 #include "vec3_operations.h"
 #include "vec3_scalar.h"
@@ -133,18 +134,18 @@ t_vec3 vec3_refract(t_vec3 ray_dir, t_vec3 normal, float eta)
 #define EPSILON 0.001f
 float	get_sphere_t_out(t_ray *ray, t_object *o);
 
-void	pass_through_sphere(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
+void	pass_through_sphere(t_vec3 *origin, t_vec3 *dir, t_hit *hit, float ni)
 {
 	float	t_out;
 	t_ray	temp;
 
-	*dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
+	*dir = vec3_refract(*dir, hit->normal, 1.0f / ni);
 	temp.origin = hit->hit_point;
 	temp.dir = *dir;
 	*origin = temp.origin;
 	t_out = get_sphere_t_out(&temp, hit->hit_obj);
 	*origin = vec3_add(*origin, vec3_scale(*dir, t_out + EPSILON));
-	*dir = vec3_refract(*dir, vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin)), hit->ni / 1.0f);
+	*dir = vec3_refract(*dir, vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin)), ni / 1.0f);
 }
 
 void	pass_through_plane(t_vec3 *origin, t_hit *hit)
@@ -152,42 +153,45 @@ void	pass_through_plane(t_vec3 *origin, t_hit *hit)
 	*origin = vec3_add(hit->hit_point, vec3_scale(hit->hit_obj->plane.normal, -EPSILON));
 }
 
-void	pass_through_triangle(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
+void	pass_through_triangle(t_vec3 *origin, t_vec3 *dir, t_hit *hit, float ni)
 {
     float	cos_theta;
     
 	cos_theta = vec3_dot(*dir, hit->normal);	
 	if (cos_theta < 0.0f)
-    	*dir = vec3_refract(*dir, hit->normal, 1.0f / hit->ni);
+    	*dir = vec3_refract(*dir, hit->normal, 1.0f / ni);
 	else
-    	*dir = vec3_refract(*dir, vec3_neg(hit->normal), hit->ni / 1.0f);
+    	*dir = vec3_refract(*dir, vec3_neg(hit->normal), ni / 1.0f);
     *origin = vec3_add(hit->hit_point, vec3_scale(*dir, EPSILON));
 }
 
-void	pass_through(t_vec3 *origin, t_vec3 *dir, t_hit *hit)
+void	pass_through(t_vec3 *origin, t_vec3 *dir, t_hit *hit, float ni)
 {
 	if (hit->hit_obj->type == SPHERE)
-		pass_through_sphere(origin, dir, hit);
+		pass_through_sphere(origin, dir, hit, ni);
 	else if (hit->hit_obj->type == PLANE)
 		pass_through_plane(origin, hit);
 	else if (hit->hit_obj->type == TRIANGLE)
-		pass_through_triangle(origin, dir, hit);
+		pass_through_triangle(origin, dir, hit, ni);
 }
+
+t_vec3	vec3_inv(t_vec3 vec);
 
 void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat)
 {
-	t_vec3	tangent;
-	t_vec3	bitangent;
-	t_rgb	nmap;
-	t_rgb	f0;
-	float	roughness;
-	t_ray	*ray;
-
+	t_vec3			tangent;
+	t_vec3			bitangent;
+	t_rgb			nmap;
+	t_rgb			f0;
+	float			roughness;
+	t_ray			*ray;
+	t_hit_mat_data	hit_data;
+(void) hit_data;
 	mat = mat + buffers->hits[pixel].mat_id;
 	ray = &buffers->rays[buffers->hits[pixel].id];
 	buffers->hits[pixel].hit_rgb = sample_texture(tex, mat->kd_id, buffers->hits[pixel].uv);
 	buffers->hits[pixel].hit_ambient = sample_binary_texture(tex, mat->ambient_id, buffers->hits[pixel].uv);
-	buffers->hits[pixel].hit_opacity = sample_binary_texture(tex, mat->opacity_id, buffers->hits[pixel].uv);
+	hit_data.hit_opacity = sample_binary_texture(tex, mat->opacity_id, buffers->hits[pixel].uv);
 	nmap = sample_texture(tex, mat->normal_id, buffers->hits[pixel].uv);
 	tangent = get_tangent(buffers->hits[pixel].normal);
 	bitangent = get_bitangent(buffers->hits[pixel].normal, tangent);
@@ -195,26 +199,26 @@ void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat)
 	buffers->hits[pixel].ks = mat->ks;
 	buffers->hits[pixel].ke = mat->ke;
 	buffers->hits[pixel].ns = mat->ns;
-	buffers->hits[pixel].ni = mat->ni;
-	f0 = get_f0(mat->pm, buffers->hits[pixel].ni, buffers->hits[pixel].ks);
+	f0 = get_f0(mat->pm, mat->ni, buffers->hits[pixel].ks);
 	roughness = sample_binary_texture(tex, mat->roughness_id, buffers->hits[pixel].uv);
 	buffers->hits[pixel].reflectivity = get_reflect(ray->dir, buffers->hits[pixel].normal, roughness, f0);
 	buffers->hits[pixel].reflectivity = vec3_clamp(buffers->hits[pixel].reflectivity, 0.0f, 1.0f);
-	if (ray->iteration > MAX_ITER || vec3_length(buffers->hits[pixel].reflectivity) < 0.01f)
+	if (ray->iteration > MAX_ITER || vec3_length(buffers->hits[pixel].reflectivity) < 0.05f)
 		buffers->hits[pixel].hit = false;
 	else
 	{
-		ray->refract.through_power[ray->refract.count] = vec3_scale(ray->through_power, 1.0f - buffers->hits[pixel].hit_opacity);
+		ray->refract.through_power[ray->refract.count] = vec3_scale(ray->through_power, 1.0f - hit_data.hit_opacity);
 		if (vec3_length(ray->refract.through_power[ray->refract.count]) > 0.05)
 		{
 			ray->refract.dir[ray->refract.count] = ray->dir;
 			ray->refract.origin[ray->refract.count] = ray->origin;
 			ray->through_power = vec3_sub(ray->through_power, ray->refract.through_power[ray->refract.count]);
-			pass_through(&ray->refract.origin[ray->refract.count], &ray->refract.dir[ray->refract.count], &buffers->hits[pixel]);
+			pass_through(&ray->refract.origin[ray->refract.count], &ray->refract.dir[ray->refract.count], &buffers->hits[pixel], mat->ni);
 			++ray->refract.count;
 		}
 		ray->origin = buffers->hits[pixel].hit_point;
 		ray->dir = vec3_reflect(ray->dir, buffers->hits[pixel].normal);
+		ray->inv_dir = vec3_inv(ray->dir);
 		ray->iteration++;
 	}
 }

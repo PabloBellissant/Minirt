@@ -93,8 +93,8 @@ static void	fill_uv_normal(t_vec3 hit_point, t_object *object, t_vec2 *uv, t_vec
 	else if (object->type == PLANE)
 	{
 		local_point = vec3_sub(hit_point, object->plane.pos);
-		uv->u = vec3_dot(local_point, object->plane.tangent) * 0.1f;
-		uv->v = vec3_dot(local_point, object->plane.bitangent) * 0.1f;
+		uv->u = vec3_dot(local_point, object->plane.tangent) * object->plane.texture_scaling;
+		uv->v = vec3_dot(local_point, object->plane.bitangent) * object->plane.texture_scaling;
 		*norm = object->plane.normal;
 		*norm = vec3_normalize(*norm);
 	}
