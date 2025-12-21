@@ -47,6 +47,7 @@ static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v, t_vec3 k_s, const fl
 }
 
 t_rgb	get_color_through_object(t_ray *ray, t_scene *scene, float light_distance);
+
 t_vec3	vec3_inv(t_vec3 vec);
 
 t_rgb	hit_register_light(t_ray *ray, t_scene *scene, float light_distance);
