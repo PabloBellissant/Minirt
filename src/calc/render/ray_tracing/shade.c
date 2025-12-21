@@ -85,7 +85,7 @@ void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data)
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
-		dir_to_light = vec3_normalize(vec3_sub(lights[m].light.pos, buffers->hits[pixel].hit_point));	
+		dir_to_light = vec3_sub(lights[m].light.pos, buffers->hits[pixel].hit_point);	
 		color_through = get_color_through(data, buffers->hits[pixel].hit_point, dir_to_light);
 		receive_color = rgb_mult(lights[m].light.rgb, color_through);
 		dir_to_light =  vec3_normalize(dir_to_light);
