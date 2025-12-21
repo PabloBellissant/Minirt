@@ -23,7 +23,7 @@ void	sample_colors_loop(t_data *data, t_texture *tex, t_mat *mat, int count);
 
 void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count);
 
-void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size);
+void	draw_screen_loop(t_ray *rays, unsigned int *addr, int pixel_size);
 void	normal_debug_loop(t_buffers *buffers, int count);
 
 

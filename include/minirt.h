@@ -78,7 +78,7 @@ typedef struct s_buffers
 	t_ray			*rays;
 	t_hit			*hits;
 	int				hits_count;
-	int				*addr;
+	unsigned int	*addr;
 }			t_buffers;
 
 typedef struct s_data

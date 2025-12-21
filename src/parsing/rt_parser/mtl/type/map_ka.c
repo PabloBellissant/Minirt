@@ -37,11 +37,11 @@ static void	scale_tex(t_texture *tex, t_vec3 *scale)
 	int	i;
 
 	i = 0;
-	while (i < tex->width * tex->height * tex->byte_depth)
+	while (i < tex->width * tex->height * tex->channels)
 	{
-		tex->pixel[i] *= scale->b;
-		tex->pixel[i + 1] *= scale->g;
-		tex->pixel[i + 2] *= scale->r;
+		tex->pixels[i] *= scale->b;
+		tex->pixels[i + 1] *= scale->g;
+		tex->pixels[i + 2] *= scale->r;
 		i += 3;
 	}
 }

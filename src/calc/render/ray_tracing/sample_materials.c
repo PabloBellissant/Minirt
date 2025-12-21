@@ -34,9 +34,9 @@ t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv)
 	x = (int)(uv.u * (float)(texture_list[id].width));
 	y = (int)(uv.v * (float)(texture_list[id].height));
 	offset = y * texture_list[id].line_len + x * 3;
-	color.r = texture_list[id].pixel[offset];
-	color.g = texture_list[id].pixel[offset + 1];
-	color.b = texture_list[id].pixel[offset + 2];
+	color.r = texture_list[id].pixels[offset];
+	color.g = texture_list[id].pixels[offset + 1];
+	color.b = texture_list[id].pixels[offset + 2];
 	return (rgb_itof(color));
 }
 
@@ -50,7 +50,7 @@ float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv)
 	x = (int)(uv.u * (float)(texture_list[id].width));
 	y = (int)(uv.v * (float)(texture_list[id].height));
 	offset = y * texture_list[id].line_len + x;
-	pixel = texture_list[id].pixel[offset];
+	pixel = texture_list[id].pixels[offset];
 	return ((float)pixel / 255.0f);
 }
 

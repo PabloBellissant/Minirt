@@ -13,7 +13,7 @@
 #include "mlx_draw.h"
 #include "render.h"
 
-void	draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size)
+void	draw_on_screen(t_ray *rays, unsigned int *addr, int pixel, int pixel_size)
 {
 	t_vec2i		cube;
 	t_rgb_int	color;
@@ -33,7 +33,7 @@ void	draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size)
 	}
 }
 
-void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size)
+void	draw_screen_loop(t_ray *rays, unsigned int *addr, int pixel_size)
 {
 	t_vec2i	pixel;
 

@@ -38,13 +38,13 @@ static void	scale_pr(t_texture *tex, float scale)
 	int	temp;
 
 	i = 0;
-	while (i < tex->width * tex->height * tex->byte_depth)
+	while (i < tex->width * tex->height * tex->channels)
 	{
-		temp = (int) tex->pixel[i];
+		temp = (int) tex->pixels[i];
 		temp *= scale;
 		if (temp > 255)
 			temp = 255;
-		tex->pixel[i] = temp;
+		tex->pixels[i] = temp;
 		++i;
 	}
 }

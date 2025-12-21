@@ -26,7 +26,7 @@ int	create_null_texture(t_vector *vec)
 	ft_memcpy(tex->addr + 3, black, 3);
 	ft_memcpy(tex->addr + 6, black, 3);
 	ft_memcpy(tex->addr + 9, magenta, 3);
-	tex->byte_depth = 3;
+	tex->channels = 3;
 	tex->line_len = 2 * 3;
 	tex->width = 2;
 	tex->height = 2;

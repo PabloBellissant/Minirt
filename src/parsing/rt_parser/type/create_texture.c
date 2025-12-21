@@ -14,8 +14,8 @@
 #include "minirt.h"
 #include "render.h"
 
-t_texture	*ppm_parser(int fd, t_texture *tex);
-t_texture	*pgm_parser(int fd, t_texture *tex);
+t_texture	*parse_ppm(int fd, t_texture *tex);
+t_texture	*parse_pgm(int fd, t_texture *tex);
 char		*skip_comment(int fd);
 
 t_texture	texture_parser(char *texture_path)
@@ -33,12 +33,12 @@ t_texture	texture_parser(char *texture_path)
 		return (tex);
 	if (ft_strncmp(line, "P6", 2) == 0)
 	{
-		if (ppm_parser(fd, &tex) == NULL)
+		if (parse_ppm(fd, &tex) == NULL)
 			return (tex);
 	}
 	else if (ft_strncmp(line, "P5", 2) == 0)
 	{
-		if (pgm_parser(fd, &tex) == NULL)
+		if (parse_pgm(fd, &tex) == NULL)
 			return (tex);
 	}
 	free(line);
@@ -88,7 +88,7 @@ int	create_color_texture(t_vector *vec, t_rgb_int *color)
 	if (!tex->addr)
 		return (-1);
 	ft_memcpy(tex->addr, &color->rgb, 3);
-	tex->byte_depth = 3;
+	tex->channels = 3;
 	tex->line_len = 1 * 3;
 	tex->width = 1;
 	tex->height = 1;
@@ -106,7 +106,7 @@ int	create_binary_texture(t_vector *vec, unsigned char value)
 	if (!tex->addr)
 		return (-1);
 	ft_memcpy(tex->addr, &value, 1);
-	tex->byte_depth = 1;
+	tex->channels = 1;
 	tex->line_len = 1;
 	tex->width = 1;
 	tex->height = 1;

@@ -244,7 +244,7 @@ void	sample_materials_loop(t_buffers *buffers, t_texture *tex, t_mat *mat, int c
 
 void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count);
 
-void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size);
+void	draw_screen_loop(t_ray *rays, unsigned int *addr, int pixel_size);
 
 ssize_t	get_precise_time(void)
 {

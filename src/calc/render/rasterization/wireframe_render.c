@@ -67,5 +67,5 @@ static void	rasterize_objects(t_img_data *img, t_vector objects, t_camera *cam)
 
 static void	clear_old_screen(t_img_data *img)
 {
-	ft_fbzero(img->pixel, img->width * img->height * 4);
+	ft_fbzero(img->pixels, img->width * img->height * 4);
 }
