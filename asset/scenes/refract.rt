@@ -18,27 +18,14 @@ C 0,0.5,10 0,0,-1 70
 tex sky asset/texture/skybox/snow.ppm
 sky sky
 
-tex tiles asset/texture/tiles/1/texture.ppm
-tex tiles_nmap asset/texture/tiles/1/normal.ppm
-tex tiles_roughness asset/texture/tiles/1/roughness.ppm
-tex tiles_ambient asset/texture/tiles/1/ambient.ppm
-
-tex tiles2 asset/texture/tiles/2/texture.ppm
-tex tiles2_nmap asset/texture/tiles/2/normal.ppm
-tex tiles2_roughness asset/texture/tiles/2/roughness.ppm
-
-mat tiles 0,0,0 0,0,0 80 1 tiles tiles_nmap tiles_roughness tiles_ambient null
-mat tiles2 0,0,0 0,0,0 80 1 tiles2 tiles2_nmap tiles2_roughness null null
-
-mat chrome 0,0,0 1,1,1 80 1
-mat glass 0,0,0 0.1,0.1,0.1 80 0
+mtl asset/materials/tiles.mtl
 
 A 0.2 255,255,255
 
-sp 2,1.,0 2 0,0,0 glass
-sp -2,1.,0 2 0,0,1 chrome
+# sp 2,1.,0 2 0,0,0 glass
+# sp -2,1.,0 2 0,0,1 chrome
 # #
-# pl 0,0,0 0,1,0 255,255,255 tiles2
+pl 0,0,0 0,1,0 255,255,255 tiles3
 # pl 0,10,0 0,-1,0 255,255,255 tiles
 #
 # pl 0,0,-10 0,0,1 255,255,255 tiles

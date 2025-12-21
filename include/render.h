@@ -43,41 +43,26 @@ typedef struct s_ray
 
 typedef struct s_hit
 {
-	bool	hit;
-	int		id;
-	t_vec3	normal;
-	t_vec2	uv;
-	int		mat_id;
-	t_vec3	hit_point;
-	t_rgb	hit_rgb;
-	float	hit_ambient;
-	t_vec3	ks;
-	t_vec3	ke;
-	float	ns;
-	t_vec3	reflectivity;
+	bool		hit;
+	int			id;
+	t_vec3		normal;
+	t_vec2		uv;
+	int			mat_id;
+	t_vec3		hit_point;
+	t_rgb		hit_rgb;
+	float		hit_ambient;
+	t_vec3		ks;
+	t_vec3		ke;
+	float		ns;
+	t_vec3		reflectivity;
 	t_object	*hit_obj;
 }			t_hit;
 
 typedef struct s_hit_mat_data
 {
-	t_vec3	normal;
-	t_vec2	uv;
-	int		mat_id;
-	t_vec3	hit_point;
-	t_rgb	hit_rgb;
-	float	hit_ambient;
 	float	hit_opacity;
-	float	pr;
-	t_object	*hit_obj;
+	float	roughness;
 }			t_hit_mat_data;
-
-typedef struct s_phong
-{
-	t_vec3	*l;//direction toward light from surface
-	t_vec3	*r;//direction of reflection of light from surface
-	t_rgb	*d;//LIGHTS color
-	t_vec3	v;//direction towards camera
-}			t_phong;
 
 typedef struct s_camera
 {
@@ -148,7 +133,6 @@ typedef struct s_scene
 	char		*name;
 	t_vector	objects;
 	t_vector	lights;
-	t_phong		phong;
 	t_object	*planes;
 	int			plane_count;
 	t_bvh_main	bvh;
@@ -190,7 +174,7 @@ void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 	t_rgb_int color, t_camera *camera);
 
 void	wireframe_render(t_data *data);
-void	ray_tracing_render(t_data *data);
+void	pbr_render(t_data *data);
 
 int		export_to_ppm(t_data *data, t_mlx *mlx);
 

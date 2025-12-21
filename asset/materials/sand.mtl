@@ -4,10 +4,11 @@ newmtl sand
 Ns 200.0
 Ka 1.0 1.0 1.0
 Kd 1.0 1.0 1.0
-Ks 0.10 0.10 0.10
+Ks 0.20 0.20 0.20
 Ni 1.3
 d 1.0
-Pr 0.95
+Pr 0.99
+Pm 0
 map_Kd asset/texture/sand/texture.ppm
 map_bump asset/texture/sand/normal.ppm
 map_Pr asset/texture/sand/roughness.ppm

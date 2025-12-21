@@ -1,7 +1,7 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    ray_tracing.mk                                     :+:      :+:    :+:    #
+#    phong_render.mk                                    :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
@@ -11,24 +11,15 @@
 # **************************************************************************** #
 
 # Directories
-RAY_TRACING_DIR	= $(RENDER_DIR)/ray_tracing
+PHONG_RENDER_DIR	= $(RAY_TRACING_DIR)/phong_render
 
 # Source files
-RAY_TRACING_SRCS	= cast_rays.c \
-					  intersect.c \
-					  sample_materials.c \
-					  draw_skybox.c \
-					  shade.c \
-					  draw_on_screen.c \
-					  get_color_through.c \
-					  normal_debug.c
-SRCS				+= $(addprefix $(RAY_TRACING_DIR)/, $(RAY_TRACING_SRCS))
+PHONG_RENDER_SRCS	= phong_render.c \
+					  sample_colors.c \
+					  hit_register_light.c \
+					  hit_light_plane.c
 
-RAY_TRACING_MKS	= phong_render/phong_render.mk \
-				  refract/refract.mk
-
-include $(addprefix $(RAY_TRACING_DIR)/, $(RAY_TRACING_MKS))
-
+SRCS				+= $(addprefix $(PHONG_RENDER_DIR)/, $(PHONG_RENDER_SRCS))
 
 # VPATH
-vpath %.c $(RAY_TRACING_DIR)
+vpath %.c $(PHONG_RENDER_DIR)

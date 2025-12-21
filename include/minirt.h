@@ -20,7 +20,7 @@
 # define TITLE "MiniRT Pabellis Jaubry--"
 
 # define SUB_PIXEL_QUANTITY 4
-# define TARGET_FPS 24
+# define TARGET_FPS 12
 # define MIN_QUALITY 25
 
 _Static_assert(SUB_PIXEL_QUANTITY > 0, "SUB_PIXEL_QUANTITY");
@@ -68,6 +68,9 @@ typedef struct s_params
 	bool	smooth_shading;
 	bool	quality_render;
 	bool	exporting;
+	bool	texture;
+	bool	ambient;
+	bool	normal_map;
 }			t_params;
 
 typedef struct s_buffers

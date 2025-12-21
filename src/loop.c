@@ -211,51 +211,9 @@ bool	cam_has_moved(t_camera *camera)
 	return (false);
 }
 
-void	cast_rays(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel);
-void	cast_ray_loop(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel_size)
-{
-	t_vec2i	pixel;
-
-	ft_bzero(buffer, WIDTH * HEIGHT * sizeof(t_ray));
-	ft_bzero(hits, WIDTH * HEIGHT * sizeof(t_hit));
-	pixel.y = 0;
-	while (pixel.y < HEIGHT)
-	{
-		pixel.x = 0;
-		while (pixel.x < WIDTH)
-		{
-			cast_rays(cam, buffer, hits, (pixel.y * WIDTH + pixel.x));
-			pixel.x += pixel_size;
-		}
-		pixel.y += pixel_size;
-	}
-}
-
-void	intersect_scene(t_ray *rays, t_hit *hits, t_scene *scene, int pixel);
-void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene, int count)
-{
-	int	i;
-
-	i = 0;
-	while (i < count)
-	{
-		intersect_scene(rays, hits, scene, i);
-		++i;
-	}
-}
-
-void	draw_skybox(int pixel, t_buffers bu, int texture_id, t_texture *texture);
-void	draw_skybox_loop(t_buffers bu, int texture_id, t_texture *texture, int size)
-{
-	int	i;
-
-	i = size;
-	while (i < (WIDTH * HEIGHT))
-	{
-		draw_skybox(i, bu, texture_id, texture);
-		++i;
-	}
-}
+void	cast_ray_loop(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel_size);
+void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene, int count);
+void	draw_skybox_loop(t_buffers bu, int texture_id, t_texture *texture, int size);
 
 int compact_hits_inplace(t_hit *buffer, int input_size)
 {
@@ -282,49 +240,11 @@ int compact_hits_inplace(t_hit *buffer, int input_size)
 	return (write_pos);
 }
 
-void	sample_materials(t_buffers *buffers, int pixel, t_texture *tex, t_mat *mat);
-void	sample_materials_loop(t_buffers *buffers, t_texture *tex, t_mat *mat, int count)
-{
-	int	i;
+void	sample_materials_loop(t_buffers *buffers, t_texture *tex, t_mat *mat, int count);
 
-	i = 0;
-	while (i < count)
-	{
-		sample_materials(buffers, i, tex, mat);
-		++i;
-	}
-}
+void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count);
 
-void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data);
-void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count)
-{
-	int			pixel;
-
-	pixel = 0;
-	while (pixel < count)
-	{
-		shade(buffers, pixel, scene, data);
-		++pixel;
-	}
-}
-
-void    draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size);
-void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size)
-{
-	t_vec2i	pixel;
-
-	pixel.y = 0;
-	while (pixel.y < HEIGHT)
-	{
-		pixel.x = 0;
-		while (pixel.x < WIDTH)
-		{
-			draw_on_screen(rays, addr, (pixel.y * WIDTH + pixel.x), pixel_size);
-			pixel.x += pixel_size;
-		}
-		pixel.y += pixel_size;
-	}
-}
+void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size);
 
 ssize_t	get_precise_time(void)
 {
@@ -335,11 +255,11 @@ ssize_t	get_precise_time(void)
 	return ((ssize_t)time.tv_sec * 1000000L) + (ssize_t)time.tv_usec;
 }
 
-void	ray_tracing_render(t_data *data)
+void	pbr_render(t_data *data)
 {
 	t_camera	*cam;
 	static int	pixel_size = 10;
-	static int	actual_pixel;
+	// static int	actual_pixel;
 
 	if (data->params.exporting)
 	{
@@ -348,14 +268,14 @@ void	ray_tracing_render(t_data *data)
 	}
 	cam = &data->scene.camera;
 	fill_camera(cam);
-	if ((!cam_has_moved(&data->scene.camera) && data->params.quality_render))
-	{
-		if (actual_pixel == pixel_size * pixel_size)
-			actual_pixel = 0;
-//		draw_individual(&data->mlx->img, cam, data, pixel_size, actual_pixel);
-		++actual_pixel;
-	}
-	else
+// 	if ((!cam_has_moved(&data->scene.camera) && data->params.quality_render))
+// 	{
+// 		if (actual_pixel == pixel_size * pixel_size)
+// 			actual_pixel = 0;
+// //		draw_individual(&data->mlx->img, cam, data, pixel_size, actual_pixel);
+// 		++actual_pixel;
+// 	}
+	// else
 	{
 		ssize_t		start_time;
 		
@@ -378,13 +298,16 @@ void	ray_tracing_render(t_data *data)
 		pixel_size = get_smooth_size(get_precise_time() - start_time, pixel_size);
 	}
 	if (data->params.bvh_debug && data->scene.bvh.bvh)
-		rasterize_bvh(data->scene.bvh.bvh, &data->params, data->scene.bvh.sphere_bvh->depth, data); }
+		rasterize_bvh(data->scene.bvh.bvh, &data->params, data->scene.bvh.sphere_bvh->depth, data); 
+}
+
+void	phong_render(t_data *data);
 
 int	loop(t_data *data)
 {
 	static void (*render_func[])(t_data *)
-		= {wireframe_render, ray_tracing_render};
-	if (data->params.render_mode == 1)
+		= {wireframe_render, phong_render, pbr_render};
+	if (data->params.render_mode != 0)
 	{
 		if (!data->scene.bvh.bvh_pointer)
 		{

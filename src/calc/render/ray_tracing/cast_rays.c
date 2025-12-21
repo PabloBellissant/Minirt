@@ -38,3 +38,24 @@ void	cast_rays(t_camera *cam, t_ray *rays, t_hit *hits, int pixel)
 	hits[pixel].id = pixel;
 	rays[pixel].inv_dir = vec3_inv(rays[pixel].dir);
 }
+
+
+void	cast_ray_loop(t_camera *cam, t_ray *buffer, t_hit *hits, int pixel_size)
+{
+	t_vec2i	pixel;
+
+	ft_bzero(buffer, WIDTH * HEIGHT * sizeof(t_ray));
+	ft_bzero(hits, WIDTH * HEIGHT * sizeof(t_hit));
+	pixel.y = 0;
+	while (pixel.y < HEIGHT)
+	{
+		pixel.x = 0;
+		while (pixel.x < WIDTH)
+		{
+			cast_rays(cam, buffer, hits, (pixel.y * WIDTH + pixel.x));
+			pixel.x += pixel_size;
+		}
+		pixel.y += pixel_size;
+	}
+}
+

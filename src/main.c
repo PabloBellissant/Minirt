@@ -32,13 +32,6 @@ void	free_ttf(t_ttf_font *font);
 // 	free(env);
 // }
 
-void	free_phong(t_phong phong)
-{
-	ft_free(phong.l);
-	ft_free(phong.r);
-	ft_free(phong.d);
-}
-
 void	free_textures(t_vector *vec)
 {
 	size_t		i;
@@ -72,7 +65,6 @@ void	free_mats(t_vector *vec)
 
 void	free_scene(t_scene *scene)
 {
-	free_phong(scene->phong);
 	free_vector(&scene->lights);
 	free_vector(&scene->objects);
 	free(scene->planes);

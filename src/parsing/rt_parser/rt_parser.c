@@ -17,32 +17,6 @@
 #include "parsing.h"
 #include "vectors.h"
 
-int	init_phong(t_scene *scene)
-{
-	int	return_val;
-
-	return_val = 0;
-	scene->phong.l = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
-	if (errno != 0)
-	{
-		return_val = -1;
-		perror("Minirt");
-	}
-	scene->phong.r = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
-	if (errno != 0)
-	{
-		return_val = -1;
-		perror("Minirt");
-	}
-	scene->phong.d = ft_calloc(sizeof(t_vec3), scene->lights.num_elements);
-	if (errno != 0)
-	{
-		return_val = -1;
-		perror("Minirt");
-	}
-	return (return_val);
-}
-
 int	rt_parser(int fd, t_scene *scene)
 {
 	char	*line;
@@ -66,7 +40,7 @@ int	rt_parser(int fd, t_scene *scene)
 	}
 	if (errno != 0)
 		return (-1);
-	if (return_val == 0)
-		return_val = init_phong(scene);
+	if (scene->skybox_tex == -1)
+		scene->skybox_tex = create_color_texture(&scene->texture, &(t_rgb_int){{0, 0, 0}});
 	return (return_val);
 }

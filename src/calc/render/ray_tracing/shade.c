@@ -17,6 +17,7 @@
 #include "rgb_operations.h"
 #include "vec3_operations.h"
 #include "vec3_special1.h"
+#include "vec3_special2.h"
 
 static t_vec3	reflection(const t_vec3 normal, const t_vec3 light_dir)
 {
@@ -48,63 +49,71 @@ static t_rgb	get_specular(const t_vec3 r_m, const t_vec3 v, t_vec3 k_s, const fl
 t_rgb	get_color_through_object(t_ray *ray, t_scene *scene, float light_distance);
 t_vec3	vec3_inv(t_vec3 vec);
 
+t_rgb	hit_register_light(t_ray *ray, t_scene *scene, float light_distance);
+
 t_rgb	get_color_through(t_data *data, t_vec3 hit_point,
-		t_vec3 light_pos, t_vec3 normal)
+		t_vec3 to_light)
 {
-	const t_vec3	offset_point = vec3_add(hit_point,
-			vec3_scale(normal, 0.001f));
 	t_ray			ray;
-	t_vec3			to_light;
 	t_rgb			color_through;
 
-	ray.origin = offset_point;
-	to_light = vec3_sub(light_pos, offset_point);
+	ray.origin = hit_point;
 	ray.dir = vec3_normalize(to_light);
 	ray.inv_dir = vec3_inv(ray.dir);
-	color_through = get_color_through_object(&ray, &data->scene, vec3_length(to_light));
+	color_through = hit_register_light(&ray, &data->scene, vec3_length(to_light));
 	return (color_through);
 }
-
-t_vec3 vec3_make(float val);
 
 void	shade(t_buffers *buffers, int pixel, t_scene *scene, t_data *data)
 {
 	t_object	*lights;
 	size_t		m;
+	t_vec3		dir_to_cam;
+	t_vec3		light_reflect_dir;
+	t_vec3		dir_to_light;
 
 	lights = scene->lights.data;
-	scene->phong.v = vec3_normalize(vec3_sub(scene->camera.pos, buffers->hits[pixel].hit_point));
-	m = 0;
-	while (m < scene->lights.num_elements)
-	{
-		scene->phong.l[m] = vec3_normalize(vec3_sub(lights[m].light.pos,
-					buffers->hits[pixel].hit_point));
-		scene->phong.r[m] = reflection(buffers->hits[pixel].normal, scene->phong.l[m]);
-		m++;
-	}
+	dir_to_cam = vec3_normalize(vec3_sub(scene->camera.pos, buffers->hits[pixel].hit_point));
 	const t_rgb	ambient = vec3_mult(buffers->hits[pixel].hit_rgb,
 							  vec3_scale(scene->ambient.rgb, buffers->hits[pixel].hit_ambient));
 	t_rgb		diffuse_m;
 	t_rgb		specular_m;
 	t_rgb		color_through;
-	t_rgb		i_p;
-	t_rgb		phong_d;
-	i_p = rgb(0, 0, 0);
+	t_rgb		color;
+	t_rgb		receive_color;
+	color = rgb(0, 0, 0);
 	m = 0;
 	while (m < scene->lights.num_elements)
 	{
-		color_through = get_color_through(data, buffers->hits[pixel].hit_point, lights[m].light.pos, buffers->hits[pixel].normal);
-		phong_d = rgb_mult(lights[m].light.rgb, color_through);
-		diffuse_m = vec3_mult(get_diffuse(data->scene.phong.l[m], phong_d,
-				buffers->hits[pixel].normal, buffers->hits[pixel].hit_rgb), buffers->hits[pixel].hit_rgb);
-		specular_m = get_specular(data->scene.phong.r[m], data->scene.phong.v, buffers->hits[pixel].ks, buffers->hits[pixel].ns);
-		specular_m = rgb_mult(specular_m, phong_d);
-		i_p = vec3_add(i_p, vec3_add(diffuse_m, specular_m));
+		dir_to_light = vec3_normalize(vec3_sub(lights[m].light.pos, buffers->hits[pixel].hit_point));	
+		color_through = get_color_through(data, buffers->hits[pixel].hit_point, dir_to_light);
+		receive_color = rgb_mult(lights[m].light.rgb, color_through);
+		dir_to_light =  vec3_normalize(dir_to_light);
+		diffuse_m = get_diffuse(dir_to_light, receive_color,
+				buffers->hits[pixel].normal, buffers->hits[pixel].hit_rgb);
+		light_reflect_dir = reflection(buffers->hits[pixel].normal, dir_to_light);
+		specular_m = get_specular(light_reflect_dir, dir_to_cam, buffers->hits[pixel].ks, buffers->hits[pixel].ns);
+		specular_m = rgb_mult(specular_m, receive_color);
+		color = vec3_add(color, vec3_add(diffuse_m, specular_m));
 		m++;
 	}
-	t_rgb	color = vec3_add(vec3_add(i_p, ambient), buffers->hits[pixel].ke);
+	color = vec3_add(vec3_add(color, ambient), buffers->hits[pixel].ke);
 	color = rgb_mult(color, buffers->rays[buffers->hits[pixel].id].through_power);
 	color = rgb_mult(color, vec3_sub(vec3(1, 1, 1), buffers->hits[pixel].reflectivity));
 	buffers->rays[buffers->hits[pixel].id].accumulated_color = rgb_add(buffers->rays[buffers->hits[pixel].id].accumulated_color, color);
 	buffers->rays[buffers->hits[pixel].id].through_power = vec3_mult(buffers->rays[buffers->hits[pixel].id].through_power, buffers->hits[pixel].reflectivity);
 }
+
+void	shade_loop(t_buffers *buffers, t_scene *scene, t_data *data, int count)
+{
+	int			pixel;
+
+	pixel = 0;
+	while (pixel < count)
+	{
+		shade(buffers, pixel, scene, data);
+		++pixel;
+	}
+}
+
+

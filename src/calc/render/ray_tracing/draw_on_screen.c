@@ -33,3 +33,20 @@ void	draw_on_screen(t_ray *rays, int *addr, int pixel, int pixel_size)
 	}
 }
 
+void	draw_screen_loop(t_ray *rays, int *addr, int pixel_size)
+{
+	t_vec2i	pixel;
+
+	pixel.y = 0;
+	while (pixel.y < HEIGHT)
+	{
+		pixel.x = 0;
+		while (pixel.x < WIDTH)
+		{
+			draw_on_screen(rays, addr, (pixel.y * WIDTH + pixel.x), pixel_size);
+			pixel.x += pixel_size;
+		}
+		pixel.y += pixel_size;
+	}
+}
+

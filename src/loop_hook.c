@@ -13,6 +13,7 @@
 #include <math.h>
 #include "mlx.h"
 #include "minirt.h"
+#include "mlx_detect_special_key.h"
 #include "mlx_key_input.h"
 
 static inline bool	is_left_key(int keycode)
@@ -95,6 +96,21 @@ static inline bool	is_f12_key(int keycode)
 	return (keycode == XK_F12);
 }
 
+static inline bool	is_t_key(int keycode)
+{
+	return (keycode == XK_t);
+}
+
+static inline bool	is_b_key(int keycode)
+{
+	return (keycode == XK_b);
+}
+
+static inline bool	is_m_key(int keycode)
+{
+	return (keycode == XK_m);
+}
+
 static inline bool	is_i_key(int keycode)
 {
 	return (keycode == XK_i);
@@ -107,7 +123,7 @@ static inline bool	is_return_key(int keycode)
 
 static inline bool	is_render_mode_key(int keycode)
 {
-	return ((keycode == XK_1) || (keycode == XK_2));
+	return ((keycode == XK_1) || (keycode == XK_2) || (keycode == XK_3));
 }
 
 void	setup_key_move_events(t_data *data)
@@ -204,6 +220,9 @@ void	setup_key_param_events(t_data *data)
 	add_status_key_hook(data->mlx, is_i_key, true, &(data->params.smooth_shading));
 	add_status_key_hook(data->mlx, is_return_key, true, &(data->params.quality_render));
 	add_status_key_hook(data->mlx, is_f12_key, true, &(data->params.exporting));
+	add_status_key_hook(data->mlx, is_t_key, true, &(data->params.texture));
+	add_status_key_hook(data->mlx, is_m_key, true, &(data->params.normal_map));
+	add_status_key_hook(data->mlx, is_b_key, true, &(data->params.ambient));
 	add_func_key_hook(data->mlx, is_up_arrow, (void (*)(void *, t_mlx *))bvh_depth_increase, data);
 	add_func_key_hook(data->mlx, is_down_arrow, (void (*)(void *, t_mlx *))bvh_depth_decrease, data);
 	add_func_key_hook(data->mlx, is_right_arrow, (void (*)(void *, t_mlx *))bvh_next_mode, data);

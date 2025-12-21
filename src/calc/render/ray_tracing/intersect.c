@@ -110,3 +110,15 @@ static void	fill_uv_normal(t_vec3 hit_point, t_object *object, t_vec2 *uv, t_vec
 	uv->v = 1.0f - uv->v;
 }
 
+void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		intersect_scene(rays, hits, scene, i);
+		++i;
+	}
+}
+

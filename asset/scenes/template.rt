@@ -13,9 +13,9 @@
 C 30,3,2 0,0,0 70
 
 L 100000,57000,128000 1 255,255,255
-#L 0, 10, 0 1 255, 0, 0
-#L 10, 10, 0 1 0, 255, 0
-#L -10, 10, 0 1 0, 0, 255
+# L 1, 1, 0 1 255, 0, 0
+# L 0, 1, 0 1 0, 255, 0
+# L -1, 1, 0 1 0, 0, 255
 
 
 
@@ -23,10 +23,9 @@ tex snow asset/texture/skybox/snow.ppm
 sky snow
 
 #mtl asset/materials/paving.mtl
-mtl asset/materials/gold.mtl
+#mtl asset/materials/gold.mtl
 #mtl asset/materials/leather.mtl
-#mtl asset/materials/sand.mtl
-#mtl asset/materials/sand.mtl
+mtl asset/materials/sand.mtl
 #mtl asset/materials/fence.mtl
 #mtl asset/materials/tiles.mtl
 #mtl asset/materials/foil.mtl
@@ -45,15 +44,12 @@ A 0.6 255,255,255
 #obj asset/bmw/bmw.obj 37, 0, -8.5           0.8, 0, 5     0.8,0.8,0.8
 #obj asset/casino/casino.obj 0, -4.1, -50           0, 0, 5     1, 1, 1
 #obj asset/porsche/porsche.obj 31, 0, 3 3, 0, 5     1, 1, 1
-obj asset/jesko/jesko.obj 31, 0, 3 3, 0, 5     5,5,5
+#obj asset/jesko/jesko.obj 31, 0, 3 3, 0, 5     5,5,5
 #obj asset/AMG/amg.obj 31, 0, 3 3, 0, 5     5,5,5
 #obj asset/vinyl/vinyl.obj 31, 0, 3 3, 0, 5     20,20,20
 
 #mat blue 0,0,1 1,1,1 80 1 0
 #mat transparent 0,0,1 1,1,1 80 0 0
 
-pl 0,0,0 0,1,0 0,0,0 gold 0.1
-
-
-
+pl 0,0,0 0,1,0 0,0,0 sand 0.1
 

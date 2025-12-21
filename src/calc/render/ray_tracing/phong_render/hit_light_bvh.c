@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   hit_bvh.c                                          :+:      :+:    :+:   */
+/*   hit_light_bvh.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -22,51 +22,32 @@ bool		hit_box(t_ray *ray, t_aabb_bvh *bvh);
 
 t_object	*hit_light_object(t_ray *ray, t_aabb_bvh *bvh);
 
-inline t_object	*hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh)
+inline t_object	*hit_light_bvh(t_ray *ray, t_aabb_bvh *bvh)
 {
-	t_object	*object_a;
-	t_object	*object_b;
+	t_object	*object;
 
 	if (bvh->depth < STOP_HIT_BVH)
 		return (hit_light_object(ray, bvh));
 	if (!hit_box(ray, bvh))
 		return (NULL);
-	object_a = hit_aabb_bvh(ray, bvh->next_a);
-	if (!object_a)
+	object = hit_aabb_bvh(ray, bvh->next_a);
+	if (!object)
 		return (hit_aabb_bvh(ray, bvh->next_b));
-	object_b = hit_aabb_bvh(ray, bvh->next_b);
-	if (object_b != NULL)
-	{
-		if (object_a->t < object_b->t)
-			return (object_a);
-		return (object_b);
-	}
-	return (object_a);
+	return (object);
 }
 
 static inline t_object	*get_nearest_2(t_ray *ray, t_aabb_bvh *bvh)
 {
-	t_object	*object[2];
-
-	object[0] = bvh->object_a;
-	object[1] = bvh->object_b;
-	if (object[0]->f(ray, object[0], &object[0]->t) == 0)
-	{
-		if (object[1]->f(ray, object[1], &object[1]->t) == 0)
-			return (NULL);
-		return (object[1]);
-	}
-	if (object[1]->f(ray, object[1], &object[1]->t) == 0)
-		return (object[0]);
-	if (object[0]->t < object[1]->t)
-		return (object[0]);
-	return (object[1]);
+	if (bvh->object_a->f(ray, bvh->object_a, &bvh->object_a->t) != 0)
+		return (bvh->object_a);
+	if (bvh->object_b->f(ray, bvh->object_b, &bvh->object_b->t) != 0)
+		return (bvh->object_b);
+	return (NULL);
 }
 
 t_object	*hit_light_object(t_ray *ray, t_aabb_bvh *bvh)
 {
-	t_object	*object_a;
-	t_object	*object_b;
+	t_object	*object;
 
 	if (bvh->depth == 1)
 		return (get_nearest_2(ray, bvh));
@@ -79,15 +60,8 @@ t_object	*hit_light_object(t_ray *ray, t_aabb_bvh *bvh)
 		}
 		return (bvh->object_a);
 	}
-	object_a = hit_light_object(ray, bvh->next_a);
-	if (!object_a)
+	object = hit_light_object(ray, bvh->next_a);
+	if (!object)
 		return (hit_light_object(ray, bvh->next_b));
-	object_b = hit_light_object(ray, bvh->next_b);
-	if (object_b != NULL)
-	{
-		if (object_a->t < object_b->t)
-			return (object_a);
-		return (object_b);
-	}
-	return (object_a);
+	return (object);
 }

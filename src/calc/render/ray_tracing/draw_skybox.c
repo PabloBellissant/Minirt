@@ -38,3 +38,16 @@ void	draw_skybox(int pixel, t_buffers bu, int texture_id, t_texture *texture)
 	bu.rays[bu.hits[pixel].id].through_power = bu.rays[bu.hits[pixel].id].refract.through_power[bu.rays[bu.hits[pixel].id].refract.count];
 	bu.hits[pixel].hit = true;
 }
+
+void	draw_skybox_loop(t_buffers bu, int texture_id, t_texture *texture, int size)
+{
+	int	i;
+
+	i = size;
+	while (i < (WIDTH * HEIGHT))
+	{
+		draw_skybox(i, bu, texture_id, texture);
+		++i;
+	}
+}
+
