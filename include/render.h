@@ -6,38 +6,63 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/09/04 06:14:38 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/16 00:51:04 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RENDER_H
 # define RENDER_H
+# include "colors_types.h"
 # include "libft.h"
 # include "mlx_wrapper.h"
 # include "object.h"
 # include "bvh.h"
+# include "vectors_types.h"
+
+# define MAX_ITER  5
+
+typedef struct s_refract_pos
+{
+	int		count;
+	t_vec3	origin[MAX_ITER];
+	t_vec3	dir[MAX_ITER];
+	t_rgb	through_power[MAX_ITER];
+}	t_refract_pos;
 
 typedef struct s_ray
 {
-	t_vec3	pos;
-	t_vec3	dir;
-	t_vec3	hit_normal;
-	t_vec3	hit_tangent;
-	t_vec3	hit_bitangent;
-	t_rgb	hit_rgb;
-	float	hit_roughness;
-	float	hit_ambient;
-	float	hit_opacity;
-	t_mat	*hit_mat;
+	t_vec3			origin;
+	t_vec3			dir;
+	t_vec3			inv_dir;
+	t_rgb			accumulated_color;
+	t_rgb			through_power;
+	int				iteration;
+	t_refract_pos	refract;
+	bool			active;
 }			t_ray;
 
-typedef struct s_phong
+typedef struct s_hit
 {
-	t_vec3	*l;//direction toward light from surface
-	t_vec3	*r;//direction of reflection of light from surface
-	t_rgb	*d;//LIGHTS color
-	t_vec3	v;//direction towards camera
-}			t_phong;
+	bool		hit;
+	int			id;
+	t_vec3		normal;
+	t_vec2		uv;
+	int			mat_id;
+	t_vec3		hit_point;
+	t_rgb		hit_rgb;
+	float		hit_ambient;
+	t_vec3		ks;
+	t_vec3		ke;
+	float		ns;
+	t_vec3		reflectivity;
+	t_object	*hit_obj;
+}			t_hit;
+
+typedef struct s_hit_mat_data
+{
+	float	hit_opacity;
+	float	roughness;
+}			t_hit_mat_data;
 
 typedef struct s_camera
 {
@@ -53,6 +78,8 @@ typedef struct s_camera
 	float	sin_pitch;
 	float	cos_yaw;
 	float	sin_yaw;
+	float	cos_roll;
+	float	sin_roll;
 	t_vec3	camera_forward;
 	t_vec3	camera_right;
 	t_vec3	camera_up;
@@ -82,16 +109,6 @@ typedef struct s_bvh_main
 	int			bvh_mode;
 }	t_bvh_main;
 
-typedef struct s_texture
-{
-	unsigned char	*pixels;
-	int				tex_bpp;
-	int				tex_size_line;
-	int				width;
-	int				height;
-	char			*name;
-}	t_texture;
-
 typedef enum e_mtl
 {
 	no_mtl = 0,
@@ -116,7 +133,6 @@ typedef struct s_scene
 	char		*name;
 	t_vector	objects;
 	t_vector	lights;
-	t_phong		phong;
 	t_object	*planes;
 	int			plane_count;
 	t_bvh_main	bvh;
@@ -142,24 +158,26 @@ int		rasterize_sphere_outline(t_sphere *s, t_img_data *img,
 void	rasterize_bvh(void *bvh, t_params *p, int total_depth, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
-void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
-	int color, t_camera *camera);
 
 void	rasterize_triangle_outline(t_img_data *img, t_triangle *triangle,
-	int color, t_camera *camera);
+	t_rgb_int color, t_camera *camera);
 void	rasterize_outline_object(t_img_data *img, t_object *object,
 	t_camera *camera, t_rgb_int color);
-void	draw_circle(t_img_data *img, t_vec2i pos, int radius, int color);
+void	draw_circle(t_img_data *img, t_vec2i pos, int radius, t_rgb_int color);
 void	rasterize_light_outline(t_img_data *img, t_light *light,
 	t_camera *camera);
 void	rasterize_plane_outline(t_img_data *img, t_plane *plane,
-	int color, t_camera *camera);
+	t_rgb_int color, t_camera *camera);
 void	rasterize_cylinder_outline(t_img_data *img, t_cylinder *cylinder,
-	int color, t_camera *camera);
+		t_rgb_int color, t_camera *camera);
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
-	int color, t_camera *camera);
+	t_rgb_int color, t_camera *camera);
 
 void	wireframe_render(t_data *data);
-void	ray_tracing_render(t_data *data);
+void	pbr_render(t_data *data);
+
+int		export_to_ppm(t_data *data, t_mlx *mlx);
+
+t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv);
 
 #endif

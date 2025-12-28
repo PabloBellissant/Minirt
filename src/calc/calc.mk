@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:39:51 by jaubry--          #+#    #+#              #
-#    Updated: 2025/08/05 01:52:31 by jaubry--         ###   ########lyon.fr    #
+#    Updated: 2025/12/10 19:59:26 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,8 @@
 CALC_DIR	= $(SRCDIR)/calc
 
 # Source files
-CALC_SRCS	= hit_register.c \
-			  hit_reg_plane.c \
-			  ray_path.c \
-			  phong_reflection.c \
-			  utils.c
+CALC_SRCS	= utils.c \
+			  hit_reg_plane.c
 SRCS		+= $(addprefix $(CALC_DIR)/, $(CALC_SRCS))
 
 CALC_MKS	= bvh/bvh.mk \

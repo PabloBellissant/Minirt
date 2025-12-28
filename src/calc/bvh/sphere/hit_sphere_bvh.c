@@ -23,7 +23,7 @@ static inline int	hit_sphere_bound(t_ray *ray, t_vec3 *pos,
 	float	discriminant;
 	float	t;
 
-	oc = vec3_sub(ray->pos, *pos);
+	oc = vec3_sub(ray->origin, *pos);
 	b = vec3_dot(ray->dir, oc) * 2;
 	c = vec3_dot(oc, oc) - radius_squared;
 	discriminant = b * b - 4 * c;

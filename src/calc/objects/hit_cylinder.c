@@ -16,7 +16,7 @@
 
 static void	init_cylinder_quadratic(t_quadratic *q, t_cylinder *cyl, t_ray *r)
 {
-	const t_vec3	oc = vec3_sub(r->pos, cyl->pos);
+	const t_vec3	oc = vec3_sub(r->origin, cyl->pos);
 
 	q->dd = vec3_dot(r->dir, cyl->rot);
 	q->oo = vec3_dot(oc, cyl->rot);

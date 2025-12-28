@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:44:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/06 09:23:11 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2025/12/12 03:19:19 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 typedef struct s_scene		t_scene;
 typedef struct s_object		t_object;
-typedef struct s_texture	t_texture;
 typedef struct s_mat		t_mat;
 typedef struct s_data		t_data;
 
@@ -54,6 +53,7 @@ typedef struct s_pos_attribute
 	t_vec3	scale;
 }	t_pos_attribute;
 
+typedef struct s_img_data t_texture;
 typedef union u_rgb_int t_rgb_int;
 
 int				parse_scene(char *file_name, t_scene *scene);
@@ -105,6 +105,6 @@ int				kr(const char *line, t_scene *scene);
 int				ni(const char *line, t_scene *scene);
 int				pr(const char *line, t_scene *scene);
 int				ke(const char *line, t_scene *scene);
-
+int				pm(const char *line, t_scene *scene);
 
 #endif

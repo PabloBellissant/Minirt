@@ -13,7 +13,7 @@
 #include "minirt.h"
 
 void	rasterize_triangle_outline(t_img_data *img, t_triangle *triangle,
-	int color, t_camera *camera)
+	t_rgb_int color, t_camera *camera)
 {
 	t_3d_line	line;
 

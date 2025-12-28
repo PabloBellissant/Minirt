@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 04:20:32 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/21 05:52:29 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 03:20:22 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ t_mat	*create_mat(t_vector *vec)
 	mat.kd = vec3(1, 1, 1);
 	mat.opacity = 1;
 	mat.pr = 1;
+	mat.pm = 0.5f;
 	if (vector_add(vec, &mat, 1) == -1)
 		return (NULL);
 	return (get_last_vector_value(vec));

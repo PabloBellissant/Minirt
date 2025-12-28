@@ -2,9 +2,11 @@
 .idea/
 .obj/
 .dep/
+.cache/
 *.o
 *.d
 *.a
 Minirt
 MiniRT
 *.out
+compile_commands.json

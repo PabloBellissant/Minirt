@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 23:10:16 by pabellis          #+#    #+#             */
-/*   Updated: 2025/11/23 23:10:29 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/11 06:50:11 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	scale_pr(t_texture *tex, float scale)
 	int	temp;
 
 	i = 0;
-	while (i < tex->width * tex->height * (tex->tex_bpp / 8))
+	while (i < tex->width * tex->height * tex->channels)
 	{
 		temp = (int) tex->pixels[i];
 		temp *= scale;

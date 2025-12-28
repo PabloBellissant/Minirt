@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/13 18:43:15 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/11 01:06:25 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,21 @@
 
 void	free_ttf(t_ttf_font *font);
 
-void	free_rast_env(t_rast_env *env)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < env->text_num)
-	{
-		free_ttf(env->texts[i]->font);
-		free(env->texts[i]);
-		i++;
-	}
-	free_ttf(env->fps->font);
-	free(env->fps);
-	free(env);
-}
-
-void	free_phong(t_phong phong)
-{
-	ft_free(phong.l);
-	ft_free(phong.r);
-	ft_free(phong.d);
-}
+// void	free_rast_env(t_rast_env *env)
+// {
+// 	size_t	i;
+//
+// 	i = 0;
+// 	while (i < env->text_num)
+// 	{
+// 		free_ttf(env->texts[i]->font);
+// 		free(env->texts[i]);
+// 		i++;
+// 	}
+// 	free_ttf(env->fps->font);
+// 	free(env->fps);
+// 	free(env);
+// }
 
 void	free_textures(t_vector *vec)
 {
@@ -48,7 +41,7 @@ void	free_textures(t_vector *vec)
 	i = 0;
 	while (i < vec->num_elements)
 	{
-		free(texture[i].pixels);
+		free(texture[i].addr);
 		free(texture[i].name);
 		++i;
 	}
@@ -72,7 +65,6 @@ void	free_mats(t_vector *vec)
 
 void	free_scene(t_scene *scene)
 {
-	free_phong(scene->phong);
 	free_vector(&scene->lights);
 	free_vector(&scene->objects);
 	free(scene->planes);
@@ -83,7 +75,7 @@ void	free_scene(t_scene *scene)
 
 void	free_data(t_data *data)
 {
-	free_rast_env(data->font_env);
+	//free_rast_env(data->font_env);
 	free_scene(&data->scene);
 	if (data->export_fd != -1)
 		close(data->export_fd);
@@ -131,7 +123,9 @@ int	main(int argc, char **argv)
 			}
 			else
 			{
-
+				data.buffers.rays = malloc(sizeof(t_ray) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY * SUB_PIXEL_QUANTITY);
+				data.buffers.hits = malloc(sizeof(t_hit) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY * SUB_PIXEL_QUANTITY);
+				data.buffers.addr = data.mlx->img.addr;
 				loop_hook(&data);
 				free_data(&data);
 			}

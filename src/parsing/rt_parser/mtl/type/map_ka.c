@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 23:48:44 by pabellis          #+#    #+#             */
-/*   Updated: 2025/11/23 23:48:47 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/11 06:50:29 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	scale_tex(t_texture *tex, t_vec3 *scale)
 	int	i;
 
 	i = 0;
-	while (i < tex->width * tex->height * (tex->tex_bpp / 8))
+	while (i < tex->width * tex->height * tex->channels)
 	{
 		tex->pixels[i] *= scale->b;
 		tex->pixels[i + 1] *= scale->g;

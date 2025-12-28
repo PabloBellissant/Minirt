@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:26:58 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/09 00:25:08 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/14 19:42:23 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ static int	create_root_bvh(t_vector *bvh, t_vector *objects)
 	ft_bzero(&root_bvh, sizeof(t_aabb_bvh));
 	if (objects->num_elements != 0)
 	{
-		root_bvh.min = (t_vec3){{FLT_MAX, FLT_MAX, FLT_MAX}};
-		root_bvh.max = (t_vec3){{-FLT_MAX, -FLT_MAX, -FLT_MAX}};
+		root_bvh.min = vec3(FLT_MAX, FLT_MAX, FLT_MAX); 
+		root_bvh.max = vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 		set_size(&root_bvh, objects);
 	}
 	else
 	{
-		root_bvh.min = (t_vec3){{0, 0, 0}};
-		root_bvh.max = (t_vec3){{0, 0, 0}};
+		root_bvh.min = vec3(0, 0, 0);
+		root_bvh.max = vec3(0, 0, 0);
 	}
 	vector_add(bvh, &root_bvh, 1);
 	return (0);

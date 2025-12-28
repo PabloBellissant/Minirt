@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/09 02:39:52 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/16 00:51:40 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 # define BOUNCE_MAX 2
 # define REFRACT_MAX 5
 # define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
-# define TITLE "Mini rt by Pabellis and Jaubry--"
+# define TITLE "MiniRT Pabellis Jaubry--"
 
-# define SUB_PIXEL_QUANTITY 1
-# define TARGET_FPS 30
+# define SUB_PIXEL_QUANTITY 4
+# define TARGET_FPS 12
 # define MIN_QUALITY 25
 
 _Static_assert(SUB_PIXEL_QUANTITY > 0, "SUB_PIXEL_QUANTITY");
@@ -46,6 +46,8 @@ typedef struct s_keys
 	bool	right;
 	bool	backward;
 	bool	upward;
+	bool	roll_left;
+	bool	roll_right;
 }			t_keys;
 
 typedef struct s_mouse
@@ -66,18 +68,29 @@ typedef struct s_params
 	bool	smooth_shading;
 	bool	quality_render;
 	bool	exporting;
+	bool	texture;
+	bool	ambient;
+	bool	normal_map;
 }			t_params;
+
+typedef struct s_buffers
+{
+	t_ray			*rays;
+	t_hit			*hits;
+	int				hits_count;
+	unsigned int	*addr;
+}			t_buffers;
 
 typedef struct s_data
 {
-	int			*addr;
+	t_buffers	buffers;
 	t_params	params;
 	t_keys		keys;
 	t_mouse		mouse;
 	t_mlx		*mlx;
 	t_vec2i		screen;
 	t_scene		scene;
-	t_rast_env	*font_env;
+	//t_rast_env	*font_env;
 	int			export_fd;
 }				t_data;
 

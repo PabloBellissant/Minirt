@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 04:31:54 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/21 04:31:56 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/12/12 03:19:46 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 t_mtl	get_mtl_type(const char *line)
 {
 	static const char	*elem[] = {"newmtl", "Ns", "Ka", "Kd", "Ks",
-			"map_Kd", "map_bump", "map_Pr", "map_Ka", "map_d", "d", "Kr", "Ni", "Pr", "Ke", NULL};
+			"map_Kd", "map_bump", "map_Pr", "map_Ka", "map_d", "d", "Ni", "Pr", "Ke", "Pm", NULL};
 	int			i;
 
 	while (*line == ' ' || *line == '\t')

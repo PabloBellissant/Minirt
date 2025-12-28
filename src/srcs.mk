@@ -6,7 +6,7 @@
 #    By: jaubry-- <marvin@42.fr>                    +#+  +:+       +#+         #
 #              +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:20:57 by jaubry--          #+#    #+#              #
-#    Updated: 2025/10/13 18:43:36 by jaubry--         ###   ########.fr        #
+#    Updated: 2025/12/10 20:00:54 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,8 +18,7 @@ MINIRT_SRCS	= main.c \
 			  loop.c loop_hook.c \
 			  camera_utils.c camera_move.c \
 			  clear_scene.c \
-			  register_rt_errors.c \
-			  export_to_ppm.c
+			  register_rt_errors.c 
 
 INIT_SRCS	= init_graphics.c
 SRCS		+= $(addprefix $(SRCDIR)/, $(MINIRT_SRCS)) \

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:21:16 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/08/07 09:48:34 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/15 04:23:46 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,41 @@ static void	apply_rotations(t_camera *cam)
 	cam->sin_pitch = sinf(cam->rot.x);
 	cam->cos_yaw = cosf(cam->rot.y);
 	cam->sin_yaw = sinf(cam->rot.y);
+	cam->cos_roll = cosf(cam->rot.z);
+	cam->sin_roll = sinf(cam->rot.z);
 }
 
 // Apply yaw and pitch to your base forward vector
 static void	apply_yaw_and_pitch(t_camera *cam)
 {
+	t_vec3	temp_right;
+	t_vec3	temp_up;
+
 	cam->camera_forward = (t_vec3){{
 		cam->sin_yaw * cam->cos_pitch,
 		cam->sin_pitch,
 		cam->cos_yaw * cam->cos_pitch
 	}};
-	cam->camera_right = (t_vec3){{
+	temp_right = (t_vec3){{
 		cam->cos_yaw,
 		0,
 		-cam->sin_yaw
 	}};
-	cam->camera_up = (t_vec3){{
+	temp_up = (t_vec3){{
 		-cam->sin_yaw * cam->sin_pitch,
 		cam->cos_pitch,
 		cam->cos_yaw * -cam->sin_pitch
+	}};
+	cam->camera_right = (t_vec3){{
+		temp_right.x * cam->cos_roll - temp_up.x * cam->sin_roll,
+		temp_right.y * cam->cos_roll - temp_up.y * cam->sin_roll,
+		temp_right.z * cam->cos_roll - temp_up.z * cam->sin_roll
+	}};
+	
+	cam->camera_up = (t_vec3){{
+		temp_right.x * cam->sin_roll + temp_up.x * cam->cos_roll,
+		temp_right.y * cam->sin_roll + temp_up.y * cam->cos_roll,
+		temp_right.z * cam->sin_roll + temp_up.z * cam->cos_roll
 	}};
 }
 

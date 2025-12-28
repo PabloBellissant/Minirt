@@ -20,7 +20,7 @@
 
 bool		hit_box(t_ray *ray, t_aabb_bvh *bvh);
 
-t_object	*hit_direct_object(t_ray *ray, t_aabb_bvh *bvh);
+t_object	*hit_light_object(t_ray *ray, t_aabb_bvh *bvh);
 
 inline t_object	*hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh)
 {
@@ -28,7 +28,7 @@ inline t_object	*hit_aabb_bvh(t_ray *ray, t_aabb_bvh *bvh)
 	t_object	*object_b;
 
 	if (bvh->depth < STOP_HIT_BVH)
-		return (hit_direct_object(ray, bvh));
+		return (hit_light_object(ray, bvh));
 	if (!hit_box(ray, bvh))
 		return (NULL);
 	object_a = hit_aabb_bvh(ray, bvh->next_a);
@@ -63,7 +63,7 @@ static inline t_object	*get_nearest_2(t_ray *ray, t_aabb_bvh *bvh)
 	return (object[1]);
 }
 
-t_object	*hit_direct_object(t_ray *ray, t_aabb_bvh *bvh)
+t_object	*hit_light_object(t_ray *ray, t_aabb_bvh *bvh)
 {
 	t_object	*object_a;
 	t_object	*object_b;
@@ -79,10 +79,10 @@ t_object	*hit_direct_object(t_ray *ray, t_aabb_bvh *bvh)
 		}
 		return (bvh->object_a);
 	}
-	object_a = hit_direct_object(ray, bvh->next_a);
+	object_a = hit_light_object(ray, bvh->next_a);
 	if (!object_a)
-		return (hit_direct_object(ray, bvh->next_b));
-	object_b = hit_direct_object(ray, bvh->next_b);
+		return (hit_light_object(ray, bvh->next_b));
+	object_b = hit_light_object(ray, bvh->next_b);
 	if (object_b != NULL)
 	{
 		if (object_a->t < object_b->t)

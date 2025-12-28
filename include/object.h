@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:43:56 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/09/08 22:51:45 by jaubry--         ###   ########.fr       */
+/*   Updated: 2025/12/12 03:14:21 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_plane
 	t_vec3	normal;
 	t_vec3	tangent;
 	t_vec3	bitangent;
+	float	texture_scaling;
 }			t_plane;
 
 typedef struct s_cylinder
@@ -76,8 +77,8 @@ typedef struct s_triangle
 	t_vertex	p0;
 	t_vertex	p1;
 	t_vertex	p2;
-	t_vec3		edge_1;
-	t_vec3		edge_2;
+	t_vec3		edge_p1p0;
+	t_vec3		edge_p2p0;
 	t_rgb		rgb;
 }	t_triangle;
 
@@ -95,9 +96,9 @@ typedef struct s_mat
 	int		roughness_id;
 	int		ambient_id;
 	int		opacity_id;
-	float	kr;
 	float	ni;
 	float	pr;
+	float	pm;
 }	t_mat;
 
 typedef struct s_ray	t_ray;

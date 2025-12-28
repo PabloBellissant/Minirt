@@ -6,7 +6,7 @@
 #    By: pabellis <pabellis@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 18:41:28 by pabellis          #+#    #+#              #
-#    Updated: 2025/08/04 23:24:24 by pabellis         ###   ########lyon.fr    #
+#    Updated: 2025/12/12 03:22:57 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,10 +25,10 @@ MTL_TYPE_SRCS	= newmtl.c \
 			  map_ka.c \
 			  map_d.c \
 			  d.c \
-			  kr.c \
 			  pr.c \
 			  ke.c \
-			  ni.c
+			  ni.c \
+			  pm.c
 
 SRCS		+= $(addprefix $(MTL_TYPE_DIR)/, $(MTL_TYPE_SRCS))
 
