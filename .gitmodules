@@ -24,3 +24,7 @@
 	path = lib/xcerrcal
 	url = git@github.com:dct-LuLu/xcerrcal.git
 	branch = library-stripped
+[submodule "lib/mlxui"]
+	path = lib/mlxui
+	url = git@github.com:dct-LuLu/mlxui.git
+	branch = library-stripped
