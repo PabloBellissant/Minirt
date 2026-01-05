@@ -6,28 +6,12 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2025/12/09 17:08:45 by pabellis         ###   ########.fr        #
+#    Updated: 2026/01/05 13:48:44 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 ROOTDIR		= .
 include $(ROOTDIR)/mkidir/make_utils.mk
-
-# Variables
-# :w
-#
-NPROC		= $(shell nproc)
-WINDOWLESS	= 0
-FULLSCREEN	= 0
-RESIZEABLE	= 0
-ifeq ($(FULLSCREEN), 1)
-WIDTH		= 1920
-HEIGHT		= 1080
-else
-WIDTH		= 1920
-HEIGHT		= 1080
-endif
-PERF		= 0
 
 # Directories
 SRCDIR		= src
@@ -40,6 +24,20 @@ LIBFTDIR	= $(LIBDIR)/libft
 MLXDIR		= $(LIBDIR)/minilibx-linux
 MLXWDIR		= $(LIBDIR)/mlx_wrapper
 FONT_RENDIR	= $(LIBDIR)/font_renderer
+MLXUIDIR	= $(LIBDIR)/mlxui
+
+# Includes
+include $(LIBFTDIR)/includes.mk $(XCERRCALDIR)/includes.mk \
+	$(MLXWDIR)/includes.mk $(FONT_RENDIR)/includes.mk \
+	$(MLXUIDIR)/includes.mk includes.mk
+
+INCLUDES	= $(INCDIRS_MINIRT) \
+			  $(addprefix $(XCERRCALDIR)/, $(INCDIRS_XCERRCAL)) \
+			  $(addprefix $(FONT_RENDIR)/, $(INCDIRS_FTRDR)) \
+			  $(addprefix $(MLXWDIR)/, $(INCDIRS_MLXW)) \
+			  $(addprefix $(MLXUIDIR)/, $(INCDIRS_MLXUI)) \
+			  $(addprefix $(LIBFTDIR)/, $(INCDIRS_LIBFT)) \
+			  $(MLXDIR)
 
 # Output
 NAME		= MiniRT
@@ -48,24 +46,35 @@ LIBFT		= $(LIBFTDIR)/libft.a
 MLX			= $(MLXDIR)/libmlx.a
 MLXW		= $(MLXWDIR)/libmlx-wrapper.a
 FONT_RENDER	= $(FONT_RENDIR)/libfont-renderer.a
-ARCHIVES	= $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT) $(XCERRCAL)
+MLXUI		= $(MLXUIDIR)/libmlxui.a
+ARCHIVES	= $(MLXUI) $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT) $(XCERRCAL)
 
-# Compiler and flags
-CC			= cc
+# Variables
+DEBUG_MINIRT = 5
 
-CFLAGS		= -g3 -Wall -Werror -Wextra \
-			  -std=gnu11
+ifeq ($(filter $(DEBUG_LVL),1 $(DEBUG_MINIRT)),)
+DEBUG		= 0
+else
+DEBUG		= 1
+endif
 
-DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
+WINDOWLESS	= 0
+FULLSCREEN	= 0
+RESIZEABLE	= 0
 
-IFLAGS		= -I$(INCDIR) -I$(XCERRCALDIR)/include -I$(FONT_RENDIR)/include -I$(MLXWDIR)/include \
-			  -I$(LIBFTDIR)/include -I$(MLXDIR)
+ifeq ($(FULLSCREEN), 1)
+WIDTH		= $(MAX_WIDTH)
+HEIGHT		= $(MAX_HEIGHT)
+else
+WIDTH		= 500
+HEIGHT		= 500
+endif
 
-LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) -L$(XCERRCALDIR)\
-			  -lfont-renderer -lmlx-wrapper -lmlx -lft -lxcerrcal \
-			  -lXext -lX11 -lXrandr -lm
+PERF		= 0
 
-VARS		= DEBUG=$(DEBUG) \
+VARS		= DEBUG_LVL=$(DEBUG_LVL) \
+			  MAX_WIDTH=$(MAX_WIDTH) \
+			  MAX_HEIGHT=$(MAX_HEIGHT) \
 			  WIDTH=$(WIDTH) \
 			  HEIGHT=$(HEIGHT) \
 			  PERF=$(PERF) \
@@ -73,22 +82,37 @@ VARS		= DEBUG=$(DEBUG) \
 			  RESIZEABLE=$(RESIZEABLE) \
 			  WINDOWLESS=$(WINDOWLESS) \
 			  NPROC=$(NPROC)
-VFLAGS		= $(addprefix -D ,$(VARS))
 
-CFLAGS		+= $(DEBUG_FLAGS) $(FFLAGS) $(VFLAGS)
+# Compiler and flags
+CC			?= cc
+
+CFLAGS		= -Wall -Werror -Wextra \
+			  -std=gnu11
+
+DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
+
+IFLAGS		= $(addprefix -I,$(INCLUDES))
+
+LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) -L$(XCERRCALDIR)\
+			  -lfont-renderer -lmlx-wrapper -lmlx -lft -lxcerrcal \
+			  -lXext -lX11 -lXrandr -lm
+
+VFLAGS		= $(addprefix -D ,$(VARS) DEBUG=$(DEBUG))
+
+CFLAGS		+= $(INSPECT_FLAGS) $(PROFILE_FLAGS) $(FFLAGS) $(VFLAGS)
 
 CF			= $(CC) $(CFLAGS) $(IFLAGS)
 
-# SRCS
+# Sources
 include $(SRCDIR)/srcs.mk
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))
-INCLUDES	= bvh.h calc.h minirt.h object.h parsing.h render.h
-INCLUDES	:= $(addprefix $(INCDIR)/, $(INCLUDES))
+#INCLUDES	= bvh.h calc.h minirt.h object.h parsing.h render.h
+#INCLUDES	:= $(addprefix $(INCDIR)/, $(INCLUDES))
 
 # VPATH
-vpath %.h $(INCDIR) $(LIBFTDIR)/$(INCDIR) $(MLXWDIR)/$(INCDIR) $(MLXDIR)
+vpath %.h $(INCLUDES)
 vpath %.o $(OBJDIR) $(LIBFTDIR)/$(OBJDIR) $(MLXWDIR)/$(OBJDIR)
 vpath %.d $(DEPDIR) $(LIBFTDIR)/$(DEPDIR) $(MLXWDIR)/$(DEPDIR)
 
@@ -96,13 +120,16 @@ all:	$(NAME)
 fast:	$(NAME)
 debug:	$(NAME)
 
-$(NAME): $(XCERRCAL) $(FONT_RENDER) $(OBJS) $(INCLUDES)
+$(NAME): $(XCERRCAL) $(MLXUI) $(FONT_RENDER) $(OBJS) $(INCLUDES)
 	$(call bin-link-msg)
 	$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
 	$(call bin-finish-msg)
 
 $(XCERRCAL):
 	@$(MAKE) -s -C $(XCERRCALDIR) $(RULE) $(VARS) ROOTDIR=../..
+
+$(MLXUI): $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)
+	@$(MAKE) -s -C $(MLXUIDIR) $(RULE)  $(VARS) ROOTDIR=../..
 
 $(FONT_RENDER): $(MLXW) $(MLX) $(LIBFT)
 	@$(MAKE) -s -C $(FONT_RENDIR) $(RULE)  $(VARS) ROOTDIR=../..
