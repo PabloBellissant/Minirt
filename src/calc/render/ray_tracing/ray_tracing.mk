@@ -17,14 +17,17 @@ RAY_TRACING_DIR	= $(RENDER_DIR)/ray_tracing
 RAY_TRACING_SRCS	= cast_rays.c \
 					  intersect.c \
 					  draw_skybox.c \
-					  shade.c \
 					  draw_on_screen.c \
-					  normal_debug.c
+					  normal_debug.c \
+					  sample_texture.c \
+					  reflect.c \
+					  fill_uv_normal.c
 SRCS				+= $(addprefix $(RAY_TRACING_DIR)/, $(RAY_TRACING_SRCS))
 
 RAY_TRACING_MKS	= phong_render/phong_render.mk \
 				  refract/refract.mk \
-				  pbr_render/pbr_render.mk
+				  pbr_render/pbr_render.mk \
+				  monte_carlo/monte_carlo.mk
 
 include $(addprefix $(RAY_TRACING_DIR)/, $(RAY_TRACING_MKS))
 

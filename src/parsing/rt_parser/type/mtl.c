@@ -10,8 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "parsing.h"
 #include <fcntl.h>
+#include "render.h"
 
 #define MTL_FORMAT " *mtl  *%s *\n"
 
@@ -23,7 +25,13 @@ int	mtl(const char *line, int line_num, t_scene *scene)
 	if (ft_scan(line_num, MTL_FORMAT, line, &mtl_path) == -1)
 		return (-1);
 	fd = open(mtl_path, O_RDONLY);
-	free(mtl_path);
+	if (scene->mtl_list.num_elements == 0)
+		vector_init(&scene->mtl_list, sizeof(char *));
+	if (vector_add(&scene->mtl_list, &mtl_path, 1) == -1)
+	{
+		close(fd);
+		return (-1);
+	}
 	if (fd == -1)
 		return (-1);
 	return (parse_mtl_file(fd, scene));

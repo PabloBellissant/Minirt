@@ -16,12 +16,13 @@
 
 int	ka(const char *line, t_scene *scene)
 {
-	t_mat			*mat;
+	t_mat	*mat;
+	t_rgb	ka;
 
 	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, KA_FORMAT, line, &mat->ka.r, &mat->ka.g, &mat->ka.b) == -1)
+	if (ft_scan(0, KA_FORMAT, line, &ka.r, &ka.g, &ka.b) == -1)
 		return (-1);
-	mat->ambient_id = create_binary_texture(&scene->texture, 255);
+	mat->ambient_id = create_gray_level_texture(&scene->texture, 255);
 	if (mat->ambient_id == -1)
 		return (-1);
 	return (0);

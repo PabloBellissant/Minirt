@@ -12,7 +12,7 @@
 
 #ifndef PARSING_H
 # define PARSING_H
-#include "libft.h"
+# include "libft.h"
 
 typedef struct s_scene		t_scene;
 typedef struct s_object		t_object;
@@ -29,13 +29,12 @@ typedef enum e_object_type
 	PLANE,
 	CYLINDER,
 	TRIANGLE,
-	TEXTURE,
 	SKYBOX,
 	MATERIAL,
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
-typedef struct s_vertex t_vertex;
+typedef struct s_vertex		t_vertex;
 
 typedef struct s_obj_vectors
 {
@@ -51,10 +50,11 @@ typedef struct s_pos_attribute
 	t_vec3	pos;
 	t_vec3	dir;
 	t_vec3	scale;
-}	t_pos_attribute;
+	char	*path;
+}	t_obj_attribute;
 
-typedef struct s_img_data t_texture;
-typedef union u_rgb_int t_rgb_int;
+typedef struct s_img_data	t_texture;
+typedef union u_rgb_int		t_rgb_int;
 
 int				parse_scene(char *file_name, t_scene *scene);
 int				rt_parser(int fd, t_scene *scene);
@@ -66,9 +66,9 @@ t_object		*create_object(t_scene *scene, t_object_type type);
 t_texture		*create_texture(t_vector *vec);
 t_texture		*parse_texture(t_scene *scene, char *texture_path);
 int				create_color_texture(t_vector *vec, t_rgb_int *color);
-int				create_binary_texture(t_vector *vec, unsigned char value);
-int				get_texture(t_scene *scene, char *texture_name);
-t_mat			*create_mat(t_vector *mat);
+int				create_gray_level_texture(t_vector *vec, unsigned char value);
+int				get_texture(t_vector *texture, char *texture_name);
+t_mat			*create_mat(t_vector *mat_vec, t_vector *tex_vec);
 t_mat			create_default_mat(void);
 int				create_null_texture(t_vector *vec);
 int				create_null_nmap(t_vector *vec);
@@ -84,7 +84,6 @@ int				sphere(const char *line, int line_num, t_scene *scene);
 int				plane(const char *line, int line_num, t_scene *scene);
 int				cylinder(const char *line, int line_num, t_scene *scene);
 int				obj(const char *line, int line_num, t_scene *scene);
-int				tex(const char *line, int line_num, t_scene *scene);
 int				sky(const char *line, int line_num, t_scene *scene);
 int				mtl(const char *line, int line_num, t_scene *scene);
 
@@ -100,6 +99,7 @@ int				map_bump(const char *line, t_scene *scene);
 int				map_pr(const char *line, t_scene *scene);
 int				map_ka(const char *line, t_scene *scene);
 int				map_d(const char *line, t_scene *scene);
+int				map_pm(const char *line, t_scene *scene);
 int				d(const char *line, t_scene *scene);
 int				kr(const char *line, t_scene *scene);
 int				ni(const char *line, t_scene *scene);

@@ -6,42 +6,58 @@
 #    By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/14 06:02:30 by pabellis          #+#    #+#              #
-#    Updated: 2025/12/16 00:26:59 by pabellis         ###   ########.fr        #
+#    Updated: 2025/12/26 01:11:50 by pabellis         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-C 30,3,2 0,0,0 70
+# C 37,0,-7 0.5,-0.7,0 70
+C 0,0,0 0.5,-0.7,0 70
 
-L 100000,57000,128000 1 255,255,255
-# L 1, 1, 0 1 255, 0, 0
-# L 0, 1, 0 1 0, 255, 0
-# L -1, 1, 0 1 0, 0, 255
+# L 10000,5700,12800 1 255,255,255
+# L 5, 10, 0 1 255, 0, 0
+# L 0, 10, 0 1 0, 255, 0
+# L 0.10, 4.5, 0 1 255, 255, 255
+# L -5, 10, 0 1 0, 0, 255
+# L 10, 10, 0 1 255, 0, 0
+# L -10, 10, 0 1 0, 0, 255
 
 
+# sp 0, 3, 0 3 255,255,255
 
-tex snow asset/texture/skybox/snow.ppm
-sky snow
+#
+sky asset/texture/skybox/indorr.ppm
 
-#mtl asset/materials/paving.mtl
-#mtl asset/materials/gold.mtl
+mtl asset/materials/paving.mtl
+mtl asset/materials/gold.mtl
 #mtl asset/materials/leather.mtl
-mtl asset/materials/sand.mtl
+#mtl asset/materials/sand.mtl
 #mtl asset/materials/fence.mtl
-#mtl asset/materials/tiles.mtl
+mtl asset/materials/tiles.mtl
 #mtl asset/materials/foil.mtl
 #mtl asset/materials/marble.mtl
 #mtl asset/materials/onyx.mtl
-#mtl asset/materials/uni/color.mtl
-#mtl asset/materials/uni/reflect.mtl
-#mtl asset/materials/uni/mat.mtl
-
+mtl asset/materials/uni/color.mtl
+mtl asset/materials/uni/reflect.mtl
+mtl asset/materials/uni/mat.mtl
+mtl asset/materials/uni/emissive.mtl
+mtl asset/materials/uni/transparent.mtl
+mtl asset/materials/metal.mtl
+mtl	asset/materials/test.mtl
+mtl asset/materials/wood.mtl
+mtl asset/materials/ornament.mtl
 # sp 30,5,0 3 255,225,255 gold2
 # sp 30,5,5 3 255,225,255 mat_black
-A 0.6 255,255,255
 
-#obj asset/chess/chess.obj 0, 0, 0      0, 0, 5     1, 1, 1
-#obj asset/bunny/bunny_high_poly.obj 10,0,-15   0, 0, 5     10,10,10
-#obj asset/bmw/bmw.obj 37, 0, -8.5           0.8, 0, 5     0.8,0.8,0.8
+# sp -5, 4.5, 0 8 0,0,0 emissive_red
+sp 0, 8.5, 0 5 0,0,0 emissive_white
+# sp 35, -4, -14.5 4 0,0,0 emissive_white
+# sp 0, 8, 0 10 0,0,0 emissive_white
+
+#
+# obj asset/triangle/triangle.obj 0, 4, 0 0, 0, 5 1,1,1
+# obj asset/chess/chess.obj 0, 0, 0      0, 0, 5     1, 1, 1
+# obj asset/bunny/bunny_high_poly.obj 10,-5,-15   0, 0, 5     10,10,10
+# obj asset/bmw/bmw.obj 37, -5, -8.5           0.8, 0, 5     0.4,0.4,0.4
 #obj asset/casino/casino.obj 0, -4.1, -50           0, 0, 5     1, 1, 1
 #obj asset/porsche/porsche.obj 31, 0, 3 3, 0, 5     1, 1, 1
 #obj asset/jesko/jesko.obj 31, 0, 3 3, 0, 5     5,5,5
@@ -51,5 +67,27 @@ A 0.6 255,255,255
 #mat blue 0,0,1 1,1,1 80 1 0
 #mat transparent 0,0,1 1,1,1 80 0 0
 
-pl 0,0,0 0,1,0 0,0,0 sand 0.1
 
+sp 0,0,0 1 0,0,0 refract1
+# sp 0,-3,3 2 0,0,0 refract2
+# sp 0,-3,6 2 0,0,0 refract3
+# sp 0,-3,9 2 0,0,0 refract4
+# sp 0,-3,12 2 0,0,0 refract5
+# sp 0,-3,15 2 0,0,0 refract6
+#
+# sp 0,0,0 2 0,0,0 reflect1
+# sp 0,0,3 2 0,0,0 reflect2
+# sp 0,0,6 2 0,0,0 refract1
+# sp 0,0,9 2 0,0,0 reflect4
+# sp 0,0,12 2 0,0,0 reflect5
+# sp 0,0,15 2 0,0,0 reflect6
+
+
+pl 0,-1,0 0,1,0 0,0,0 mat_white 1
+# pl 0,5,0 0,-1,0 0,0,0 mat_white 0.1
+
+# pl -5,0,0 1,0,0 0,0,0 mat_white 0.1
+# pl 5,0,0 -1,0,0 0,0,0 gold 0.1
+
+# pl 0,0,-5 0,0,1 0,0,0 mat_white 0.1
+# pl 0,0,5 0,0,-1 0,0,0 mat_white 0.1

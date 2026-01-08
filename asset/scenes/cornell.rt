@@ -1,0 +1,8 @@
+C 0,0,0 0.5,-0.7,0 70
+A 0.6 255, 255, 255
+
+mtl asset/materials/uni/transparent.mtl
+
+obj asset/cornellbox/cornellbox.obj 0,0,0 0,0,5 1,1,1
+obj asset/bunny/bunny_high_poly.obj 0.4,0,-0.6 0,0,5 0.6,0.6,0.6
+sp -0.3,0.4,0.5 0.8 255,225,255 glass

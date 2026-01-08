@@ -26,6 +26,7 @@ void	refract_sphere(t_vec3 *origin, t_vec3 *dir, t_hit *hit, float ni)
 	*origin = temp.origin;
 	t_out = get_sphere_t_out(&temp, hit->hit_obj);
 	*origin = vec3_add(*origin, vec3_scale(*dir, t_out + EPSILON));
-	*dir = vec3_refract(*dir, vec3_normalize(vec3_sub(hit->hit_obj->sphere.pos, *origin)), ni / 1.0f);
+	*dir = vec3_refract(
+			*dir, vec3_normalize(
+				vec3_sub(hit->hit_obj->sphere.pos, *origin)), ni / 1.0f);
 }
-

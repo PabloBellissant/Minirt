@@ -37,7 +37,7 @@ int	gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color)
 {
 	t_mat	*new;
 
-	new = create_mat(mat);
+	new = create_mat(mat, tex);
 	if (!new)
 		return (-1);
 	*new = create_default_mat();

@@ -84,31 +84,31 @@ int	create_color_texture(t_vector *vec, t_rgb_int *color)
 	tex = create_texture(vec);
 	if (!tex)
 		return (-1);
-	tex->addr = malloc(1 * 3);
-	if (!tex->addr)
+	tex->pixels = malloc(1 * 3);
+	if (!tex->pixels)
 		return (-1);
-	ft_memcpy(tex->addr, &color->rgb, 3);
+	ft_memcpy(tex->pixels, &color->rgb, 3);
 	tex->channels = 3;
-	tex->line_len = 1 * 3;
-	tex->width = 1;
-	tex->height = 1;
+	tex->line_len = 0;
+	tex->width = 0;
+	tex->height = 0;
 	return ((int) vec->num_elements - 1);
 }
 
-int	create_binary_texture(t_vector *vec, unsigned char value)
+int	create_gray_level_texture(t_vector *vec, unsigned char value)
 {
 	t_texture	*tex;
 
 	tex = create_texture(vec);
 	if (!tex)
 		return (-1);
-	tex->addr = malloc(1);
-	if (!tex->addr)
+	tex->pixels = malloc(1);
+	if (!tex->pixels)
 		return (-1);
-	ft_memcpy(tex->addr, &value, 1);
+	ft_memcpy(tex->pixels, &value, 1);
 	tex->channels = 1;
-	tex->line_len = 1;
-	tex->width = 1;
-	tex->height = 1;
+	tex->line_len = 0;
+	tex->width = 0;
+	tex->height = 0;
 	return ((int) vec->num_elements - 1);
 }

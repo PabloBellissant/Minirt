@@ -8,6 +8,7 @@ Ks 0.8 0.8 0.8
 Ni 1.3
 d 1.0
 Pr 1
+Pm 0.2
 map_Kd asset/texture/paving/1/texture.ppm
 map_bump asset/texture/paving/1/normal.ppm
 map_Pr asset/texture/paving/1/roughness.ppm

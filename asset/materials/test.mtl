@@ -1,15 +1,114 @@
 # MiniRT MTL File
 
-newmtl test_mat
+newmtl refract1
 Ns 800.0
 Ka 1.0 1.0 1.0
-Kd 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+Pr 0.0
+Ni 2.3
+d 0.0
+Pm 0
+
+newmtl refract2
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 0.2
+d 0
+Pm 1
+
+newmtl refract3
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 0.4
+d 0
+Pm 1
+
+newmtl refract4
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 0.6
+d 0
+Pm 1
+
+newmtl refract5
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 0.8
+d 0
+Pm 1
+m 1
+
+newmtl refract6
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
 Ks 1.0 1.0 1.0
 Pr 1
+d 0
+Pm 1
 
-newmtl test_no_mat
+
+newmtl reflect1
 Ns 800.0
 Ka 1.0 1.0 1.0
-Kd 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
 Ks 1.0 1.0 1.0
-Pr 0.5
+Pr 0
+d 1
+Pm 1
+
+newmtl reflect2
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 0.4 0.35 1.0
+Ks 1.0 1.0 1.0
+Pr 0.
+d 1
+Pm 0
+
+newmtl reflect3
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 0.4
+d 1
+
+newmtl reflect4
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 0.6
+d 1
+Pm 1
+
+newmtl reflect5
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 0.8
+d 1
+Pm 1
+m 1
+
+newmtl reflect6
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Pr 1
+d 1
+Pm 1
+
+

@@ -16,22 +16,6 @@
 
 void	free_ttf(t_ttf_font *font);
 
-// void	free_rast_env(t_rast_env *env)
-// {
-// 	size_t	i;
-//
-// 	i = 0;
-// 	while (i < env->text_num)
-// 	{
-// 		free_ttf(env->texts[i]->font);
-// 		free(env->texts[i]);
-// 		i++;
-// 	}
-// 	free_ttf(env->fps->font);
-// 	free(env->fps);
-// 	free(env);
-// }
-
 void	free_textures(t_vector *vec)
 {
 	size_t		i;
@@ -67,9 +51,11 @@ void	free_scene(t_scene *scene)
 {
 	free_vector(&scene->lights);
 	free_vector(&scene->objects);
-	free(scene->planes);
+	free(scene->planes_id);
+	free(scene->emissive_id);
 	free_textures(&scene->texture);
 	free_mats(&scene->mat);
+	free_vector(&scene->mtl_list);
 	free(scene->bvh.bvh_pointer);
 }
 
@@ -90,11 +76,14 @@ void	register_unit_errors(void)
 	register_rt_errors();
 }
 
+#include <time.h>
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
 	int		ret;
 
+	srand(time(NULL));
 	ret = 0;
 	register_unit_errors();
 	if (argc != 2)
@@ -123,9 +112,10 @@ int	main(int argc, char **argv)
 			}
 			else
 			{
-				data.buffers.rays = malloc(sizeof(t_ray) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY * SUB_PIXEL_QUANTITY);
-				data.buffers.hits = malloc(sizeof(t_hit) * WIDTH * HEIGHT * SUB_PIXEL_QUANTITY * SUB_PIXEL_QUANTITY);
+				data.buffers.rays = malloc(sizeof(t_ray) * WIDTH * HEIGHT);
+				data.buffers.hits = malloc(sizeof(t_hit) * WIDTH * HEIGHT);
 				data.buffers.addr = data.mlx->img.addr;
+				data.buffers.accu = malloc(sizeof(t_vec3) * WIDTH * HEIGHT);
 				loop_hook(&data);
 				free_data(&data);
 			}

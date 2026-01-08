@@ -23,11 +23,8 @@
 #include "vectors_types.h"
 #include <errno.h>
 
-t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv);
-
-float	sample_binary_texture(const t_texture *texture_list, int id, t_vec2 uv);
-
-t_vec3	apply_normal_map(t_vec3 normal, t_vec3 nmap, t_vec3 tangent, t_vec3 bitangent);
+t_vec3	apply_normal_map(t_vec3 normal, t_vec3 nmap,
+			t_vec3 tangent, t_vec3 bitangent);
 
 t_rgb	get_f0(float metalness, float ior, t_rgb ks);
 
@@ -41,23 +38,25 @@ void	sample_colors(t_data *data, int pixel, t_texture *tex, t_mat *mat)
 
 	mat = mat + data->buffers.hits[pixel].mat_id;
 	if (data->params.texture)
-		data->buffers.hits[pixel].hit_rgb = sample_texture(tex, mat->kd_id, data->buffers.hits[pixel].uv);
+		data->buffers.hits[pixel].hit_rgb = sample_texture(tex, mat->kd_id,
+				data->buffers.hits[pixel].uv);
 	else
-	 	data->buffers.hits[pixel].hit_rgb = rgb(0.7, 0.7, 0.7);
+		data->buffers.hits[pixel].hit_rgb = rgb(0.7, 0.7, 0.7);
 	if (data->params.ambient)
-		data->buffers.hits[pixel].hit_ambient = sample_binary_texture(tex, mat->ambient_id, data->buffers.hits[pixel].uv);
+		data->buffers.hits[pixel].hit_ambient = sample_gray_level_texture(tex,
+				mat->ambient_id, data->buffers.hits[pixel].uv);
 	else
 		data->buffers.hits[pixel].hit_ambient = 1.0f;
-	if (data->params.normal_map)
-	{
-		nmap = sample_texture(tex, mat->normal_id, data->buffers.hits[pixel].uv);
-		tangent = get_tangent(data->buffers.hits[pixel].normal);
-		bitangent = get_bitangent(data->buffers.hits[pixel].normal, tangent);
-		data->buffers.hits[pixel].normal = apply_normal_map(data->buffers.hits[pixel].normal, nmap, tangent, bitangent);
-	}
 	data->buffers.hits[pixel].ks = mat->ks;
 	data->buffers.hits[pixel].ke = mat->ke;
 	data->buffers.hits[pixel].ns = mat->ns;
+	if (!data->params.normal_map)
+		return ;
+	nmap = sample_texture(tex, mat->normal_id, data->buffers.hits[pixel].uv);
+	tangent = get_tangent(data->buffers.hits[pixel].normal);
+	bitangent = get_bitangent(data->buffers.hits[pixel].normal, tangent);
+	data->buffers.hits[pixel].normal = apply_normal_map(
+			data->buffers.hits[pixel].normal, nmap, tangent, bitangent);
 }
 
 void	sample_colors_loop(t_data *data, t_texture *tex, t_mat *mat, int count)
@@ -71,5 +70,3 @@ void	sample_colors_loop(t_data *data, t_texture *tex, t_mat *mat, int count)
 		++i;
 	}
 }
-
-

@@ -18,6 +18,9 @@ int	create_null_nmap(t_vector *vec)
 	t_rgb_int	rgb;
 	t_texture	*tex;
 
+	tex_id = get_texture(vec, "no_nmap");
+	if (tex_id != -1)
+		return (tex_id);
 	rgb = rgb_int(255, 128, 128);
 	tex_id = create_color_texture(vec, &rgb);
 	if (tex_id == -1)

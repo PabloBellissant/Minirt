@@ -28,7 +28,6 @@ RT_TYPE_SRCS	= ambient.c \
 				  plane.c \
 				  sphere.c \
 				  obj.c \
-				  tex.c \
 				  mtl.c \
 				  sky.c \
 				  create_object.c \

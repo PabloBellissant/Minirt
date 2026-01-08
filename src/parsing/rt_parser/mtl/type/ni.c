@@ -12,7 +12,7 @@
 
 #include "render.h"
 
-#define NI_FORMAT " *Ni  *%f[1,5] *\n"
+#define NI_FORMAT " *Ni  *%f[0,5] *\n"
 
 int	ni(const char *line, t_scene *scene)
 {

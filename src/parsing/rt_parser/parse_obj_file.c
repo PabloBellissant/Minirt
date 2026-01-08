@@ -13,9 +13,9 @@
 #include "calc.h"
 #include "minirt.h"
 
-int	parse_obj_type(const char *line, t_scene *scene, t_pos_attribute *attr, t_obj_vectors *vec);
+int	parse_obj_type(const char *line, t_scene *scene, t_obj_attribute *attr, t_obj_vectors *vec);
 
-int	parse_obj_file(int fd, t_scene *scene, t_pos_attribute *attr)
+int	parse_obj_file(int fd, t_scene *scene, t_obj_attribute *attr)
 {
 	char			*line;
 	t_obj_vectors	vec;

@@ -11,21 +11,28 @@
 /* ************************************************************************** */
 
 #include "minirt.h"
+#include "parsing.h"
 
 int	create_null_texture(t_vector *vec)
 {
 	t_texture			*tex;
 	const unsigned char	magenta[3] = {0xFF, 0x00, 0xFF};
 	const unsigned char	black[3]   = {0x00, 0x00, 0x00};
+	int					texture_id;
 
+	texture_id = get_texture(vec, "no_tex");
+	if (texture_id != -1)
+		return (texture_id);
 	tex = create_texture(vec);
-	tex->addr = malloc(4 * 3);
-	if (!tex->addr)
+	if (!tex)
 		return (-1);
-	ft_memcpy(tex->addr + 0, magenta, 3);
-	ft_memcpy(tex->addr + 3, black, 3);
-	ft_memcpy(tex->addr + 6, black, 3);
-	ft_memcpy(tex->addr + 9, magenta, 3);
+	tex->pixels = malloc(4 * 3);
+	if (!tex->pixels)
+		return (-1);
+	ft_memcpy(tex->pixels + 0, magenta, 3);
+	ft_memcpy(tex->pixels + 3, black, 3);
+	ft_memcpy(tex->pixels + 6, black, 3);
+	ft_memcpy(tex->pixels + 9, magenta, 3);
 	tex->channels = 3;
 	tex->line_len = 2 * 3;
 	tex->width = 2;

@@ -15,7 +15,7 @@ PBR_RENDER_DIR	= $(RAY_TRACING_DIR)/pbr_render
 
 # Source files
 PBR_RENDER_SRCS	= sample_materials.c \
-				  get_color_through.c
+				  pbr_shade.c
 
 SRCS				+= $(addprefix $(PBR_RENDER_DIR)/, $(PBR_RENDER_SRCS))
 

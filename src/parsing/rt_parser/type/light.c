@@ -37,15 +37,16 @@ int	light(const char *line, int line_num, t_scene *scene)
 	t_vec3		*pos;
 	t_rgb_int	color;
 	t_object	*object;
+	float		brightness;
 
 	object = create_light(scene, LIGHT);
 	light = &object->light;
 	pos = &light->pos;
 	if (ft_scan(line_num, LIGHT_FORMAT, line, &pos->x, &pos->y, &pos->z,
-			&light->brightness, &color.r, &color.g, &color.b))
+			&brightness, &color.r, &color.g, &color.b))
 	{
 		return (error(pack_err(RT_ID, RT_E_LIGHT), FL, LN, FC));
 	}
-	light->rgb = get_real_ratio(color, light->brightness);
+	light->rgb = get_real_ratio(color, brightness);
 	return (0);
 }

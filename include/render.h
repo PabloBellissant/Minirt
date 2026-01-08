@@ -60,8 +60,10 @@ typedef struct s_hit
 
 typedef struct s_hit_mat_data
 {
+	t_mat	*mat;
 	float	hit_opacity;
 	float	roughness;
+	float	metalness;
 }			t_hit_mat_data;
 
 typedef struct s_camera
@@ -99,7 +101,7 @@ typedef struct s_camera
 
 typedef struct s_bvh_main
 {
-	void			*bvh_pointer;
+	void		*bvh_pointer;
 	union
 	{
 		void			*bvh;
@@ -123,23 +125,27 @@ typedef enum e_mtl
 	e_illum,
 	e_normal,
 	e_map_kd,
-	e_map_d // to fix
-}	t_mtl;
+	e_map_d
+}	t_mtl; // to fix;
 
 typedef struct s_scene
 {
-	t_ambient	ambient;
+	t_rgb		ambient;
 	t_camera	camera;
 	char		*name;
 	t_vector	objects;
 	t_vector	lights;
-	t_object	*planes;
+	int			*planes_id;
 	int			plane_count;
 	t_bvh_main	bvh;
 	t_vector	texture;
 	t_vector	mat;
+	t_vector	mtl_list;
+	t_vector	obj_list;
 	t_mlx		*mlx;
 	int			skybox_tex;
+	int			*emissive_id;
+	int			emissive_count;
 }				t_scene;
 
 typedef struct s_3d_line
@@ -148,36 +154,56 @@ typedef struct s_3d_line
 	t_vec3	pos2;
 }	t_3d_line;
 
-typedef struct s_data t_data;
-typedef struct s_params t_params;
+typedef struct s_data		t_data;
+typedef struct s_params		t_params;
+typedef struct s_buffers	t_buffers;
 
 int		rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
-	t_camera *camera, t_rgb_int color);
+			t_camera *camera, t_rgb_int color);
 int		rasterize_sphere_outline(t_sphere *s, t_img_data *img,
-	t_camera *camera, t_rgb_int color);
+			t_camera *camera, t_rgb_int color);
 void	rasterize_bvh(void *bvh, t_params *p, int total_depth, t_data *data);
-t_vec2i	project_point(t_vec3 *p, t_camera *camera);
+t_vec2i	project_point(t_vec3 *p, t_camera *camera, t_img_data *img);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
 
 void	rasterize_triangle_outline(t_img_data *img, t_triangle *triangle,
-	t_rgb_int color, t_camera *camera);
+			t_rgb_int color, t_camera *camera);
 void	rasterize_outline_object(t_img_data *img, t_object *object,
-	t_camera *camera, t_rgb_int color);
+			t_camera *camera, t_rgb_int color);
 void	draw_circle(t_img_data *img, t_vec2i pos, int radius, t_rgb_int color);
 void	rasterize_light_outline(t_img_data *img, t_light *light,
-	t_camera *camera);
+			t_camera *camera);
 void	rasterize_plane_outline(t_img_data *img, t_plane *plane,
-	t_rgb_int color, t_camera *camera);
+			t_rgb_int color, t_camera *camera);
 void	rasterize_cylinder_outline(t_img_data *img, t_cylinder *cylinder,
-		t_rgb_int color, t_camera *camera);
+			t_rgb_int color, t_camera *camera);
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
-	t_rgb_int color, t_camera *camera);
+			t_rgb_int color, t_camera *camera);
 
-void	wireframe_render(t_data *data);
-void	pbr_render(t_data *data);
+void	wireframe_render(t_data *data, t_img_data *img);
+void	pbr_render(t_data *data, t_img_data *img);
 
 int		export_to_ppm(t_data *data, t_mlx *mlx);
 
+float	sample_gray_level_texture(const t_texture *texture_list,
+			int id, t_vec2 uv);
 t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv);
+
+void	fill_camera(t_camera *cam, t_img_data *img);
+void	cast_ray_loop(
+			t_camera *cam, t_buffers bu, int pixel_size, t_img_data *img);
+void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene, int count);
+void	draw_skybox_loop(
+			t_buffers bu, int texture_id, t_texture *texture, int size);
+
+int		compact_hits_inplace(t_hit *buffer, int input_size);
+
+void	path_sample_materials_loop(
+			t_buffers *bu, t_texture *tex, t_mat *mat, int count);
+
+void	path_shade_loop(t_buffers *buffers, t_scene *scene, int count);
+
+void	normal_debug_loop(t_buffers *buffers, int count);
+void	accu_screen_loop(t_buffers bu, int sample_count, t_img_data *img);
 
 #endif

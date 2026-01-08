@@ -13,6 +13,8 @@
 #include "libft.h"
 #include "render.h"
 #include "rt_xcerrcal.h"
+#include "vec3_scalar.h"
+#include "calc.h"
 
 #define CAMERA_FORMAT " *C  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *\
 , *%f[-1,1]  *%d[180]\n"
@@ -34,5 +36,6 @@ int	camera(const char *line, int line_num, t_scene *scene)
 	{
 		return (error(pack_err(RT_ID, RT_E_CAMERA), FL, LN, FC));
 	}
+	*rot = vec3_scale(*rot, M_PI);
 	return (ret);
 }

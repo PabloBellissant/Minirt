@@ -1,0 +1,13 @@
+# MiniRT MTL File
+
+newmtl wood
+Ns 800
+Ka 0.2 0.2 0.2
+Kd 0.65 0.45 0.25
+Ks 0.04 0.04 0.04
+Pr 1
+Pm 0
+map_Kd asset/texture/wood/texture.ppm
+map_Ka asset/texture/wood/ambient.ppm
+map_Pr asset/texture/wood/roughness.ppm
+map_bump asset/texture/wood/normal.ppm

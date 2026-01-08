@@ -12,21 +12,6 @@
 
 #ifndef MINIRT_H
 # define MINIRT_H
-# include "mlx_wrapper.h"
-
-# define BOUNCE_MAX 2
-# define REFRACT_MAX 5
-# define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
-# define TITLE "MiniRT Pabellis Jaubry--"
-
-# define SUB_PIXEL_QUANTITY 4
-# define TARGET_FPS 12
-# define MIN_QUALITY 25
-
-_Static_assert(SUB_PIXEL_QUANTITY > 0, "SUB_PIXEL_QUANTITY");
-_Static_assert(TARGET_FPS > 0, "TARGET_FPS");
-_Static_assert(MIN_QUALITY > 0, "MIN_QUALITY");
-
 
 # include <stdint.h>
 # include "xcerrcal.h"
@@ -38,6 +23,19 @@ _Static_assert(MIN_QUALITY > 0, "MIN_QUALITY");
 # include "render.h"
 # include "font_renderer.h"
 # include "mlx_wrapper.h"
+
+# define BOUNCE_MAX 2
+# define REFRACT_MAX 5
+# define AUTHORS "'Aubry Richard Jaurel' And 'Bellissant Pablo'"
+# define TITLE "MiniRT Pabellis Jaubry--"
+
+# define SUB_PIXEL_QUANTITY 1
+# define TARGET_FPS 12
+# define MIN_QUALITY 25
+
+_Static_assert(SUB_PIXEL_QUANTITY > 0, "SUB_PIXEL_QUANTITY");
+_Static_assert(TARGET_FPS > 0, "TARGET_FPS");
+_Static_assert(MIN_QUALITY > 0, "MIN_QUALITY");
 
 typedef struct s_keys
 {
@@ -79,6 +77,7 @@ typedef struct s_buffers
 	t_hit			*hits;
 	int				hits_count;
 	unsigned int	*addr;
+	t_vec3			*accu;
 }			t_buffers;
 
 typedef struct s_data
