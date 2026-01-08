@@ -16,7 +16,7 @@
 
 t_vec3	rotate_point(t_vec3 pos, t_vec3 rot);
 
-int	parse_vertex(const char *line, t_vector *vertex, t_pos_attribute *attr)
+int	parse_vertex(const char *line, t_vector *vertex, t_obj_attribute *attr)
 {
 	t_vertex	v;
 

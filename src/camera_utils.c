@@ -60,12 +60,12 @@ static void	apply_yaw_and_pitch(t_camera *cam)
 }
 
 // Create viewport vectors
-static void	create_viewport_vectors(t_camera *cam)
+static void	create_viewport_vectors(t_camera *cam, t_img_data *img)
 {
 	cam->u = vec3_scale(cam->camera_right, cam->viewport_width);
 	cam->v = vec3_scale(cam->camera_up, -cam->viewport_height);
-	cam->pixel_delta_u = vec3_div_scalar(cam->u, WIDTH);
-	cam->pixel_delta_v = vec3_div_scalar(cam->v, HEIGHT);
+	cam->pixel_delta_u = vec3_div_scalar(cam->u, img->width);
+	cam->pixel_delta_v = vec3_div_scalar(cam->v, img->height);
 }
 
 // Use forward vector for focal distance
@@ -83,15 +83,15 @@ static void	create_focal_distance_viewport(t_camera *cam)
 			cam->half_pixel_offset);
 }
 
-void	fill_camera(t_camera *cam)
+void	fill_camera(t_camera *cam, t_img_data *img)
 {
 	cam->focal_length = 1.0f;
 	cam->theta = (float)(cam->fov * M_PI) / 180.0f;
 	cam->viewport_height = 2.0f * tanf(cam->theta / 2.0f) * cam->focal_length;
-	cam->aspect_ratio = (float)WIDTH / (float)HEIGHT;
+	cam->aspect_ratio = (float)img->width / (float)img->height;
 	cam->viewport_width = cam->viewport_height * cam->aspect_ratio;
 	apply_rotations(cam);
 	apply_yaw_and_pitch(cam);
-	create_viewport_vectors(cam);
+	create_viewport_vectors(cam, img);
 	create_focal_distance_viewport(cam);
 }

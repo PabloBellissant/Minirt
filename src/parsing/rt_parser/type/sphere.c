@@ -38,7 +38,7 @@ int	sphere(const char *line, int line_num, t_scene *scene)
 	object->sphere.radius_squared = (object->sphere.diameter / 2.f)
 		* (object->sphere.diameter / 2.f);
 	object->mat_id = get_mat(mat_name, scene, &color);
-	free(mat_name);
+	object->name = mat_name;
 	if (object->mat_id == -1)
 		return (-1);
 	object->f = hit_sphere;

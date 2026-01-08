@@ -10,12 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "render.h"
 #include "parsing.h"
 
 #define MAP_KA_FORMAT " *map_Ka  *%s *\n"
 
-static void	scale_tex(t_texture *tex, t_vec3 *scale);
+static void	scale_tex(t_texture *tex, t_texture *ka);
 
 int	map_ka(const char *line, t_scene *scene)
 {
@@ -27,21 +28,20 @@ int	map_ka(const char *line, t_scene *scene)
 		return (-1);
 	if (!parse_texture(scene, name))
 		return (-1);
-	scale_tex(get_last_vector_value(&scene->texture), &mat->ka);
+	scale_tex(get_last_vector_value(&scene->texture), \
+		get_vector_value(&scene->texture, mat->ambient_id));
 	mat->ambient_id = (int) scene->texture.num_elements - 1;
 	return (0);
 }
 
-static void	scale_tex(t_texture *tex, t_vec3 *scale)
+static void	scale_tex(t_texture *tex, t_texture *ka)
 {
 	int	i;
 
 	i = 0;
 	while (i < tex->width * tex->height * tex->channels)
 	{
-		tex->pixels[i] *= scale->b;
-		tex->pixels[i + 1] *= scale->g;
-		tex->pixels[i + 2] *= scale->r;
-		i += 3;
+		tex->pixels[i] *= ka->pixels[0];
+		i += 1;
 	}
 }

@@ -14,6 +14,6 @@
 
 void	refract_plane(t_vec3 *origin, t_hit *hit)
 {
-	*origin = vec3_add(hit->hit_point, vec3_scale(hit->hit_obj->plane.normal, -EPSILON));
+	*origin = vec3_add(
+			hit->hit_point, vec3_scale(hit->hit_obj->plane.normal, -EPSILON));
 }
-

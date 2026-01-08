@@ -15,8 +15,8 @@
 static t_vec3		get_arbitrary_vector(float normal_y);
 static t_3d_line	fill_3d(t_vec3 origin, t_vec3 *pos);
 
-#define LINE_LEN 1
-#define DISTANCE 5
+#define LINE_LEN 0.5
+#define DISTANCE 2.
 #define NUMBER_OF_LINES 210
 
 void	rasterize_plane_outline(t_img_data *img, t_plane *plane,

@@ -16,7 +16,7 @@
 
 #define MIN_DISTANCE_EPSILON -1e-2f
 
-t_vec2i	project_point(t_vec3 *p, t_camera *camera)
+t_vec2i	project_point(t_vec3 *p, t_camera *camera, t_img_data *img)
 {
 	t_vec3	temp;
 	t_vec3	cam_space;
@@ -34,7 +34,7 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera)
 	projected.x = (cam_space.x * fov_scale) / (fabsf(cam_space.z)
 			* camera->aspect_ratio);
 	projected.y = (cam_space.y * fov_scale) / fabsf(cam_space.z);
-	screen_projected.x = (int)((projected.x + 1.0f) * WIDTH / 2.0f);
-	screen_projected.y = (int)((1.0f - projected.y) * HEIGHT / 2.0f);
+	screen_projected.x = (int)((projected.x + 1.0f) * img->width / 2.0f);
+	screen_projected.y = (int)((1.0f - projected.y) * img->height / 2.0f);
 	return (screen_projected);
 }

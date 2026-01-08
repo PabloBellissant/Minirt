@@ -42,7 +42,7 @@ int	plane(const char *line, int line_num, t_scene *scene)
 		return (error(pack_err(RT_ID, RT_E_PLANE), FL, LN, FC));
 	}
 	object->mat_id = get_mat(mat_name, scene, &color);
-	free(mat_name);
+	object->name = mat_name;
 	if (object->mat_id == -1)
 		return (-1);
 	object->f = hit_plane;

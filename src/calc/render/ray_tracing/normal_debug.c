@@ -1,12 +1,12 @@
-/* **********************l*************************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shade.c                                            :+:      :+:    :+:   */
+/*   normal_debug.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
+/*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/02 10:55:34 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/16 01:44:23 by pabellis         ###   ########.fr       */
+/*   Created: 2026/01/04 05:16:58 by pabellis          #+#    #+#             */
+/*   Updated: 2026/01/04 05:16:58 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,20 @@
 
 void	normal_debug(t_buffers *buffers, int pixel)
 {
-	buffers->rays[buffers->hits[pixel].id].accumulated_color = rgb_add_scalar(rgb_scale(buffers->hits[pixel].normal, 0.5f), 0.5f);
-	buffers->rays[buffers->hits[pixel].id].through_power = rgb(0, 0, 0);
+	t_ray	*ray;
+
+	ray = &buffers->rays[buffers->hits[pixel].id];
+	ray->accumulated_color = rgb_add_scalar(rgb_scale(
+				buffers->hits[pixel].normal,
+				0.5f),
+			0.5f);
+	ray->through_power = rgb(0, 0, 0);
+	buffers->hits[pixel].hit = false;
 }
 
 void	normal_debug_loop(t_buffers *buffers, int count)
 {
-	int			pixel;
+	int	pixel;
 
 	pixel = 0;
 	while (pixel < count)
@@ -36,5 +43,3 @@ void	normal_debug_loop(t_buffers *buffers, int count)
 		++pixel;
 	}
 }
-
-

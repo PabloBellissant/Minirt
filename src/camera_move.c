@@ -10,11 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "vec3_special2.h"
 #include "vectors.h"
 #include <math.h>
 #include "minirt.h"
 
-#define MOVE_SPEED 10
+#define MOVE_SPEED 3
 
 static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add, const float step)
 {
@@ -68,6 +69,10 @@ void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y)
 {
 	data->scene.camera.rot.y -= (float)delta_x * SENSITIVITY;
+	if (data->scene.camera.rot.y < -M_PI)
+		data->scene.camera.rot.y += M_PI * 2;
+	else if (data->scene.camera.rot.y > M_PI)
+		data->scene.camera.rot.y -= M_PI * 2;
 	data->scene.camera.rot.x += (float)delta_y * SENSITIVITY;
 	if (data->scene.camera.rot.x > MAX_PITCH)
 		data->scene.camera.rot.x = MAX_PITCH;

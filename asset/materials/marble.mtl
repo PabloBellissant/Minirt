@@ -7,7 +7,7 @@ Kd 1.0 1.0 1.0
 Ks 0.3 0.3 0.3
 Ni 1.0
 d 1.0
-Pr 2.3
+Pr 0
 map_Kd asset/texture/marble/1/texture.ppm
 map_bump asset/texture/marble/1/normal.ppm
 map_Pr asset/texture/marble/1/roughness.ppm
@@ -19,7 +19,7 @@ Kd 1.0 1.0 1.0
 Ks 0.3 0.3 0.3
 Ni 1.0
 d 1.0
-Pr 2.3
+Pr 0
 map_Kd asset/texture/marble/2/texture.ppm
 map_bump asset/texture/marble/2/normal.ppm
 map_Pr asset/texture/marble/2/roughness.ppm

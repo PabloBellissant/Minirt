@@ -22,8 +22,8 @@ void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 	t_vec2i	proj1;
 	t_vec2i	proj2;
 
-	proj1 = project_point(&line->pos1, camera);
-	proj2 = project_point(&line->pos2, camera);
+	proj1 = project_point(&line->pos1, camera, img);
+	proj2 = project_point(&line->pos2, camera, img);
 	if (!is_out_screen(img, &proj1, &proj2))
 		return ;
 	if ((proj1.x == -1) || (proj2.x == -1))

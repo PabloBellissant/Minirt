@@ -12,7 +12,7 @@
 
 #include "render.h"
 
-#define Ke_FORMAT " *Ke  *%f[10]  *%f[10]  *%f[10] *\n"
+#define Ke_FORMAT " *Ke  *%f[100]  *%f[100]  *%f[100] *\n"
 
 int	ke(const char *line, t_scene *scene)
 {

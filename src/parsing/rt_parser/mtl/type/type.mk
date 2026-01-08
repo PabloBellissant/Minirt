@@ -23,6 +23,7 @@ MTL_TYPE_SRCS	= newmtl.c \
 			  map_bump.c \
 			  map_pr.c \
 			  map_ka.c \
+			  map_pm.c \
 			  map_d.c \
 			  d.c \
 			  pr.c \

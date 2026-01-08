@@ -17,7 +17,10 @@ int	create_null_roughness(t_vector *vec)
 	t_texture	*tex;
 	int			tex_id;
 
-	tex_id = create_binary_texture(vec, 16);
+	tex_id = get_texture(vec, "no_roughness");
+	if (tex_id != -1)
+		return (tex_id);
+	tex_id = create_gray_level_texture(vec, 16);
 	if (tex_id == -1)
 		return (-1);
 	tex = get_vector_value(vec, tex_id);

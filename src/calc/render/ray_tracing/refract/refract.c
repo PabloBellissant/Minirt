@@ -19,7 +19,7 @@ void	refract_plane(t_vec3 *origin, t_hit *hit);
 void	refract(t_vec3 *origin, t_vec3 *dir, t_hit *hit, float ni)
 {
 	if (hit->hit_obj->type == TRIANGLE)
- 		refract_triangle(origin, dir, hit, ni);
+		refract_triangle(origin, dir, hit, ni);
 	else if (hit->hit_obj->type == SPHERE)
 		refract_sphere(origin, dir, hit, ni);
 	else
@@ -39,10 +39,8 @@ t_vec3	vec3_refract(t_vec3 ray_dir, t_vec3 normal, float eta)
 		return (ray_dir);
 	cost = sqrtf(cost2);
 	refract_dir = vec3_add(
-		vec3_scale(ray_dir, eta),
-		vec3_scale(normal, eta * cosi - cost)
-	);
+			vec3_scale(ray_dir, eta),
+			vec3_scale(normal, eta * cosi - cost)
+			);
 	return (vec3_normalize(refract_dir));
 }
-
-

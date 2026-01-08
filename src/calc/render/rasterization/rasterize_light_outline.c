@@ -21,7 +21,7 @@ void	rasterize_light_outline(t_img_data *img, t_light *light,
 	t_rgb_int	color;
 
 	color = rgb_int(light->rgb.r * 255, light->rgb.g * 255, light->rgb.b * 255);
-	proj = project_point(&light->pos, camera);
+	proj = project_point(&light->pos, camera, img);
 	if (proj.x == -1)
 		return ;
 	draw_circle(img, proj, LIGHT_SIZE - 15, color);

@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 01:29:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/16 00:53:51 by pabellis         ###   ########.fr       */
+/*   Updated: 2025/09/05 01:30:51 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	full_render_aabb(t_aabb_bvh *bvh, int target_depth,
 	rgb = depth_to_rgb_int(target_depth + data->params.bvh_color_offset,
 			total_depth + 2);
 	rasterize_cuboid(&bvh->cuboid, &data->mlx->img, &data->scene.camera, rgb);
-	if (bvh->depth > 0)
+	if (bvh->depth > 0 && bvh->next_a)
 	{
 		full_render_aabb(bvh->next_a, target_depth - 1, total_depth, data);
 		full_render_aabb(bvh->next_b, target_depth - 1, total_depth, data);
@@ -69,7 +69,7 @@ void	rasterize_aabb_bvh(t_aabb_bvh *bvh, t_params *p,
 		full_render_aabb(bvh, total_depth, total_depth, data);
 		return ;
 	}
-	if (bvh->depth > p->bvh_depth)
+	if (bvh->depth > p->bvh_depth && bvh->next_a)
 	{
 		rasterize_aabb_bvh(bvh->next_a, p, total_depth, data);
 		rasterize_aabb_bvh(bvh->next_b, p, total_depth, data);

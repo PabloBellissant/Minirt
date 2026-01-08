@@ -14,6 +14,8 @@
 #include "render.h"
 #include "calc.h"
 
+#define SPHERE_EPSILON 1e-4f
+
 static void	init_sphere_quadratic(t_quadratic *q, t_sphere *sp, t_ray *ray)
 {
 	const t_vec3	oc = vec3_sub(ray->origin, sp->pos);
@@ -33,7 +35,7 @@ int	hit_sphere(t_ray *ray, t_object *o, float *t_in)
 	*t_in = fminf(q.t_min, q.t_max);
 	if (*t_in <= 0)
 		*t_in = fmaxf(q.t_min, q.t_max);
-	return (*t_in > EPSILON);
+	return (*t_in > SPHERE_EPSILON);
 }
 
 float	get_sphere_t_out(t_ray *ray, t_object *o)

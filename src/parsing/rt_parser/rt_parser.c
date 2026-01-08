@@ -41,6 +41,8 @@ int	rt_parser(int fd, t_scene *scene)
 	if (errno != 0)
 		return (-1);
 	if (scene->skybox_tex == -1)
-		scene->skybox_tex = create_color_texture(&scene->texture, &(t_rgb_int){{0, 0, 0}});
+		scene->skybox_tex = create_color_texture(&scene->texture, &(t_rgb_int){{0, 100, 255}});
+	if (scene->skybox_tex == -1)
+		return (-1);
 	return (return_val);
 }

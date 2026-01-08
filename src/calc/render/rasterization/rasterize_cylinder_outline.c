@@ -65,7 +65,7 @@ static void	rasterize_faces(t_img_data *img, t_cylinder *cylinder,
 	i = 0;
 	while (i < RESOLUTION)
 	{
-		r = ((float)i / RESOLUTION) * (M_PIf * 2);
+		r = ((float)i / RESOLUTION) * (M_PI * 2);
 		line.pos1.x = (cosf(r) * cylinder->radius) + cylinder->pos.x;
 		line.pos1.y = (sinf(r) * cylinder->radius) + cylinder->pos.y;
 		line.pos1.z = cylinder->pos.z;
@@ -89,10 +89,10 @@ static void	rasterize_caps(t_img_data *img, t_cylinder *cylinder,
 	i = 0;
 	while (i < RESOLUTION)
 	{
-		r = ((float)i / RESOLUTION) * (M_PIf * 2);
+		r = ((float)i / RESOLUTION) * (M_PI * 2);
 		line.pos1 = vec3(cosf(r) * cylinder->radius + cylinder->pos.x,
 				sinf(r) * cylinder->radius + cylinder->pos.y, cylinder->pos.z);
-		r = ((float)(i + 1) / RESOLUTION) * (M_PIf * 2);
+		r = ((float)(i + 1) / RESOLUTION) * (M_PI * 2);
 		line.pos2 = vec3(cosf(r) * cylinder->radius + cylinder->pos.x,
 				sinf(r) * cylinder->radius + cylinder->pos.x, cylinder->pos.z);
 		rotated_line.pos1 = rotate_point(line.pos1, cylinder->rot);

@@ -45,6 +45,10 @@ int	parse_face(const char *line, t_obj_vectors *vec, t_scene *scene, int mat_id)
 	}
 	obj->triangle.edge_p1p0 = vec3_sub(obj->triangle.p1.pos, obj->triangle.p0.pos);
 	obj->triangle.edge_p2p0 = vec3_sub(obj->triangle.p2.pos, obj->triangle.p0.pos);
+	obj->triangle.d00 = vec3_dot(obj->triangle.edge_p1p0, obj->triangle.edge_p1p0);
+	obj->triangle.d01 = vec3_dot(obj->triangle.edge_p1p0, obj->triangle.edge_p2p0);
+	obj->triangle.d11 = vec3_dot(obj->triangle.edge_p2p0, obj->triangle.edge_p2p0);
+	obj->triangle.denom = obj->triangle.d00 * obj->triangle.d11 - obj->triangle.d01 * obj->triangle.d01;
 	obj->mat_id = mat_id;
 	obj->f = hit_triangle;
 	return (0);

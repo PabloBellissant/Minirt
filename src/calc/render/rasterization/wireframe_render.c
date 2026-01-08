@@ -12,21 +12,19 @@
 
 #include "minirt.h"
 
-void		fill_camera(t_camera *cam);
+void		fill_camera(t_camera *cam, t_img_data *img);
 static void	clear_old_screen(t_img_data *img);
 static void	rasterize_lights(t_img_data *img, t_vector lights, t_camera *cam);
 static void	rasterize_objects(t_img_data *img, t_vector objects, t_camera *cam);
 
-void	wireframe_render(t_data *data)
+void	wireframe_render(t_data *data, t_img_data *img)
 {
 	t_camera	*cam;
 	t_scene		*scene;
-	t_img_data	*img;
 
 	scene = &data->scene;
 	cam = &scene->camera;
-	img = &data->mlx->img;
-	fill_camera(cam);
+	fill_camera(cam, img);
 	clear_old_screen(img);
 	rasterize_objects(img, scene->objects, cam);
 	rasterize_lights(img, scene->lights, cam);
