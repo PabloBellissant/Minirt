@@ -12,14 +12,14 @@
 
 #include "render.h"
 
-#define Ke_FORMAT " *Ke  *%f[100]  *%f[100]  *%f[100] *\n"
+#define KE_FORMAT " *Ke  *%f[100]  *%f[100]  *%f[100] *\n"
 
 int	ke(const char *line, t_scene *scene)
 {
-	t_mat		*mat;
+	t_mat	*mat;
 
 	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, Ke_FORMAT, line, &mat->ke.r, &mat->ke.g, &mat->ke.b) == -1)
+	if (ft_scan(0, KE_FORMAT, line, &mat->ke.x, &mat->ke.y, &mat->ke.z) == -1)
 		return (-1);
 	return (0);
 }

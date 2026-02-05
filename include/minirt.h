@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/16 00:51:40 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/19 15:57:32 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINIRT_H
 
 # include <stdint.h>
+# include "CL/cl.h"
 # include "xcerrcal.h"
 # include "rt_xcerrcal.h"
 # include "mlx_int.h"
@@ -62,13 +63,6 @@ typedef struct s_params
 	int		bvh_depth;
 	int		bvh_color_offset;
 	bool	bvh_debug;
-	bool	normal_debug;
-	bool	smooth_shading;
-	bool	quality_render;
-	bool	exporting;
-	bool	texture;
-	bool	ambient;
-	bool	normal_map;
 }			t_params;
 
 typedef struct s_buffers
@@ -80,8 +74,36 @@ typedef struct s_buffers
 	t_vec3			*accu;
 }			t_buffers;
 
+typedef struct s_kernel
+{
+	cl_kernel	phong;
+	cl_kernel	draw_accu;
+	cl_kernel	pbr;
+	cl_kernel	monte_carlo;
+	cl_kernel	normal;
+	cl_kernel	heat;
+}	t_kernel;
+
+typedef struct s_gpu_buffers
+{
+	cl_mem	accu;
+	cl_mem	img;
+}	t_gpu_buffers;
+
+typedef struct s_opencl {
+    cl_platform_id platform;
+    cl_device_id device;
+    cl_context context;
+    cl_command_queue queue;
+    cl_program program;
+	t_kernel	kernel;
+	t_gpu_buffers	bu;
+    unsigned char *host_buffer;
+}	t_opencl;
+
 typedef struct s_data
 {
+	t_opencl	cl;
 	t_buffers	buffers;
 	t_params	params;
 	t_keys		keys;
@@ -89,9 +111,13 @@ typedef struct s_data
 	t_mlx		*mlx;
 	t_vec2i		screen;
 	t_scene		scene;
-	//t_rast_env	*font_env;
-	int			export_fd;
 }				t_data;
+
+typedef struct s_kernel_def
+{
+	const char	*name;
+	cl_kernel	*kernel;
+}	t_kernel_def;
 
 typedef enum e_obj
 {
@@ -105,6 +131,8 @@ typedef enum e_obj
 }	t_obj;
 
 int		init_graphics(t_data *data);
+int		init_opencl(t_opencl *state, cl_device_type id);
+void	 cleanup_opencl(t_opencl *state);
 void	clear_scene(t_scene *scene);
 
 int		loop_hook(t_data *mlx);

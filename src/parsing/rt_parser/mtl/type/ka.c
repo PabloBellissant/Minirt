@@ -20,10 +20,10 @@ int	ka(const char *line, t_scene *scene)
 	t_rgb	ka;
 
 	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, KA_FORMAT, line, &ka.r, &ka.g, &ka.b) == -1)
+	if (ft_scan(0, KA_FORMAT, line, &ka.x, &ka.y, &ka.z) == -1)
 		return (-1);
-	mat->ambient_id = create_gray_level_texture(&scene->texture, 255);
-	if (mat->ambient_id == -1)
+	mat->ambient_id.index = create_gray_level_texture(&scene->texture, 255);
+	if (mat->ambient_id.index == -1)
 		return (-1);
 	return (0);
 }

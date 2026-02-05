@@ -19,7 +19,8 @@ MINIRT_SRCS	= main.c \
 			  camera_utils.c camera_move.c \
 			  clear_scene.c \
 			  register_rt_errors.c \
-			  export_scene.c
+			  export_to_ppm.c \
+			  opencl.c
 
 INIT_SRCS	= init_graphics.c
 SRCS		+= $(addprefix $(SRCDIR)/, $(MINIRT_SRCS)) \
@@ -28,6 +29,7 @@ SRCS		+= $(addprefix $(SRCDIR)/, $(MINIRT_SRCS)) \
 # MKs
 MKS			= parsing/parsing.mk \
 			  calc/calc.mk \
+			  export_scene/export_scene.mk
 
 include	$(addprefix $(SRCDIR)/, $(MKS))
 

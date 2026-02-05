@@ -11,16 +11,12 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "calc.h"
-#include "vectors.h"
+#include "object.h"
 #include "rt_xcerrcal.h"
 #include "parsing.h"
 
 #define PLANE_FORMAT " *pl  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *\
 , *%f[-1,1]  *%8[255] *, *%8[255] *, *%8[255](  *%s %f) *\n"
-
-static t_vec3	get_tangent(t_vec3 n);
-static t_vec3	get_bitangent(t_vec3 n, t_vec3 tangent);
 
 int	plane(const char *line, int line_num, t_scene *scene)
 {
@@ -31,22 +27,21 @@ int	plane(const char *line, int line_num, t_scene *scene)
 	char		*mat_name;
 
 	object = create_object(scene, PLANE);
+	if (object == NULL)
+		return (-1);
 	pos = &object->plane.pos;
 	norm = &object->plane.normal;
 	mat_name = NULL;
 	if (ft_scan(line_num, PLANE_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&norm->x, &norm->y, &norm->z, &color.r, &color.g, &color.b,
-					&mat_name, &object->plane.texture_scaling))
+			&mat_name, &object->plane.texture_scaling))
 	{
 		free(mat_name);
 		return (error(pack_err(RT_ID, RT_E_PLANE), FL, LN, FC));
 	}
 	object->mat_id = get_mat(mat_name, scene, &color);
 	object->name = mat_name;
-	if (object->mat_id == -1)
-		return (-1);
-	object->f = hit_plane;
 	object->plane.tangent = get_tangent(*norm);
 	object->plane.bitangent = get_bitangent(*norm, object->plane.tangent);
-	return (0);
+	return (object->mat_id);
 }

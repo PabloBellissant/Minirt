@@ -6,13 +6,12 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 00:38:46 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/13 23:29:13 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/19 18:28:23 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vectors_types.h"
 #include "render.h"
-#include "calc.h"
 
 #define MIN_DISTANCE_EPSILON -1e-2f
 
@@ -30,9 +29,9 @@ t_vec2i	project_point(t_vec3 *p, t_camera *camera, t_img_data *img)
 		return ((t_vec2i){{-1, -1}});
 	cam_space.x = vec3_dot(temp, camera->camera_right);
 	cam_space.y = vec3_dot(temp, camera->camera_up);
-	fov_scale = 1.0f / tanf(camera->theta / 2.0f);
+	fov_scale = 1.0f / tanf(((camera->fov * M_PI) / 180) / 2.0f);
 	projected.x = (cam_space.x * fov_scale) / (fabsf(cam_space.z)
-			* camera->aspect_ratio);
+			* ((float)img->width / (float)img->height));
 	projected.y = (cam_space.y * fov_scale) / fabsf(cam_space.z);
 	screen_projected.x = (int)((projected.x + 1.0f) * img->width / 2.0f);
 	screen_projected.y = (int)((1.0f - projected.y) * img->height / 2.0f);

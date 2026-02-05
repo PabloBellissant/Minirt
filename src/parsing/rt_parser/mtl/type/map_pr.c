@@ -29,9 +29,9 @@ int	map_pr(const char *line, t_scene *scene)
 		return (-1);
 	if (!parse_texture(scene, name))
 		return (-1);
-	scale_pr(get_last_vector_value(&scene->texture), \
-		  get_vector_value(&scene->texture, mat->roughness_id));
-	mat->roughness_id = (int) scene->texture.num_elements - 1;
+	scale_pr(get_last_vector_value(&scene->texture),
+		get_vector_value(&scene->texture, mat->roughness_id.index));
+	mat->roughness_id.index = (int) scene->texture.num_elements - 1;
 	return (0);
 }
 
@@ -51,4 +51,3 @@ static void	scale_pr(t_texture *tex, t_texture *pr)
 		++i;
 	}
 }
-

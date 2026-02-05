@@ -6,13 +6,12 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 23:29:13 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/15 22:59:12 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/19 18:19:58 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vectors_types.h"
 #include "minirt.h"
-#include "calc.h"
 
 bool	is_out_screen(t_img_data *img, t_vec2i *a, t_vec2i *b);
 

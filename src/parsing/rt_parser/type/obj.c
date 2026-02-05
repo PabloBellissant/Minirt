@@ -11,13 +11,15 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "calc.h"
 #include "parsing.h"
+#include "minirt.h"
 #include "rt_xcerrcal.h"
 
-#define OBJ_FORMAT " *obj  *%s  *%f *, *%f *, *%f  *%f *, *%f *, *%f  *%f *, *%f *, *%f *\n"
+#define OBJ_FORMAT " *obj  *%s  *%f *, *%f *, *%f  *%f *, *%f *, *%f  *%f *,\
+*%f *, *%f *\n"
 
-int						parse_obj_file(int fd, t_scene *scene, t_obj_attribute *attr);
+int						parse_obj_file(
+							int fd, t_scene *scene, t_obj_attribute *attr);
 static t_obj_attribute	*create_raw_attribute(t_scene *scene);
 
 int	obj(const char *line, int line_num, t_scene *scene)
@@ -25,10 +27,12 @@ int	obj(const char *line, int line_num, t_scene *scene)
 	t_obj_attribute	*attr;
 
 	attr = create_raw_attribute(scene);
+	if (!attr)
+		return (-1);
 	if (ft_scan(line_num, OBJ_FORMAT, line, &attr->path,
-		&attr->pos.x, &attr->pos.y, &attr->pos.z,
-		&attr->dir.x, &attr->dir.y, &attr->dir.z,
-		&attr->scale.x, &attr->scale.y, &attr->scale.z))
+			&attr->pos.x, &attr->pos.y, &attr->pos.z,
+			&attr->dir.x, &attr->dir.y, &attr->dir.z,
+			&attr->scale.x, &attr->scale.y, &attr->scale.z))
 	{
 		free(attr->path);
 		return (error(pack_err(RT_ID, RT_E_OBJ), FL, LN, FC));
@@ -55,4 +59,3 @@ static t_obj_attribute	*create_raw_attribute(t_scene *scene)
 		return (NULL);
 	return (get_last_vector_value(&scene->obj_list));
 }
-

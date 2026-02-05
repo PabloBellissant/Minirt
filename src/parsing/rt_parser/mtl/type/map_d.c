@@ -25,6 +25,6 @@ int	map_d(const char *line, t_scene *scene)
 		return (-1);
 	if (!parse_texture(scene, name))
 		return (-1);
-	mat->opacity_id = (int) scene->texture.num_elements - 1;
+	mat->opacity_id.index = (int) scene->texture.num_elements - 1;
 	return (0);
 }

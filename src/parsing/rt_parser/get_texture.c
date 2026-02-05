@@ -27,4 +27,3 @@ int	get_texture(t_vector *texture, char *texture_name)
 	}
 	return (-1);
 }
-

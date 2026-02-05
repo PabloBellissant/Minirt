@@ -23,12 +23,12 @@ t_mat	*create_mat(t_vector *mat_vec, t_vector *tex_vec)
 	ft_bzero(&mat, sizeof(t_mat));
 	mat.ni = 2.3f;
 	mat.opacity = 1;
-	mat.roughness_id = create_null_roughness(tex_vec);
-	mat.ambient_id = create_null_ambient(tex_vec);
-	mat.metalness_id = create_null_opacity(tex_vec);
-	mat.normal_id = create_null_nmap(tex_vec);
-	mat.opacity_id = create_null_opacity(tex_vec);
-	mat.kd_id = create_null_texture(tex_vec);
+	mat.roughness_id.index = create_null_roughness(tex_vec);
+	mat.ambient_id.index = create_null_ambient(tex_vec);
+	mat.metalness_id.index = create_null_opacity(tex_vec);
+	mat.normal_id.index = create_null_nmap(tex_vec);
+	mat.opacity_id.index = create_null_opacity(tex_vec);
+	mat.kd_id.index = create_null_texture(tex_vec);
 	mat.name = NULL;
 	if (vector_add(mat_vec, &mat, 1) == -1)
 		return (NULL);

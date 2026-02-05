@@ -18,7 +18,6 @@ RASTERIZATION_SRCS	= rasterize_cuboid.c \
 					  rasterize_bvh.c \
 					  rasterize_sphere_bvh.c \
 					  rasterize_sphere_outline.c \
-					  rasterize_cylinder_outline.c \
 					  get_cuboid_vertice.c \
 					  rasterize_3d_line.c \
 					  float_to_rainbow.c \

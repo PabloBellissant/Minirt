@@ -1,31 +1,16 @@
-C 0,0.5,10 0,0,-1 70
+C 0,0,0 0.5,-0.7,0 70
 
-# L 10,9.5,0 0.2 255,255,255
-# L 8.5,9.5,0 0.2 255,255,255
-# L 7,9.5,0 0.2 255,255,255
-# L 5.5,9.5,0 0.2 255,255,255
-# L 4,9.5,0 0.2 255,255,255
-# L 2.5,9.5,0 0.2 255,255,255
-# L 1,9.5,0 0.2 255,255,255
-# L -0.5,9.5,0 0.2   255,255,255
-# L -2,9.5,0 0.2   255,255,255
-# L -3.5,9.5,0 0.2   255,255,255
-# L -5,9.5,0 0.2   255,255,255
-# L -6.5,9.5,0 0.2   255,255,255
-# L -8,9.5,0 0.2   255,255,255
-# L -9.5,9.5,0 0.2   255,255,255
 
-tex sky asset/texture/skybox/snow.ppm
-sky sky
-
-mtl asset/materials/tiles.mtl
+mtl asset/materials/checkerboard.mtl
+mtl asset/materials/uni/transparent.mtl
+mtl asset/materials/uni/emissive.mtl
 
 A 0.2 255,255,255
 
 # sp 2,1.,0 2 0,0,0 glass
 # sp -2,1.,0 2 0,0,1 chrome
 # #
-pl 0,0,0 0,1,0 255,255,255 tiles3
+ pl 0,0,0 0,1,0 255,255,255 checkerboard 1
 # pl 0,10,0 0,-1,0 255,255,255 tiles
 #
 # pl 0,0,-10 0,0,1 255,255,255 tiles
@@ -33,3 +18,11 @@ pl 0,0,0 0,1,0 255,255,255 tiles3
 #
 # pl -10,0,0 1,0,0 255,255,255 tiles
 # pl 10,0,0 -1,0,0 255,255,255 tiles
+#
+# sp 0.50,0.90,0.33 0.60 0,0,0 glass
+# sp 0.51,0.90,0.33 0.10 0,0,0 emissive_cyan
+#obj asset/half/monkey.obj 0,0.53,0 0,0,5 0.5,0.5,0.5
+#sp 0.25, 1.5, 1 0.5 0,0,0 emissive_white
+#obj asset/half/cylinder.obj 0,-0.1,0.5 0,0,5 0.5,1,0.5
+obj asset/prism/prism.obj 0,-0.1,0 0,0,5 2,2,2
+sp 2, 1, 0 1 0,0,0 emissive_white

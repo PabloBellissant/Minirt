@@ -27,4 +27,3 @@ int	newmtl(const char *line, t_scene *scene)
 		return (-1);
 	return (0);
 }
-

@@ -15,44 +15,62 @@
 # include "vectors.h"
 # include "colors.h"
 # include "parsing.h"
+# include <CL/cl.h>
+
+typedef cl_float3 cl_rgb3;
 
 typedef struct s_light
 {
-	t_rgb	rgb;
-	t_vec3	pos;
+	cl_rgb3		rgb;
+	cl_float3	pos;
 }			t_light;
+
+typedef struct s_texture_data
+{
+	int	index;
+	int	offset;
+	int	width;
+	int	height;
+	int	channels;
+} t_texture_data;
+
+typedef struct s_mat
+{
+	char				*name;
+	cl_float			ns;
+	cl_float3			kd;
+	cl_float3			ks;
+	cl_float3			ke;
+	cl_float			opacity;
+	t_texture_data		kd_id;
+	t_texture_data		normal_id;
+	t_texture_data		roughness_id;
+	t_texture_data		ambient_id;
+	t_texture_data		opacity_id;
+	t_texture_data		metalness_id;
+	cl_float			ni;
+}	t_mat;
 
 typedef struct s_sphere
 {
-	t_rgb	rgb;
 	t_vec3	pos;
+	int		mat;
 	float	diameter;
-	float	radius_squared;
 }			t_sphere;
 
 typedef struct s_plane
 {
-	t_rgb	rgb;
 	t_vec3	pos;
 	t_vec3	normal;
 	t_vec3	tangent;
 	t_vec3	bitangent;
+	int		mat;
 	float	texture_scaling;
 }			t_plane;
 
-typedef struct s_cylinder
-{
-	t_rgb	rgb;
-	t_vec3	pos;
-	t_vec3	rot;
-	float	radius;
-	float	diameter;
-	float	height;
-}			t_cylinder;
-
 typedef struct s_vertex
 {
-	t_vec3		pos;
+	cl_float3		pos;
 	union
 	{
 		struct
@@ -60,41 +78,24 @@ typedef struct s_vertex
 			float	u;
 			float	v;
 		};
-		t_vec2	uv;
+		cl_float2	uv;
 	};
-	t_vec3		norm;
+	cl_float3		norm;
 }	t_vertex;
 
 typedef struct s_triangle
 {
-	t_vertex	p0;
-	t_vertex	p1;
-	t_vertex	p2;
-	t_vec3		edge_p1p0;
-	t_vec3		edge_p2p0;
-	float		d00;
-	float		d01;
-	float		d11;
-	float		denom;
-	t_rgb		rgb;
+	t_vertex		p0;
+	t_vertex		p1;
+	t_vertex		p2;
+	cl_float3		edge_p1p0;
+	cl_float3		edge_p2p0;
+	int				mat;
+	cl_float		d00;
+	cl_float		d01;
+	cl_float		d11;
+	cl_float		denom;
 }	t_triangle;
-
-typedef struct s_mat
-{
-	char	*name;
-	float	ns;
-	t_vec3	kd;
-	t_vec3	ks;
-	t_vec3	ke;
-	float	opacity;
-	int		kd_id;
-	int		normal_id;
-	int		roughness_id;
-	int		ambient_id;
-	int		opacity_id;
-	int		metalness_id;
-	float	ni;
-}	t_mat;
 
 typedef struct s_ray	t_ray;
 
@@ -103,14 +104,12 @@ typedef struct s_object
 	char			*name;
 	int				mat_id;
 	t_object_type	type;
-	int				(*f)(t_ray *, t_object *, float *);
 	float			t;
 	union
 	{
 		t_light		light;
 		t_sphere	sphere;
 		t_plane		plane;
-		t_cylinder	cylinder;
 		t_triangle	triangle;
 	};
 }					t_object;

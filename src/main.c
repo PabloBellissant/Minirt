@@ -6,13 +6,16 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:00:29 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/11 01:06:25 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/20 18:21:59 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 #include "minirt.h"
 #include "font_renderer.h"
+#include "render.h"
+#include <CL/cl.h>
+#include <time.h>
 
 void	free_ttf(t_ttf_font *font);
 
@@ -49,23 +52,19 @@ void	free_mats(t_vector *vec)
 
 void	free_scene(t_scene *scene)
 {
-	free_vector(&scene->lights);
+	free_vector(&scene->light);
 	free_vector(&scene->objects);
 	free(scene->planes_id);
-	free(scene->emissive_id);
 	free_textures(&scene->texture);
 	free_mats(&scene->mat);
 	free_vector(&scene->mtl_list);
-	free(scene->bvh.bvh_pointer);
+	free(scene->bvh.sphere_bvh);
+	free(scene->bvh.triangle_bvh);
 }
 
 void	free_data(t_data *data)
 {
-	//free_rast_env(data->font_env);
 	free_scene(&data->scene);
-	if (data->export_fd != -1)
-		close(data->export_fd);
-	//kill_mlx(data->mlx);
 }
 
 void	register_unit_errors(void)
@@ -75,8 +74,6 @@ void	register_unit_errors(void)
 	register_frdr_errors();
 	register_rt_errors();
 }
-
-#include <time.h>
 
 int	main(int argc, char **argv)
 {
@@ -98,11 +95,12 @@ int	main(int argc, char **argv)
 			ret = error(pack_err(RT_ID, RT_E_GRAPHICS), FL, LN, FC);
 		else
 		{
+			if(init_opencl(&data.cl, CL_DEVICE_TYPE_GPU) != 0)
+				return (1);
 			data.scene.mlx = data.mlx;
 			data.scene.skybox_tex = -1;
-			data.export_fd = -1;
 			errno = 0;
-			if (parse_scene(argv[1], &data.scene) != 0)
+			if (parse_scene(argv[1], &data.scene, &data.cl) != 0)
 			{
 				ret = errno;
 				kill_mlx(data.mlx);
@@ -112,8 +110,6 @@ int	main(int argc, char **argv)
 			}
 			else
 			{
-				data.buffers.rays = malloc(sizeof(t_ray) * WIDTH * HEIGHT);
-				data.buffers.hits = malloc(sizeof(t_hit) * WIDTH * HEIGHT);
 				data.buffers.addr = data.mlx->img.addr;
 				data.buffers.accu = malloc(sizeof(t_vec3) * WIDTH * HEIGHT);
 				loop_hook(&data);
@@ -121,6 +117,7 @@ int	main(int argc, char **argv)
 			}
 		}
 	}
+	cleanup_opencl(&data.cl);
 	print_errs();
 	return (ret);
 }

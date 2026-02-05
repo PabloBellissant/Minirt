@@ -19,7 +19,7 @@ int	ks(const char *line, t_scene *scene)
 	t_mat	*mat;
 
 	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, KS_FORMAT, line, &mat->ks.r, &mat->ks.g, &mat->ks.b) == -1)
+	if (ft_scan(0, KS_FORMAT, line, &mat->ks.x, &mat->ks.y, &mat->ks.z) == -1)
 		return (-1);
 	return (0);
 }

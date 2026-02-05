@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 23:26:55 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/10 23:26:57 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/19 19:30:18 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,6 @@ void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid)
 	vertices[3] = vec3(cuboid->min.x, cuboid->max.y, cuboid->min.z);
 	vertices[4] = vec3(cuboid->min.x, cuboid->min.y, cuboid->max.z);
 	vertices[5] = vec3(cuboid->max.x, cuboid->min.y, cuboid->max.z);
-	vertices[6] = vec3(cuboid->max.x, cuboid->max.y, cuboid->max.z);
+	vertices[6] = cuboid->max;
 	vertices[7] = vec3(cuboid->min.x, cuboid->max.y, cuboid->max.z);
 }

@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl half_glass
+Ns 800.0
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+Ni 1.52
+d 0.0
+Pr 0.03
+Pm 1
+illum 2

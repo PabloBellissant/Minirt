@@ -18,16 +18,14 @@
 
 int	ambient(const char *line, int line_num, t_scene *scene)
 {
-	t_rgb		*ambient;
 	t_rgb_int	color;
 	float		ratio;
 
-	ambient = &scene->ambient;
 	if (ft_scan(line_num, AMBIENT_FORMAT, line, &ratio,
 			&color.r, &color.g, &color.b))
 	{
 		return (error(pack_err(RT_ID, RT_E_AMBIENT), FL, LN, FC));
 	}
-	*ambient = get_real_ratio(color, ratio);
+	scene->ambient = get_real_ratio(color, ratio);
 	return (0);
 }

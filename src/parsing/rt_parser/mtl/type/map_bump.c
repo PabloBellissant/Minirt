@@ -25,6 +25,6 @@ int	map_bump(const char *line, t_scene *scene)
 		return (-1);
 	if (!parse_texture(scene, name))
 		return (-1);
-	mat->normal_id = (int) scene->texture.num_elements - 1;
+	mat->normal_id.index = (int) scene->texture.num_elements - 1;
 	return (0);
 }

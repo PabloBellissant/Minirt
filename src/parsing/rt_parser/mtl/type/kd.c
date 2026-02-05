@@ -20,11 +20,11 @@ int	kd(const char *line, t_scene *scene)
 	t_rgb_int	temp;
 
 	mat = get_last_vector_value(&scene->mat);
-	if (ft_scan(0, KD_FORMAT, line, &mat->kd.b, &mat->kd.g, &mat->kd.r) == -1)
+	if (ft_scan(0, KD_FORMAT, line, &mat->kd.z, &mat->kd.y, &mat->kd.x) == -1)
 		return (-1);
 	temp = rgb_ftoi(mat->kd);
-	mat->kd_id = create_color_texture(&scene->texture, &temp);
-	if (mat->kd_id == -1)
+	mat->kd_id.index = create_color_texture(&scene->texture, &temp);
+	if (mat->kd_id.index == -1)
 		return (-1);
 	return (0);
 }

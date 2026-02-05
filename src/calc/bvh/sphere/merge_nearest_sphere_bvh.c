@@ -24,6 +24,8 @@ void	merge_nearest_sphere_bvh(t_vector *bvh_vec, int *parents)
 
 	bvh = bvh_vec->data;
 	min_area = FLT_MAX;
+	best[0] = 0;
+	best[1] = 0;
 	i[0] = 0;
 	while (i[0] < bvh_vec->num_elements)
 	{

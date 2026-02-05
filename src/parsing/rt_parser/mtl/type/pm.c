@@ -22,8 +22,9 @@ int	pm(const char *line, t_scene *scene)
 	mat = get_last_vector_value(&scene->mat);
 	if (ft_scan(0, PM_FORMAT, line, &pm) == -1)
 		return (-1);
-	mat->metalness_id = create_gray_level_texture(&scene->texture, pm * 255);
-	if (mat->metalness_id == -1)
+	mat->metalness_id.index
+		= create_gray_level_texture(&scene->texture, pm * 255);
+	if (mat->metalness_id.index == -1)
 		return (-1);
 	return (0);
 }

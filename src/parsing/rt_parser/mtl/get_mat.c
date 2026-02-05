@@ -41,13 +41,14 @@ int	gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color)
 	if (!new)
 		return (-1);
 	*new = create_default_mat();
-	new->kd_id = create_color_texture(tex, color);
-	new->normal_id = create_null_nmap(tex);
-	new->roughness_id = create_null_roughness(tex);
-	new->ambient_id = create_null_ambient(tex);
-	new->opacity_id = create_null_opacity(tex);
-	if (new->kd_id == -1 || new->normal_id == -1 || new->roughness_id == -1
-		|| new->ambient_id == -1 || new->opacity_id == -1)
+	new->kd_id.index = create_color_texture(tex, color);
+	new->normal_id.index = create_null_nmap(tex);
+	new->roughness_id.index = create_null_roughness(tex);
+	new->ambient_id.index = create_null_ambient(tex);
+	new->opacity_id.index = create_null_opacity(tex);
+	if (new->kd_id.index == -1 || new->normal_id.index == -1
+		|| new->roughness_id.index == -1 || new->ambient_id.index == -1
+		|| new->opacity_id.index == -1)
 	{
 		return (-1);
 	}

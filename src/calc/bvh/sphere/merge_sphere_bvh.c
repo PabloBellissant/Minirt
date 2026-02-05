@@ -12,7 +12,8 @@
 
 #include "libft.h"
 #include "bvh.h"
-#include "calc.h"
+
+int	imax(int a, int b);
 
 void	merge_sphere_bvh(t_vector *bvh_vec, size_t a_index, size_t b_index)
 {

@@ -21,9 +21,9 @@ int	d(const char *line, t_scene *scene)
 	mat = get_last_vector_value(&scene->mat);
 	if (ft_scan(0, D_FORMAT, line, &mat->opacity) == -1)
 		return (-1);
-	mat->opacity_id = create_gray_level_texture(&scene->texture,
-		(int)(mat->opacity * 255));
-	if (mat->opacity_id == -1)
+	mat->opacity_id.index = create_gray_level_texture(&scene->texture,
+			(int)(mat->opacity * 255));
+	if (mat->opacity_id.index == -1)
 		return (-1);
 	return (0);
 }

@@ -21,7 +21,7 @@ int	check_double(t_object_type type)
 	static const t_object_type	forbidden_double[] = {AMBIENT, CAMERA};
 	static int					elem_count[OBJ_ENUM_SIZE];
 	static const char			*type_name[] = {"Undefined",
-	"Ambient", "Camera", "Light", "Sphere", "Plane", "Cylinder"};
+		"Ambient", "Camera", "Light", "Sphere", "Plane"};
 	int							i;
 
 	i = 0;

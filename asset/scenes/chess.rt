@@ -1,0 +1,12 @@
+C 0.37,1.55,3.06 0.20,0.05,0.00 70
+A 0.6 255, 255, 255
+
+sky asset/texture/skybox/indor.ppm
+
+mtl asset/materials/uni/emissive.mtl
+mtl asset/materials/wood.mtl
+obj asset/chess/room.obj 0.0,-0.01,0.0 0,0,5 1,1,1
+obj asset/chess/chess.obj 0.3,0.93,2.2 0,0,5 0.01,0.01,0.01
+sp 3000,3000,0 1000 0,0,0 emissive_white_10
+pl 0,0,0 0,1,0 255,255,255 wood 1
+

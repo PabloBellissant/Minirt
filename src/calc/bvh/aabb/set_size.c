@@ -13,20 +13,20 @@
 #include <float.h>
 #include "minirt.h"
 
-void	set_size(t_aabb_bvh *bvh, t_vector *objects_vec)
+void	set_size(t_aabb_bvh *bvh, t_vector *index_vec, t_object *objects)
 {
 	size_t		i;
-	t_object	**objects;
+	t_vec2i		*obj_index;
 	t_vec3		temp_min;
 	t_vec3		temp_max;
 
 	bvh->min = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
 	bvh->max = vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-	objects = objects_vec->data;
+	obj_index = index_vec->data;
 	i = 0;
-	while (i < objects_vec->num_elements)
+	while (i < index_vec->num_elements)
 	{
-		get_min_max(objects[i], &temp_min, &temp_max);
+		get_min_max(&objects[obj_index[i].x], &temp_min, &temp_max);
 		bvh->min.x = fminf(bvh->min.x, temp_min.x);
 		bvh->min.y = fminf(bvh->min.y, temp_min.y);
 		bvh->min.z = fminf(bvh->min.z, temp_min.z);

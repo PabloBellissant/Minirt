@@ -10,23 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "object.h"
 #include "render.h"
-#include "vec3_special1.h"
+#include "parsing.h"
 
+static int	fill_plane_type(t_scene *scene);
 
-int	fill_plane_type(t_scene *scene);
-int	fill_emissive_type(t_scene *scene);
-
-int	fill_by_type(t_scene *scene)
+int	fill_by_type(t_opencl *state, t_scene *scene)
 {
 	if (fill_plane_type(scene) == -1)
 		return (-1);
-	if (fill_emissive_type(scene) == -1)
-		return (-1); // should free here instead of main
+	if (fill_gpu_data(state, scene) == -1)
+		return (-1);
 	return (0);
 }
 
-int	fill_plane_type(t_scene *scene)
+static int	fill_plane_type(t_scene *scene)
 {
 	t_vector	plane_vec;
 	size_t		i;
@@ -49,34 +48,5 @@ int	fill_plane_type(t_scene *scene)
 	}
 	scene->planes_id = plane_vec.data;
 	scene->plane_count = (int)plane_vec.num_elements;
-	return (0);
-}
-
-int	fill_emissive_type(t_scene *scene)
-{
-	t_vector	emissive_vec;
-	size_t		i;
-	t_object	*object;
-	t_mat		*mat;
-
-	vector_init(&emissive_vec, sizeof(int));
-	object = scene->objects.data;
-	mat = scene->mat.data;
-	i = 0;
-	while (i < scene->objects.num_elements)
-	{
-		if (object[i].type != PLANE \
-			&& vec3_length2(mat[object[i].mat_id].ke) > 0.001f)
-		{
-			if (vector_add(&emissive_vec, &i, 1) == -1)
-			{
-				free_vector(&emissive_vec);
-				return (-1);
-			}
-		}
-		++i;
-	}
-	scene->emissive_id = emissive_vec.data;
-	scene->emissive_count = (int)emissive_vec.num_elements;
 	return (0);
 }
