@@ -1,32 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cohen_sutherland_clip.c                            :+:      :+:    :+:   */
+/*   is_out_screen.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 17:36:13 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/17 17:36:19 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/19 19:31:03 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-static int	compute_out(t_img_data *img, t_vec2i pos);
-
-bool	is_out_screen(t_img_data *img, t_vec2i *a, t_vec2i *b)
-{
-	int		out0;
-	int		out1;
-
-	out0 = compute_out(img, *a);
-	out1 = compute_out(img, *b);
-	if (out0 & out1)
-		return (false);
-	return (true);
-}
-
-static int	compute_out(t_img_data *img, t_vec2i pos)
+static inline int	compute_out(t_img_data *img, t_vec2i pos)
 {
 	int	code;
 
@@ -40,4 +26,9 @@ static int	compute_out(t_img_data *img, t_vec2i pos)
 	else if (pos.y >= img->height)
 		code |= 0b1000;
 	return (code);
+}
+
+bool	is_out_screen(t_img_data *img, t_vec2i *a, t_vec2i *b)
+{
+	return (!(compute_out(img, *a) & compute_out(img, *b)));
 }

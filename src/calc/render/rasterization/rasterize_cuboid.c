@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 22:08:27 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/13 23:29:13 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/19 19:31:14 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ int	rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 static void	draw_vertices(t_img_data *img, t_vec3 vertices[8],
 	t_rgb_int color, t_camera *cam)
 {
-	rasterize_3d_line(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
 	rasterize_3d_line(img, &(t_3d_line){vertices[0], vertices[1]}, color, cam);
 	rasterize_3d_line(img, &(t_3d_line){vertices[1], vertices[2]}, color, cam);
 	rasterize_3d_line(img, &(t_3d_line){vertices[2], vertices[3]}, color, cam);

@@ -23,7 +23,6 @@ typedef enum e_rt_err
 	RT_E_ARGS,
 	RT_E_AMBIENT,
 	RT_E_CAMERA,
-	RT_E_CYLINDER,
 	RT_E_LIGHT,
 	RT_E_OBJ,
 	RT_E_PLANE,
@@ -42,7 +41,12 @@ typedef enum e_rt_err
 	RT_E_UNKNOW_OPACITY,
 	RT_E_FB_DOUBLE,
 	RT_E_FB_NO,
+	RT_E_VERTEX,
+	RT_E_NORMAL,
+	RT_E_UV,
+	RT_E_FACE,
 	RT_E_UNDEFINED_TYPE,
+	RT_E_KERNEL,
 	RT_ERRS_NUM
 }	t_rt_err;
 
@@ -56,9 +60,7 @@ got \"%s\""
 # define RT_E_MSG_AMBIENT "Ambient syntax invalid, expecting format: \
 \"A ratio[0:1] R,G,B[0:255]\""
 # define RT_E_MSG_CAMERA "Camera syntax invalid, expecting format: \
-\"C posX,Y,Z rotX,Y,Z\""
-# define RT_E_MSG_CYLINDER "Cylinder syntax invalid, expecting format: \
-\"cy posX,Y,Z rotX,Y,Z radius height R,G,B[0:255]\""
+\"C posX,Y,Z rotX,Y,Z FOV[0:180]\""
 # define RT_E_MSG_LIGHT "Light syntax invalid, expecting format: \
 \"L posX,Y,Z brightness[0:1] R,G,B[0:255]\""
 # define RT_E_MSG_OBJ "Object syntax invalid, expecting format: \
@@ -86,6 +88,12 @@ got \"%s\""
 # define RT_E_MSG_FB_DOUBLE "Cannot instance type \"%s\" twice"
 # define RT_E_MSG_FB_NO "Cannot find needed type \"%s\""
 # define RT_E_MSG_UNDEFINED_TYPE "Cannot recognize type \"%c\""
+# define RT_E_MSG_KERNEL "Cannot start kernel."
+
+# define RT_E_MSG_VERTEX "Cannot apply vertex"
+# define RT_E_MSG_NORMAL "Cannot apply normal"
+# define RT_E_MSG_UV "Cannot apply uv"
+# define RT_E_FACE "Failed to parse face"
 
 void	register_rt_errors(void);
 

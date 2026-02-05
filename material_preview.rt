@@ -14,13 +14,13 @@ mtl asset/materials/uni/reflect.mtl
 mtl asset/materials/checkerboard.mtl
 mtl asset/materials/uni/mat.mtl
 mtl asset/materials/gold.mtl
-mtl asset/materials/wood.mtl
-mtl asset/materials/marble.mtl
+# mtl asset/materials/wood.mtl
+# mtl asset/materials/marble.mtl
 # Light #
 # Format : 'L posX,Y,Z intensity R,G,B'
-L  5,2.5,1.00 1 255,255,255
+# L  5,2.5,1.00 1 255,255,255
 
-# sp 5,2.5,1 0.5 0,0,0 emissive_white
+sp 5,2.5,1 0.5 0,0,0 emissive_white
 
 # Primitive #
 #  - Sphere format : 'sp posX,Y,Z diameter material_name'

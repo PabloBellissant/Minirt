@@ -6,19 +6,17 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 22:00:39 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:14:00 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2026/02/05 05:18:17 by pabellis         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-#define MUST_EXIST_COUNT 2
-
 int	parse_line(t_scene *scene, const char *line, int actual_line)
 {
 	t_object_type		type;
 	static int			(*f[])(const char *, int, t_scene *)
-		= {ambient, camera, light, sphere, plane, cylinder, obj, sky, mtl};
+		= {ambient, camera, light, sphere, plane, obj, sky, mtl};
 
 	if (line[0] == '#' || (line[0] == '/' && line[1] == '/') || line[0] == '\n')
 		return (0);

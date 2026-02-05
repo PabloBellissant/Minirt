@@ -24,10 +24,8 @@ typedef enum e_object_type
 	UNDEFINED,
 	AMBIENT,
 	CAMERA,
-	LIGHT,
 	SPHERE,
 	PLANE,
-	CYLINDER,
 	TRIANGLE,
 	SKYBOX,
 	MATERIAL,
@@ -55,10 +53,11 @@ typedef struct s_pos_attribute
 
 typedef struct s_img_data	t_texture;
 typedef union u_rgb_int		t_rgb_int;
+typedef struct s_opencl		t_opencl;
 
-int				parse_scene(char *file_name, t_scene *scene);
+int				parse_scene(char *file_name, t_scene *scene, t_opencl *state);
 int				rt_parser(int fd, t_scene *scene);
-int				fill_by_type(t_scene *scene);
+int				fill_by_type(t_opencl *state, t_scene *scene);
 int				parse_line(t_scene *scene, const char *line, int actual_line);
 t_object_type	get_type(const char *line);
 int				check_double(t_object_type type);
@@ -82,7 +81,6 @@ int				camera(const char *line, int line_num, t_scene *scene);
 int				light(const char *line, int line_num, t_scene *scene);
 int				sphere(const char *line, int line_num, t_scene *scene);
 int				plane(const char *line, int line_num, t_scene *scene);
-int				cylinder(const char *line, int line_num, t_scene *scene);
 int				obj(const char *line, int line_num, t_scene *scene);
 int				sky(const char *line, int line_num, t_scene *scene);
 int				mtl(const char *line, int line_num, t_scene *scene);
@@ -106,5 +104,13 @@ int				ni(const char *line, t_scene *scene);
 int				pr(const char *line, t_scene *scene);
 int				ke(const char *line, t_scene *scene);
 int				pm(const char *line, t_scene *scene);
+
+int				parse_vertex(const char *line, t_vector *vertex, t_obj_attribute *attr);
+int				parse_normal(const char *line, t_vector *normal_vec);
+int				parse_face(const char *line, t_obj_vectors *vec, t_scene *scene, int mat_id);
+int				parse_uv(const char *line, t_vector *uv_vec);
+int				parse_mtllib(const char *line, t_scene *scene);
+
+int				fill_gpu_data(t_opencl *state, t_scene *scene);
 
 #endif

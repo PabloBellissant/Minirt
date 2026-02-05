@@ -23,7 +23,6 @@ RT_PARSER_SRCS	= check_double.c \
 				  parse_obj_file.c
 RT_TYPE_SRCS	= ambient.c \
 				  camera.c \
-				  cylinder.c \
 				  light.c \
 				  plane.c \
 				  sphere.c \

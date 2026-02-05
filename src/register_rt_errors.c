@@ -25,7 +25,6 @@ void	register_rt_errors(void)
 		RT_E_MSG_ARGS,
 		RT_E_MSG_AMBIENT,
 		RT_E_MSG_CAMERA,
-		RT_E_MSG_CYLINDER,
 		RT_E_MSG_LIGHT,
 		RT_E_MSG_OBJ,
 		RT_E_MSG_PLANE,
@@ -44,6 +43,12 @@ void	register_rt_errors(void)
 		RT_E_MSG_UNKNOW_OPACITY,
 		RT_E_MSG_FB_DOUBLE,
 		RT_E_MSG_FB_NO,
+		RT_E_MSG_UNDEFINED_TYPE,
+		RT_E_MSG_KERNEL,
+		RT_E_MSG_VERTEX,
+		RT_E_MSG_NORMAL,
+		RT_E_MSG_UV,
+		RT_E_FACE,
 	};
 	bulk_register_error(RT_ERRS_NUM - 1, RT_ID, (const char **)err_msgs);
 }

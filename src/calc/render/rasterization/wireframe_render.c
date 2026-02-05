@@ -27,24 +27,24 @@ void	wireframe_render(t_data *data, t_img_data *img)
 	fill_camera(cam, img);
 	clear_old_screen(img);
 	rasterize_objects(img, scene->objects, cam);
-	rasterize_lights(img, scene->lights, cam);
+	rasterize_lights(img, scene->light, cam);
 	if (data->params.bvh_debug && data->scene.bvh.bvh)
 	{
 		rasterize_bvh(scene->bvh.bvh, &data->params,
-			scene->bvh.sphere_bvh->depth, data);
+			scene->bvh.sphere_mode_bvh->depth, data);
 	}
 }
 
 static void	rasterize_lights(t_img_data *img, t_vector lights, t_camera *cam)
 {
 	size_t		i;
-	t_object	*obj;
+	t_light	*light;
 
-	obj = lights.data;
+	light = lights.data;
 	i = 0;
 	while (i < lights.num_elements)
 	{
-		rasterize_light_outline(img, &obj[i].light, cam);
+		rasterize_light_outline(img, &light[i], cam);
 		++i;
 	}
 }

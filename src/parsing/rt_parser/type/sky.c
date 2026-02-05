@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "calc.h"
-#include "rt_xcerrcal.h"
+#include "minirt.h"
 
 #define SKY_FORMAT " *sky  *%s *\n"
 
@@ -21,7 +20,6 @@ int	sky(const char *line, int line_num, t_scene *scene)
 	char		*texture_path;
 	t_texture	*texture;
 
-	(void) scene;
 	if (ft_scan(line_num, SKY_FORMAT, line, &texture_path))
 	{
 		free(texture_path);

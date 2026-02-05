@@ -28,7 +28,7 @@ int	map_kd(const char *line, t_scene *scene)
 	if (!parse_texture(scene, name))
 		return (-1);
 	scale_tex(get_last_vector_value(&scene->texture), &mat->kd);
-	mat->kd_id = (int) scene->texture.num_elements - 1;
+	mat->kd_id.index = (int) scene->texture.num_elements - 1;
 	return (0);
 }
 
@@ -39,9 +39,9 @@ static void	scale_tex(t_texture *tex, t_vec3 *scale)
 	i = 0;
 	while (i < tex->width * tex->height * tex->channels)
 	{
-		tex->pixels[i] *= scale->b;
-		tex->pixels[i + 1] *= scale->g;
-		tex->pixels[i + 2] *= scale->r;
+		tex->pixels[i] *= scale->z;
+		tex->pixels[i + 1] *= scale->y;
+		tex->pixels[i + 2] *= scale->x;
 		i += 3;
 	}
 }

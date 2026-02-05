@@ -26,9 +26,5 @@ t_vec3	get_center(const t_object *o)
 	{
 		return (o->sphere.pos);
 	}
-	if (o->type == CYLINDER)
-	{
-		return (vec3_add(o->cylinder.pos, vec3_scale(o->cylinder.rot, 0.5f)));
-	}
 	return (min);
 }

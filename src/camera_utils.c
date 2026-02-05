@@ -10,88 +10,74 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "vec3_scalar.h"
 #include "vectors.h"
 #include <math.h>
 #include "minirt.h"
 
-// Apply rotations to the base orientation
-static void	apply_rotations(t_camera *cam)
-{
-	cam->cos_pitch = cosf(cam->rot.x);
-	cam->sin_pitch = sinf(cam->rot.x);
-	cam->cos_yaw = cosf(cam->rot.y);
-	cam->sin_yaw = sinf(cam->rot.y);
-	cam->cos_roll = cosf(cam->rot.z);
-	cam->sin_roll = sinf(cam->rot.z);
-}
-
-// Apply yaw and pitch to your base forward vector
 static void	apply_yaw_and_pitch(t_camera *cam)
 {
 	t_vec3	temp_right;
 	t_vec3	temp_up;
 
 	cam->camera_forward = (t_vec3){{
-		cam->sin_yaw * cam->cos_pitch,
-		cam->sin_pitch,
-		cam->cos_yaw * cam->cos_pitch
+		sinf(cam->rot.y) * cosf(cam->rot.x),
+		sinf(cam->rot.x),
+		cosf(cam->rot.y) * cosf(cam->rot.x)
 	}};
-	temp_right = (t_vec3){{
-		cam->cos_yaw,
-		0,
-		-cam->sin_yaw
-	}};
+	temp_right = (t_vec3){{cosf(cam->rot.y), 0, -sinf(cam->rot.y)}};
 	temp_up = (t_vec3){{
-		-cam->sin_yaw * cam->sin_pitch,
-		cam->cos_pitch,
-		cam->cos_yaw * -cam->sin_pitch
+		-sinf(cam->rot.y) * sinf(cam->rot.x),
+		cosf(cam->rot.x),
+		cosf(cam->rot.y) * -sinf(cam->rot.x)
 	}};
 	cam->camera_right = (t_vec3){{
-		temp_right.x * cam->cos_roll - temp_up.x * cam->sin_roll,
-		temp_right.y * cam->cos_roll - temp_up.y * cam->sin_roll,
-		temp_right.z * cam->cos_roll - temp_up.z * cam->sin_roll
+		temp_right.x * cosf(cam->rot.z) - temp_up.x * sinf(cam->rot.z),
+		temp_right.y * cosf(cam->rot.z) - temp_up.y * sinf(cam->rot.z),
+		temp_right.z * cosf(cam->rot.z) - temp_up.z * sinf(cam->rot.z)
 	}};
-	
-	cam->camera_up = (t_vec3){{
-		temp_right.x * cam->sin_roll + temp_up.x * cam->cos_roll,
-		temp_right.y * cam->sin_roll + temp_up.y * cam->cos_roll,
-		temp_right.z * cam->sin_roll + temp_up.z * cam->cos_roll
-	}};
+	cam->camera_up = vec3_add(
+			vec3_scale(temp_right, sinf(cam->rot.z)),
+			vec3_scale(temp_up, cosf(cam->rot.z)));
 }
 
-// Create viewport vectors
-static void	create_viewport_vectors(t_camera *cam, t_img_data *img)
+static void	create_focal_distance_viewport(
+		t_camera *cam, cl_float3 u, cl_float3 v)
 {
-	cam->u = vec3_scale(cam->camera_right, cam->viewport_width);
-	cam->v = vec3_scale(cam->camera_up, -cam->viewport_height);
-	cam->pixel_delta_u = vec3_div_scalar(cam->u, img->width);
-	cam->pixel_delta_v = vec3_div_scalar(cam->v, img->height);
-}
+	cl_float3	viewport_upper_left;
+	cl_float3	half_pixel_offset;
 
-// Use forward vector for focal distance
-static void	create_focal_distance_viewport(t_camera *cam)
-{
-	cam->focal_vec = vec3_scale(cam->camera_forward, cam->focal_length);
-	cam->viewport_upper_left = vec3_sub(cam->pos, cam->focal_vec);
-	cam->u = vec3_div_scalar(cam->u, 2.0f);
-	cam->viewport_upper_left = vec3_sub(cam->viewport_upper_left, cam->u);
-	cam->v = vec3_div_scalar(cam->v, 2.0f);
-	cam->viewport_upper_left = vec3_sub(cam->viewport_upper_left, cam->v);
-	cam->half_pixel_offset = vec3_scale(vec3_add(cam->pixel_delta_u,
+	viewport_upper_left = vec3_sub(cam->pos, cam->camera_forward);
+	u = vec3_div_scalar(u, 2.0f);
+	viewport_upper_left = vec3_sub(viewport_upper_left, u);
+	v = vec3_div_scalar(v, 2.0f);
+	viewport_upper_left = vec3_sub(viewport_upper_left, v);
+	half_pixel_offset = vec3_scale(vec3_add(cam->pixel_delta_u,
 				cam->pixel_delta_v), 0.5f);
-	cam->pixel00_loc = vec3_add(cam->viewport_upper_left,
-			cam->half_pixel_offset);
+	cam->pixel00_loc = vec3_add(viewport_upper_left,
+			half_pixel_offset);
+}
+
+static void	create_viewport_vectors(
+	t_camera *cam, t_img_data *img, float viewport_height, float viewport_width)
+{
+	cl_float3	u;
+	cl_float3	v;
+
+	u = vec3_scale(cam->camera_right, viewport_width);
+	v = vec3_scale(cam->camera_up, -viewport_height);
+	cam->pixel_delta_u = vec3_div_scalar(u, img->width);
+	cam->pixel_delta_v = vec3_div_scalar(v, img->height);
+	create_focal_distance_viewport(cam, u, v);
 }
 
 void	fill_camera(t_camera *cam, t_img_data *img)
 {
-	cam->focal_length = 1.0f;
-	cam->theta = (float)(cam->fov * M_PI) / 180.0f;
-	cam->viewport_height = 2.0f * tanf(cam->theta / 2.0f) * cam->focal_length;
-	cam->aspect_ratio = (float)img->width / (float)img->height;
-	cam->viewport_width = cam->viewport_height * cam->aspect_ratio;
-	apply_rotations(cam);
+	float	viewport_height;
+	float	viewport_width;
+
+	viewport_height = 2.0f * tanf((cam->fov * M_PI) / 180 / 2.0f);
+	viewport_width = viewport_height * ((float)img->width / (float)img->height);
 	apply_yaw_and_pitch(cam);
-	create_viewport_vectors(cam, img);
-	create_focal_distance_viewport(cam);
+	create_viewport_vectors(cam, img, viewport_height, viewport_width);
 }

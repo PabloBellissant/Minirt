@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "calc.h"
-#include "vectors.h"
+#include "object.h"
 #include "rt_xcerrcal.h"
 
 #define SPHERE_FORMAT " *sp  *%f *, *%f *, *%f  *%f  *%8[255] *\
@@ -26,6 +25,8 @@ int	sphere(const char *line, int line_num, t_scene *scene)
 	char		*mat_name;
 
 	object = create_object(scene, SPHERE);
+	if (!object)
+		return (-1);
 	pos = &object->sphere.pos;
 	mat_name = NULL;
 	if (ft_scan(line_num, SPHERE_FORMAT, line, &pos->x, &pos->y, &pos->z,
@@ -35,12 +36,9 @@ int	sphere(const char *line, int line_num, t_scene *scene)
 		free(mat_name);
 		return (error(pack_err(RT_ID, RT_E_SPHERE), FL, LN, FC));
 	}
-	object->sphere.radius_squared = (object->sphere.diameter / 2.f)
-		* (object->sphere.diameter / 2.f);
 	object->mat_id = get_mat(mat_name, scene, &color);
 	object->name = mat_name;
 	if (object->mat_id == -1)
 		return (-1);
-	object->f = hit_sphere;
 	return (0);
 }

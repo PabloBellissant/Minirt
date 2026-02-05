@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2026/01/05 13:48:44 by jaubry--         ###   ########.fr        #
+#    Updated: 2026/01/19 20:18:56 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,8 @@ include $(LIBFTDIR)/includes.mk $(XCERRCALDIR)/includes.mk \
 	$(MLXWDIR)/includes.mk $(FONT_RENDIR)/includes.mk \
 	$(MLXUIDIR)/includes.mk includes.mk
 
+INCXTEST	= $(LIBDIR)/local_xtst/include/X11/extensions
+
 INCLUDES	= $(INCDIRS_MINIRT) \
 			  $(addprefix $(XCERRCALDIR)/, $(INCDIRS_XCERRCAL)) \
 			  $(addprefix $(FONT_RENDIR)/, $(INCDIRS_FTRDR)) \
@@ -38,6 +40,7 @@ INCLUDES	= $(INCDIRS_MINIRT) \
 			  $(addprefix $(MLXUIDIR)/, $(INCDIRS_MLXUI)) \
 			  $(addprefix $(LIBFTDIR)/, $(INCDIRS_LIBFT)) \
 			  $(MLXDIR)
+
 
 # Output
 NAME		= MiniRT
@@ -81,7 +84,8 @@ VARS		= DEBUG_LVL=$(DEBUG_LVL) \
 			  FULLSCREEN=$(FULLSCREEN) \
 			  RESIZEABLE=$(RESIZEABLE) \
 			  WINDOWLESS=$(WINDOWLESS) \
-			  NPROC=$(NPROC)
+			  NPROC=$(NPROC) \
+			  CL_TARGET_OPENCL_VERSION=300
 
 # Compiler and flags
 CC			?= cc
@@ -91,11 +95,14 @@ CFLAGS		= -Wall -Werror -Wextra \
 
 DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 
-IFLAGS		= $(addprefix -I,$(INCLUDES))
+IFLAGS		= $(addprefix -I,$(INCLUDES) $(INCXTEST))
 
-LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) -L$(XCERRCALDIR)\
+LXTEST		= $(LIBDIR)/local_xtst/lib
+LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) -L$(XCERRCALDIR) -L$(LXTEST) \
 			  -lfont-renderer -lmlx-wrapper -lmlx -lft -lxcerrcal \
-			  -lXext -lX11 -lXrandr -lm
+			  -lXtst -lXext -lX11 -lXrandr -lm -l:libOpenCL.so.1
+
+# i think it is the same as putting -lOpenCL == -l:libOpenCL.so.1
 
 VFLAGS		= $(addprefix -D ,$(VARS) DEBUG=$(DEBUG))
 
@@ -108,8 +115,6 @@ include $(SRCDIR)/srcs.mk
 
 OBJS		= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DEPS		= $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.c=.o)))
-#INCLUDES	= bvh.h calc.h minirt.h object.h parsing.h render.h
-#INCLUDES	:= $(addprefix $(INCDIR)/, $(INCLUDES))
 
 # VPATH
 vpath %.h $(INCLUDES)

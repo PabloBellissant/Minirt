@@ -17,7 +17,8 @@
 
 #define MOVE_SPEED 3
 
-static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add, const float step)
+static void	adjust_cam(
+	t_camera *cam, const t_vec3 *matrix, const bool add, const float step)
 {
 	const float	new_x = matrix->x * step;
 	const float	new_z = matrix->z * step;
@@ -36,16 +37,17 @@ static void	adjust_cam(t_camera *cam, const t_vec3 *matrix, const bool add, cons
 
 void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 {
-	const float		step = MOVE_SPEED * (1 + data->mlx->key_input.ctrl) * data->mlx->delta_time;
+	const float		step
+		= MOVE_SPEED * (1 + data->mlx->key_input.ctrl) * data->mlx->delta_time;
 	const t_vec3	camera_forward = {{
-		-cam->sin_yaw,
+		-sinf(cam->rot.y),
 		0,
-		-cam->cos_yaw
+		-cosf(cam->rot.y)
 	}};
 	const t_vec3	camera_right = {{
-		cam->cos_yaw,
+		cosf(cam->rot.y),
 		0,
-		-cam->sin_yaw
+		-sinf(cam->rot.y)
 	}};
 
 	if (keys.forward)
@@ -66,7 +68,8 @@ void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 #define ROLL_SENSITIVITY .01f
 #define MAX_PITCH 1.53938043117523193F
 
-void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y)
+void	handle_camera_rotation(
+		t_data *data, const int delta_x, const int delta_y)
 {
 	data->scene.camera.rot.y -= (float)delta_x * SENSITIVITY;
 	if (data->scene.camera.rot.y < -M_PI)
@@ -83,4 +86,3 @@ void	handle_camera_rotation(t_data *data, const int delta_x, const int delta_y)
 	if (data->keys.roll_right)
 		data->scene.camera.rot.z += ROLL_SENSITIVITY;
 }
-

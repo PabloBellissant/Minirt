@@ -28,9 +28,9 @@ int	map_ka(const char *line, t_scene *scene)
 		return (-1);
 	if (!parse_texture(scene, name))
 		return (-1);
-	scale_tex(get_last_vector_value(&scene->texture), \
-		get_vector_value(&scene->texture, mat->ambient_id));
-	mat->ambient_id = (int) scene->texture.num_elements - 1;
+	scale_tex(get_last_vector_value(&scene->texture),
+		get_vector_value(&scene->texture, mat->ambient_id.index));
+	mat->ambient_id.index = (int) scene->texture.num_elements - 1;
 	return (0);
 }
 

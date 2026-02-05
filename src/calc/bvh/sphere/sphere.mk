@@ -18,7 +18,6 @@ SPHERE_SRCS	= create_sphere_bvh.c \
 			  merge_nearest_sphere_bvh.c \
 			  get_next_sphere_bvh_area.c \
 			  merge_sphere_bvh.c \
-			  hit_sphere_bvh.c \
 			  get_sphere_root.c
 
 SRCS		+= $(addprefix $(SPHERE_DIR)/, $(SPHERE_SRCS))

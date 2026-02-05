@@ -21,6 +21,4 @@ void	rasterize_outline_object(t_img_data *img, t_object *object,
 		rasterize_triangle_outline(img, &object->triangle, color, camera);
 	else if (object->type == PLANE)
 		rasterize_plane_outline(img, &object->plane, color, camera);
-	else if (object->type == CYLINDER)
-		rasterize_cylinder_outline(img, &object->cylinder, color, camera);
 }

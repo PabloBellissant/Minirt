@@ -44,8 +44,19 @@ int	compare_z(const void *a, const void *b)
 	return (1);
 }
 
+int compare_dumb(const void *a, const void *b)
+{
+	const int *const *aa = a;
+	const int *const *bb = b;
+
+	if (*aa > *bb)
+		return (-1);
+	return (1);
+}
+
 int	(*get_axis_function(const int axis))(const void *a, const void *b)
 {
+	return (compare_dumb);
 	if (axis == 0)
 		return (compare_x);
 	if (axis == 1)

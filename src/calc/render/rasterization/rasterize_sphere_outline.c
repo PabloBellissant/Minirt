@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <math.h>
-#include "calc.h"
 #include "render.h"
 #include "mlx_wrapper.h"
 

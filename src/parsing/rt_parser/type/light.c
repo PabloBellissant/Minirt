@@ -18,29 +18,18 @@
 #define LIGHT_FORMAT " *L  *%f *, *%f *, *%f  *%f[1]  *%8[255] *\
 , *%8[255] *, *%8[255] *\n"
 
-static t_object	*create_light(t_scene *scene, t_object_type type)
-{
-	t_object	object;
-
-	if (scene->lights.max_elements == 0)
-		vector_init(&scene->lights, sizeof(t_object));
-	ft_bzero(&object, sizeof(t_object));
-	object.type = type;
-	if (vector_add(&scene->lights, &object, 1) == -1)
-		return (NULL);
-	return (get_vector_value(&scene->lights, scene->lights.num_elements - 1));
-}
+static t_light	*create_light(t_scene *scene);
 
 int	light(const char *line, int line_num, t_scene *scene)
 {
 	t_light		*light;
 	t_vec3		*pos;
 	t_rgb_int	color;
-	t_object	*object;
 	float		brightness;
 
-	object = create_light(scene, LIGHT);
-	light = &object->light;
+	light = create_light(scene);
+	if (!light)
+		return (-1);
 	pos = &light->pos;
 	if (ft_scan(line_num, LIGHT_FORMAT, line, &pos->x, &pos->y, &pos->z,
 			&brightness, &color.r, &color.g, &color.b))
@@ -49,4 +38,16 @@ int	light(const char *line, int line_num, t_scene *scene)
 	}
 	light->rgb = get_real_ratio(color, brightness);
 	return (0);
+}
+
+static t_light	*create_light(t_scene *scene)
+{
+	t_light	light;
+
+	if (scene->light.max_elements == 0)
+		vector_init(&scene->light, sizeof(t_light));
+	ft_bzero(&light, sizeof(t_light));
+	if (vector_add(&scene->light, &light, 1) == -1)
+		return (NULL);
+	return (get_vector_value(&scene->light, scene->light.num_elements - 1));
 }

@@ -15,7 +15,7 @@
 t_obj	get_obj_type(const char *line)
 {
 	static const char	*elem[] = {"mtllib", "usemtl", "vn", "vt",
-			"v", "f", NULL};
+		"v", "f", NULL};
 	int					i;
 
 	while (*line == ' ' || *line == '\t')

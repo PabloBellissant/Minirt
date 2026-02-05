@@ -18,12 +18,13 @@ int	pr(const char *line, t_scene *scene)
 {
 	t_mat	*mat;
 	float	pr;
-	
+
 	mat = get_last_vector_value(&scene->mat);
 	if (ft_scan(0, PR_FORMAT, line, &pr) == -1)
 		return (-1);
-	mat->roughness_id = create_gray_level_texture(&scene->texture, pr * 255);
-	if (mat->roughness_id == -1)
+	mat->roughness_id.index
+		= create_gray_level_texture(&scene->texture, pr * 255);
+	if (mat->roughness_id.index == -1)
 		return (-1);
 	return (0);
 }

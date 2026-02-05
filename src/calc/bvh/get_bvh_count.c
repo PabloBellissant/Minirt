@@ -10,10 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "parsing.h"
 #include "stddef.h"
 #include "minirt.h"
 
-size_t	get_bvh_count(t_vector *objects)
+size_t	get_bvh_count(t_vector *objects, t_object_type type)
 {
 	size_t		volume_count;
 	size_t		i;
@@ -24,7 +25,7 @@ size_t	get_bvh_count(t_vector *objects)
 	i = 0;
 	while (i < objects->num_elements)
 	{
-		if (object[i].type != PLANE && object[i].type != LIGHT)
+		if (object[i].type == type)
 			++volume_count;
 		++i;
 	}

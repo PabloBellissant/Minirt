@@ -17,7 +17,7 @@
 #include "rt_xcerrcal.h"
 #include "render.h"
 
-int	parse_scene(char *file_name, t_scene *scene)
+int	parse_scene(char *file_name, t_scene *scene, t_opencl *state)
 {
 	int	fd;
 
@@ -29,14 +29,13 @@ int	parse_scene(char *file_name, t_scene *scene)
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
 		return (-1);
-	scene->camera.fov = 70;
 	if (rt_parser(fd, scene) == -1)
 	{
 		close(fd);
 		return (-1);
 	}
 	close(fd);
-	if (fill_by_type(scene) == -1)
+	if (fill_by_type(state, scene) == -1)
 		return (-1); //free
 	return (0);
 }

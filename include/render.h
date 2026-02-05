@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:45:02 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/12/16 00:51:04 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/20 16:26:36 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,45 +18,49 @@
 # include "object.h"
 # include "bvh.h"
 # include "vectors_types.h"
+# include <CL/cl.h>
 
-# define MAX_ITER  5
+typedef cl_float3 cl_rgb3;
+
+# define MAX_ITER  1
 
 typedef struct s_refract_pos
 {
-	int		count;
-	t_vec3	origin[MAX_ITER];
-	t_vec3	dir[MAX_ITER];
-	t_rgb	through_power[MAX_ITER];
+	cl_int		count;
+	cl_float3	origin[MAX_ITER];
+	cl_float3	dir[MAX_ITER];
+	cl_rgb3		through_power[MAX_ITER];
 }	t_refract_pos;
 
 typedef struct s_ray
 {
-	t_vec3			origin;
-	t_vec3			dir;
-	t_vec3			inv_dir;
-	t_rgb			accumulated_color;
-	t_rgb			through_power;
-	int				iteration;
+	cl_float3		origin;
+	cl_float3		dir;
+	cl_float3		inv_dir;
+	cl_rgb3			accumulated_color;
+	cl_rgb3			through_power;
+	cl_int			iteration;
 	t_refract_pos	refract;
-	bool			active;
+	cl_int			active;
 }			t_ray;
 
 typedef struct s_hit
 {
-	bool		hit;
-	int			id;
-	t_vec3		normal;
-	t_vec2		uv;
-	int			mat_id;
-	t_vec3		hit_point;
-	t_rgb		hit_rgb;
-	float		hit_ambient;
-	t_vec3		ks;
-	t_vec3		ke;
-	float		ns;
-	t_vec3		reflectivity;
+	cl_int		hit;
+	cl_int		id;
+	cl_float3	normal;
+	cl_float2	uv;
+	cl_int		mat_id;
+	cl_float3	hit_point;
+	cl_rgb3		hit_rgb;
+	cl_float	hit_ambient;
+	cl_float3	ks;
+	cl_float3	ke;
+	cl_float	ns;
+	cl_float3	reflectivity;
 	t_object	*hit_obj;
 }			t_hit;
+
 
 typedef struct s_hit_mat_data
 {
@@ -68,47 +72,45 @@ typedef struct s_hit_mat_data
 
 typedef struct s_camera
 {
-	t_vec3	pos;
-	t_vec3	rot;
-	int		fov;
-	float	focal_length;
-	float	theta;
-	float	aspect_ratio;
-	float	viewport_height;
-	float	viewport_width;
-	float	cos_pitch;
-	float	sin_pitch;
-	float	cos_yaw;
-	float	sin_yaw;
-	float	cos_roll;
-	float	sin_roll;
-	t_vec3	camera_forward;
-	t_vec3	camera_right;
-	t_vec3	camera_up;
-	t_vec3	u;
-	t_vec3	v;
-	t_vec3	pixel_delta_u;
-	t_vec3	pixel_delta_v;
-	t_vec3	focal_vec;
-	t_vec3	viewport_upper_left;
-	t_vec3	half_pixel_offset;
-	t_vec3	pixel00_loc;
-	t_vec3	pixel_center;
-	t_vec3	pixel_center_x;
-	t_vec3	x_offset;
-	t_vec3	y_offset;
+	cl_float3	pos;
+	cl_float3	rot;
+	cl_float3	camera_forward;
+	cl_float3	camera_right;
+	cl_float3	camera_up;
+	cl_float3	pixel_delta_u;
+	cl_float3	pixel_delta_v;
+	cl_float3	pixel00_loc;
+	cl_int		fov;
+	cl_int		frame;
+	cl_float	lens_radius;
+	cl_float	focus_dist;
 }			t_camera;
 
 typedef struct s_bvh_main
 {
-	void		*bvh_pointer;
+	t_aabb_bvh	*triangle_bvh;
+	t_aabb_bvh	*sphere_bvh;
 	union
 	{
 		void			*bvh;
-		t_aabb_bvh		*aabb_bvh;
-		t_sphere_bvh	*sphere_bvh;
+		t_sphere_bvh	*sphere_mode_bvh;
 	};
 	int			bvh_mode;
+	int			sphere_bvh_size;
+	int			triangle_bvh_size;
+
+	t_aabb_bvh	*triangle_bvh4;
+	int			triangle_bvh4_size;
+	t_aabb_bvh	*sphere_bvh4;
+	int			sphere_bvh4_size;
+
+	t_aabb_bvh	*triangle_bvh8;
+	int			triangle_bvh8_size;
+	t_aabb_bvh	*sphere_bvh8;
+	int			sphere_bvh8_size;
+
+	cl_mem		sphere_gpu_bvh;
+	cl_mem		triangle_gpu_bvh;
 }	t_bvh_main;
 
 typedef enum e_mtl
@@ -134,18 +136,27 @@ typedef struct s_scene
 	t_camera	camera;
 	char		*name;
 	t_vector	objects;
-	t_vector	lights;
+	t_vector	light;
 	int			*planes_id;
 	int			plane_count;
 	t_bvh_main	bvh;
+	t_aabb_bvh	*bvh_triangle_sah;
+	int			bvh_triangle_sah_size;
+	t_aabb_bvh	*bvh_sphere_sah;
+	int			bvh_sphere_sah_size;
 	t_vector	texture;
 	t_vector	mat;
 	t_vector	mtl_list;
 	t_vector	obj_list;
 	t_mlx		*mlx;
 	int			skybox_tex;
-	int			*emissive_id;
-	int			emissive_count;
+	cl_mem		spheres;
+	cl_mem		triangles;
+	cl_mem		planes;
+	cl_mem		textures;
+	cl_mem		mats;
+	cl_mem		lights;
+	t_texture_data	skybox;
 }				t_scene;
 
 typedef struct s_3d_line
@@ -162,7 +173,7 @@ int		rasterize_cuboid(t_cuboid *cuboid, t_img_data *img,
 			t_camera *camera, t_rgb_int color);
 int		rasterize_sphere_outline(t_sphere *s, t_img_data *img,
 			t_camera *camera, t_rgb_int color);
-void	rasterize_bvh(void *bvh, t_params *p, int total_depth, t_data *data);
+void	rasterize_bvh(void *bvh, t_params *p, int size, t_data *data);
 t_vec2i	project_point(t_vec3 *p, t_camera *camera, t_img_data *img);
 void	get_cuboid_vertice(t_vec3 vertices[8], t_cuboid *cuboid);
 
@@ -175,35 +186,27 @@ void	rasterize_light_outline(t_img_data *img, t_light *light,
 			t_camera *camera);
 void	rasterize_plane_outline(t_img_data *img, t_plane *plane,
 			t_rgb_int color, t_camera *camera);
-void	rasterize_cylinder_outline(t_img_data *img, t_cylinder *cylinder,
-			t_rgb_int color, t_camera *camera);
 void	rasterize_3d_line(t_img_data *img, t_3d_line *line,
 			t_rgb_int color, t_camera *camera);
 
-void	wireframe_render(t_data *data, t_img_data *img);
-void	pbr_render(t_data *data, t_img_data *img);
-
-int		export_to_ppm(t_data *data, t_mlx *mlx);
-
-float	sample_gray_level_texture(const t_texture *texture_list,
-			int id, t_vec2 uv);
-t_rgb	sample_texture(const t_texture *texture_list, int id, t_vec2 uv);
-
+void	export_to_ppm(t_data *data, t_mlx *mlx);
 void	fill_camera(t_camera *cam, t_img_data *img);
-void	cast_ray_loop(
-			t_camera *cam, t_buffers bu, int pixel_size, t_img_data *img);
-void	intersect_loop(t_ray *rays, t_hit *hits, t_scene *scene, int count);
-void	draw_skybox_loop(
-			t_buffers bu, int texture_id, t_texture *texture, int size);
+bool	render_changed(t_data *data);
+bool	cam_has_moved(t_camera *camera);
 
-int		compact_hits_inplace(t_hit *buffer, int input_size);
 
-void	path_sample_materials_loop(
-			t_buffers *bu, t_texture *tex, t_mat *mat, int count);
+int		monte_carlo_kernel(t_opencl *cl_state, t_data *data, t_img_data *img);
+int		normal_kernel(t_opencl *cl_state, t_data *data, t_img_data *img);
+int		pbr_kernel(t_opencl *c, t_data *data, t_img_data *img);
+int		phong_kernel(t_opencl *c, t_data *data, t_img_data *img);
+int		accu_kernel(t_opencl *cl_state, t_data *data, t_img_data *img);
+int		heat_kernel(t_opencl *cl_state, t_data *data, t_img_data *img);
 
-void	path_shade_loop(t_buffers *buffers, t_scene *scene, int count);
-
-void	normal_debug_loop(t_buffers *buffers, int count);
-void	accu_screen_loop(t_buffers bu, int sample_count, t_img_data *img);
+void	phong_render(t_data *data, t_img_data *img);
+void	monte_carlo_render(t_data *data, t_img_data *img);
+void	pbr_render(t_data *data, t_img_data *img);
+void	heat_render(t_data *data, t_img_data *img);
+void	normal_render(t_data *data, t_img_data *img);
+void	wireframe_render(t_data *data, t_img_data *img);
 
 #endif

@@ -1,0 +1,206 @@
+# Blender MTL File: 'room.blend'
+# Material Count: 19
+
+newmtl Carpet
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/dylanheyes/01- Minimalistic.Modern.Bedroom/d71ca44d75b7452692ab15742ba8f6c5_RGB_Carpet_Combined.png
+map_Ke /home/pabellis/Downloads/3d_Ripper/Downloads/dylanheyes/01- Minimalistic.Modern.Bedroom/d71ca44d75b7452692ab15742ba8f6c5_RGB_Carpet_Combined.png
+
+newmtl Cat2
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/AndreaMarziano/01- Sleeping.on.a.mat.cat/44f5196453d34d93bf66497a4fb7ef11_RGB_Cat_Color.jpeg
+map_Ke /home/pabellis/Downloads/3d_Ripper/Downloads/AndreaMarziano/01- Sleeping.on.a.mat.cat/44f5196453d34d93bf66497a4fb7ef11_RGB_Cat_Color.jpeg
+
+newmtl Color_M02
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl Color_M08
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl FrontColor
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl Material.002
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl Material.003
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl Material_#4
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/AnuragAnD/01- Marble.coffe.table/3a4021a23e194cf19f9cd645a4c40dd7_RGB_Arabescus_White.jpeg
+
+newmtl Material_#5
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/AnuragAnD/01- Marble.coffe.table/b678eb41a0384dd185e3fc78090be402_RGB_Arabescus_black.jpeg
+
+newmtl Material_2
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl White
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl Wood
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/dluX/01- dlX/bed75718359044029aebd6577c912476_RGB_woodish.png
+
+newmtl _abstract_3
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/3DWALKABOUT/01- Abstract.Modern.Australian.Art/9df00c1b9ae0422693b938014170ba4b_RGB__abstract_3.jpeg
+
+newmtl abstract_1
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/3DWALKABOUT/01- Abstract.Modern.Australian.Art/608e5835bee546cd84e527922b724064_RGB_abstract_1.jpeg
+
+newmtl abstract_2
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/3DWALKABOUT/01- Abstract.Modern.Australian.Art/e95a191a55cd4aa6acc0e806ef8eab02_RGB_abstract_2.jpeg
+
+newmtl cat_mat
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/zammon/01- Cat.sculpture/fb72b1de27b24175ade5d0d79069f336_RGB_cat_mat_albedo.jpeg
+
+newmtl fabric
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump -bm 2.000000 /home/pabellis/Downloads/3d_Ripper/Downloads/dluX/01- dlX/10b67ddff9b94be2bca6bad3231f787b_N_fabric_gray_nrm.png
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/dluX/01- dlX/382af1244b4843c9b2e21d9a96a94ec6_RGB_fabric_gray.jpeg
+
+newmtl wall
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl wood_floor
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd /home/pabellis/Downloads/3d_Ripper/Downloads/mabapro08/01- Modern.looking.lamplight/4247e4d37f9249b398931271d24678c7_RGB_WoodFlooringMerbauBrickBondNatural001_COL_3K.jpeg
