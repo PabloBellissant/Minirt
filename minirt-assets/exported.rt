@@ -1,0 +1,31 @@
+# Minirt '.rt' file.
+
+# Camera #
+# Format : 'C posX,Y,Z dirX,Y,Z fov'
+C -0.96,6.95,-0.70 0.05,0.30,0.00 70
+
+# Ambient #
+# Format : 'A intensity R,G,B'
+A 1 127,127,127
+
+
+
+# Materials #
+# Format : 'mtl [path.mtl]'
+mtl minirt-assets/materials/sand.mtl
+mtl minirt-assets/materials/checkerboard.mtl
+mtl minirt-assets/materials/uni/mat.mtl
+mtl minirt-assets/materials/uni/emissive.mtl
+mtl minirt-assets/materials/uni/transparent.mtl
+
+# Primitive #
+#  - Sphere format : 'sp posX,Y,Z diameter material_name'
+#  - Plane format : 'pl posX,Y,Z normX,Y,Z material_name scaling'
+pl 0.00,0.00,0.00 0.00,1.00,0.00 0,0,0 checkerboard 1.00
+
+# Custom .obj #
+# Format :'obj [path.obj] posX,Y,Z dirX,Y,Z scaleX,Y,Z'
+obj minirt-assets/cornel/glass-cube.obj 0.00,0.00,0.00 0.00,0.00,5.00 1.00,1.00,1.00
+obj minirt-assets/half/monkey.obj 0.00,1.00,0.00 0.00,0.00,5.00 0.70,0.70,0.70
+obj minirt-assets/difract/difract.obj 0.00,-1.00,0.00 0.00,0.00,5.00 1.00,1.00,1.00
+obj minirt-assets/square.obj 0.00,1.00,-5.00 0.00,0.00,5.00 20.00,5.00,1.00
