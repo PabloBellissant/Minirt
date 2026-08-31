@@ -165,12 +165,12 @@ graph LR
 
 ```mermaid
 graph TD
-    A[SAH AABB BVH construction] --> B[BVH2 flat array<br/>depth-first order]
+    A[SAH AABB BVH construction] --> B["BVH2 flat array<br/>depth-first order"]
     B --> C{branching factor?}
     C -->|BVH2| D[Compile with skip pointers]
-    C -->|BVH4| E[Pack into 4-child nodes<br/>bvh4.c]
-    C -->|BVH8| F[Pack into 8-child nodes<br/>bvh8.c]
-    D --> G[Upload to GPU<br/>CL_MEM_COPY_HOST_PTR]
+    C -->|BVH4| E["Pack into 4-child nodes<br/>bvh4.c"]
+    C -->|BVH8| F["Pack into 8-child nodes<br/>bvh8.c"]
+    D --> G["Upload to GPU<br/>CL_MEM_COPY_HOST_PTR"]
     E --> G
     F --> G
     G --> H[GPU traversal kernel]
@@ -268,9 +268,9 @@ graph TD
     START[Parse scene / load OBJ] --> SPH{Sphere primitives?}
     SPH -->|Yes| SB[Build sphere BVH]
     SPH -->|No| TB[Build triangle BVH]
-    SB --> S1[mode 0: sphere merging<br/>hierarchical sphere BVH]
-    SB --> S2[mode 1: AABB SAH BVH<br/>around spheres]
-    TB --> T1[SAH binning AABB BVH<br/>for triangle meshes]
+    SB --> S1["mode 0: sphere merging<br/>hierarchical sphere BVH"]
+    SB --> S2["mode 1: AABB SAH BVH<br/>around spheres"]
+    TB --> T1["SAH binning AABB BVH<br/>for triangle meshes"]
 
     S1 --> S_BVH2[BVH2 skip-ptr array]
     S2 --> T_BVH2[BVH2 skip-ptr array]
@@ -285,7 +285,7 @@ graph TD
     TPACK -->|BVH4| T4GPU
     TPACK -->|BVH8| T8GPU
 
-    S2GPU --> GPU[Upload to GPU<br/>clCreateBuffer]
+    S2GPU --> GPU["Upload to GPU<br/>clCreateBuffer"]
     S4GPU --> GPU
     S8GPU --> GPU
     T2GPU --> GPU

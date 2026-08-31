@@ -16,20 +16,20 @@ displayed.
 
 ```mermaid
 graph TD
-    A[init_opencl] --> B[clGetPlatformIDs<br/>enumerate platforms]
+    A[init_opencl] --> B["clGetPlatformIDs<br/>enumerate platforms"]
     B --> C{GPU device found?}
     C -->|No| D[return -1]
     C -->|Yes| E[init_gpu]
-    E --> F[clCreateContext<br/>with GPU device]
+    E --> F["clCreateContext<br/>with GPU device"]
     F --> G[clCreateCommandQueue]
     G --> H[build_program]
     H --> I{clBuildProgram}
-    I -->|FAIL| J[print build log<br/>return -1]
+    I -->|FAIL| J["print build log<br/>return -1"]
     I -->|OK| K[create_kernels]
-    K --> L[clCreateKernel × 6]
+    K --> L[clCreateKernel x 6]
     L --> M[init_gpu buffers]
-    M --> N[clCreateBuffer: accu<br/>(float3 × WIDTH × HEIGHT)]
-    N --> O[clCreateBuffer: img<br/>(int × WIDTH × HEIGHT)]
+    M --> N["clCreateBuffer: accu<br/>(float3 x WIDTH x HEIGHT)"]
+    N --> O["clCreateBuffer: img<br/>(int x WIDTH x HEIGHT)"]
     O --> P[allocate host_buffer]
     P --> Q[Done]
 ```
@@ -56,8 +56,8 @@ graph TD
 
 5. **Kernel creation:** `clCreateKernel()` for each of 6 kernels.
 
-6. **Buffer allocation:** The accumulation buffer (`float3 × WIDTH × HEIGHT`)
-   and output image buffer (`int × WIDTH × HEIGHT`) are allocated as
+6. **Buffer allocation:** The accumulation buffer (`float3 × WIDTH x HEIGHT`)
+   and output image buffer (`int × WIDTH x HEIGHT`) are allocated as
    read-write GPU buffers.
 
 ---
@@ -218,16 +218,16 @@ The project uses a two-buffer progressive accumulation scheme:
 ```mermaid
 graph LR
     subgraph GPU
-        ACCU[accu: float3[]<br/>WIDTH × HEIGHT]
-        IMG[img: int[]<br/>WIDTH × HEIGHT]
+        ACCU["accu: float3[]<br/>WIDTH x HEIGHT"]
+        IMG["img: int[]<br/>WIDTH x HEIGHT"]
     end
     subgraph Host
-        HOST_BUFFER[host_buffer: int[]<br/>WIDTH × HEIGHT]
+        HOST_BUFFER["host_buffer: int[]<br/>WIDTH x HEIGHT"]
         MLX_IMG[mlx image object]
     end
 
-    KERNEL[Render Kernel<br/>phong/pbr/mc/...] -->|writes float3| ACCU
-    ACCU -->|draw_accu kernel<br/>÷ sample_count<br/>×255, clamp to int| IMG
+    KERNEL["Render Kernel<br/>phong/pbr/mc/..."] -->|writes float3| ACCU
+    ACCU -->|draw_accu kernel<br/>÷ sample_count<br/>x255, clamp to int| IMG
     IMG -->|clEnqueueReadBuffer| HOST_BUFFER
     HOST_BUFFER -->|mlx_put_data_addr| MLX_IMG
     MLX_IMG -->|mlx_put_image_to_window| SCREEN[Window]

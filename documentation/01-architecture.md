@@ -135,7 +135,7 @@ graph TD
         LOOP[loop / loop_hook]
         PARSING[parsing / rt_parser]
         OPENCL[opencl / gpu init]
-        RENDER[render modes<br/>wireframe / phong / pbr<br/>monte_carlo / normal / heat]
+        RENDER["render modes<br/>wireframe / phong / pbr<br/>monte_carlo / normal / heat"]
         SHADER[shader / .cl kernels]
         BVH[calc / bvh<br/>sah / bvh_ary]
         SCENE[scene / camera_utils]
@@ -178,18 +178,18 @@ The rendering pipeline proceeds through these stages for each frame:
 ```mermaid
 flowchart TD
     A[Start Frame] --> B{Camera Moved?}
-    B -->|Yes| C[Reset accumulation buffer<br/>Recompute camera basis<br/>Recompute viewport]
+    B -->|Yes| C["Reset accumulation buffer<br/>Recompute camera basis<br/>Recompute viewport"]
     B -->|No| D[Increment frame counter]
 
-    D --> E[Determine render mode<br/>from dispatch table]
+    D --> E["Determine render mode<br/>from dispatch table"]
     E --> F{Mode == 0?}
-    F -->|Wireframe| G[CPU rasterize<br/>BVH boxes + outlines + lights]
-    F -->|Phong / PBR /<br/>Monte Carlo /<br/>Normal / Heat| H[Set GPU kernel args<br/>(camera, BVH, materials,<br/>textures, lights)]
+    F -->|Wireframe| G["CPU rasterize<br/>BVH boxes + outlines + lights"]
+    F -->|Phong / PBR /<br/>Monte Carlo /<br/>Normal / Heat| H["Set GPU kernel args<br/>(camera, BVH, materials,<br/>textures, lights)"]
 
-    H --> I[clEnqueueNDRangeKernel<br/>global_size = {width, height}]
+    H --> I["clEnqueueNDRangeKernel<br/>global_size = {width, height}"]
     I --> J[Read GPU accumulation buffer]
 
-    J --> K[accu_kernel / draw_accu.cl<br/>accumulation ÷ frame_count<br/>clamp to [0,255]<br/>pack to RGB int]
+    J --> K["accu_kernel / draw_accu.cl<br/>accumulation ÷ frame_count<br/>clamp to [0,255"]<br/>pack to RGB int]
 
     G --> K
 
@@ -208,22 +208,22 @@ flowchart TD
 flowchart LR
     RT[.rt scene file] --> PARSER[rt_parser]
     PARSER --> OBJ_LOAD[OBJ loader]
-    OBJ_LOAD --> TRIANGLES[Triangle arrays<br/>with precomputed edges]
+    OBJ_LOAD --> TRIANGLES["Triangle arrays<br/>with precomputed edges"]
     PARSER --> MTL_LOAD[MTL loader]
     MTL_LOAD --> MATERIALS[PBR material array]
-    PARSER --> TEX_LOAD[Texture loader<br/>PPM / PNG]
+    PARSER --> TEX_LOAD["Texture loader<br/>PPM / PNG"]
     TEX_LOAD --> TEXTURES[Texture pixel arrays]
-    PARSER --> SCENE_DATA[Scene structs<br/>spheres, planes,<br/>lights, camera]
+    PARSER --> SCENE_DATA["Scene structs<br/>spheres, planes,<br/>lights, camera"]
 
-    SCENE_DATA --> BVH_BUILD[BVH construction<br/>SAH binning or<br/>sphere merging]
-    BVH_BUILD --> BVH_ARY[BVH flattening<br/>BVH2 / BVH4 / BVH8]
+    SCENE_DATA --> BVH_BUILD["BVH construction<br/>SAH binning or<br/>sphere merging"]
+    BVH_BUILD --> BVH_ARY["BVH flattening<br/>BVH2 / BVH4 / BVH8"]
     BVH_ARY --> clCreateBuffer
     MATERIALS --> clCreateBuffer
     TEXTURES --> clCreateBuffer
     TRIANGLES --> clCreateBuffer
     SCENE_DATA --> clCreateBuffer
 
-    clCreateBuffer --> GPU[(GPU Device Memory<br/>Buffers: spheres,<br/>triangles, planes,<br/>BVH, materials,<br/>textures, lights,<br/>accumulation, image)]
+    clCreateBuffer --> GPU["(GPU Device Memory<br/>Buffers: spheres,<br/>triangles, planes,<br/>BVH, materials,<br/>textures, lights,<br/>accumulation, image)"]
 ```
 
 ---

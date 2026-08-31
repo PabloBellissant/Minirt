@@ -37,8 +37,8 @@ $$
 
 $$
 \begin{aligned}
-\text{right}_\text{temp} &= (\cos(\text{yaw}),\; 0,\; -\sin(\text{yaw})) \\
-\text{up}_\text{temp} &= (-\sin(\text{yaw}) \cdot \sin(\text{pitch}),\; \cos(\text{pitch}),\; \cos(\text{yaw}) \cdot -\sin(\text{pitch}))
+\text{right}_{\text{temp}} &= (\cos(\text{yaw}),\; 0,\; -\sin(\text{yaw})) \\
+\text{up}_{\text{temp}} &= (-\sin(\text{yaw}) \cdot \sin(\text{pitch}),\; \cos(\text{pitch}),\; \cos(\text{yaw}) \cdot -\sin(\text{pitch}))
 \end{aligned}
 $$
 
@@ -46,8 +46,8 @@ $$
 
 $$
 \begin{aligned}
-\text{right} &= \text{right}_\text{temp} \cdot \cos(\text{roll}) - \text{up}_\text{temp} \cdot \sin(\text{roll}) \\
-\text{up} &= \text{right}_\text{temp} \cdot \sin(\text{roll}) + \text{up}_\text{temp} \cdot \cos(\text{roll})
+\text{right} &= \text{right}_{\text{temp}} \cdot \cos(\text{roll}) - \text{up}_{\text{temp}} \cdot \sin(\text{roll}) \\
+\text{up} &= \text{right}_{\text{temp}} \cdot \sin(\text{roll}) + \text{up}_{\text{temp}} \cdot \cos(\text{roll})
 \end{aligned}
 $$
 
@@ -303,8 +303,8 @@ pitch ignored):
 
 ```math
 \begin{aligned}
-\text{forward}_\text{horizontal} &= (-\sin(\text{yaw}),\; 0,\; -\cos(\text{yaw})) \\
-\text{right}_\text{horizontal} &= (\cos(\text{yaw}),\; 0,\; -\sin(\text{yaw}))
+\text{forward}_{\text{horizontal}} &= (-\sin(\text{yaw}),\; 0,\; -\cos(\text{yaw})) \\
+\text{right}_{\text{horizontal}} &= (\cos(\text{yaw}),\; 0,\; -\sin(\text{yaw}))
 \end{aligned}
 ```
 
@@ -336,7 +336,7 @@ parameter controls which depth level to visualize (-1 = all levels).
 
 ```mermaid
 graph TD
-    A[loop()] --> B[handle_camera_move]
+    A["loop()"] --> B[handle_camera_move]
     B --> C{keys.forward?}
     C -->|Yes| D[adjust_cam +step]
     C -->|No| E{keys.backward?}
@@ -357,7 +357,7 @@ graph TD
     R -->|No| T[mouse focus?]
     T -->|Yes| U[handle_camera_rotation]
     U --> V{delta_x/delta_y}
-    V --> W[rot.y -= delta_x × 0.001]
-    V --> X[rot.x += delta_y × 0.001]
+    V --> W[rot.y -= delta_x x 0.001]
+    V --> X[rot.x += delta_y x 0.001]
     X --> Y[clamp pitch to ±1.539]
 ```

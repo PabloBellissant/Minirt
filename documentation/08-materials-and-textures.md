@@ -47,7 +47,7 @@ control reflection, refraction, and surface appearance:
 | Property | Field | Source | Effect |
 |----------|-------|--------|--------|
 | **Roughness** | `Pr` (in texture) | `map_Pr` / scalar `Pr` | Controls microfacet distribution width. 0 = mirror-perfect, 1 = fully diffuse. Used in GGX sampling and glossy factor: $\text{glossy} = 1 - \text{roughness}^2$ |
-| **Metalness** | `Pm` (in texture) | `map_Pm` / scalar `Pm` | Blends between dielectric and metallic Fresnel. $\text{F0} = \text{mix}(\text{F0}_\text{dielectric}, k_s, \text{metalness})$ |
+| **Metalness** | `Pm` (in texture) | `map_Pm` / scalar `Pm` | Blends between dielectric and metallic Fresnel. $\text{F0} = \text{mix}(\text{F0}_{\text{dielectric}}, k_s, \text{metalness})$ |
 | **IOR (Ni)** | `ni` | `Ni value` | Index of refraction. Used in Snell's law for refraction and Schlick Fresnel: $\text{F0} = ((n_i - 1) / (n_i + 1))^2$ |
 | **Opacity (d)** | `opacity` | `d value` | Controls transmission. If random < opacity: reflect; otherwise: refract. 1 = fully opaque, 0 = fully transparent |
 | **Emissive (Ke)** | `ke` | `Ke r g b` | Emitted light color. Added directly to accumulated color when hit. Enables self-illuminating materials |
@@ -58,8 +58,8 @@ From `sample_materials.cl`:
 
 ```math
 \begin{aligned}
-\text{F0}_\text{dielectric} &= \left(\frac{n_i - 1}{n_i + 1}\right)^2 \\
-\text{F0} &= \text{mix}(\text{F0}_\text{dielectric}, k_s, \text{metalness}) \\
+\text{F0}_{\text{dielectric}} &= \left(\frac{n_i - 1}{n_i + 1}\right)^2 \\
+\text{F0} &= \text{mix}(\text{F0}_{\text{dielectric}}, k_s, \text{metalness}) \\
 \cos\theta &= |\text{dot}(\text{ray\_dir}, \text{normal})| \\
 F &= \text{F0} + (1 - \text{F0}) \cdot (1 - \cos\theta)^5 \quad (\text{Schlick approximation})
 \end{aligned}
@@ -200,8 +200,8 @@ float3 world_normal = normalize(
 graph LR
     subgraph Tangent_World["Tangent Space → World Space"]
         direction LR
-        NMAP["nmap (tangent space)<br/>(R,G,B) = (X,Y,Z)"] --> DECODE["Decode: nmap × 2 - 1<br/>maps [0,1] → [-1,1]"]
-        DECODE --> TBN["TBN Transform:<br/>T × nmap.x + B × nmap.y + N × nmap.z"]
+        NMAP["nmap (tangent space)<br/>(R,G,B) = (X,Y,Z)"] --> DECODE["Decode: nmap x 2 - 1<br/>maps [0,1] → [-1,1]"]
+        DECODE --> TBN["TBN Transform:<br/>T x nmap.x + B x nmap.y + N x nmap.z"]
         GN["Geometric Normal N"] --> TBN_T["Tangent T = cross(N, up)"]
         GN --> TBN_B["Bitangent B = cross(N, T)"]
         TBN_T --> TBN
@@ -271,24 +271,24 @@ graph TD
     MAT --> TEX_METAL[Metalness map_Pm]
     MAT --> TEX_AO[Ambient map_Ka]
     MAT --> TEX_OPAC[Opacity map_d]
-    MAT --> SCALAR[Scalar properties:<br/>Ns, Ni, d, Ke, Kd, Ks]
+    MAT --> SCALAR["Scalar properties:<br/>Ns, Ni, d, Ke, Kd, Ks"]
     
-    TEX_DIFF --> ATLAS[Texture Atlas<br/>flat uchar[] on GPU]
+    TEX_DIFF --> ATLAS["Texture Atlas<br/>flat uchar["] on GPU]
     TEX_NORM --> ATLAS
     TEX_ROUGH --> ATLAS
     TEX_METAL --> ATLAS
     TEX_AO --> ATLAS
     TEX_OPAC --> ATLAS
 
-    ATLAS --> SAMPLE[sample_texture /<br/>sample_gray_level_texture]
+    ATLAS --> SAMPLE["sample_texture /<br/>sample_gray_level_texture"]
     SCALAR --> SHADER[Shading Kernels]
 
     SAMPLE --> SAMPLE_MAT[sample_materials.cl]
     SAMPLE_MAT --> SHADER
 
-    SHADER --> PBR[PBR Bounce<br/>Fresnel, reflect/refract]
+    SHADER --> PBR["PBR Bounce<br/>Fresnel, reflect/refract"]
     SHADER --> PHONG[Phong Shading]
-    SHADER --> MC[Monte Carlo<br/>GGX sampling, dispersion]
+    SHADER --> MC["Monte Carlo<br/>GGX sampling, dispersion"]
     SHADER --> NORMAL[Normal Debug]
     SHADER --> HEAT[Heat Map]
 ```
