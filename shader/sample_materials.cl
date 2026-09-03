@@ -160,41 +160,28 @@ float3	sample_ggx_gpu(float3 normal, float roughness, uint *rng)
 	h = normalize(t * h.x + b * h.y + normal * h.z);
 	return (h);
 }
-// t_vec3	sample_ggx(t_vec3 normal, float roughness)
-// {
-// 	t_vec3	tangent;
-// 	float	phi;
-// 	float	cos_theta;
-// 	float	sin_theta;
-// 	t_vec3	h;
-//
-// 	if (roughness <= 0.01)
-// 		return (normal);
-// 	phi = rand_f();
-// 	cos_theta = sqrtf(
-// 			(1.0f - phi) / (1.0f + (powf(roughness, 4.0f) - 1.0f) * phi));
-// 	sin_theta = sqrtf(1.0f - cos_theta * cos_theta);
-// 	phi = 2.0f * M_PI * rand_f();
-// 	h.x = cosf(phi) * sin_theta;
-// 	h.y = sinf(phi) * sin_theta;
-// 	h.z = cos_theta;
-// 	tangent = get_tangent(normal);
-// 	return (vec3_normalize(
-// 			vec3_add(
-// 				vec3_add(vec3_scale(tangent, h.x),
-// 					vec3_scale(get_bitangent(normal, tangent), h.y)),
-// 				vec3_scale(normal, h.z)
-// 			)
-// 		));
-// }
-//
 
-int rgb_to_spectrum_index(float3 rgb);
+int rgb_to_spectrum_index(float3 rgb)
+{
+    float max_c = fmax(fmax(rgb.x, rgb.y), rgb.z);
+    float min_c = fmin(fmin(rgb.x, rgb.y), rgb.z);
+    float delta = max_c - min_c;
+    float hue;
+    
+    if (max_c == rgb.x)
+        hue = 60.0f * fmod((rgb.y - rgb.z) / delta + 6.0f, 6.0f);
+    else if (max_c == rgb.y)
+        hue = 60.0f * ((rgb.z - rgb.x) / delta + 2.0f);
+    else
+        hue = 60.0f * ((rgb.x - rgb.y) / delta + 4.0f);
+    return hue;
+}
+
 float get_ni_by_color(float ni_base, float3 rgb, float dispersion)
 {
-    int spectrum_index;
-    float wavelength_factor;
-    float dispersion_scale;
+    int		spectrum_index;
+    float	wavelength_factor;
+    float	dispersion_scale;
 
     spectrum_index = rgb_to_spectrum_index(rgb);
     wavelength_factor = (spectrum_index / 127.5f) - 1.0f;
@@ -202,61 +189,10 @@ float get_ni_by_color(float ni_base, float3 rgb, float dispersion)
     return (ni_base + wavelength_factor * dispersion * dispersion_scale);
 }
 
-int rgb_to_spectrum_index(float3 rgb)
-{
-    // Vérifier si la couleur est noire
-    float total = rgb.x + rgb.y + rgb.z;
-    if (total < 0.0001f)
-        return 127; // Noir -> milieu du spectre
-    
-    rgb = rgb / total;
-    
-    float max_c = fmax(fmax(rgb.x, rgb.y), rgb.z);
-    float min_c = fmin(fmin(rgb.x, rgb.y), rgb.z);
-    float delta = max_c - min_c;
-    
-    if (delta < 0.0001f)
-        return 127; // Gris -> milieu du spectre
-    
-    // Calcul de hue en degrés (0-360)
-    float hue;
-    if (max_c == rgb.x)
-        hue = 60.0f * fmod((rgb.y - rgb.z) / delta + 6.0f, 6.0f);
-    else if (max_c == rgb.y)
-        hue = 60.0f * ((rgb.z - rgb.x) / delta + 2.0f);
-    else
-        hue = 60.0f * ((rgb.x - rgb.y) / delta + 4.0f);
-    
-    // LIMITER à 0-240° pour exclure le magenta
-    if (hue > 240.0f)
-        hue = 240.0f;
-    
-    // Mapper hue au spectre visible (0-255)
-    // 0° (rouge) -> 0
-    // 120° (vert) -> 127
-    // 240° (bleu) -> 255
-    int index = (int)((hue / 240.0f) * 255.0f);
-    
-    // Clamp
-    if (index < 0) index = 0;
-    if (index > 255) index = 255;
-    
-    return index;
-}
 
 float3 rainbow_color(uint *rng)
 {
-    float t = randomf(rng);
-
-	if (t < 0.2)
-		return ((float3) (1, 0, 0));
-	if (t < 0.4)
-		return ((float3) (1, 0.7, 0));
-	if (t < 0.6)
-		return ((float3) (0, 0.6, 0));
-	if (t < 0.8)
-		return ((float3) (0, 0.7, 1));
-	return ((float3) (5 * (t - 0.9), 0, 1));
+	return (normalize((float3) (randomf(rng), randomf(rng), randomf(rng))));
 }
 
 t_hit_data path_sample_materials(__private t_hit_gpu *hit, __constant uchar *tex,
@@ -274,8 +210,7 @@ t_hit_data path_sample_materials(__private t_hit_gpu *hit, __constant uchar *tex
 			*is_diffract = 1;
 			*through_power *= rainbow_color(rng) * 3;
 		}
-		refract(&ray->dir, hit, &hit_data, get_ni_by_color(hit_data.ni, *through_power, 0.03));
-		hit_data.reflectivity = 1 - hit_data.opacity + hit_data.opacity * hit_data.kd;
+		refract(&ray->dir, hit, &hit_data, get_ni_by_color(hit_data.ni, *through_power, 0.1));
 	}
 	else
 		ray->dir = reflect(ray->dir, sample_ggx_gpu(hit_data.normal, hit_data.roughness, rng));
@@ -283,22 +218,3 @@ t_hit_data path_sample_materials(__private t_hit_gpu *hit, __constant uchar *tex
 	ray->inv_dir = 1 / ray->dir; 
 	return (hit_data);
 }
-// t_hit_data	path_sample_materials(__private t_hit_gpu *hit, __constant uchar *tex, __constant t_mat_gpu *mat, __private t_ray_gpu *ray, int seed)
-// {
-// 	t_hit_data	hit_data;
-//
-// 	hit_data = sample_materials(hit, tex, mat, ray);
-// 	hit_data.opacity = fmax(hit_data.opacity, hit_data.reflectivity.x);
-// 	if (random01(seed) > hit_data.opacity)
-// 	{
-// 		refract(&ray->origin, &ray->dir, hit, hit_data.ni);
-// 		hit_data.reflectivity = 1 - hit_data.opacity;
-// 	}
-// 	else
-// 	{
-// 		ray->dir = sample_ggx(hit_data.normal, hit_data.roughness, -ray->dir, seed + 1);
-// 		ray->origin = hit->hit_point + (0.0001f * ray->dir);
-// 	}
-// 	ray->inv_dir = 1 / ray->dir; 
-// 	return (hit_data);
-// }

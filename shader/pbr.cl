@@ -29,10 +29,10 @@ float3	draw_skybox(t_hit_gpu *hit, __constant uchar *textures, t_texture_data sk
 
 __kernel void	pbr(
 		t_camera_gpu cam,
+		__constant t_bvh_node_gpu *bvh,
+		int	bvh_type,
 		__constant t_sphere_gpu *spheres,
-		__constant t_bvh_gpu *sphere_bvh,
 		__constant t_triangle_gpu *triangles,
-		__constant t_bvh_gpu *triangle_bvh,
 		__constant t_plane_gpu *planes,
 		int planes_count,
 		__global float3 *img,
@@ -47,9 +47,8 @@ __kernel void	pbr(
 	t_objects	objects;	
 
 	objects.spheres = spheres;
-	objects.sphere_bvh = sphere_bvh;
 	objects.triangles = triangles;
-	objects.triangle_bvh = triangle_bvh;
+	objects.bvh = bvh;
 	objects.planes = planes;
 	objects.planes_count = planes_count;
 	objects.lights = lights;
@@ -74,7 +73,7 @@ __kernel void	pbr(
 	float	random;
 	while (bounce < MAX_BOUNCE)
 	{
-		hit = hit_register_gpu(&ray, &objects);
+		hit = hit_register_gpu(&ray, &objects, bvh_type);
 		if (hit.hit_obj > -1)
 		{
 			if (cam.frame == 1)
@@ -82,7 +81,7 @@ __kernel void	pbr(
 			else
 				random = randomf(&rng);
 			hit_data = sample_refract(&hit, textures, mats, &ray, random);
-			accumulated_color += (phong_shading(&hit_data, &hit, &ray, &objects, ambient) * (1 - hit_data.reflectivity)) * through_power; 
+			accumulated_color += (phong_shading(&hit_data, &hit, &ray, &objects, ambient, bvh_type) * (1 - hit_data.reflectivity)) * through_power; 
 			through_power *= hit_data.reflectivity;
 		}
 		else

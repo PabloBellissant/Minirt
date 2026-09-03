@@ -6,7 +6,7 @@
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 21:06:19 by pabellis          #+#    #+#             */
-/*   Updated: 2026/02/04 21:06:19 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/16 10:03:29 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ int	normal_kernel(t_opencl *cl_state, t_data *data, t_img_data *img)
 
 	kernel = &cl_state->kernel.normal;
 	err = clSetKernelArg(*kernel, 0, sizeof(t_camera), &data->scene.camera);
-	err |= clSetKernelArg(*kernel, 1, sizeof(cl_mem), &data->scene.spheres);
 	err |= clSetKernelArg(
-			*kernel, 2, sizeof(cl_mem), &data->scene.bvh.sphere_gpu_bvh);
-	err |= clSetKernelArg(*kernel, 3, sizeof(cl_mem), &data->scene.triangles);
-	err |= clSetKernelArg(
-			*kernel, 4, sizeof(cl_mem), &data->scene.bvh.triangle_gpu_bvh);
+			*kernel, 1, sizeof(cl_mem), &data->scene.bvh.bvh_gpu);
+	err = clSetKernelArg(
+			*kernel, 2, sizeof(int), &data->scene.bvh.world_bvh->shape);
+	err |= clSetKernelArg(*kernel, 3, sizeof(cl_mem), &data->scene.spheres);
+	err |= clSetKernelArg(*kernel, 4, sizeof(cl_mem), &data->scene.triangles);
 	err |= clSetKernelArg(*kernel, 5, sizeof(cl_mem), &data->scene.planes);
 	err |= clSetKernelArg(*kernel, 6, sizeof(int), &data->scene.plane_count);
 	err |= clSetKernelArg(*kernel, 7, sizeof(cl_mem), &cl_state->bu.accu);

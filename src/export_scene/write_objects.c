@@ -6,7 +6,7 @@
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/05 00:48:39 by pabellis          #+#    #+#             */
-/*   Updated: 2026/02/05 00:48:39 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/20 14:25:47 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,19 @@
 
 void	write_objects(t_data *data, int fd)
 {
-	t_obj_attribute	*attr;
-	size_t			i;
+	t_mesh		*mesh;
+	size_t		i;
 
-	if (data->scene.obj_list.num_elements == 0)
-		return ;
 	ft_putchar_fd('\n', fd);
 	ft_putstr_fd(OBJECT_COMMENT, fd);
-	attr = data->scene.obj_list.data;
+	mesh = data->scene.mesh.data;
 	i = 0;
-	while (i < data->scene.obj_list.num_elements)
+	while (i < data->scene.mesh.num_elements)
 	{
 		dprintf(fd, "obj %s %.2f,%.2f,%.2f %.2f,%.2f,%.2f %.2f,%.2f,%.2f\n",
-			attr[i].path, attr[i].pos.x, attr[i].pos.y, attr[i].pos.z,
-			attr[i].dir.x, attr[i].dir.y, attr[i].dir.z,
-			attr[i].scale.x, attr[i].scale.y, attr[i].scale.z);
+			mesh[i].path, mesh[i].pos.x, mesh[i].pos.y, mesh[i].pos.z,
+			mesh[i].rot.x, mesh[i].rot.y, mesh[i].rot.z,
+			mesh[i].scale.x, mesh[i].scale.y, mesh[i].scale.z);
 		++i;
 	}
 }

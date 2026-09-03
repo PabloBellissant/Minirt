@@ -6,7 +6,7 @@
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 21:18:20 by pabellis          #+#    #+#             */
-/*   Updated: 2026/02/04 21:18:20 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/16 10:02:50 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ static int	set_args(t_opencl *c, cl_kernel *kernel, t_scene *scene)
 	cl_int	err;
 
 	err = clSetKernelArg(*kernel, 0, sizeof(t_camera), &scene->camera);
-	err |= clSetKernelArg(*kernel, 1, sizeof(cl_mem), &scene->spheres);
 	err |= clSetKernelArg(
-			*kernel, 2, sizeof(cl_mem), &scene->bvh.sphere_gpu_bvh);
-	err |= clSetKernelArg(*kernel, 3, sizeof(cl_mem), &scene->triangles);
-	err |= clSetKernelArg(
-			*kernel, 4, sizeof(cl_mem), &scene->bvh.triangle_gpu_bvh);
+			*kernel, 1, sizeof(cl_mem), &scene->bvh.bvh_gpu);
+	err = clSetKernelArg(
+			*kernel, 2, sizeof(int), &scene->bvh.world_bvh->shape);
+	err |= clSetKernelArg(*kernel, 3, sizeof(cl_mem), &scene->spheres);
+	err |= clSetKernelArg(*kernel, 4, sizeof(cl_mem), &scene->triangles);
 	err |= clSetKernelArg(*kernel, 5, sizeof(cl_mem), &scene->planes);
 	err |= clSetKernelArg(*kernel, 6, sizeof(int), &scene->plane_count);
 	err |= clSetKernelArg(*kernel, 7, sizeof(cl_mem), &c->bu.accu);

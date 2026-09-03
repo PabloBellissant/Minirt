@@ -6,13 +6,12 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:03:48 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 04:50:37 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2026/02/05 21:16:15 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "parsing.h"
-#include "bvh.h"
 #include <fcntl.h>
 #include "rt_xcerrcal.h"
 #include "render.h"
@@ -29,14 +28,13 @@ int	parse_scene(char *file_name, t_scene *scene, t_opencl *state)
 	fd = open(file_name, O_RDONLY);
 	if (fd == -1)
 		return (-1);
-	if (rt_parser(fd, scene) == -1)
+	if (rt_parser(fd, scene) != 0)
 	{
 		close(fd);
 		return (-1);
 	}
 	close(fd);
-	if (fill_by_type(state, scene) == -1)
-		return (-1); //free
+	if (fill_by_type(state, scene) != 0)
+		return (-1);
 	return (0);
 }
-

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rasterize_sphere.c                                 :+:      :+:    :+:   */
+/*   rasterize_sphere_outline.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 01:29:51 by pabellis          #+#    #+#             */
-/*   Updated: 2025/09/06 04:30:37 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/26 23:23:54 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ static void	draw_vertical_lines(t_sphere *s, t_img_data *img,
 		val = 0.0f;
 		while (val <= 2.0f * M_PI + STEP)
 		{
-			point.x = s->pos.x + s->diameter / 2.0f * sinf(val)
+			point.x = s->pos.x + s->radius * sinf(val)
 				* cosf(i * 2.0f * M_PI / V_COUNT);
-			point.y = s->pos.y + s->diameter / 2.0f * cosf(val);
-			point.z = s->pos.z + s->diameter / 2.0f * sinf(val)
+			point.y = s->pos.y + s->radius * cosf(val);
+			point.z = s->pos.z + s->radius * sinf(val)
 				* sinf(i * 2.0f * M_PI / V_COUNT);
 			if (val != 0.0f)
 				rasterize_3d_line(img, &(t_3d_line){point, prev_point},
@@ -74,10 +74,10 @@ static void	draw_horizontal_lines(t_sphere *s, t_img_data *img,
 		val = 0.0f;
 		while (val <= 2.0f * M_PI + STEP)
 		{
-			point.x = s->pos.x + s->diameter / 2.0f * sinf(i * M_PI
+			point.x = s->pos.x + s->radius * sinf(i * M_PI
 					/ H_COUNT) * cosf(val);
-			point.y = s->pos.y + s->diameter / 2.0f * cosf(i * M_PI / H_COUNT);
-			point.z = s->pos.z + s->diameter / 2.0f * sinf(i * M_PI
+			point.y = s->pos.y + s->radius * cosf(i * M_PI / H_COUNT);
+			point.z = s->pos.z + s->radius * sinf(i * M_PI
 					/ H_COUNT) * sinf(val);
 			if (val != 0.0f)
 				rasterize_3d_line(img, &(t_3d_line){point, prev_point},

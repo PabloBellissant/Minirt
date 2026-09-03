@@ -22,7 +22,8 @@ int	accu_kernel(t_opencl *cl_state, t_data *data, t_img_data *img)
 	kernel = &cl_state->kernel.draw_accu;
 	err = clSetKernelArg(*kernel, 0, sizeof(cl_mem), &cl_state->bu.accu);
 	err |= clSetKernelArg(*kernel, 1, sizeof(cl_mem), &cl_state->bu.img);
-	err |= clSetKernelArg(*kernel, 2, sizeof(int), &data->scene.camera.frame);
+	int	sample = data->scene.camera.frame * data->params.exposure;
+	err |= clSetKernelArg(*kernel, 2, sizeof(int), &sample);
 	err |= clEnqueueNDRangeKernel(cl_state->queue, *kernel, 2, NULL,
 			global_size, NULL, 0, NULL, NULL);
 	if (err != CL_SUCCESS)

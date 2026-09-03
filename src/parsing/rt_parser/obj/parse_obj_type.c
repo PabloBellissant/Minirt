@@ -17,7 +17,7 @@ int		apply_mtl(const char *line, t_scene *scene, int *mat_id);
 int		gen_mat_by_color(t_vector *mat, t_vector *tex, t_rgb_int *color);
 
 int	parse_obj_type(
-	const char *line, t_scene *scene, t_obj_attribute *attr, t_obj_vectors *vec)
+	const char *line, t_scene *scene, t_vec3 *scale, t_obj_vectors *vec)
 {
 	t_obj			type;
 	static int		mat_id = -1;
@@ -30,7 +30,7 @@ int	parse_obj_type(
 	if (type == usemtl)
 		return (apply_mtl(line, scene, &mat_id));
 	if (type == v)
-		return (parse_vertex(line, &vec->vertex, attr));
+		return (parse_vertex(line, &vec->vertex, scale));
 	if (type == vn)
 		return (parse_normal(line, &vec->normal));
 	if (type == f)

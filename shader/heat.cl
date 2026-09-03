@@ -2,20 +2,22 @@
 
 # include "include/gpu.cl"
 
-bool	hit_box(__private t_ray_gpu *ray, __constant t_bvh_gpu *bvh);
+bool	hit_aabb(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh);
+bool	hit_obb(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh);
+int		hit_sphere(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh);
 
-int hit_bvh_depth(__private t_ray_gpu *ray, __constant t_bvh_gpu *bvh)
+int hit_bvh_depth_sphere(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh)
 {
 	int	node;
 	int	hit_count;
 
-	if (bvh[0].depth == 0 && bvh[0].object == -1)
+	if (bvh[0].children[0] <= 0 && bvh[0].object_id == -1)
 		return (-1);
 	node = 0;
 	hit_count = 0;
 	while (node != -1)
 	{
-		if (bvh[node].depth > 0 && hit_box(ray, &bvh[node]))
+		if (bvh[node].children[0] > 0 && hit_sphere(ray, &bvh[node]))
 		{
 			++hit_count;
 			++node;
@@ -26,16 +28,67 @@ int hit_bvh_depth(__private t_ray_gpu *ray, __constant t_bvh_gpu *bvh)
 	return (hit_count);
 }
 
+int hit_bvh_depth_aabb(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh)
+{
+	int	node;
+	int	hit_count;
+
+	if (bvh[0].children[0] <= 0 && bvh[0].object_id == -1)
+		return (-1);
+	node = 0;
+	hit_count = 0;
+	while (node != -1)
+	{
+		if (bvh[node].children[0] > 0 && hit_aabb(ray, &bvh[node]))
+		{
+			++hit_count;
+			++node;
+		}
+		else
+			node = bvh[node].skip;
+	}
+	return (hit_count);
+}
+
+int hit_bvh_depth_obb(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh)
+{
+	int	node;
+	int	hit_count;
+
+	if (bvh[0].children[0] <= 0 && bvh[0].object_id == -1)
+		return (-1);
+	node = 0;
+	hit_count = 0;
+	while (node != -1)
+	{
+		if (bvh[node].children[0] > 0 && hit_obb(ray, &bvh[node]))
+		{
+			++hit_count;
+			++node;
+		}
+		else
+			node = bvh[node].skip;
+	}
+	return (hit_count);
+}
+
+int hit_bvh_depth(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh, int bvh_type)
+{
+	if (bvh_type == 0)
+		return (hit_bvh_depth_sphere(ray, bvh));
+	if (bvh_type == 1)
+		return (hit_bvh_depth_aabb(ray, bvh));
+	return (hit_bvh_depth_obb(ray, bvh));
+}
+
 typedef struct s_palette
 {
 	int		color_count;
 	float3	color[4];
 }	t_palette;
 
-
 inline t_palette get_palette(int idx)
 {
-
 	const t_palette palettes[10] = {
 		{
 			.color_count = 2,
@@ -119,11 +172,10 @@ inline t_palette get_palette(int idx)
 			}
 		}
 	};
-
 	return palettes[idx];
 }
 
-float3 heatmap(float v, int color_id)
+float3	heatmap(float v, int color_id)
 {
 	int		idx;
 	float	scaled;
@@ -143,24 +195,17 @@ float3 heatmap(float v, int color_id)
 	return (p.color[idx] + t * (p.color[idx + 1] - p.color[idx]));
 }
 
-int	hit_reg_depth(__private t_ray_gpu *ray, __constant t_bvh_gpu *sphere_bvh, __constant t_bvh_gpu *triangle_bvh)
-{
-	int	val;
-
-	val = hit_bvh_depth(ray, triangle_bvh);
-	val += hit_bvh_depth(ray, sphere_bvh);
-	return (val);
-}
-
-__kernel void	heat(t_camera_gpu cam, __constant t_bvh_gpu *sphere_bvh, __constant t_bvh_gpu *triangle_bvh, __global float3 *img, int max_depth, int color_offset)
+__kernel void	heat(t_camera_gpu cam,
+				   __constant t_bvh_node_gpu *bvh,
+				   int bvh_type,
+				   __global float3 *img,
+				   int max_depth,
+				   int color_offset)
 {
 	int2		pos;
 	t_ray_gpu	ray;
 	int			pixel;
-	t_objects	objects;	
 
-	objects.sphere_bvh = sphere_bvh;
-	objects.triangle_bvh = triangle_bvh;
 	pos.x = get_global_id(0);
 	pos.y = get_global_id(1);
 	if (pos.x >= (int) get_global_size(0) || pos.y >= (int) get_global_size(1))
@@ -169,7 +214,7 @@ __kernel void	heat(t_camera_gpu cam, __constant t_bvh_gpu *sphere_bvh, __constan
 	uint		rng = cam.frame * get_global_size(1) * get_global_size(0) + pixel;
 	ray = calc_ray(&cam, pos, &rng);
 	int	hit_depth;
-	hit_depth = hit_reg_depth(&ray, sphere_bvh, triangle_bvh);
+	hit_depth = hit_bvh_depth(&ray, bvh, bvh_type);
 	if (hit_depth <= 1)
 		return ;
 	img[pixel] += heatmap((float) hit_depth / (max_depth * max_depth), color_offset);
