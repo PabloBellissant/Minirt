@@ -11,3 +11,4 @@ MiniRT
 miniRT
 *.out
 compile_commands.json
+lib/minilibx-linux/test/mlx-test
