@@ -2,13 +2,16 @@
 
 ## Overview
 
+![Asset catalog preview](docs/assets/asset-catalog-overview.png)
+*Visual catalog grid showing available scene files, OBJ meshes, MTL materials, and texture maps organized by type, giving an at-a-glance view of all available assets.*
+
 miniRT loads scene files, OBJ meshes, MTL materials, and texture maps from
 two locations:
 
-1. **`asset/` directory** — Bundled with the repository. Contains scene
+1. **`asset/` directory** - Bundled with the repository. Contains scene
    files (`.rt`), MTL material definitions, and small-to-medium texture
    maps and OBJ meshes.
-2. **`minirt-assets` submodule** — External repository at
+2. **`minirt-assets` submodule** - External repository at
    [https://github.com/ketodin/minirt-assets](https://github.com/ketodin/minirt-assets).
    Contains large OBJ meshes (high-poly models) and high-resolution texture
    maps that are too large for the main repository.
@@ -26,9 +29,7 @@ The `minirt-assets` submodule is declared in `.gitmodules`:
 To fetch all assets:
 
 ```bash
-git submodule init
-git submodule sync
-git submodule update --remote
+git submodule init && git submodule sync && git submodule update --remote
 ```
 
 The `minirt-assets` repository mirrors the internal directory structure of
@@ -52,7 +53,7 @@ These small assets are kept in the main repository under `assets/`.
 
 ---
 
-## asset/scenes/ Directory — Scene Files
+## asset/scenes/ Directory - Scene Files
 
 | File | Description | Key Features |
 |------|-------------|-------------|
@@ -82,7 +83,7 @@ sky path_to_texture.ppm     # Skybox
 
 ---
 
-## asset/ Directory — Texture Maps
+## asset/ Directory - Texture Maps
 
 Textures are stored in `asset/texture/<name>/` and follow a naming convention:
 
@@ -124,7 +125,7 @@ Textures are stored in `asset/texture/<name>/` and follow a naming convention:
 
 ---
 
-## asset/ Directory — MTL Materials
+## asset/ Directory - MTL Materials
 
 Materials are defined in `.mtl` files under `asset/materials/`. They follow
 the Wavefront OBJ MTL format with extensions.
@@ -152,7 +153,7 @@ the Wavefront OBJ MTL format with extensions.
 
 ---
 
-## asset/ Directory — OBJ Meshes
+## asset/ Directory - OBJ Meshes
 
 Small OBJ meshes bundled in the repository. Large meshes are in
 `minirt-assets`.

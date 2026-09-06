@@ -1,15 +1,18 @@
-# miniRT — Build System
+# miniRT - Build System
 
 ## Overview
 
-miniRT uses a **modular recursive Makefile system** orchestrated by the `mkidir` submodule. The top-level `Makefile` coordinates 6 library submodules, each with its own Makefiles and `includes.mk`, plus the main binary's 251 C source files distributed across 48 `.mk` include files.
+![Build chain diagram](docs/assets/build-chain.png)
+*Build chain diagram showing the dependency graph from library submodules (.a archives) through to the final miniRT binary, including include paths and linker flags.*
+
+miniRT uses a **modular recursive Makefile system** orchestrated by the `mkidir` submodule. The top-level `Makefile` coordinates 6 library submodules, each with their own Makefiles and `includes.mk`, plus the main binary's 487 C source files distributed across 48 `.mk` include files.
 
 ## Submodules
 
-There are **8 submodules** registered in `.gitmodules`:
+There are **7 submodules** registered in `.gitmodules`:
 
-| # | Path | URL | Branch |
-|---|---|---|---|
+|| # | Path | URL | Branch |
+||---|---|---|---|
 | 1 | `mkidir` | `git@github.com:dct-LuLu/mkidir.git` | (default) |
 | 2 | `lib/libft` | `git@github.com:dct-LuLu/libft.git` | `libft-stripped` |
 | 3 | `lib/font_renderer` | `git@github.com:dct-LuLu/mlx_ttf_font_renderer.git` | `library-stripped` |
@@ -18,7 +21,7 @@ There are **8 submodules** registered in `.gitmodules`:
 | 6 | `lib/mlxui` | `git@github.com:dct-LuLu/mlxui.git` | `library-stripped` |
 | 7 | `minirt-assets` | `git@github.com:ketodin/minirt-assets.git` | (default) |
 
-Of the 8, **7 are libraries** (mkidir is a build system helper, not a library). `minirt-assets` is an asset repository (test scenes, meshes, textures).
+Of the 7, **5 are libraries** (mkidir is a build system helper, not a library, and minirt-assets is an asset repository).
 
 ## Submodule Build Chain
 
@@ -59,14 +62,9 @@ flowchart LR
     class BINARY bin
 ```
 
-**Build order**: `minilibx-linux` → `libft` → `mlx_wrapper` → `font_renderer` → `mlxui` → `xcerrcal` → `miniRT binary`
+**Build order**: `minilibx-linux` -> `libft` -> `mlx_wrapper` -> `font_renderer` -> `mlxui` -> `xcerrcal` -> `miniRT binary`
 
-Dependencies are enforced via Makefile prerequisites:
-- `$(MLXUI)` depends on: `$(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)`
-- `$(FONT_RENDER)` depends on: `$(MLXW) $(MLX) $(LIBFT)`
-- `$(MLXW)` depends on: `$(MLX) $(LIBFT)`
-- `$(LIBFT)` and `$(MLX)` and `$(XCERRCAL)` have no prerequisites (built first)
-- The binary `$(NAME)` depends on: `$(XCERRCAL) $(MLXUI) $(FONT_RENDER) $(OBJS) $(INCLUDES)`
+Dependencies are enforced via Makefile prerequisites: `$(MLXUI)` depends on `$(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)`, `$(FONT_RENDER)` depends on `$(MLXW) $(MLX) $(LIBFT)`, `$(MLXW)` depends on `$(MLX) $(LIBFT)`, while `$(LIBFT)`, `$(MLX)`, and `$(XCERRCAL)` have no prerequisites and are built first. The binary `$(NAME)` depends on `$(XCERRCAL) $(MLXUI) $(FONT_RENDER) $(OBJS) $(INCLUDES)`.
 
 ## Modular `.mk` File System
 
@@ -74,37 +72,37 @@ The build is decomposed into **48 `.mk` files** across the project:
 
 ```
 miniRT/
-├── Makefile                       # Top-level build orchestration
-├── includes.mk                    # All include directories
-├── src/
-│   ├── srcs.mk                    # Main source list + includes sub-MKs
-│   ├── parsing/
-│   │   ├── parsing.mk             # +fill_gpu_data/fill_gpu_data.mk
-│   │   ├── rt_parser/rt_parser.mk # All parser source .mk files
-│   │   └── fill_gpu_data/fill_gpu_data.mk
-│   ├── calc/
-│   │   ├── calc.mk                # +bvh/bvh.mk +render/render.mk +kernel/kernel.mk
-│   │   ├── bvh/bvh.mk             # All BVH sub-.mk files
-│   │   └── render/render.mk       # All renderer .mk files
-│   ├── init/
-│   │   ├── init.mk                # +ui/ui.mk
-│   │   └── ui/ui.mk               # All UI init .mk files
-│   └── export_scene/export_scene.mk
-├── mkidir/
-│   ├── make_utils.mk              # Variables, machine-ID detection, print utils
-│   ├── make_rules.mk              # Implicit rules, pattern rules, re- targets
-│   ├── sanitize.mk                # Sanitizer flags, mode detection
-│   └── colors.mk                  # Terminal color definitions, build messages
-├── lib/libft/
-│   └── includes.mk                # Export INCDIRS_LIBFT
-├── lib/mlx_wrapper/
-│   └── includes.mk                # Export INCDIRS_MLXW
-├── lib/font_renderer/
-│   └── includes.mk                # Export INCDIRS_FTRDR
-├── lib/mlxui/
-│   └── includes.mk                # Export INCDIRS_MLXUI
-└── lib/xcerrcal/
-    └── includes.mk                # Export INCDIRS_XCERRCAL
++-- Makefile                       # Top-level build orchestration
++-- includes.mk                    # All include directories
++-- src/
+|   +-- srcs.mk                    # Main source list + includes sub-MKs
+|   +-- parsing/
+|   |   +-- parsing.mk             # +fill_gpu_data/fill_gpu_data.mk
+|   |   +-- rt_parser/rt_parser.mk # All parser source .mk files
+|   |   +-- fill_gpu_data/fill_gpu_data.mk
+|   +-- calc/
+|   |   +-- calc.mk                # +bvh/bvh.mk +render/render.mk +kernel/kernel.mk
+|   |   +-- bvh/bvh.mk             # All BVH sub-.mk files
+|   |   +-- render/render.mk       # All renderer .mk files
+|   +-- init/
+|   |   +-- init.mk                # +ui/ui.mk
+|   |   +-- ui/ui.mk               # All UI init .mk files
+|   +-- export_scene/export_scene.mk
++-- mkidir/
+|   +-- make_utils.mk              # Variables, machine-ID detection, print utils
+|   +-- make_rules.mk              # Implicit rules, pattern rules, re- targets
+|   +-- sanitize.mk                # Sanitizer flags, mode detection
+|   +-- colors.mk                  # Terminal color definitions, build messages
++-- lib/libft/
+|   +-- includes.mk                # Export INCDIRS_LIBFT
++-- lib/mlx_wrapper/
+|   +-- includes.mk                # Export INCDIRS_MLXW
++-- lib/font_renderer/
+|   +-- includes.mk                # Export INCDIRS_FTRDR
++-- lib/mlxui/
+|   +-- includes.mk                # Export INCDIRS_MLXUI
++-- lib/xcerrcal/
+|   +-- includes.mk                # Export INCDIRS_XCERRCAL
 ```
 
 Each sub-MK file appends to the `SRCS` variable, keeping the build modular and avoiding a single 2000-line Makefile.
@@ -171,22 +169,11 @@ Each sub-MK file appends to the `SRCS` variable, keeping the build modular and a
 
 ### DEBUG_LVL Tiered System
 
-The `DEBUG_LVL` variable controls debug verbosity across submodules:
-
-| Level | Effect |
-|---|---|
-| `0` | No debug (default production build) |
-| `1` | **All submodules** + miniRT binary compiled with debug info |
-| `2` | Same as 1 + `mlx_wrapper` debug |
-| `3` | Same as 2 + `font_renderer` debug |
-| `4` | Same as 3 + `mlxui` debug |
-| `5` | Same as 4 + `miniRT` binary debug (MAXIMUM verbosity) |
-
-The Makefile sets `DEBUG=1` when `DEBUG_LVL >= 5` (configurable via `DEBUG_MINIRT = 5`).
+The `DEBUG_LVL` variable controls debug verbosity across submodules. At level `0`, no debug is active (default production build). Level `1` compiles all submodules plus the miniRT binary with debug info. Level `2` adds `mlx_wrapper` debug. Level `3` adds `font_renderer` debug. Level `4` adds `mlxui` debug. Level `5` adds miniRT binary debug at maximum verbosity. The Makefile sets `DEBUG=1` when `DEBUG_LVL >= 5` (configurable via `DEBUG_MINIRT = 5`).
 
 ## Machine-ID Compiler Selection
 
-The build system automatically selects compiler toolchain based on `/etc/machine-id`:
+The build system automatically selects the compiler toolchain based on `/etc/machine-id`:
 
 ```makefile
 HOME_ID = 6bb6eb3dbd1b58e9b11f9bba389b9fa248353ef0dd2fea7e9f1f5aeed881747d
@@ -205,21 +192,18 @@ XTEST = 1  # Use local XTest library
 
 This ensures consistent builds across different development environments.
 
+> **NOTE on XTEST / mouse confinement:** libXtst is bundled inside `lib/minilibx-linux/local_xtst/` and does not need to be installed separately. It is used to work around mouse confinement issues on certain campus architectures. On development machines (HOME_ID match), the system XTest library is used. On remote/CI machines, the bundled `local_xtst` copy is activated via `XTEST=1`.
+
 ## OpenCL Build Details
 
-OpenCL kernels are loaded at runtime from `shader/` directory (14 `.cl` files). The C code compiles the OpenCL program via `clBuildProgram()` with:
-
-- Target version: `-cl-std=CL3.0` (controlled by `CL_TARGET_OPENCL_VERSION=300`)
-- Kernels are compiled into a single program object
-- Individual kernels are extracted via `clCreateKernel()` by name
-
-The C flags for the host side include `-l:libOpenCL.so.1` for linking.
+OpenCL kernels are loaded at runtime from the `shader/` directory (14 `.cl` files). The C code compiles the OpenCL program via `clBuildProgram()` with target version `-cl-std=CL3.0` (controlled by `CL_TARGET_OPENCL_VERSION=300`). Kernels are compiled into a single program object and individual kernels are extracted via `clCreateKernel()` by name. The C flags for the host side include `-l:libOpenCL.so.1` for linking.
 
 ## Sanitizer Environment Variables
 
-Each sanitizer build requires specific environment variables to be exported before running:
+Each sanitizer build requires specific environment variables to be exported before running.
 
 ### AddressSanitizer (`san-mem`)
+
 ```bash
 export ASAN_OPTIONS="intercept_tls_get_addr=0:detect_leaks=0:quarantine_size_mb=512:\
 redzone=128:max_redzone=2048:report_globals=1:check_initialization_order=1:\
@@ -234,6 +218,7 @@ dump_instruction_bytes=1:protect_shadow_gap=0:interceptor_via_fun=0"
 ```
 
 ### LeakSanitizer (`san-leak`)
+
 ```bash
 export LSAN_OPTIONS="verbosity=1:log_threads=0:log_pointers=0:report_objects=0:\
 use_registers=1:use_globals=1:use_stacks=1:use_root_regions=1:\
@@ -244,6 +229,7 @@ malloc_context_size=50:print_full_thread_history=1:verbosity=1"
 ```
 
 ### UndefinedBehaviorSanitizer (`san-ub`)
+
 ```bash
 export UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=0:verbosity=1:\
 report_error_type=1"

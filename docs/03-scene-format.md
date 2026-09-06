@@ -1,8 +1,11 @@
-# miniRT — Scene Format (.rt)
+# miniRT - Scene Format (.rt)
 
 ## Overview
 
-miniRT scene files use the `.rt` extension. They are plain-text files with one directive per line. Lines starting with `#` or `//` are comments. Values are comma- or whitespace-separated. The parser uses `ft_scan()` — a typed scanf with range validation — defined in the format macros below.
+miniRT scene files use the `.rt` extension. They are plain-text files with one directive per line. Lines starting with `#` or `//` are comments. Values are comma- or whitespace-separated. The parser uses `ft_scan()` - a typed scanf with range validation - defined in the format macros below.
+
+![Example .rt file in a text editor](docs/assets/rt-file-syntax.png)
+*Screenshot showing a sample .rt scene file open in a text editor, with highlighted syntax for each identifier type (A, C, L, sp, pl, cy, obj, sky, mtl).*
 
 ## Identifiers
 
@@ -18,7 +21,7 @@ miniRT scene files use the `.rt` extension. They are plain-text files with one d
 | `sky` | Skybox | Equirectangular environment map |
 | `mtl` | Material | MTL material library file |
 
-### Ambient — `A`
+### Ambient - `A`
 
 ```
 A  ratio  R,G,B
@@ -36,7 +39,7 @@ The final ambient color is computed as `ratio × (R/255, G/255, B/255)`.
 A 0.2 255,255,255
 ```
 
-### Camera — `C`
+### Camera - `C`
 
 ```
 C  x,y,z  rx,ry,rz  fov
@@ -55,7 +58,7 @@ The rotation vector is normalized and scaled by $\pi$ to produce Euler-like orie
 C 0,0,0 0.5,-0.7,0 70
 ```
 
-### Light — `L`
+### Light - `L`
 
 ```
 L  x,y,z  brightness  R,G,B
@@ -75,7 +78,7 @@ L 0,10,0 1 255,255,255
 L -5,10,0 1 0,0,255
 ```
 
-### Sphere — `sp`
+### Sphere - `sp`
 
 ```
 sp  x,y,z  diameter  R,G,B  [mat_name]
@@ -86,7 +89,7 @@ sp  x,y,z  diameter  R,G,B  [mat_name]
 | `x,y,z` | float | unlimited | Center position |
 | `diameter` | float | unlimited | Sphere diameter (radius = diameter / 2) |
 | `R,G,B` | int | `[0, 255]` | Diffuse color (used if no material name given) |
-| `mat_name` | string | — | Optional material name (must be loaded via `mtl` first) |
+| `mat_name` | string | - | Optional material name (must be loaded via `mtl` first) |
 
 **Examples:**
 ```
@@ -95,7 +98,7 @@ sp -5,4.5,0 8 0,0,0 emissive_red
 sp 0,8.5,0 5 0,0,0 sand
 ```
 
-### Plane — `pl`
+### Plane - `pl`
 
 ```
 pl  x,y,z  nx,ny,nz  R,G,B  [mat_name]  [texture_scaling]
@@ -106,7 +109,7 @@ pl  x,y,z  nx,ny,nz  R,G,B  [mat_name]  [texture_scaling]
 | `x,y,z` | float | unlimited | Point on the plane |
 | `nx,ny,nz` | float | `[-1, 1]` | Normalized normal vector |
 | `R,G,B` | int | `[0, 255]` | Diffuse color |
-| `mat_name` | string | — | Optional material name |
+| `mat_name` | string | - | Optional material name |
 | `texture_scaling` | float | unlimited | Texture coordinate scaling factor (default 1.0) |
 
 Tangent and bitangent vectors are automatically computed from the normal for normal mapping.
@@ -117,7 +120,7 @@ pl 0,0,0 0,1,0 0,0,0 checkerboard 1
 pl -5,0,0 1,0,0 0,0,0 gold 0.1
 ```
 
-### Cylinder — `cy` (WIP)
+### Cylinder - `cy` (WIP)
 
 ```
 cy  x,y,z  rx,ry,rz  diameter  height  R,G,B  [mat_name]
@@ -130,7 +133,7 @@ cy  x,y,z  rx,ry,rz  diameter  height  R,G,B  [mat_name]
 | `diameter` | float | unlimited | Cylinder diameter |
 | `height` | float | unlimited | Cylinder height |
 | `R,G,B` | int | `[0, 255]` | Diffuse color |
-| `mat_name` | string | — | Optional material name |
+| `mat_name` | string | - | Optional material name |
 
 **Note:** The cylinder parser is complete and creates objects in the scene, but the GPU render path for cylinders is a work-in-progress. Cylinders appear in the scene list and can be edited in the UI, but ray intersection on the GPU is not yet implemented.
 
@@ -139,7 +142,7 @@ cy  x,y,z  rx,ry,rz  diameter  height  R,G,B  [mat_name]
 cy 0,0,0 0,1,0 2 5 255,0,0
 ```
 
-### Mesh (OBJ) — `obj`
+### Mesh (OBJ) - `obj`
 
 ```
 obj  path  pos_x,pos_y,pos_z  rot_x,rot_y,rot_z  scale_x,scale_y,scale_z
@@ -147,7 +150,7 @@ obj  path  pos_x,pos_y,pos_z  rot_x,rot_y,rot_z  scale_x,scale_y,scale_z
 
 | Field | Type | Range | Description |
 |---|---|---|---|
-| `path` | string | — | Path to `.obj` file (relative to `miniRT/` or absolute) |
+| `path` | string | - | Path to `.obj` file (relative to `miniRT/` or absolute) |
 | `pos_x,y,z` | float | unlimited | Translation |
 | `rot_x,y,z` | float | unlimited | Rotation in radians (applied to vertices and normals) |
 | `scale_x,y,z` | float | unlimited | Scale factor per axis |
@@ -161,7 +164,7 @@ obj asset/porsche/porsche.obj 31,0,3 3,0,5 1,1,1
 obj asset/difract/difract.obj 0,-1,0 0,0,5 1,1,1
 ```
 
-### Skybox — `sky`
+### Skybox - `sky`
 
 ```
 sky  path
@@ -178,7 +181,7 @@ Loads an environment map that is sampled by the GPU when rays miss all scene obj
 sky asset/texture/skybox/nebula.ppm
 ```
 
-### Material Library — `mtl`
+### Material Library - `mtl`
 
 ```
 mtl  path
@@ -206,14 +209,14 @@ MTL files follow the Wavefront OBJ material specification with miniRT-specific e
 |---|---|---|
 | `newmtl` | `" *newmtl  *%s *\\n"` | Start new material with given name |
 | `Ns` | `" *Ns  *%f *\\n"` | Specular exponent (clamped to ≥ 50.0) |
-| `Ka` | `" *Ka  *%f[1]  *%f[1]  *%f[1] *\\n"` | Ambient color (float RGB, `[0,1]`) — creates a gray-level ambient texture |
-| `Kd` | `" *Kd  *%f[1]  *%f[1]  *%f[1] *\\n"` | Diffuse color (float RGB, `[0,1]`) — stored in BGR order on GPU, creates a color texture |
+| `Ka` | `" *Ka  *%f[1]  *%f[1]  *%f[1] *\\n"` | Ambient color (float RGB, `[0,1]`) - creates a gray-level ambient texture |
+| `Kd` | `" *Kd  *%f[1]  *%f[1]  *%f[1] *\\n"` | Diffuse color (float RGB, `[0,1]`) - stored in BGR order on GPU, creates a color texture |
 | `Ks` | `" *Ks  *%f[1]  *%f[1]  *%f[1] *\\n"` | Specular color (float RGB, `[0,1]`) |
-| `Ke` | `" *Ke  *%f[1000]  *%f[1000]  *%f[1000] *\\n"` | Emissive color (float RGB, `[0,1000]`) — allows HDR emission |
+| `Ke` | `" *Ke  *%f[1000]  *%f[1000]  *%f[1000] *\\n"` | Emissive color (float RGB, `[0,1000]`) - allows HDR emission |
 | `Ni` | `" *Ni  *%f[0,5] *\\n"` | Index of refraction (`[0, 5]`) |
-| `d` | `" *d  *%f[1] *\\n"` | Opacity (`[0, 1]`, 1 = opaque) — creates a gray-level opacity texture |
-| `Pr` | `" *Pr  *%f[1] *\\n"` | Roughness (`[0, 1]`, 0 = smooth) — creates a gray-level roughness texture |
-| `Pm` | `" *Pm  *%f[1] *\\n"` | Metalness (`[0, 1]`, 1 = metallic) — creates a gray-level metalness texture |
+| `d` | `" *d  *%f[1] *\\n"` | Opacity (`[0, 1]`, 1 = opaque) - creates a gray-level opacity texture |
+| `Pr` | `" *Pr  *%f[1] *\\n"` | Roughness (`[0, 1]`, 0 = smooth) - creates a gray-level roughness texture |
+| `Pm` | `" *Pm  *%f[1] *\\n"` | Metalness (`[0, 1]`, 1 = metallic) - creates a gray-level metalness texture |
 | `map_Kd` | `" *map_Kd  *%s *\\n"` | Diffuse/albedo texture map (PPM path); scaled by `Kd` values |
 | `map_bump` | `" *map_bump  *%s *\\n"` | Normal/bump map (PPM path) |
 | `map_Pr` | `" *map_Pr  *%s *\\n"` | Roughness texture map (PPM path); scaled by `Pr` value |
@@ -349,8 +352,8 @@ sky asset/texture/skybox/studio.ppm
 
 The scene is parsed in two phases:
 
-1. **Phase 1 — `rt_parser()`**: Reads the `.rt` file line by line, dispatches to type-specific parsers (`sphere()`, `plane()`, `obj()`, etc.), populates `t_scene` with CPU-side data (objects vector, materials vector, textures vector, lights vector, mesh vector).
+1. **Phase 1 - `rt_parser()`**: Reads the `.rt` file line by line, dispatches to type-specific parsers (`sphere()`, `plane()`, `obj()`, etc.), populates `t_scene` with CPU-side data (objects vector, materials vector, textures vector, lights vector, mesh vector).
 
-2. **Phase 2 — `fill_by_type()` → `fill_gpu_data()`**: Separates objects by type into GPU buffers (spheres, triangles, planes), creates BVH, uploads all buffers to the GPU via `clCreateBuffer` / `clEnqueueWriteBuffer`.
+2. **Phase 2 - `fill_by_type()` → `fill_gpu_data()`**: Separates objects by type into GPU buffers (spheres, triangles, planes), creates BVH, uploads all buffers to the GPU via `clCreateBuffer` / `clEnqueueWriteBuffer`.
 
-The OBJ and MTL parsers are recursive — `obj()` calls `parse_obj_file()` which calls `parse_obj_type()` → `parse_face()`/`parse_vertex()` etc., and `mtl()` calls `parse_mtl_file()` → `parse_mtl_type()` for each line. Both support nested file references via `mtllib` inside OBJ files.
+The OBJ and MTL parsers are recursive - `obj()` calls `parse_obj_file()` which calls `parse_obj_type()` → `parse_face()`/`parse_vertex()` etc., and `mtl()` calls `parse_mtl_file()` → `parse_mtl_type()` for each line. Both support nested file references via `mtllib` inside OBJ files.

@@ -29,30 +29,18 @@ __kernel void normal_debug(t_camera_gpu cam, __constant t_bvh_node_gpu *bvh,
 
 The surface normal $\hat{N} = (N_x, N_y, N_z)$ is mapped to RGB colorspace as:
 
-$$
-\text{color} =
+$$\text{color} =
 \begin{pmatrix}
 N_x \cdot 0.5 + 0.5 \\
 N_y \cdot 0.5 + 0.5 \\
 N_z \cdot 0.5 + 0.5
-\end{pmatrix}
-$$
+\end{pmatrix}$$
 
-Since each normal component is in $[-1, 1]$, the mapping shifts it to $[0, 1]$:
+Since each normal component is in $[-1, 1]$, the mapping shifts it to $[0, 1]$. For example, +X (right) maps to pink/red, -X (left) maps to teal, +Y (up) maps to green, -Y (down) maps to purple, +Z (forward) maps to blue, and -Z (backward) maps to yellow. When a ray misses all geometry, the pixel is set to black $(0, 0, 0)$.
 
-| Normal Direction | X (Red) | Y (Green) | Z (Blue) | Resulting Color |
-|------------------|---------|-----------|----------|-----------------|
-| +X (right)      | 1.0     | 0.5       | 0.5      | Pink/red        |
-| -X (left)        | 0.0     | 0.5       | 0.5      | Teal            |
-| +Y (up)          | 0.5     | 1.0       | 0.5      | Green           |
-| -Y (down)        | 0.5     | 0.0       | 0.5      | Purple          |
-| +Z (forward)     | 0.5     | 0.5       | 1.0      | Blue            |
-| -Z (backward)    | 0.5     | 0.5       | 0.0      | Yellow          |
-
-When a ray misses all geometry, the pixel is set to black $(0, 0, 0)$.
+![Normal debug screenshot](docs/assets/normal-debug-mode.png)
+*Screenshot of normal debug mode showing surface normals mapped to RGB colors.*
 
 ## Key Details
 
-- Uses `sample_materials()` to get the **mapped normal** (after tangent-space normal map perturbation), not the raw geometric normal. This means normal map textures are visible in the debug view.
-- Uses progressive accumulation: `img[pixel] += ...` — over multiple frames the result converges but since the normal is deterministic, it stabilizes immediately (no stochastic component).
-- Miss pixels remain black, clearly distinguishing background from geometry.
+The mode uses `sample_materials()` to get the **mapped normal** (after tangent-space normal map perturbation), not the raw geometric normal. This means normal map textures are visible in the debug view. It uses progressive accumulation with `img[pixel] += ...`, but since the normal is deterministic, the result stabilizes immediately with no stochastic component. Miss pixels remain black, clearly distinguishing background from geometry.

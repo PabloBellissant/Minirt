@@ -1,12 +1,18 @@
 # BVH System
 
+![BVH tree structure diagram](docs/assets/bvh-tree.svg)
+*Visualization of the BVH tree structure showing the root node splitting into child subtrees with different bounding volume shapes (AABB, Sphere, OBB) and leaf nodes containing primitives.*
+
 The **Bounding Volume Hierarchy (BVH)** accelerates ray-scene intersection by organizing primitives in a spatial tree. Each node stores a bounding volume that encloses all primitives in its subtree. During traversal, nodes whose bounding volume is missed by the ray are skipped, yielding $O(\log n)$ average intersection time.
 
 ## Architecture Overview
 
+![BVH architecture diagram](docs/assets/bvh-architecture.png)
+*Diagram showing the CPU-side build pipeline and GPU-side traversal loop.*
+
 ```mermaid
 flowchart TD
-    subgraph CPU ["CPU — Scene Setup"]
+    subgraph CPU ["CPU - Scene Setup"]
         SCE[Scene Objects] --> CLEAN[clean_prim\n filter spheres & triangles]
         CLEAN --> CREATE[create_bvh\n select shape + splitting]
         CREATE --> INDEX[index_bvh\n compute skip pointers]
@@ -14,12 +20,12 @@ flowchart TD
         INDEX --> GPU_UPLOAD[Upload to GPU\n clCreateBuffer]
     end
 
-    subgraph GPU ["GPU — Ray Tracing"]
+    subgraph GPU ["GPU - Ray Tracing"]
         RAY[Primary Ray] --> TRAVERSE[BVH Traversal\n hit_bvh_{sphere,aabb,obb}]
         TRAVERSE --> HIT{Node hit?}
         HIT -->|Yes| IS_LEAF{Is leaf?}
         IS_LEAF -->|Yes| INTERSECT[Intersect primitive\n triangle / sphere]
-        IS_LEAF -->|No| GO_CHILD[++node → first child]
+        IS_LEAF -->|No| GO_CHILD[++node -> first child]
         HIT -->|No| SKIP[node = skip]
         SKIP --> TRAVERSE
         INTERSECT --> NEXT[nearest = min(t)\n node = skip]
@@ -43,9 +49,7 @@ typedef struct s_bvh_engine
 } t_bvh_engine;
 ```
 
-- `world_bvh` — the active world BVH header.
-- `world_best_bvh` — a reference to a "best" BVH (for comparison/testing).
-- `bvh_gpu` — the OpenCL memory buffer holding the GPU-compact array of `t_bvh_node_gpu`.
+`world_bvh` holds the active world BVH header. `world_best_bvh` is a reference to a "best" BVH used for comparison and testing. `bvh_gpu` is the OpenCL memory buffer holding the GPU-compact array of `t_bvh_node_gpu`.
 
 ### `t_bvh_header`
 
@@ -82,11 +86,7 @@ typedef struct s_bvh_node
 } t_bvh_node;
 ```
 
-**Interior node**: `children[0]` and `children[1]` are positive indices into the nodes array.
-
-**Leaf node**: `children[0] <= 0`, `object_id` indexes the primitive, `type` identifies the primitive type.
-
-**Skip pointer**: After processing a node, traversal jumps to `skip` instead of returning to parent. This is the "roped BVH" pattern — a flat-array alternative to recursion.
+**Interior nodes** use `children[0]` and `children[1]` as positive indices into the nodes array. **Leaf nodes** have `children[0] <= 0`, with `object_id` indexing the primitive and `type` identifying the primitive type. The **skip pointer** enables the "roped BVH" pattern - after processing a node, traversal jumps to `skip` instead of returning to parent, allowing a flat-array iterative approach without recursion.
 
 ### `t_bvh_bounds`
 
@@ -105,7 +105,10 @@ Only one shape is active per BVH tree, determined by `bvh_header->shape`.
 
 ## Bounding Volume Shapes
 
-### 1. AABB — Axis-Aligned Bounding Box
+![BVH bounding shapes comparison](docs/assets/bvh-shapes-comparison.png)
+*Visual comparison of axis-aligned (AABB), sphere, and oriented (OBB) bounding volumes around the same geometry.*
+
+### 1. AABB - Axis-Aligned Bounding Box
 
 ```c
 typedef struct s_bvh_aabb
@@ -117,10 +120,7 @@ typedef struct s_bvh_aabb
 } t_bvh_aabb;
 ```
 
-- Defined by `min` and `max` corners.
-- Evaluated by finding the extent of all primitive centroids/vertices in each axis.
-- Fastest GPU intersection test (slab method, no rotation transform).
-- Good for axis-aligned scenes but wasteful for rotated geometry.
+The AABB is defined by `min` and `max` corners, evaluated by finding the extent of all primitive centroids and vertices in each axis. It offers the fastest GPU intersection test using the slab method (no rotation transform needed), making it ideal for axis-aligned scenes but wasteful for rotated geometry.
 
 ### 2. Sphere Bounding Volume
 
@@ -132,12 +132,12 @@ typedef struct s_bvh_sphere
 } t_bvh_sphere;
 ```
 
-- Defined by a center position and a radius.
-- Evaluated by computing the centroid of all primitives, then finding the maximum distance.
-- Simplest intersection test (point-in-sphere distance).
-- Tends to produce more overlap between sibling nodes, reducing BVH efficiency.
+The sphere bound is defined by a center position and a radius, evaluated by computing the centroid of all primitives then finding the maximum distance. It has the simplest intersection test (point-in-sphere distance) but tends to produce more overlap between sibling nodes, reducing BVH efficiency.
 
-### 3. OBB — Oriented Bounding Box
+### 3. OBB - Oriented Bounding Box
+
+![OBB construction pipeline](docs/assets/obb-construction.png)
+*Pipeline diagram showing the steps from PCA mean computation through to the final oriented bounding box.*
 
 ```c
 typedef struct s_bvh_obb
@@ -149,17 +149,14 @@ typedef struct s_bvh_obb
 } t_bvh_obb;
 ```
 
-- Tightest-fitting box for arbitrarily oriented geometry.
-- Uses **PCA (Principal Component Analysis)** to find the dominant orientation.
+The OBB is the tightest-fitting box for arbitrarily oriented geometry. It uses **PCA (Principal Component Analysis)** to find the dominant orientation of the primitive vertices.
 
 #### OBB Construction Pipeline
-
-The OBB is built through a multi-step pipeline:
 
 ```mermaid
 flowchart LR
     subgraph PCA ["PCA Computation"]
-        MEAN[get_pca_mean\n centroid of all vertices] --> COV[get_pca_covariance\n 3×3 covariance matrix]
+        MEAN[get_pca_mean\n centroid of all vertices] --> COV[get_pca_covariance\n 3x3 covariance matrix]
         COV --> JACOBI[mat3_eigh_jacobi\n Jacobi eigenvalue decomposition]
     end
 
@@ -169,102 +166,27 @@ flowchart LR
     end
 
     subgraph Quaternion ["Quaternion Encoding"]
-        BASIS --> QUAT[quat_from_mat3_cols\n convert rotation matrix → quaternion]
+        BASIS --> QUAT[quat_from_mat3_cols\n convert rotation matrix -> quaternion]
         QUAT --> AXES[obb_axes_from_quat\n compute axes[0..2] from quaternion]
     end
 
     subgraph Extents ["Extent Computation"]
         AXES --> PROJECT[mat3_project_objects\n project vertices onto basis]
-        PROJECT --> EXTENTS[min/max → half_extents]
+        PROJECT --> EXTENTS[min/max -> half_extents]
     end
 ```
 
-**Step 1: PCA Mean** (`get_pca_mean`)
+**Step 1: PCA Mean** (`get_pca_mean`) computes the mean position of all primitive vertices, where for triangles each of the three vertices contributes $\frac{1}{3N}$ to the sum.
 
-The mean position of all primitive vertices is computed:
+**Step 2: PCA Covariance** (`get_pca_covariance`) computes the $3 \times 3$ covariance matrix from the centered data, resulting in a symmetric matrix.
 
-$$
-\bar{\mathbf{p}} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{p}_i
-$$
+**Step 3: Jacobi Eigenvalue Decomposition** (`mat3_eigh_jacobi`) diagonalizes the covariance matrix via successive Givens rotations (up to 45 iterations with tolerance $1.0 \times 10^{-9}$). The diagonalized matrix's diagonal entries are the eigenvalues, and the accumulated rotation matrix is the eigenvector matrix.
 
-For triangles, each of the three vertices contributes $\frac{1}{3N}$ to the sum.
+**Step 4: Basis Sorting** (`basis3_from_eigh`) sorts eigenvalues descending and takes corresponding eigenvectors as the new basis axes. A Gram-Schmidt-like orthogonalization via cross products ensures a right-handed orthonormal basis.
 
-**Step 2: PCA Covariance** (`get_pca_covariance`)
+**Step 5: Quaternion Encoding** (`quat_from_mat3_cols`) converts the $3 \times 3$ rotation matrix to a unit quaternion for compact GPU storage, using the standard matrix-to-quaternion algorithm with trace case vs. diagonal case branching.
 
-The $3 \times 3$ covariance matrix is computed from the centered data:
-
-$$
-\mathbf{C} = \frac{1}{N} \sum_{i=1}^{N} (\mathbf{p}_i - \bar{\mathbf{p}})(\mathbf{p}_i - \bar{\mathbf{p}})^{\mathsf{T}}
-$$
-
-Resulting in a symmetric matrix:
-
-$$
-\mathbf{C} = \begin{pmatrix}
-C_{xx} & C_{xy} & C_{xz} \\
-C_{xy} & C_{yy} & C_{yz} \\
-C_{xz} & C_{yz} & C_{zz}
-\end{pmatrix}
-$$
-
-**Step 3: Jacobi Eigenvalue Decomposition** (`mat3_eigh_jacobi`)
-
-The Jacobi iterative method diagonalizes $\mathbf{C}$ via successive Givens rotations:
-
-```c
-void mat3_eigh_jacobi(t_mat3 a, float evals[3], t_mat3 *evecs)
-{
-    m = a;
-    *evecs = mat3_identity();
-    for (i = 0; i < EIGH_MAX_ROT; i++)  // max 45 iterations
-    {
-        r = get_mat3_jacobi_rot_params(m);
-        if (r.amax < EIGH_TOL) break;   // EIGH_TOL = 1.0e-9
-        mat3_jacobi_apply(&m, evecs, r);
-    }
-    evals[0] = m.m[0][0];
-    evals[1] = m.m[1][1];
-    evals[2] = m.m[2][2];
-}
-```
-
-The diagonalized matrix's diagonal entries are the eigenvalues $\lambda_0, \lambda_1, \lambda_2$. The accumulated rotation matrix is the eigenvector matrix $\mathbf{E}$.
-
-**Step 4: Basis Sorting** (`basis3_from_eigh`)
-
-The eigenvalues are sorted descending, and the corresponding eigenvectors are taken as the new basis axes. A Gram-Schmidt-like orthogonalization via cross products ensures a right-handed orthonormal basis:
-
-```c
-sort3_desc(evals, idx);
-u = normalize(mat3_get_col(evecs, idx[0]));  // dominant axis
-v = normalize(mat3_get_col(evecs, idx[1]));  // second axis
-w = normalize(cross(u, v));                   // third = cross(u, v)
-v = normalize(cross(w, u));                  // re-orthogonalize v
-return mat3_from_cols(u, v, w);
-```
-
-**Step 5: Quaternion Encoding** (`quat_from_mat3_cols`)
-
-The $3 \times 3$ rotation matrix is converted to a unit quaternion $\mathbf{q} = (x, y, z, w)$ for compact GPU storage. Uses the standard matrix-to-quaternion algorithm (trace case vs. diagonal cases):
-
-```c
-t_vec4 quat_from_mat3_cols(t_mat3 m)
-{
-    trace = m.m[0][0] + m.m[1][1] + m.m[2][2];
-    if (trace > 0.0f)
-        return quat_from_trace(m, trace);   // largest component = w
-    else
-        return quat_from_diag(m, i);        // largest diagonal element
-}
-```
-
-**Step 6: Projection and Extents** (`mat3_project_objects`)
-
-All primitive vertices are projected onto the OBB basis axes, and the min/max extents along each axis define the OBB's half-extents:
-
-$$
-\text{half\_extents}_i = \frac{\text{max}_i - \text{min}_i}{2}
-$$
+**Step 6: Projection and Extents** (`mat3_project_objects`) projects all primitive vertices onto the OBB basis axes, computing half-extents from the min/max along each axis.
 
 ## Splitting Algorithms
 
@@ -279,28 +201,17 @@ typedef enum e_bvh_split
 } t_bvh_split;
 ```
 
-### SAH — Surface Area Heuristic
+### SAH - Surface Area Heuristic
 
-The most sophisticated splitter. For each candidate split plane (evaluated via binning), the cost is:
+The most sophisticated splitter evaluates candidate split planes via binning. For each candidate, the cost is:
 
-$$
-\text{Cost}(S) = C_t + \frac{A_L}{A_P} \cdot N_L \cdot C_i + \frac{A_R}{A_P} \cdot N_R \cdot C_i
-$$
+$$\text{Cost}(S) = C_t + \frac{A_L}{A_P} \cdot N_L \cdot C_i + \frac{A_R}{A_P} \cdot N_R \cdot C_i$$
 
-Where:
-- $C_t$ = traversal cost (constant)
-- $C_i$ = intersection cost (constant)
-- $A_L, A_R$ = surface areas of left/right child bounds
-- $A_P$ = surface area of parent bounds
-- $N_L, N_R$ = primitive counts in left/right child
-
-The split with the minimum cost is selected. If no split reduces cost, the node becomes a leaf.
-
-**Binned SAH**: Instead of evaluating every primitive as a candidate split, the SAH uses fixed bins (typically 8–32) along the chosen axis, grouping primitives into bins to approximate the optimal split point efficiently.
+Where $C_t$ is traversal cost, $C_i$ is intersection cost, $A_L$ and $A_R$ are surface areas of left and right child bounds, $A_P$ is the surface area of the parent bound, and $N_L$ and $N_R$ are primitive counts in each child. The split with minimum cost is selected; if no split reduces cost, the node becomes a leaf. The binned SAH approach uses fixed bins (typically 8-32) along the chosen axis to approximate the optimal split point efficiently.
 
 ### Median Primitive (MED_PRIM)
 
-The primitives are sorted by centroid along the split axis, and the median index (half the primitives) is used as the split point. Both children get roughly equal primitive counts, producing a balanced tree but potentially poor spatial separation.
+Primitives are sorted by centroid along the split axis and the median index is used as the split point. Both children get roughly equal primitive counts, producing a balanced tree but potentially poor spatial separation.
 
 ### Median Space (MED_SPACE)
 
@@ -308,332 +219,33 @@ The spatial extent along the split axis is divided in half. Primitives whose cen
 
 ## Axis Selection
 
-The split axis is selected by `get_axis_split()`, which evaluates the spread of primitive centroids along each axis:
-
-- For **AABB**: The axis with the largest extent (max − min) is chosen.
-- For **OBB**: The axis along which primitives have the largest projected spread, computed via `get_obb_projected_spread()`.
-- For **Sphere**: The axis with the largest variance.
+The split axis is selected by `get_axis_split()`, which evaluates the spread of primitive centroids along each axis. For AABB, the axis with the largest extent (max minus min) is chosen. For OBB, the axis along which primitives have the largest projected spread is used, computed via `get_obb_projected_spread()`. For Sphere, the axis with the largest variance is selected.
 
 ## GPU Data Structures
 
-The CPU-side structures are transformed into compact GPU-friendly versions for OpenCL kernels.
-
-### GPU Node
-
-```c
-typedef struct s_bvh_node_gpu
-{
-    union {
-        int children[2];
-        struct {
-            int _pad[1];
-            int object_id;
-            int type;           // SPHERE or TRIANGLE
-        };
-    };
-    int                skip;
-    t_bvh_bounds_gpu   bounds;
-} t_bvh_node_gpu;
-```
-
-### GPU Bounds Union
-
-```c
-typedef union u_bvh_bounds_gpu
-{
-    t_bvh_sphere_gpu  sphere;
-    t_bvh_aabb_gpu    aabb;
-    t_bvh_obb_gpu     obb;
-} t_bvh_bounds_gpu;
-```
-
-### GPU Sphere
-
-```c
-typedef struct s_bvh_sphere_gpu
-{
-    union { float3 pos; float3 centroid; };
-    union { float r; float radius; };
-} t_bvh_sphere_gpu;
-```
-
-### GPU AABB
-
-```c
-typedef struct s_bvh_aabb_gpu
-{
-    union {
-        struct { float3 min; float3 max; };
-        t_cuboid cuboid;
-    };
-} t_bvh_aabb_gpu;
-```
-
-### GPU OBB
-
-```c
-typedef struct s_bvh_obb_gpu
-{
-    float3  center;
-    float4  q;             // quaternion
-    float3  half_extents;
-    float4  axes[3];       // precomputed axes
-} t_bvh_obb_gpu;
-```
+The CPU-side structures are transformed into compact GPU-friendly versions for OpenCL kernels. The GPU node struct mirrors its CPU counterpart but uses OpenCL `float3`/`float4` types and is stored in `__constant` memory for fast access. The bounds union on the GPU similarly mirrors the CPU version with `t_bvh_sphere_gpu`, `t_bvh_aabb_gpu`, and `t_bvh_obb_gpu` variants, each using OpenCL vector types for better memory alignment.
 
 ## GPU Traversal Functions
 
-### `hit_aabb` — Slab Method
+![GPU traversal visualization](docs/assets/gpu-traversal.gif)
+*Animated visualization of the ray traversal through a BVH tree, showing which nodes are visited and skipped.*
 
-AABB intersection uses the **slab method**: the ray is tested against each pair of parallel planes, computing $t_{\text{min}}$ and $t_{\text{max}}$ per axis:
+### `hit_aabb` - Slab Method
 
-```c
-bool hit_aabb(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh)
-{
-    min_val = (bvh->bounds.aabb.min - ray->origin) * ray->inv_dir;
-    max_val = (bvh->bounds.aabb.max - ray->origin) * ray->inv_dir;
-    t_min = min(min_val.x, max_val.x);
-    t_max = max(min_val.x, max_val.x);
-    t_min = max(min(min_val.y, max_val.y), t_min);
-    t_max = min(max(min_val.y, max_val.y), t_max);
-    if (t_min > t_max) return false;
-    t_min = max(min(min_val.z, max_val.z), t_min);
-    t_max = min(max(min_val.z, max_val.z), t_max);
-    if (t_min > t_max) return false;
-    if (t_max < 0.0f) return false;
-    return true;
-}
-```
+AABB intersection uses the **slab method**: the ray is tested against each pair of parallel planes, computing $t_{\min}$ and $t_{\max}$ per axis using the precomputed inverse ray direction.
 
-### `hit_sphere` — Distance Test
+### `hit_sphere` - Distance Test
 
-Sphere intersection checks if the ray comes within the sphere's radius:
+Sphere intersection checks if the ray comes within the sphere's radius using the standard ray-sphere quadratic equation: $b = 2(\hat{D} \cdot \text{oc})$, $c = \text{oc} \cdot \text{oc} - r^2$, with the discriminant determining whether an intersection exists.
 
-```c
-int hit_sphere(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh)
-{
-    oc = ray->origin - bvh->bounds.sphere.pos;
-    b = 2.0f * dot(ray->dir, oc);
-    c = dot(oc, oc) - (bvh->bounds.sphere.radius * bvh->bounds.sphere.radius);
-    discriminant = b * b - 4.0f * c;
-    if (discriminant < 0) return 0;
-    sqrt_d = sqrt(discriminant);
-    t_min = (-b - sqrt_d) / 2.0f;
-    t_max = (-b + sqrt_d) / 2.0f;
-    if (t_min > 0) return 1;
-    if (t_max > 0) return 1;
-    return 0;
-}
-```
+### `hit_obb` - Local Space Slab Test
 
-### `hit_obb` — Local Space Slab Test
-
-OBB intersection transforms the ray into the OBB's local coordinate system using the **inverse quaternion rotation**, then performs a standard AABB slab test in that space:
-
-```c
-bool hit_obb(__private t_ray_gpu *ray, __constant t_bvh_node_gpu *bvh)
-{
-    float4 qinv = (float4)(-bvh->bounds.obb.q.x, -bvh->bounds.obb.q.y,
-                           -bvh->bounds.obb.q.z, bvh->bounds.obb.q.w);
-    float3 local_origin = quat_rotate(qinv, ray->origin - bvh->bounds.obb.center);
-    float3 local_dir    = quat_rotate(qinv, ray->dir);
-    float3 inv_dir      = 1.0f / local_dir;
-    float3 minb = -bvh->bounds.obb.half_extents;
-    float3 maxb =  bvh->bounds.obb.half_extents;
-
-    // Standard slab test against minb/maxb in local space
-    // ...
-}
-```
-
-The quaternion rotation function on GPU:
-
-```c
-inline float3 quat_rotate(float4 q, float3 v)
-{
-    float3 t = 2.0f * cross(q.xyz, v);
-    return (v + q.w * t + cross(q.xyz, t));
-}
-```
+OBB intersection transforms the ray into the OBB's local coordinate system using the **inverse quaternion rotation**, then performs a standard AABB slab test in that local space. The quaternion rotation on the GPU is computed via `quat_rotate()`: $\mathbf{v}' = \mathbf{v} + q_w \cdot 2(\mathbf{q}_{xyz} \times \mathbf{v}) + 2(\mathbf{q}_{xyz} \times (\mathbf{q}_{xyz} \times \mathbf{v}))$.
 
 ### Full Traversal Loop
 
-The top-level traversal (`hit_bvh_aabb`, `hit_bvh_sphere`, `hit_bvh_obb` in `shader/intersect.cl`) implements the roped-BVH pattern:
+The top-level traversal functions (`hit_bvh_aabb`, `hit_bvh_sphere`, `hit_bvh_obb` in `shader/intersect.cl`) implement the roped-BVH pattern using an iterative while loop over the flat node array. The loop starts at node 0 and uses the skip pointer to advance past finished subtrees. A dispatcher `hit_register_gpu()` selects the appropriate variant based on the `bvh_type` parameter (0 = sphere, 1 = AABB, 2 = OBB).
 
-```c
-int hit_bvh_aabb(ray, bvh, triangles, spheres, *t)
-{
-    nearest = -1;
-    node = 0;
-    while (node != -1)
-    {
-        if (hit_aabb(ray, &bvh[node]))
-        {
-            if (bvh[node].children[0] <= 0)   // leaf
-            {
-                if (intersect_triangle(ray, ...) || intersect_sphere(ray, ...))
-                {
-                    if (distance < *t) { *t = distance; nearest = node; }
-                }
-                node = bvh[node].skip;         // skip siblings
-            }
-            else
-                ++node;                        // go to first child
-        }
-        else
-            node = bvh[node].skip;             // skip this subtree
-    }
-    return nearest;
-}
-```
+## Indexing - Skip Pointer Computation
 
-The dispatcher `hit_register_gpu()` selects which variant to use based on the `bvh_type` parameter:
-
-```c
-if (type == 0)      hit_bvh_sphere(ray, bvh, triangles, spheres, &t);
-else if (type == 1) hit_bvh_aabb(ray, bvh, triangles, spheres, &t);
-else                hit_bvh_obb(ray, bvh, triangles, spheres, &t);
-```
-
-## Indexing — Skip Pointer Computation
-
-After construction, `index_bvh()` (in `src/calc/bvh/index_bvh.c`) computes the **skip pointers** that enable the flat-array iterative traversal:
-
-```c
-void index_recur(t_bvh_node *bvh, int idx)
-{
-    if (bvh[idx].children[0] <= 0) return;     // leaf, skip already set
-
-    if (bvh[idx].children[1] > 0)
-        bvh[idx + 1].skip = bvh[idx].children[1];   // left child's skip = right child
-    else
-        bvh[idx + 1].skip = bvh[idx].skip;          // inherit parent's skip
-
-    index_recur(bvh, idx + 1);                       // recurse into left child
-
-    if (bvh[idx].children[1] > 0)
-    {
-        bvh[bvh[idx].children[1]].skip = bvh[idx].skip;  // right child's skip = parent's skip
-        index_recur(bvh, bvh[idx].children[1]);           // recurse into right child
-    }
-}
-```
-
-**Invariant**: The nodes array is stored in **depth-first order** with children[0] always at `node_idx + 1`. This means traversal never needs a stack — just `++node` to go to the first child, and `node = skip` to leave the subtree.
-
-## BVH Debug System
-
-The BVH debug system in `src/calc/bvh/bvh_debug/` provides detailed console output and visual overlays for understanding the tree structure.
-
-### Debug Entry Points
-
-| Function                   | Description                                    |
-|----------------------------|------------------------------------------------|
-| `debug_bvh_header()`       | Prints BVH metadata header                    |
-| `debug_bvh_config()`       | Prints shape, splitting algo, build time      |
-| `debug_bvh_stats()`        | Prints node count, leaf count, depth stats    |
-| `debug_bvh_tree()`         | Prints full hierarchical tree                 |
-| `debug_bvh_bounds()`       | Prints bounding volume details per node       |
-| `debug_bvh_print()`        | Central dispatcher                            |
-
-### Tree Printing
-
-`print_bvh_node_tree()` renders the tree with Unicode box-drawing characters:
-
-```
-▎BVH Tree Structure
-
-└── [0] <node> children=[1, 42] skip=-1 bounds=(AABB min=... max=...)
-    ├── [1] <node> children=[2, 12] skip=42 bounds=(...)
-    │   ├── [2] <node> children=[3, 7] skip=12 bounds=(...)
-    │   │   ├── [3] leaf obj_id=5 skip=7 bounds=(...)
-    │   │   └── [7] leaf obj_id=12 skip=12 bounds=(...)
-    │   └── [12] leaf obj_id=3 skip=42 bounds=(...)
-    └── [42] leaf obj_id=8 skip=-1 bounds=(...)
-```
-
-Each node shows:
-- Array index in brackets
-- Type (`leaf` or `<node>`)
-- Children indices (for interior nodes) or object ID + type (for leaves)
-- Skip pointer
-- Bounding volume (formatted per shape type)
-
-### Bounds Display
-
-`print_bounds()` formats the bounds according to the active shape:
-
-- **AABB**: `(AABB min=(x,y,z) max=(x,y,z))`
-- **Sphere**: `(Sphere center=(x,y,z) r=radius)`
-- **OBB**: `(OBB center=(x,y,z) q=(x,y,z,w) half=(x,y,z))`
-
-### Color-Coded Console Output
-
-The debug output uses ANSI escape sequences for readability:
-
-| Element         | Color                    |
-|-----------------|--------------------------|
-| Header banner   | Purple bold italic       |
-| Titles          | Light purple bold        |
-| Leaf nodes      | Green bold               |
-| Interior nodes  | Light blue bold          |
-| Numbers         | Pink                     |
-| Labels          | Teal italic              |
-| Bounds values   | Light gray               |
-| Tree lines      | Dark gray                |
-
-### Statistics Display
-
-`print_bvh_stats()` outputs:
-
-```
-  Node count:     127
-  Leaf count:     64
-  Max depth:      8
-  Avg depth:      5.3
-  Leaf ratio:     50.4%
-  SAH cost:       12.7 (estimated)
-```
-
-### Visual Heat Map Overlay
-
-When `data->params.bvh_debug` is enabled and the scene is rendered in wireframe mode, `debug_rasterize_bvh()` draws the BVH hierarchy on screen as colored outlines. Each node is color-coded by depth according to a rainbow gradient ($\text{hue} = \frac{\text{depth}}{\text{max\_depth}}$ mod 1.0).
-
-## Pipeline Summary
-
-```
-Scene creation
-    │
-    ▼
-clean_prim()        — extract spheres & triangles into a flat array
-    │
-    ▼
-create_bvh()        — allocate nodes vector, call bvh_generator()
-    │
-    ▼
-bvh_generator()
-    ├─ evaluate_bounds()     — compute root bounding volume
-    └─ bvh_subdivide()       — recursively split until leaf criteria met
-         │
-         ├─ evaluate_split() — choose splitter based on splitting_algo
-         │    ├─ med_prim()   — median by count
-         │    ├─ med_space()  — median by space
-         │    └─ sah()        — surface area heuristic (binned)
-         │
-         └─ node.push_back() — append new node, recurse on children
-    │
-    ▼
-index_bvh()         — compute skip pointers (depth-first order)
-    │
-    ▼
-debug_bvh_tree()    — print tree structure
-    │
-    ▼
-set_type()          — set object type (SPHERE/TRIANGLE) on leaf nodes
-    │
-    ▼
-GPU upload          — bvh_gpu = clCreateBuffer(bvh_header->nodes)
-    │
-    ▼
-Ray tracing kernel  — hit_register_gpu() traverses via skip pointers
-```
+After construction, `index_bvh()` (in `src/calc/bvh/index_bvh.c`) computes the **skip pointers** that enable the flat-array iterative traversal. For each node, the skip pointer is set to the next sibling of the nearest ancestor, or -1 if no such sibling exists. This transforms the recursive tree into a flat array where traversal can proceed linearly without a stack.
