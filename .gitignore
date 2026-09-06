@@ -8,5 +8,6 @@
 *.a
 Minirt
 MiniRT
+miniRT
 *.out
 compile_commands.json
