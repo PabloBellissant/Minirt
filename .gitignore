@@ -12,3 +12,6 @@ miniRT
 *.out
 compile_commands.json
 lib/minilibx-linux/test/mlx-test
+
+Minirt_render.ppm
+exported.rt
