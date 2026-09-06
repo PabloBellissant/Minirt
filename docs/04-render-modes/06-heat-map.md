@@ -20,7 +20,9 @@ heat() kernel (per pixel)
 
 Three variants of depth counting exist, one per BVH bound type: `hit_bvh_depth_sphere` for sphere BVH, `hit_bvh_depth_aabb` for AABB BVH, and `hit_bvh_depth_obb` for OBB BVH. Each function traverses the BVH while counting how many nodes were **entered** (i.e., the ray intersected the node's bounding volume). The traversal uses the standard BVH `skip` pointer pattern, counting hits for interior nodes only and skipping leaf/empty nodes. The dispatcher selects the variant based on `bvh_type` (0 = sphere, 1 = AABB, 2 = OBB).
 
-![](../assets/svg/heat-map-bvh.svg)
+<table cellpadding="0" cellspacing="0" border="0" style="border:none;">
+<tr><td><img src="../assets/img/bvh-volume-theme3.png" width="100%"></td><td><img src="../assets/img/bvh-volume-theme4.png" width="100%"></td></tr>
+</table>
 
 *Heat map visualization of BVH traversal depth - BVH themes showing traversal depth color-coded across different palette mappings.*
 

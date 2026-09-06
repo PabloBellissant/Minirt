@@ -29,7 +29,7 @@ wireframe_render()
 
 All geometry types are rasterized as **wireframe outlines**. **Spheres** are projected as screen-space circles via `rasterize_sphere_outline()`. **Triangles** have three edge lines drawn with `rasterize_3d_line()`. **Planes** are projected as a bounded quad outline. **Meshes** rasterize each constituent triangle individually. All outlines are drawn in **white** (`rgb_int(255, 255, 255)`) by default.
 
-![Wireframe render screenshot](docs/assets/img/bvh-volume-theme1.png)
+![Wireframe render screenshot](../assets/img/bvh-volume-theme1.png)
 *Screenshot of wireframe mode showing object outlines and light circles.*
 
 ### Light Circles

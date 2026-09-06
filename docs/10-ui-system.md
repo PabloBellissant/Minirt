@@ -2,7 +2,7 @@
 
 ## Overview
 
-![UI Selection](docs/assets/img/ui-selection.png)
+![UI Selection](assets/img/ui-selection.png)
 *Screenshot of the miniRT UI showing the left panel with scene hierarchy list, object selection in the viewport, and edit panels.*
 
 miniRT features a full hierarchical UI system built on top of the **mlxui** library, a custom minilibx UI toolkit. The UI provides a **scene hierarchy list** (left panel) showing all objects, lights, and the camera; **edit panels** for modifying object geometry, materials, and render settings in real time; **on-display information** including an FPS counter, info text, and render mode switch buttons with logos; a **selection system** via click, drag (rubber-band), and scene list interaction; a **color theme** with a customizable Material Design-like palette; and **TTF font rendering** via the custom `font_renderer` library.

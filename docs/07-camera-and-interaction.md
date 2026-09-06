@@ -61,16 +61,18 @@ The viewport is centered on the forward axis at unit distance from the camera po
 
 The GPU ray generation in `calc_rays.cl` implements a thin-lens DOF model. Sub-pixel jitter provides antialiasing. The ray direction is initially computed toward the pixel center, then the focal point is determined by extending the ray to `focus_dist`. A random point on a disk (scaled by `lens_radius`) is sampled, and the final ray origin is offset by this lens sample while the direction is re-targeted toward the focal point.
 
+![Camera DOF diagram](assets/svg/camera-dof.svg)
+
 **`focus_dist`** controls the distance at which objects are perfectly in focus (zero circle of confusion), adjustable via `T` (increase x1.05) and `G` (decrease /1.05) with range [0.2, 10000]. **`lens_radius`** controls the aperture size; larger values produce a shallower depth of field (more blur), adjustable via `Y` (increase x1.05) and `H` (decrease /1.05) with range [0.0, 0.5]. When `lens_radius = 0`, the camera acts as a perfect pinhole with no DOF.
 
-![Depth of field comparison](docs/assets/img/depth-of-field.png)
+![Depth of field comparison](assets/img/depth-of-field.png)
 *Comparison of pinhole (lens_radius=0) vs. shallow DOF (lens_radius > 0) with focus on a specific object.*
 
 ---
 
 ## Exposure Control
 
-**New in this version:** Real-time exposure control via `F5` / `F6`. Pressing F5 multiplies exposure by 1.3 (brighten) and F6 divides by 1.3 (darken). Exposure is stored as `data->params.exposure` (a float) and applied in the `draw_accu` kernel as a multiplier on the sample count divisor. Higher exposure produces a smaller divisor and brighter image. This is purely a post-process multiplier on the accumulation buffer and requires no re-rendering. Default exposure is `1.0`.
+**Real-time exposure control** via `F5` / `F6`. Pressing F5 multiplies exposure by 1.3 (brighten) and F6 divides by 1.3 (darken). Exposure is stored as `data->params.exposure` (a float) and applied in the `draw_accu` kernel as a multiplier on the sample count divisor. Higher exposure produces a smaller divisor and brighter image. This is purely a post-process multiplier on the accumulation buffer and requires no re-rendering. Default exposure is `1.0`.
 
 ---
 

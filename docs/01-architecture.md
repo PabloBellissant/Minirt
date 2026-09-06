@@ -2,7 +2,7 @@
 
 ## Overview
 
-![Architecture overview diagram](docs/assets/svg/render-pipeline.svg)
+![Architecture overview diagram](assets/svg/render-pipeline.svg)
 *High-level system architecture showing the three layers: main binary, library submodules, and assets. The data flow moves from scene parsing through BVH construction to GPU rendering and display.*
 
 miniRT is organized into three layers: the **main binary** (`src/`), **library submodules** (`lib/`), and **assets** (`minirt-assets/`). The binary reads a `.rt` scene file, parses it into an in-memory scene graph, transfers data to the GPU, and runs a render loop that dispatches OpenCL compute kernels.
@@ -28,7 +28,7 @@ typedef struct s_data
 
 ### `t_scene` - Scene Description
 
-![Scene data flow diagram](docs/assets/img/showcase-render5.png)
+![Scene data flow diagram](assets/img/showcase-render5.png)
 *Data flow from .rt file parsing into the in-memory t_scene structure, then uploaded to the GPU for rendering.*
 
 ```c
@@ -58,7 +58,7 @@ typedef struct s_scene
 }                   t_scene;
 ```
 
-Several key differences from earlier versions exist: the struct now has `t_vector mesh` - a list of loaded mesh instances that were not in the original subject; there is no `planes_id` field since planes are handled via the general `objects` vector and `plane_count`; and it uses `t_bvh_engine` (the new unified BVH system) instead of separate AABB/Sphere BVH pointers.
+The `t_scene` struct includes a `t_vector mesh` for loaded mesh instances, handles planes via the general `objects` vector and `plane_count` (there is no separate `planes_id` field), and uses `t_bvh_engine` - a unified BVH system with a single set of AABB/Sphere BVH pointers.
 
 ### `t_bvh_engine` - Unified BVH System
 
@@ -216,7 +216,7 @@ flowchart TB
 
 ## Render Pipeline Flowchart
 
-![Render pipeline screenshot](docs/assets/img/ui-selection.png)
+![Render pipeline screenshot](assets/img/ui-selection.png)
 *Screenshot capturing the render loop in action, showing the viewport with object selection.*
 
 ```mermaid

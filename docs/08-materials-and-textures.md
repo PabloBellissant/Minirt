@@ -68,7 +68,9 @@ miniRT supports **6 texture map types** per material. Each map is an optional `t
 
 All loaded textures are concatenated into a single flat byte array (`__constant uchar *textures` on the GPU) called the **texture atlas**. Each texture is described by a `t_texture_data` struct containing an index, byte offset into the atlas, width, height, and number of channels.
 
-![](../assets/svg/materials-mat2.svg)
+<table cellpadding="0" cellspacing="0" border="0" style="border:none;">
+<tr><td><img src="assets/img/mat2-1.png" width="100%"></td><td><img src="assets/img/mat2-2.png" width="100%"></td><td><img src="assets/img/mat2-3.png" width="100%"></td></tr>
+</table>
 
 *Sample material renders showing different PBR surface properties - metallic, dielectric, and textured materials.*
 

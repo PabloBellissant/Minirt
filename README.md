@@ -40,7 +40,10 @@ with PBR texture maps, a complete in-engine UI with edit panels and
 selection, scene import/export, depth-of-field, exposure control, and
 progressive accumulation rendering.
 
-![](docs/assets/svg/README-showcase.svg)
+<table cellpadding="0" cellspacing="0" border="0" style="border:none;">
+<tr><td rowspan="2"><img src="docs/assets/img/showcase-render6-cornell.png" width="100%"></td><td><img src="docs/assets/img/showcase-render2.png" width="100%"></td></tr>
+<tr><td><img src="docs/assets/img/showcase-render3.png" width="100%"></td></tr>
+</table>
 
 ---
 
@@ -117,7 +120,7 @@ submodule descriptions with struct definitions and API details.
 
 For a C project made in 8 months by two people with an obscure graphics
 library and a strict norm, this is still pretty great. But if we're being
-honest, there are real issues and a graveyard of scrapped ambitions.
+honest, there are real trade-offs and unimplemented features.
 
 ### Known Issues
 
@@ -157,37 +160,17 @@ with multiple moving parts, needing clean separation and modularisation.
 It was learning how to engineer and architect from scratch big
 codebases, and honestly, we think we did good.
 
-### Scrapped Features
+### Notes on Design Scope
 
-A lot of infrastructure was designed for features that were never
-finished. Here's what was planned and where it died.
+The project focuses on a streamlined set of features.
 
-**Acceleration structures.** A full UI section was planned for generating
-on-the-fly BVH types, letting the user pick shapes, splitting algorithms,
-and arity from the interface. BVH4 and BVH8 (quad and octree branching)
-were designed and partially implemented but removed in favor of a binary
-tree. Discrete Oriented Polytopes (DOP-4, DOP-6, DOP-8) and convex
-hull shapes were planned as additional bounding volumes. Additional split
-and merge algorithms for determining optimal partitions were designed.
-Only AABB, Sphere, and OBB with SAH, median-primitive, and median-space
-made it in.
+**Acceleration structures.** The renderer uses AABB, Sphere, and OBB bounding volumes with SAH, median-primitive, and median-space splitting. A single binary tree (BVH_ARITY=2) is used. BVH4/BVH8 (quad/octree branching) and DOP shapes are not implemented. A full UI for on-the-fly BVH type selection is not included - the BVH system remains simpler by design.
 
-**Scene editing.** Way more editing options were planned for meshes and
-primitives (per-vertex editing, material assignment UI, transform
-gizmos). A full scene hierarchy tree like Blender's outliner was planned;
-a simplified scene list exists but not everything is selectable, not all
-objects render inside the hierarchy UI on some scenes because of size,
-and object names are inconsistent. A world settings panel for changing
-global settings like ambient light was designed but never built.
+**Scene editing.** Basic property editing is available (position, rotation, scale, material assignment). A simplified scene list is provided, though not every object type is selectable in the hierarchy UI. A world settings panel for global settings like ambient light is not included.
 
-**Camera and navigation.** Dissociated camera/player movement (like
-Blender's separate camera object vs. viewport navigation) was planned.
-Grid floor display, rotation around a world anchor point, and
-position/rotation movement arrows on selected objects (Blender-style
-gizmos) were all designed and never implemented.
+**Camera and navigation.** The camera uses unified player/viewport navigation. Separate dissociated camera movement (like Blender's camera object vs. viewport) is not provided. Grid floor display, world-anchor rotation, and transform gizmo arrows are not implemented.
 
-**Textures.** A PNG texture parser was planned for certain textures.
-Only PPM and PFM are supported.
+**Textures.** PPM and PFM texture formats are supported. PNG texture parsing is not included.
 
 ---
 

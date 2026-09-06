@@ -43,7 +43,9 @@ Where $\alpha = \text{roughness}^2$, and $u_1, u_2$ are uniform random numbers. 
 
 ## Chromatic Dispersion
 
-![](../assets/svg/monte-carlo-diffraction.svg)
+<table cellpadding="0" cellspacing="0" border="0" style="border:none;">
+<tr><td><img src="../assets/img/diffraction.png" width="100%"></td><td><img src="../assets/img/diffraction2.png" width="100%"></td></tr>
+</table>
 
 *Chromatic dispersion in Monte Carlo mode: wavelength-dependent IOR produces physically accurate rainbow caustics and colored refractions.*
 

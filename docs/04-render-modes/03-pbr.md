@@ -28,7 +28,7 @@ pbr() kernel (per pixel)
   +-- img[pixel] += accumulated_color
 ```
 
-![PBR rendering screenshot](docs/assets/img/bvh-volume-theme2.png)
+![PBR rendering screenshot](../assets/img/bvh-volume-theme2.png)
 *Screenshot of PBR mode showing Fresnel reflections, glossy reflections, and skybox environment mapping.*
 
 ## Fresnel Reflectance - F0

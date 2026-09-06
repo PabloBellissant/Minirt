@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520" font-family="monospace" font-size="13">
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="510" viewBox="0 0 720 510" font-family="monospace" font-size="13">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#0d1117"/>
@@ -21,7 +21,7 @@
     </marker>
   </defs>
 
-  <rect width="720" height="520" fill="url(#bg)" rx="12"/>
+  <rect width="720" height="510" fill="url(#bg)" rx="12"/>
 
   <!-- Title -->
   <text x="360" y="30" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">miniRT Submodule Architecture</text>
@@ -29,54 +29,74 @@
 
   <!-- ===== ARROWS (drawn first, behind boxes) ===== -->
 
-  <!-- Row 1 -> Row 2 (straight verticals) -->
-  <line x1="130" y1="120" x2="130" y2="165" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="360" y1="120" x2="360" y2="165" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft (440,95) → xcerrcal (520,95) [horizontal, row 1] -->
+  <path d="M 440 95 C 460 95, 500 95, 520 95" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Row 1 -> Row 2 (cross connections) -->
-  <!-- minilibx -> font_renderer -->
-  <path d="M 170 100 L 320 100 L 320 165" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- libft -> mlx_wrapper -->
-  <path d="M 320 100 L 170 100 L 170 165" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Row 1 → Row 2 -->
 
-  <!-- xcerrcal -> Row 2 (down and left) -->
-  <!-- xcerrcal -> mlx_wrapper -->
-  <path d="M 570 100 L 570 140 L 130 140 L 130 165" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- xcerrcal -> font_renderer -->
-  <path d="M 530 114 L 530 155 L 400 155 L 400 165" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- minilibx (130,120) → mlx_wrapper (130,175) -->
+  <path d="M 130 120 C 130 147, 130 147, 130 175" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- libft -> xcerrcal (horizontal) -->
-  <line x1="420" y1="95" x2="520" y2="95" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- minilibx (130,120) → font_renderer (360,175) -->
+  <path d="M 130 120 C 130 140, 360 140, 360 175" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Row 1/2 -> Row 3 (mlxui) -->
-  <!-- minilibx -> mlxui -->
-  <path d="M 80 114 L 80 280 L 250 280 L 250 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- libft -> mlxui -->
-  <path d="M 340 114 L 340 250 L 290 250 L 290 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- xcerrcal -> mlxui -->
-  <path d="M 620 114 L 620 260 L 350 260 L 350 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- mlx_wrapper -> mlxui -->
-  <path d="M 180 214 L 180 285 L 260 285 L 260 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- font_renderer -> mlxui -->
-  <path d="M 380 214 L 380 295 L 310 295 L 310 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft (360,120) → mlx_wrapper (130,175) -->
+  <path d="M 360 120 C 360 140, 130 140, 130 175" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Row 2 horizontal -->
-  <!-- mlx_wrapper -> font_renderer -->
-  <line x1="210" y1="187" x2="310" y2="187" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft (360,120) → font_renderer (360,175) -->
+  <path d="M 360 120 C 360 147, 360 147, 360 175" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- Everything -> miniRT binary -->
-  <!-- minilibx -> binary -->
-  <path d="M 80 114 L 80 430 L 260 430 L 260 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- libft -> binary -->
-  <path d="M 360 120 L 360 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- mlx_wrapper -> binary -->
-  <path d="M 150 214 L 150 420 L 290 420 L 290 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- font_renderer -> binary -->
-  <path d="M 380 214 L 380 420 L 330 420 L 330 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- xcerrcal -> binary -->
-  <path d="M 620 120 L 620 430 L 430 430 L 430 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- mlxui -> binary -->
-  <line x1="290" y1="364" x2="290" y2="440" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- xcerrcal (600,120) → mlx_wrapper (130,175) -->
+  <path d="M 600 120 C 600 140, 130 140, 130 175" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- xcerrcal (600,120) → font_renderer (360,175) -->
+  <path d="M 600 120 C 600 140, 360 140, 360 175" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2 horizontal: mlx_wrapper (210,200) → font_renderer (280,200) -->
+  <path d="M 210 200 C 230 200, 260 200, 280 200" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2 → Row 3 (mlxui) -->
+
+  <!-- mlx_wrapper (130,225) → mlxui (290,310) -->
+  <path d="M 130 225 C 130 260, 290 260, 290 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- font_renderer (360,225) → mlxui (290,310) -->
+  <path d="M 360 225 C 360 260, 290 260, 290 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 1 → Row 3 (mlxui) -->
+
+  <!-- minilibx (130,120) → mlxui (290,310) -->
+  <path d="M 130 120 C 130 200, 290 200, 290 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- libft (360,120) → mlxui (290,310) -->
+  <path d="M 360 120 C 360 200, 290 200, 290 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- xcerrcal (600,120) → mlxui (290,310) -->
+  <path d="M 600 120 C 600 200, 290 200, 290 310" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 3 → Row 4 (miniRT) -->
+
+  <!-- mlxui (290,360) → miniRT (360,440) -->
+  <path d="M 290 360 C 290 400, 360 400, 360 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2 → Row 4 (miniRT) -->
+
+  <!-- mlx_wrapper (130,225) → miniRT (360,440) -->
+  <path d="M 130 225 C 130 330, 360 330, 360 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- font_renderer (360,225) → miniRT (360,440) -->
+  <path d="M 360 225 C 360 332, 360 332, 360 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 1 → Row 4 (miniRT) -->
+
+  <!-- minilibx (130,120) → miniRT (360,440) -->
+  <path d="M 130 120 C 130 250, 360 250, 360 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- libft (360,120) → miniRT (360,440) -->
+  <path d="M 360 120 C 360 280, 360 280, 360 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- xcerrcal (600,120) → miniRT (360,440) -->
+  <path d="M 600 120 C 600 250, 360 250, 360 440" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- ===== BOXES ===== -->
 
@@ -94,13 +114,13 @@
   <text x="600" y="108" text-anchor="middle" fill="#c7d2fe" font-size="11">error handling (all libs)</text>
 
   <!-- Row 2: Mid-level -->
-  <rect x="50" y="165" width="160" height="50" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
-  <text x="130" y="187" text-anchor="middle" fill="#eef2ff" font-weight="bold">mlx_wrapper</text>
-  <text x="130" y="203" text-anchor="middle" fill="#c7d2fe" font-size="11">input, key/mouse hooks</text>
+  <rect x="50" y="175" width="160" height="50" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="130" y="197" text-anchor="middle" fill="#eef2ff" font-weight="bold">mlx_wrapper</text>
+  <text x="130" y="213" text-anchor="middle" fill="#c7d2fe" font-size="11">input, key/mouse hooks</text>
 
-  <rect x="280" y="165" width="160" height="50" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
-  <text x="360" y="187" text-anchor="middle" fill="#eef2ff" font-weight="bold">font_renderer</text>
-  <text x="360" y="203" text-anchor="middle" fill="#c7d2fe" font-size="11">TTF parsing + rasterization</text>
+  <rect x="280" y="175" width="160" height="50" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="360" y="197" text-anchor="middle" fill="#eef2ff" font-weight="bold">font_renderer</text>
+  <text x="360" y="213" text-anchor="middle" fill="#c7d2fe" font-size="11">TTF parsing + rasterization</text>
 
   <!-- Row 3: High-level -->
   <rect x="210" y="310" width="160" height="50" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
@@ -111,9 +131,4 @@
   <rect x="230" y="440" width="260" height="50" rx="8" fill="url(#bin)" stroke="#4ade80" stroke-width="1.5"/>
   <text x="360" y="463" text-anchor="middle" fill="#f0fdf4" font-weight="bold" font-size="14">miniRT binary</text>
   <text x="360" y="479" text-anchor="middle" fill="#bbf7d0" font-size="11">OpenCL ray tracing + UI + scene editor</text>
-
-  <!-- ===== LEGEND (inside the SVG) ===== -->
-  <text x="360" y="510" text-anchor="middle" fill="#64748b" font-size="10">
-    libft: used by all self-made libs + xcerrcal / xcerrcal: used by all libs + miniRT
-  </text>
 </svg>
