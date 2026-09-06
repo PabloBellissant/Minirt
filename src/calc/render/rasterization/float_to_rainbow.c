@@ -6,14 +6,18 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 06:49:41 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/11 06:49:43 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/30 12:34:13 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 #include "colors_types.h"
 
-t_rgb_int	rgb_to_rgb_int(float r, float g, float b);
+t_rgb_int	rgb_to_rgb_int(float r, float g, float b)
+{
+	return ((t_rgb_int){{(uint8_t)(r * 255.0f + 0.5f),
+		(uint8_t)(g * 255.0f + 0.5f), (uint8_t)(b * 255.0f + 0.5f)}});
+}
 
 t_rgb_int	float_to_rainbow(float f)
 {
@@ -34,10 +38,4 @@ t_rgb_int	float_to_rainbow(float f)
 	if (zone >= 4 && zone < 5)
 		return (rgb_to_rgb_int(x, 0.0f, 1.0f));
 	return (rgb_to_rgb_int(1.0f, 0.0f, x));
-}
-
-t_rgb_int	rgb_to_rgb_int(float r, float g, float b)
-{
-	return ((t_rgb_int){{(uint8_t)(r * 255.0f + 0.5f),
-		(uint8_t)(g * 255.0f + 0.5f), (uint8_t)(b * 255.0f + 0.5f)}});
 }

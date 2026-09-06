@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2026/01/19 20:18:56 by jaubry--         ###   ########.fr        #
+#    Updated: 2026/02/20 18:38:59 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,8 +31,6 @@ include $(LIBFTDIR)/includes.mk $(XCERRCALDIR)/includes.mk \
 	$(MLXWDIR)/includes.mk $(FONT_RENDIR)/includes.mk \
 	$(MLXUIDIR)/includes.mk includes.mk
 
-INCXTEST	= $(LIBDIR)/local_xtst/include/X11/extensions
-
 INCLUDES	= $(INCDIRS_MINIRT) \
 			  $(addprefix $(XCERRCALDIR)/, $(INCDIRS_XCERRCAL)) \
 			  $(addprefix $(FONT_RENDIR)/, $(INCDIRS_FTRDR)) \
@@ -43,7 +41,7 @@ INCLUDES	= $(INCDIRS_MINIRT) \
 
 
 # Output
-NAME		= MiniRT
+NAME		= miniRT
 XCERRCAL	= $(XCERRCALDIR)/libxcerrcal.a
 LIBFT		= $(LIBFTDIR)/libft.a
 MLX			= $(MLXDIR)/libmlx.a
@@ -69,11 +67,13 @@ ifeq ($(FULLSCREEN), 1)
 WIDTH		= $(MAX_WIDTH)
 HEIGHT		= $(MAX_HEIGHT)
 else
-WIDTH		= 500
-HEIGHT		= 500
+WIDTH		= 1920
+HEIGHT		= 1080
 endif
 
 PERF		= 0
+MINIRT_MODE	= 1
+CL_TARGET_OPENCL_VERSION=300
 
 VARS		= DEBUG_LVL=$(DEBUG_LVL) \
 			  MAX_WIDTH=$(MAX_WIDTH) \
@@ -85,7 +85,8 @@ VARS		= DEBUG_LVL=$(DEBUG_LVL) \
 			  RESIZEABLE=$(RESIZEABLE) \
 			  WINDOWLESS=$(WINDOWLESS) \
 			  NPROC=$(NPROC) \
-			  CL_TARGET_OPENCL_VERSION=300
+			  MINIRT_MODE=$(MINIRT_MODE) \
+			  CL_TARGET_OPENCL_VERSION=$(CL_TARGET_OPENCL_VERSION)
 
 # Compiler and flags
 CC			?= cc
@@ -97,16 +98,14 @@ DFLAGS		= -MMD -MP -MF $(DEPDIR)/$*.d
 
 IFLAGS		= $(addprefix -I,$(INCLUDES) $(INCXTEST))
 
-LXTEST		= $(LIBDIR)/local_xtst/lib
-LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) -L$(XCERRCALDIR) -L$(LXTEST) \
+LXTEST		= $(MLXDIR)/local_xtst/lib
+LFLAGS		= -L$(FONT_RENDIR) -L$(MLXWDIR) -L$(LIBFTDIR) -L$(MLXDIR) -L$(XCERRCALDIR) \
 			  -lfont-renderer -lmlx-wrapper -lmlx -lft -lxcerrcal \
 			  -lXtst -lXext -lX11 -lXrandr -lm -l:libOpenCL.so.1
 
-# i think it is the same as putting -lOpenCL == -l:libOpenCL.so.1
-
 VFLAGS		= $(addprefix -D ,$(VARS) DEBUG=$(DEBUG))
 
-CFLAGS		+= $(INSPECT_FLAGS) $(PROFILE_FLAGS) $(FFLAGS) $(VFLAGS)
+CFLAGS		+= $(SANITIZE_FLAGS) $(INSPECT_FLAGS) $(PROFILE_FLAGS) $(FFLAGS) $(VFLAGS)
 
 CF			= $(CC) $(CFLAGS) $(IFLAGS)
 
@@ -121,42 +120,58 @@ vpath %.h $(INCLUDES)
 vpath %.o $(OBJDIR) $(LIBFTDIR)/$(OBJDIR) $(MLXWDIR)/$(OBJDIR)
 vpath %.d $(DEPDIR) $(LIBFTDIR)/$(DEPDIR) $(MLXWDIR)/$(DEPDIR)
 
-all:	$(NAME)
-fast:	$(NAME)
-debug:	$(NAME)
+bonus: $(NAME)
+
+include $(ROOTDIR)/mkidir/make_rules.mk
 
 $(NAME): $(XCERRCAL) $(MLXUI) $(FONT_RENDER) $(OBJS) $(INCLUDES)
 	$(call bin-link-msg)
+ifeq ($(VERBOSE),1)
 	$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
+else
+	@$(CF) $(OBJS) $(ARCHIVES) $(LFLAGS) -o $@
+endif
 	$(call bin-finish-msg)
 
 $(XCERRCAL):
+ifeq ($(VERBOSE),1)
+	$(MAKE) -C $(XCERRCALDIR) $(RULE) $(VARS) ROOTDIR=../..
+else
 	@$(MAKE) -s -C $(XCERRCALDIR) $(RULE) $(VARS) ROOTDIR=../..
+endif
 
 $(MLXUI): $(FONT_RENDER) $(MLXW) $(MLX) $(LIBFT)
-	@$(MAKE) -s -C $(MLXUIDIR) $(RULE)  $(VARS) ROOTDIR=../..
+ifeq ($(VERBOSE),1)
+	$(MAKE) -C $(MLXUIDIR) $(RULE) $(VARS) ROOTDIR=../..
+else
+	@$(MAKE) -s -C $(MLXUIDIR) $(RULE) $(VARS) ROOTDIR=../..
+endif
 
 $(FONT_RENDER): $(MLXW) $(MLX) $(LIBFT)
-	@$(MAKE) -s -C $(FONT_RENDIR) $(RULE)  $(VARS) ROOTDIR=../..
+ifeq ($(VERBOSE),1)
+	$(MAKE) -C $(FONT_RENDIR) $(RULE) $(VARS) ROOTDIR=../..
+else
+	@$(MAKE) -s -C $(FONT_RENDIR) $(RULE) $(VARS) ROOTDIR=../..
+endif
 
 $(MLXW): $(MLX) $(LIBFT)
-	@$(MAKE) -s -C $(MLXWDIR) $(RULE)  $(VARS) ROOTDIR=../..
+ifeq ($(VERBOSE),1)
+	$(MAKE) -C $(MLXWDIR) $(RULE) $(VARS) ROOTDIR=../..
+else
+	@$(MAKE) -s -C $(MLXWDIR) $(RULE) $(VARS) ROOTDIR=../..
+endif
 
 $(LIBFT):
-	@$(MAKE) -s -C $(LIBFTDIR) $(RULE)  $(VARS) ROOTDIR=../..
+ifeq ($(VERBOSE),1)
+	$(MAKE) -C $(LIBFTDIR) $(RULE) $(VARS) ROOTDIR=../..
+else
+	@$(MAKE) -s -C $(LIBFTDIR) $(RULE) $(VARS) ROOTDIR=../..
+endif
 
 $(MLX):
 	$(call mlx-build-msg)
 	@$(MAKE) -s -C $(MLXDIR) CC="$(MLX_GCC) $(if $(filter 1,$(FAST)),$(OFLAGS))" $(MUTE)
 	$(call mlx-finish-msg)
-
-$(OBJDIR)/%.o: %.c $(INCLUDES) | buildmsg $(OBJDIR) $(DEPDIR)
-	$(call bin-compile-obj-msg)
-	@$(CF) $(DFLAGS) -c $< -o $@
-
-$(OBJDIR) $(DEPDIR):
-	$(call color,$(CYAN),"Creating directory %UL%$@")
-	@mkdir -p $@
 
 buildmsg:
 ifneq ($(shell [ -f $(NAME) ] && echo exists),exists)
@@ -303,26 +318,20 @@ help:
 	@echo "    make clean                    # remove objects only"
 	@echo "    make fclean                   # remove everything and start over"
 
-print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
-
 clean:
-	@$(MAKE) -s -C $(FONT_RENDIR) clean ROOTDIR=../..
+	@$(MAKE) -s -C $(MLXUIDIR) clean ROOTDIR=../..
 	$(call rm-obj-msg)
 	@rm -rf $(OBJDIR) $(DEPDIR)
 
 fclean:
-	@$(MAKE) -s -C $(FONT_RENDIR) fclean ROOTDIR=../..
+	@$(MAKE) -s -C $(MLXUIDIR) fclean ROOTDIR=../..
 	$(call rm-obj-msg)
 	@rm -rf $(OBJDIR) $(DEPDIR)
 	$(call rm-bin-msg)
 	@rm -f $(NAME)
 
-re: 	fclean all
-refast:	fclean fast
-redebug:fclean debug
-
-bonus: all
 
 -include $(DEPS)
 
-.PHONY: all debug fast refast redebug re clean fclean help buildmsg print-%
+.PHONY: all bonus clean fclean
+.PHONY: help buildmsg

@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 00:50:41 by pabellis          #+#    #+#             */
-/*   Updated: 2025/11/19 00:50:43 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/19 14:46:27 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,3 @@ static int	write_binary(int fd, t_data *data)
 	}
 	return (0);
 }
-

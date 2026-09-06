@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 21:37:36 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/10/13 18:45:46 by jaubry--         ###   ########.fr       */
+/*   Updated: 2026/02/07 04:46:32 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ got \"%s\""
 # define RT_E_MSG_VERTEX "Cannot apply vertex"
 # define RT_E_MSG_NORMAL "Cannot apply normal"
 # define RT_E_MSG_UV "Cannot apply uv"
-# define RT_E_FACE "Failed to parse face"
+# define RT_E_MSG_FACE "Failed to parse face"
 
 void	register_rt_errors(void);
 

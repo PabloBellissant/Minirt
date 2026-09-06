@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 02:26:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/08/05 05:06:31 by jaubry--         ###   ########lyon.fr   */
+/*   Updated: 2026/01/25 22:47:27 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ t_object	*create_object(t_scene *scene, t_object_type type)
 		vector_init(&scene->objects, sizeof(t_object));
 	ft_bzero(&object, sizeof(t_object));
 	object.type = type;
+	object.object_id = scene->objects.num_elements;
 	if (vector_add(&scene->objects, &object, 1) == -1)
 		return (NULL);
 	return (get_last_vector_value(&scene->objects));

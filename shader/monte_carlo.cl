@@ -8,7 +8,6 @@ float3	reflect(float3 dir, float3 normal);
 t_hit_data	path_sample_materials(__private t_hit_gpu *hit, __constant uchar *tex, __constant t_mat_gpu *mat, __private t_ray_gpu *ray, __private uint *rng, __private float3 *through_power, __private int *is_diffract);
 
 float3	sample_ggx_gpu(float3 normal, float roughness, uint *rng);
-static float3	get_tangent(float3 n);
 
 float randomf(uint *rng)
 {
@@ -19,12 +18,13 @@ float randomf(uint *rng)
 }
 
 uint	hash(uint x);
+
 __kernel void	monte_carlo(
 		t_camera_gpu cam,
+		__constant t_bvh_node_gpu *bvh,
+		int	bvh_type,
 		__constant t_sphere_gpu *spheres,
-		__constant t_bvh_gpu *sphere_bvh,
 		__constant t_triangle_gpu *triangles,
-		__constant t_bvh_gpu *triangle_bvh,
 		__constant t_plane_gpu *planes,
 		int planes_count,
 		__global float3 *img,
@@ -39,10 +39,9 @@ __kernel void	monte_carlo(
 	t_objects	objects;	
 
 	objects.spheres = spheres;
-	objects.sphere_bvh = sphere_bvh;
 	objects.triangles = triangles;
-	objects.triangle_bvh = triangle_bvh;
 	objects.planes = planes;
+	objects.bvh = bvh;
 	objects.planes_count = planes_count;
 	objects.lights = lights;
 	objects.lights_count = lights_count;
@@ -71,7 +70,7 @@ __kernel void	monte_carlo(
 	bounce = 0;
 	while (bounce < MAX_BOUNCE)
 	{
-		hit = hit_register_gpu(&ray, &objects);
+		hit = hit_register_gpu(&ray, &objects, bvh_type);
 		if (hit.hit_obj < 0)
 		{
 			if (bounce == 0)

@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 02:44:47 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/14 06:42:52 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/01/26 06:17:23 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ int	sphere(const char *line, int line_num, t_scene *scene)
 		free(mat_name);
 		return (error(pack_err(RT_ID, RT_E_SPHERE), FL, LN, FC));
 	}
+	object->sphere.radius = object->sphere.diameter / 2;
 	object->mat_id = get_mat(mat_name, scene, &color);
 	object->name = mat_name;
 	if (object->mat_id == -1)

@@ -14,51 +14,18 @@
 #include "minirt.h"
 #include "render.h"
 
-t_texture	*parse_ppm(int fd, t_texture *tex);
-t_texture	*parse_pgm(int fd, t_texture *tex);
-char		*skip_comment(int fd);
-
-t_texture	texture_parser(char *texture_path)
-{
-	int			fd;
-	t_texture	tex;
-	char		*line;
-
-	ft_bzero(&tex, sizeof(t_texture));
-	fd = open(texture_path, O_RDONLY);
-	if (fd < 0)
-		return (tex);
-	line = skip_comment(fd);
-	if (!line)
-		return (tex);
-	if (ft_strncmp(line, "P6", 2) == 0)
-	{
-		if (parse_ppm(fd, &tex) == NULL)
-			return (tex);
-	}
-	else if (ft_strncmp(line, "P5", 2) == 0)
-	{
-		if (parse_pgm(fd, &tex) == NULL)
-			return (tex);
-	}
-	free(line);
-	return (tex);
-}
-
 t_texture	*parse_texture(t_scene *scene, char *texture_path)
 {
 	t_texture	tex;
+	int			fd;
 
 	if (scene->texture.max_elements == 0)
 		vector_init(&scene->texture, sizeof(t_texture));
 	ft_bzero(&tex, sizeof(t_texture));
-	if (ft_strrncmp(texture_path, ".ppm", 4) == 0)
-	{
-		tex = texture_parser(texture_path);
-		if (!tex.addr)
-			return (NULL);
-	}
-	else
+	fd = open(texture_path, O_RDONLY);
+	if (fd < 0)
+		return (NULL);
+	if (pnm_parser(fd, &tex) == NULL)
 		return (NULL);
 	if (vector_add(&scene->texture, &tex, 1) == -1)
 		return (NULL);
@@ -84,12 +51,12 @@ int	create_color_texture(t_vector *vec, t_rgb_int *color)
 	tex = create_texture(vec);
 	if (!tex)
 		return (-1);
-	tex->pixels = malloc(1 * 3);
+	tex->pixels = malloc(3 * sizeof(uint8_t));
 	if (!tex->pixels)
 		return (-1);
-	ft_memcpy(tex->pixels, &color->rgb, 3);
+	ft_memcpy(tex->pixels, &color->rgb, 3 * sizeof(uint8_t));
 	tex->channels = 3;
-	tex->line_len = 0;
+	tex->line_len = 3;
 	tex->width = 1;
 	tex->height = 1;
 	return ((int) vec->num_elements - 1);
@@ -102,12 +69,12 @@ int	create_gray_level_texture(t_vector *vec, unsigned char value)
 	tex = create_texture(vec);
 	if (!tex)
 		return (-1);
-	tex->pixels = malloc(1);
+	tex->pixels = malloc(1 * sizeof(uint8_t));
 	if (!tex->pixels)
 		return (-1);
 	ft_memcpy(tex->pixels, &value, 1);
 	tex->channels = 1;
-	tex->line_len = 0;
+	tex->line_len = 1;
 	tex->width = 1;
 	tex->height = 1;
 	return ((int) vec->num_elements - 1);

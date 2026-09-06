@@ -6,16 +6,16 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 04:24:03 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/12/15 04:33:03 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/12 00:52:50 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vec3_special2.h"
 #include "vectors.h"
 #include <math.h>
 #include "minirt.h"
 
-#define MOVE_SPEED 3
+#define MOVE_SPEED 5
+#define RUN_SPEED 5
 
 static void	adjust_cam(
 	t_camera *cam, const t_vec3 *matrix, const bool add, const float step)
@@ -38,16 +38,13 @@ static void	adjust_cam(
 void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 {
 	const float		step
-		= MOVE_SPEED * (1 + data->mlx->key_input.ctrl) * data->mlx->delta_time;
+		= MOVE_SPEED * (1 + RUN_SPEED * data->mlx->key_input.ctrl)
+		* data->mlx->delta_time;
 	const t_vec3	camera_forward = {{
-		-sinf(cam->rot.y),
-		0,
-		-cosf(cam->rot.y)
+		-sinf(cam->rot.y), 0, -cosf(cam->rot.y)
 	}};
 	const t_vec3	camera_right = {{
-		cosf(cam->rot.y),
-		0,
-		-sinf(cam->rot.y)
+		cosf(cam->rot.y), 0, -sinf(cam->rot.y)
 	}};
 
 	if (keys.forward)
@@ -64,8 +61,8 @@ void	handle_camera_move(t_data *data, t_camera *cam, t_keys keys)
 		cam->pos.y -= step;
 }
 
-#define SENSITIVITY .001f
-#define ROLL_SENSITIVITY .01f
+#define SENSITIVITY .003f
+#define ROLL_SENSITIVITY .03f
 #define MAX_PITCH 1.53938043117523193F
 
 void	handle_camera_rotation(

@@ -6,32 +6,16 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 06:38:10 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/12 06:38:12 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/09 01:10:11 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vectors.h"
 
-static t_vec3	rotate_around_axis(t_vec3 p, t_vec3 u,
-				float cos_theta, float sin_theta);
+#define POINT_EPSILON 1e-6f
 
-t_vec3	rotate_point(t_vec3 pos, t_vec3 rot)
-{
-	const t_vec3	z_axis = vec3(0, 0, 1);
-	t_vec3			rotation_axis;
-	float			angle;
-
-	rot = vec3_normalize(rot);
-	if (fabsf(rot.x) < 1e-6f && fabsf(rot.y) < 1e-6f)
-		return (pos);
-	rotation_axis = vec3_cross(z_axis, rot);
-	rotation_axis = vec3_normalize(rotation_axis);
-	angle = acosf(vec3_dot(z_axis, rot));
-	return (rotate_around_axis(pos, rotation_axis, cosf(angle), sinf(angle)));
-}
-
-static t_vec3	rotate_around_axis(t_vec3 p, t_vec3 u,
-				float cos_theta, float sin_theta)
+static inline t_vec3	rotate_around_axis(const t_vec3 p, const t_vec3 u,
+							const float cos_theta, const float sin_theta)
 {
 	t_vec3	term1;
 	t_vec3	term2;
@@ -43,16 +27,17 @@ static t_vec3	rotate_around_axis(t_vec3 p, t_vec3 u,
 	return (vec3_add(vec3_add(term1, term2), term3));
 }
 
-int	imax(int a, int b)
+t_vec3	rotate_point(const t_vec3 pos, t_vec3 rot)
 {
-	if (a > b)
-		return (a);
-	return (b);
-}
+	const t_vec3	z_axis = vec3(0, 0, 1);
+	t_vec3			rotation_axis;
+	float			angle;
 
-int	imin(int a, int b)
-{
-	if (a < b)
-		return (a);
-	return (b);
+	rot = vec3_normalize(rot);
+	if ((fabsf(rot.x) < POINT_EPSILON) && (fabsf(rot.y) < POINT_EPSILON))
+		return (pos);
+	rotation_axis = vec3_cross(z_axis, rot);
+	rotation_axis = vec3_normalize(rotation_axis);
+	angle = acosf(vec3_dot(z_axis, rot));
+	return (rotate_around_axis(pos, rotation_axis, cosf(angle), sinf(angle)));
 }

@@ -17,8 +17,8 @@ void	rasterize_outline_object(t_img_data *img, t_object *object,
 {
 	if (object->type == SPHERE)
 		rasterize_sphere_outline(&object->sphere, img, camera, color);
-	else if (object->type == TRIANGLE)
-		rasterize_triangle_outline(img, &object->triangle, color, camera);
 	else if (object->type == PLANE)
 		rasterize_plane_outline(img, &object->plane, color, camera);
+	else if (object->type == TRIANGLE)
+		rasterize_triangle_outline(img, &object->triangle, color, camera);
 }
