@@ -38,7 +38,6 @@ N_z \cdot 0.5 + 0.5
 
 Since each normal component is in $[-1, 1]$, the mapping shifts it to $[0, 1]$. For example, +X (right) maps to pink/red, -X (left) maps to teal, +Y (up) maps to green, -Y (down) maps to purple, +Z (forward) maps to blue, and -Z (backward) maps to yellow. When a ray misses all geometry, the pixel is set to black $(0, 0, 0)$.
 
-![Normal debug screenshot](docs/assets/normal-debug-mode.png)
 *Screenshot of normal debug mode showing surface normals mapped to RGB colors.*
 
 ## Key Details

@@ -20,7 +20,6 @@ typedef struct s_opencl
 }                       t_opencl;
 ```
 
-![OpenCL architecture diagram](docs/assets/opencl-architecture.png)
 *Diagram showing the relationship between the host (C code), OpenCL platform layer, and GPU device with kernels.*
 
 ---
@@ -124,7 +123,6 @@ Every kernel is dispatched with a 2D global work size equal to the screen dimens
 
 The project uses a two-buffer progressive accumulation scheme on the GPU. The **accu** buffer (`float3[]`, WIDTH x HEIGHT, `CL_MEM_READ_WRITE`) stores accumulated samples, while the **img** buffer (`int[]`, WIDTH x HEIGHT, `CL_MEM_READ_WRITE`) holds the normalized display output. On the host side, a **host_buffer** (`int[]`, WIDTH x HEIGHT) receives the GPU output and is copied into the minilibx image object via `mlx_put_data_addr` and `mlx_put_image_to_window`.
 
-![Accumulation buffer flow](docs/assets/accumulation-buffer.png)
 *Diagram showing how render kernels write to the accumulation buffer, which is normalized by draw_accu and read back to the host for display.*
 
 ### Flow per Frame

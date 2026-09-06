@@ -20,7 +20,6 @@ phong() kernel (per pixel)
        +-- img[pixel] = 0
 ```
 
-![Phong rendering screenshot](docs/assets/phong-mode.png)
 *Screenshot of Phong mode showing ambient, diffuse, and specular lighting on a scene.*
 
 ## The Phong Reflection Model

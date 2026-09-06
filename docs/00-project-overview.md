@@ -18,39 +18,56 @@ The current miniRT implements a full production-grade ray tracer that far exceed
 
 ### Core Rendering
 
-![Render modes comparison](docs/assets/render-modes-comparison.png)
-*Screenshot showing the same scene rendered in all six modes: wireframe, Phong, PBR, Monte Carlo, normal debug, and heat map.*
+<table>
+  <tr>
+    <td><img src="docs/assets/img/showcase-render1.png" alt="Phong render" width="100%"/></td>
+    <td><img src="docs/assets/img/showcase-render2.png" alt="PBR render" width="100%"/></td>
+    <td><img src="docs/assets/img/showcase-render3.png" alt="Monte Carlo render" width="100%"/></td>
+  </tr>
+  <tr>
+    <td colspan="3" style="text-align:center"><em>Three render modes - Phong (left), PBR (center), Monte Carlo (right) - applied to the same scene.</em></td>
+  </tr>
+</table>
 
-![Render comparison](docs/assets/render-comparison.png)
+![Original subject render](docs/assets/img/mandatory1.png)
 *Side-by-side comparison of the original 42 subject render (Phong, no shadows) vs. the current miniRT render (PBR with Fresnel, shadows, and textures) on the same scene.*
 
 The rendering engine provides **OpenCL GPU rendering** where all shading, intersection, and accumulation runs on the GPU via OpenCL compute kernels. There are **6 render modes**: wireframe (CPU rasterized), Phong, PBR, Monte Carlo path tracing, normal debug, and heat map. The **PBR (Physically Based Rendering)** system uses Fresnel (Schlick approximation) and **GGX microfacet distribution** for realistic specular highlights. **Monte Carlo path tracing** features progressive accumulation, multi-bounce indirect illumination, and **chromatic dispersion** (wavelength-dependent refraction) for physically accurate caustics and rainbows. The camera supports position, rotation, field of view, **depth of field** (lens radius + focus distance), and auto exposure. **Exposure control** is available with real-time adjustment in the UI via the F5/F6 keys. **Progressive accumulation** means samples accumulate over frames for noise-free Monte Carlo results.
 
 ### Scene Objects
 
-![Scene object types](docs/assets/scene-object-types.png)
-*Visual overview of the supported primitive types: sphere, plane, cylinder, and mesh.*
+![Scene objects overview](docs/assets/img/mandatory2.png)
+*Scene objects rendered in miniRT - spheres, planes, meshes, and lights.*
 
 The renderer supports spheres (`sp`) defined by position and diameter; planes (`pl`) with position, normal, material, and texture scaling; cylinders (`cy`) with position, rotation, diameter, and height (WIP render with full parser support); meshes (`obj`) via Wavefront OBJ loading with full transform (position, rotation, scale), per-vertex normals, UV coordinates, and material assignment; skybox (`sky`) as an equirectangular environment map via PPM texture; and point lights (`L`) with position, brightness, and color.
 
 ### Materials (MTL)
 
-![Material system diagram](docs/assets/material-system.png)
-*Diagram showing the MTL-to-GPU material pipeline with texture maps.*
+<table>
+  <tr>
+    <td><img src="docs/assets/img/mat1-1.png" alt="Material preview 1" width="100%"/></td>
+    <td><img src="docs/assets/img/mat1-2.png" alt="Material preview 2" width="100%"/></td>
+  </tr>
+  <tr>
+    <td><img src="docs/assets/img/mat1-3.png" alt="Material preview 3" width="100%"/></td>
+    <td><img src="docs/assets/img/mat1-4.png" alt="Material preview 4" width="100%"/></td>
+  </tr>
+</table>
+*Sample materials showing different PBR properties - metallic, dielectric, textured, and emissive surfaces.*
 
 The system includes a full MTL file parser supporting `newmtl`, `Ns` (specular exponent), `Ka` (ambient), `Kd` (diffuse), `Ks` (specular), `Ke` (emissive), `Ni` (index of refraction), `d` (opacity), `Pr` (roughness), and `Pm` (metalness). It supports **texture maps** for `map_Kd` (albedo), `map_bump` (normal map), `map_Pr` (roughness map), `map_Ka` (ambient occlusion), `map_d` (opacity map), and `map_Pm` (metalness map). Eight or more materials are included in the minirt-assets repository.
 
 ### BVH Acceleration
 
-![BVH visualization](docs/assets/bvh-visualization.gif)
-*Animated GIF showing the BVH debug overlay cycling through AABB, sphere, and OBB bounding volumes.*
+![BVH debug visualization](docs/assets/img/bvh-volume-aabb.png)
+*BVH debug overlay showing AABB bounding volumes around scene geometry.*
 
 The **unified BVH system** provides three bounding shapes: **AABB** (Axis-Aligned Bounding Box) for fast, simple intersection tests; **Sphere** bounds optimal for sphere-heavy scenes; and **OBB** (Oriented Bounding Box) driven by PCA via Jacobi eigenvalue decomposition with quaternion rotation for the tightest fit. Three splitting algorithms are available: **SAH** (Surface Area Heuristic) using bins-based cost evaluation that minimizes expected traversal cost; **Median Primitive** splitting at the median primitive; and **Median Space** splitting at the spatial median. The tree uses `BVH_ARITY=2` (binary tree) with GPU-side traversal via `hit_aabb`, `hit_obb`, and `hit_sphere` functions. OBB uses quaternion-based ray-box intersection to avoid full matrix inverse. Debug visualization provides a wireframe BVH overlay and heat map by depth.
 
 ### User Interface
 
-![UI screenshot](docs/assets/ui-screenshot.png)
-*Screenshot of the miniRT UI showing the scene list, edit panels, render mode switch, and FPS counter.*
+![miniRT render output](docs/assets/img/showcase-render4.png)
+*Render output showcasing the full-ray traced scene with shadows, reflections, and PBR materials.*
 
 The **full UI system** is built on `mlxui` - a custom GUI toolkit over minilibx. The **left panel** provides a scene list (hierarchical object browser), edit panels, and a render mode switch. **Object selection** works via click-to-select in the viewport with first-selected highlight. **Edit panels** are per object type, offering geometry transforms (position, rotation, scale), material properties (Ns, Kd, Ks, Ni, d, Pr, Pm, emissive), color pickers, sliders, and texture selectors. The UI also provides camera parameters (FOV, lens radius, focus distance), render controls (mode switching, BVH debug toggle, export render task), an **FPS counter** and info display overlay, and export to PPM and scene export (.rt format).
 
@@ -80,8 +97,8 @@ The project comprises **487 C source files**, **30 header files**, **14 OpenCL k
 
 ## minirt-assets Repository
 
-![Asset catalog preview](docs/assets/asset-catalog.png)
-*Preview grid showing some of the available test scenes, OBJ models, and textures.*
+![Cornell box render](docs/assets/img/showcase-render6-cornell.png)
+*Cornell box scene rendered with PBR materials, demonstrating global illumination and progressive accumulation.*
 
 The [minirt-assets](https://github.com/ketodin/minirt-assets) repository provides **test scenes** (`.rt` files) including Cornell box, refraction test, marble, chess, RGB, and template; **meshes** (`.obj`) such as glass cube, monkey head, diffraction grating, chess set, bunny, BMW, Porsche, Jesko, AMG, casino, dragon, triangle, and square; **materials** (`.mtl`) for sand, gold, leather, tiles, foil, marble, onyx, wood, metal, fence, paving, ornament, and checkerboard; and **textures** (`.ppm`) including skyboxes (nebula, studio), procedural textures, normal maps, roughness maps, and ambient occlusion maps.
 

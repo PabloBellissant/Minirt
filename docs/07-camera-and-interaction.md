@@ -22,7 +22,6 @@ typedef struct s_camera
 }               t_camera;
 ```
 
-![Camera diagram](docs/assets/camera-diagram.png)
 *Diagram showing the camera position, viewport, forward/right/up basis vectors, and depth of field parameters.*
 
 ---
@@ -64,8 +63,8 @@ The GPU ray generation in `calc_rays.cl` implements a thin-lens DOF model. Sub-p
 
 **`focus_dist`** controls the distance at which objects are perfectly in focus (zero circle of confusion), adjustable via `T` (increase x1.05) and `G` (decrease /1.05) with range [0.2, 10000]. **`lens_radius`** controls the aperture size; larger values produce a shallower depth of field (more blur), adjustable via `Y` (increase x1.05) and `H` (decrease /1.05) with range [0.0, 0.5]. When `lens_radius = 0`, the camera acts as a perfect pinhole with no DOF.
 
-![Depth of field comparison](docs/assets/depth-of-field.gif)
-*Animated GIF comparing pinhole (lens_radius=0) vs. shallow DOF (lens_radius > 0) with focus on a specific object.*
+![Depth of field comparison](docs/assets/img/depth-of-field.png)
+*Comparison of pinhole (lens_radius=0) vs. shallow DOF (lens_radius > 0) with focus on a specific object.*
 
 ---
 
@@ -189,7 +188,6 @@ Mouse look is implemented in `mouse_hooks.c`. `cam_move()` is called on every mo
 
 The BVH debug system (`params_hooks1.c`, `params_hooks3.c`) provides real-time visualization of the acceleration structure. Pressing `V` toggles the debug overlay on and off. When enabled, the Up/Down keys adjust `params.bvh_depth` (-1 = max depth, 0..max_depth = specific depth). The Left/Right keys switch between BVH shapes (0: Sphere BVH, 1: AABB BVH with SAH, 2: OBB BVH with PCA). The `C` key cycles the heat map color palette offset through indices 0-9. The CPU-side `debug_rasterize_bvh()` rasterizes bounding boxes at the currently selected depth level using the camera projection (`project_point()`). Colors are either the heat map palette or a simple white outline depending on configuration.
 
-![BVH debug overlay](docs/assets/bvh-debug-overlay.gif)
 *Animated GIF showing the BVH debug overlay cycling through different depth levels and bounding box shapes.*
 
 ---

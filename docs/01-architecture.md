@@ -2,7 +2,7 @@
 
 ## Overview
 
-![Architecture overview diagram](docs/assets/render-pipeline.svg)
+![Architecture overview diagram](docs/assets/svg/render-pipeline.svg)
 *High-level system architecture showing the three layers: main binary, library submodules, and assets. The data flow moves from scene parsing through BVH construction to GPU rendering and display.*
 
 miniRT is organized into three layers: the **main binary** (`src/`), **library submodules** (`lib/`), and **assets** (`minirt-assets/`). The binary reads a `.rt` scene file, parses it into an in-memory scene graph, transfers data to the GPU, and runs a render loop that dispatches OpenCL compute kernels.
@@ -28,8 +28,8 @@ typedef struct s_data
 
 ### `t_scene` - Scene Description
 
-![Scene data flow diagram](docs/assets/scene-data-flow.png)
-*Diagram illustrating how the .rt file is parsed into the in-memory t_scene structure and then uploaded to the GPU.*
+![Scene data flow diagram](docs/assets/img/showcase-render5.png)
+*Data flow from .rt file parsing into the in-memory t_scene structure, then uploaded to the GPU for rendering.*
 
 ```c
 typedef struct s_scene
@@ -216,8 +216,8 @@ flowchart TB
 
 ## Render Pipeline Flowchart
 
-![Render pipeline screenshot](docs/assets/render-pipeline.png)
-*Screenshot capturing the render loop in action, showing the viewport, UI, and FPS overlay.*
+![Render pipeline screenshot](docs/assets/img/ui-selection.png)
+*Screenshot capturing the render loop in action, showing the viewport with object selection.*
 
 ```mermaid
 flowchart TD

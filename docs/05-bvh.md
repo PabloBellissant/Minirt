@@ -1,13 +1,12 @@
 # BVH System
 
-![BVH tree structure diagram](docs/assets/bvh-tree.svg)
+![BVH tree structure diagram](docs/assets/svg/bvh-tree.svg)
 *Visualization of the BVH tree structure showing the root node splitting into child subtrees with different bounding volume shapes (AABB, Sphere, OBB) and leaf nodes containing primitives.*
 
 The **Bounding Volume Hierarchy (BVH)** accelerates ray-scene intersection by organizing primitives in a spatial tree. Each node stores a bounding volume that encloses all primitives in its subtree. During traversal, nodes whose bounding volume is missed by the ray are skipped, yielding $O(\log n)$ average intersection time.
 
 ## Architecture Overview
 
-![BVH architecture diagram](docs/assets/bvh-architecture.png)
 *Diagram showing the CPU-side build pipeline and GPU-side traversal loop.*
 
 ```mermaid
@@ -105,7 +104,6 @@ Only one shape is active per BVH tree, determined by `bvh_header->shape`.
 
 ## Bounding Volume Shapes
 
-![BVH bounding shapes comparison](docs/assets/bvh-shapes-comparison.png)
 *Visual comparison of axis-aligned (AABB), sphere, and oriented (OBB) bounding volumes around the same geometry.*
 
 ### 1. AABB - Axis-Aligned Bounding Box
@@ -136,7 +134,6 @@ The sphere bound is defined by a center position and a radius, evaluated by comp
 
 ### 3. OBB - Oriented Bounding Box
 
-![OBB construction pipeline](docs/assets/obb-construction.png)
 *Pipeline diagram showing the steps from PCA mean computation through to the final oriented bounding box.*
 
 ```c
@@ -227,7 +224,6 @@ The CPU-side structures are transformed into compact GPU-friendly versions for O
 
 ## GPU Traversal Functions
 
-![GPU traversal visualization](docs/assets/gpu-traversal.gif)
 *Animated visualization of the ray traversal through a BVH tree, showing which nodes are visited and skipped.*
 
 ### `hit_aabb` - Slab Method

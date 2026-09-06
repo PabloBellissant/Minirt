@@ -4,7 +4,6 @@
 
 miniRT scene files use the `.rt` extension. They are plain-text files with one directive per line. Lines starting with `#` or `//` are comments. Values are comma- or whitespace-separated. The parser uses `ft_scan()` - a typed scanf with range validation - defined in the format macros below.
 
-![Example .rt file in a text editor](docs/assets/rt-file-syntax.png)
 *Screenshot showing a sample .rt scene file open in a text editor, with highlighted syntax for each identifier type (A, C, L, sp, pl, cy, obj, sky, mtl).*
 
 ## Identifiers

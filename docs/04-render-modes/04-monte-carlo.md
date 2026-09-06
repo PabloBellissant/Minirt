@@ -31,7 +31,6 @@ monte_carlo() kernel (per pixel)
        +-- bounce++
 ```
 
-![Monte Carlo rendering screenshot](docs/assets/monte-carlo-mode.png)
 *Screenshot of Monte Carlo mode showing progressive path tracing with caustics and chromatic dispersion.*
 
 ## GGX Importance Sampling
@@ -43,6 +42,16 @@ $$\theta = \arccos\left(\sqrt{\frac{1 - u_2}{1 + (\alpha^2 - 1)u_2}}\right), \qu
 Where $\alpha = \text{roughness}^2$, and $u_1, u_2$ are uniform random numbers. The sampled half-vector $\mathbf{h}$ is used to compute the scattered direction $\hat{D}' = \text{reflect}(\hat{D}, \mathbf{h})$ for glossy reflection, or $\hat{D}' = \text{refract}(\hat{D}, \mathbf{h}, \eta)$ for glossy refraction.
 
 ## Chromatic Dispersion
+
+<table>
+  <tr>
+    <td><img src="docs/assets/img/diffraction.png" alt="Chromatic dispersion - caustics" width="100%"/></td>
+    <td><img src="docs/assets/img/diffraction2.png" alt="Chromatic dispersion - rainbows" width="100%"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" style="text-align:center"><em>Chromatic dispersion in Monte Carlo mode: wavelength-dependent IOR produces physically accurate rainbow caustics and colored refractions.</em></td>
+  </tr>
+</table>
 
 Dispersion models the **wavelength-dependent refractive index** of real materials. The ray's current `through_power` color is converted to a **spectral hue index** (0-360 degrees) via `rgb_to_spectrum_index()`. This hue is mapped to a **wavelength factor** in $[-1, 1]$, and the effective IOR for the ray becomes:
 
@@ -68,7 +77,6 @@ Skybox is handled differently depending on bounce number. On **bounce 0** (prima
 
 ## Pipeline Diagram
 
-![Monte Carlo pipeline diagram](docs/assets/monte-carlo-pipeline.png)
 *Flowchart illustrating the Monte Carlo ray path sampling pipeline from primary ray generation through bounce accumulation.*
 
 The following Mermaid diagram illustrates the Monte Carlo ray path sampling pipeline:

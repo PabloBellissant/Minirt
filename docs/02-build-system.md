@@ -2,7 +2,6 @@
 
 ## Overview
 
-![Build chain diagram](docs/assets/build-chain.png)
 *Build chain diagram showing the dependency graph from library submodules (.a archives) through to the final miniRT binary, including include paths and linker flags.*
 
 miniRT uses a **modular recursive Makefile system** orchestrated by the `mkidir` submodule. The top-level `Makefile` coordinates 6 library submodules, each with their own Makefiles and `includes.mk`, plus the main binary's 487 C source files distributed across 48 `.mk` include files.

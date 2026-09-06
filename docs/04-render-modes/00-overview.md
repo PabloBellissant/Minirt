@@ -25,7 +25,6 @@ The current mode is read from `*data->params.render_mode` (an `int` pointer). Th
 | 4 | Normal Debug | Surface normal visualization | GPU (OpenCL) |
 | 5 | Heat Map | BVH traversal depth visualization | GPU (OpenCL) |
 
-![Render mode comparison](docs/assets/render-modes-comparison.png)
 *Side-by-side comparison of the same scene rendered in all six modes.*
 
 ## Keyboard Switching

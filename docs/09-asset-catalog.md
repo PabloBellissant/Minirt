@@ -2,7 +2,6 @@
 
 ## Overview
 
-![Asset catalog preview](docs/assets/asset-catalog-overview.png)
 *Visual catalog grid showing available scene files, OBJ meshes, MTL materials, and texture maps organized by type, giving an at-a-glance view of all available assets.*
 
 miniRT loads scene files, OBJ meshes, MTL materials, and texture maps from

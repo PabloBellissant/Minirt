@@ -24,7 +24,7 @@ shading using **minilibx**, the only external rendering library permitted.
 Scenes are defined in a `.rt` text format with a camera, ambient light,
 point lights, and primitives.
 
-![Default miniRT render placeholder](docs/assets/minirt-default.png)
+![Default miniRT render](docs/assets/img/mandatory1.png)
 
 ---
 
@@ -40,7 +40,7 @@ with PBR texture maps, a complete in-engine UI with edit panels and
 selection, scene import/export, depth-of-field, exposure control, and
 progressive accumulation rendering.
 
-![miniRT rendered scene placeholder](docs/assets/minirt-result.png)
+<table><tr><td rowspan="2" width="50%"><img src="docs/assets/img/showcase-render1.png" width="100%"></td><td width="50%"><img src="docs/assets/img/showcase-render2.png" width="100%"></td></tr><tr><td width="50%"><img src="docs/assets/img/showcase-render3.png" width="100%"></td></tr></table>
 
 ---
 
@@ -99,7 +99,7 @@ The project relies on seven submodules, six of which we wrote ourselves
 specifically for miniRT. They are built as static libraries and linked
 into the final binary.
 
-![miniRT Submodule Architecture](docs/assets/submodule-stack.svg)
+![miniRT Submodule Architecture](docs/assets/svg/submodule-stack.svg)
 
 Our custom libraries are **libft** (vector math, colors, utilities),
 **mlx_wrapper** (input abstraction over minilibx), **font_renderer**

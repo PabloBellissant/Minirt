@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="460" viewBox="0 0 640 460" font-family="monospace" font-size="13">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="ours" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <linearGradient id="ext" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#134e4a"/>
+      <stop offset="100%" stop-color="#115e59"/>
+    </linearGradient>
+    <linearGradient id="bin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#166534"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect width="640" height="460" fill="url(#bg)" rx="12"/>
+
+  <!-- Title -->
+  <text x="320" y="28" text-anchor="middle" fill="#e2e8f0" font-size="15" font-weight="bold">miniRT Submodule Architecture</text>
+  <text x="320" y="45" text-anchor="middle" fill="#94a3b8" font-size="11">indigo = self-made / teal = external / green = binary</text>
+
+  <!-- Dependency chain bullet list -->
+  <text x="320" y="435" text-anchor="middle" fill="#64748b" font-size="10">
+    <tspan x="40" dy="0">• libft → all self-made libs (mlx_wrapper, font_renderer, mlxui) + xcerrcal</tspan>
+    <tspan x="40" dy="14">• xcerrcal → all self-made libs + miniRT binary</tspan>
+    <tspan x="40" dy="14">• minilibx-linux → mlx_wrapper, font_renderer, mlxui</tspan>
+    <tspan x="40" dy="14">• All modules → miniRT binary (final executable)</tspan>
+  </text>
+
+  <!-- ==================== ARROWS (behind boxes) ==================== -->
+
+  <!-- Row 1 → Row 2 -->
+  <!-- minilibx → mlx_wrapper -->
+  <line x1="120" y1="114" x2="120" y2="150" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- minilibx → font_renderer -->
+  <polyline points="200,92 200,120 240,120 240,150" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft → mlx_wrapper -->
+  <polyline points="240,92 240,120 200,120 200,150" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft → font_renderer -->
+  <line x1="320" y1="114" x2="320" y2="150" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft → xcerrcal -->
+  <line x1="400" y1="92" x2="440" y2="92" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- xcerrcal → mlx_wrapper -->
+  <polyline points="460,109 460,130 200,130 200,150" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- xcerrcal → font_renderer -->
+  <polyline points="440,92 440,120 400,120 400,150" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 1 → Row 3 -->
+  <!-- minilibx → mlxui -->
+  <polyline points="200,100 200,145 140,145 140,240" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft → mlxui -->
+  <polyline points="400,100 400,145 300,145 300,240" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- xcerrcal → mlxui -->
+  <polyline points="520,114 520,200 300,200 300,240" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 1 → Row 4 (miniRT) -->
+  <!-- minilibx → miniRT -->
+  <polyline points="60,100 60,380 190,380" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- libft → miniRT -->
+  <polyline points="400,109 400,380" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- xcerrcal → miniRT -->
+  <polyline points="600,100 600,380 450,380" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2 → Row 2 -->
+  <!-- mlx_wrapper → font_renderer -->
+  <line x1="200" y1="172" x2="240" y2="172" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2 → Row 3 -->
+  <!-- mlx_wrapper → mlxui -->
+  <polyline points="200,172 200,215 140,215 140,240" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- font_renderer → mlxui -->
+  <polyline points="320,194 320,215 300,215 300,240" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2 → Row 4 -->
+  <!-- mlx_wrapper → miniRT -->
+  <polyline points="120,194 120,310 190,310 190,380" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- font_renderer → miniRT -->
+  <polyline points="320,194 320,380" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 3 → Row 4 -->
+  <!-- mlxui → miniRT -->
+  <polyline points="220,284 220,380" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ==================== BOXES ==================== -->
+
+  <!-- Row 1: Foundation libraries -->
+  <!-- minilibx-linux (external, teal) -->
+  <rect x="40" y="70" width="160" height="44" rx="8" fill="url(#ext)" stroke="#2dd4bf" stroke-width="1.5"/>
+  <text x="120" y="89" text-anchor="middle" fill="#f0fdfa" font-weight="bold">minilibx-linux</text>
+  <text x="120" y="104" text-anchor="middle" fill="#a7f3d0" font-size="11">X11 windowing (not ours)</text>
+
+  <!-- libft (indigo) -->
+  <rect x="240" y="70" width="160" height="44" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="320" y="89" text-anchor="middle" fill="#eef2ff" font-weight="bold">libft</text>
+  <text x="320" y="104" text-anchor="middle" fill="#c7d2fe" font-size="11">vectors, colors, matrices</text>
+
+  <!-- xcerrcal (indigo) -->
+  <rect x="440" y="70" width="160" height="44" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="520" y="89" text-anchor="middle" fill="#eef2ff" font-weight="bold">xcerrcal</text>
+  <text x="520" y="104" text-anchor="middle" fill="#c7d2fe" font-size="11">error handling</text>
+
+  <!-- Row 2: Mid-level libraries -->
+  <!-- mlx_wrapper (indigo) -->
+  <rect x="40" y="150" width="160" height="44" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="120" y="169" text-anchor="middle" fill="#eef2ff" font-weight="bold">mlx_wrapper</text>
+  <text x="120" y="184" text-anchor="middle" fill="#c7d2fe" font-size="11">input, key/mouse hooks</text>
+
+  <!-- font_renderer (indigo) -->
+  <rect x="240" y="150" width="160" height="44" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="320" y="169" text-anchor="middle" fill="#eef2ff" font-weight="bold">font_renderer</text>
+  <text x="320" y="184" text-anchor="middle" fill="#c7d2fe" font-size="11">TTF parsing + rasterization</text>
+
+  <!-- Row 3: High-level library -->
+  <!-- mlxui (indigo) -->
+  <rect x="140" y="240" width="160" height="44" rx="8" fill="url(#ours)" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="220" y="259" text-anchor="middle" fill="#eef2ff" font-weight="bold">mlxui</text>
+  <text x="220" y="274" text-anchor="middle" fill="#c7d2fe" font-size="11">GUI components, hierarchy</text>
+
+  <!-- Row 4: Binary -->
+  <!-- MiniRT binary (green) -->
+  <rect x="190" y="340" width="260" height="48" rx="8" fill="url(#bin)" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="320" y="362" text-anchor="middle" fill="#f0fdf4" font-weight="bold" font-size="14">miniRT binary</text>
+  <text x="320" y="378" text-anchor="middle" fill="#bbf7d0" font-size="11">OpenCL ray tracing + UI + scene editor</text>
+</svg>

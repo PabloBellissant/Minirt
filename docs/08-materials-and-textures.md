@@ -68,8 +68,16 @@ miniRT supports **6 texture map types** per material. Each map is an optional `t
 
 All loaded textures are concatenated into a single flat byte array (`__constant uchar *textures` on the GPU) called the **texture atlas**. Each texture is described by a `t_texture_data` struct containing an index, byte offset into the atlas, width, height, and number of channels.
 
-![Texture atlas layout](docs/assets/texture-atlas.png)
-*Diagram showing how multiple texture maps are concatenated into a single flat byte array for GPU access.*
+<table>
+  <tr>
+    <td><img src="docs/assets/img/mat2-1.png" alt="Material sample 1" width="100%"/></td>
+    <td><img src="docs/assets/img/mat2-2.png" alt="Material sample 2" width="100%"/></td>
+    <td><img src="docs/assets/img/mat2-3.png" alt="Material sample 3" width="100%"/></td>
+  </tr>
+  <tr>
+    <td colspan="3" style="text-align:center"><em>Sample material renders showing different PBR surface properties - metallic, dielectric, and textured materials.</em></td>
+  </tr>
+</table>
 
 ### Per-Pixel Sampling (GPU)
 
@@ -87,7 +95,6 @@ Normal maps store normals in tangent space. The GPU applies a tangent-bitangent-
 
 ## Material Diagrams
 
-![Material system flowchart](docs/assets/material-system-flowchart.png)
 *Complete flowchart from MTL file parsing through GPU-side material sampling and Fresnel computation.*
 
 ```mermaid

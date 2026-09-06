@@ -2,14 +2,12 @@
 
 ## Overview
 
-![Full UI screenshot](docs/assets/ui-screenshot-full.png)
-*Screenshot of the complete miniRT UI showing the left panel with scene hierarchy list, object edit panel with sliders and color pickers, render mode switch icons at top-right, and FPS/info overlay.*
+*Screenshot of the miniRT UI showing the left panel with scene hierarchy list, object selection in the viewport, and edit panels.*
 
 miniRT features a full hierarchical UI system built on top of the **mlxui** library, a custom minilibx UI toolkit. The UI provides a **scene hierarchy list** (left panel) showing all objects, lights, and the camera; **edit panels** for modifying object geometry, materials, and render settings in real time; **on-display information** including an FPS counter, info text, and render mode switch buttons with logos; a **selection system** via click, drag (rubber-band), and scene list interaction; a **color theme** with a customizable Material Design-like palette; and **TTF font rendering** via the custom `font_renderer` library.
 
 The UI is built from a **hierarchical tree** (`t_htree`) of **branches** (`t_hbranch`), where each branch is a UI component (box, button, textbox, slider, colorpicker, etc.). The tree is populated once during initialization and rebuilt dynamically when the selection or edit mode changes.
 
-![UI screenshot with annotations](docs/assets/ui-screenshot-annotated.png)
 *Annotated screenshot of the miniRT UI showing the left panel, scene list, edit panel, render mode switch, and FPS counter.*
 
 ---
@@ -153,7 +151,6 @@ flowchart TD
 
 ## Edit Panels
 
-![Edit panel screenshot](docs/assets/edit-panel-screenshot.png)
 *Close-up screenshot of the edit panel showing the material block with sliders (Ns, Ni, d, Pm, Pr, Ka), color pickers (Kd, Ks, Ke), and texture map selectors for each PBR channel.*
 
 The left panel's edit section uses a **block-based** layout system defined in `include/ui/edit_pannel/blocks.h`.
@@ -183,7 +180,6 @@ This mode contains **camera parameters** (Position, rotation, FOV, focus distanc
 
 ### Dynamic Rebuild
 
-![Edit panel rebuild animation](docs/assets/ui-rebuild.gif)
 *Animated GIF showing the left panel switching between Object Edit and Render Edit modes.*
 
 When the user clicks a different edit mode tab, `rebuild_inner_edit()` is called, which destroys the current inner edit panel's components, calls `populate_obj_edit()` or `populate_render_edit()` depending on `edit_mode`, and calls `precompute_hbranch()` on the entire edit panel subtree.
