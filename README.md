@@ -18,12 +18,11 @@ and selection, and a wireframe debug visualizer.
 
 ## The Original Subject
 
-The 42 School **miniRT** is a standard common core project, not a
-homework assignment. The brief is straightforward: render spheres, planes,
-and cylinders with Phong shading using **minilibx**, the only external
-rendering library permitted. Scenes are defined in a `.rt` text format
-with a camera, ambient light, point lights, and primitives. The subject
-explicitly forbids GPU acceleration and advanced shading models.
+The 42 School **miniRT** is a standard common core project very 
+straightforward: render spheres, planes, and cylinders with Phong
+shading using **minilibx**, the only external rendering library permitted.
+Scenes are defined in a `.rt` text format with a camera, ambient light,
+point lights, and primitives.
 
 ![Default miniRT render placeholder](docs/assets/minirt-default.png)
 
@@ -323,7 +322,7 @@ which submodules compile with debug symbols. Each level adds more subsystems:
 | `5` | + miniRT binary itself (maximum verbosity) |
 
 The `DEBUG` macro is passed as `-D DEBUG=0` or `-D DEBUG=1` to the C
-compiler when `DEBUG_LVL >= 5`, so source code can use `#if DEBUG` guards.
+compiler when `1 >= DEBUG_LVL <= 5`, so source code can use `#if DEBUG` guards.
 See [docs/02-build-system.md](docs/02-build-system.md) for details on sanitizer targets,
 compiler flags, and environment variables.
 
