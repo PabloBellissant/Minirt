@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <rect width="800" height="450" fill="#0d1117"/>
+  <!-- Left large: showcase-render1 -->
+  <image href="../img/showcase-render1.png" width="400" height="450" x="0" y="0" preserveAspectRatio="xMidYMid slice"/>
+  <!-- Right top: showcase-render2 -->
+  <image href="../img/showcase-render2.png" width="400" height="225" x="400" y="0" preserveAspectRatio="xMidYMid slice"/>
+  <!-- Right bottom: showcase-render3 -->
+  <image href="../img/showcase-render3.png" width="400" height="225" x="400" y="225" preserveAspectRatio="xMidYMid slice"/>
+</svg>

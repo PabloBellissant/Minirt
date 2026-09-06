@@ -43,15 +43,9 @@ Where $\alpha = \text{roughness}^2$, and $u_1, u_2$ are uniform random numbers. 
 
 ## Chromatic Dispersion
 
-<table>
-  <tr>
-    <td><img src="docs/assets/img/diffraction.png" alt="Chromatic dispersion - caustics" width="100%"/></td>
-    <td><img src="docs/assets/img/diffraction2.png" alt="Chromatic dispersion - rainbows" width="100%"/></td>
-  </tr>
-  <tr>
-    <td colspan="2" style="text-align:center"><em>Chromatic dispersion in Monte Carlo mode: wavelength-dependent IOR produces physically accurate rainbow caustics and colored refractions.</em></td>
-  </tr>
-</table>
+![](../assets/svg/monte-carlo-diffraction.svg)
+
+*Chromatic dispersion in Monte Carlo mode: wavelength-dependent IOR produces physically accurate rainbow caustics and colored refractions.*
 
 Dispersion models the **wavelength-dependent refractive index** of real materials. The ray's current `through_power` color is converted to a **spectral hue index** (0-360 degrees) via `rgb_to_spectrum_index()`. This hue is mapped to a **wavelength factor** in $[-1, 1]$, and the effective IOR for the ray becomes:
 

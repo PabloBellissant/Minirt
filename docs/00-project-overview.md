@@ -18,16 +18,9 @@ The current miniRT implements a full production-grade ray tracer that far exceed
 
 ### Core Rendering
 
-<table>
-  <tr>
-    <td><img src="docs/assets/img/showcase-render1.png" alt="Phong render" width="100%"/></td>
-    <td><img src="docs/assets/img/showcase-render2.png" alt="PBR render" width="100%"/></td>
-    <td><img src="docs/assets/img/showcase-render3.png" alt="Monte Carlo render" width="100%"/></td>
-  </tr>
-  <tr>
-    <td colspan="3" style="text-align:center"><em>Three render modes - Phong (left), PBR (center), Monte Carlo (right) - applied to the same scene.</em></td>
-  </tr>
-</table>
+![](docs/assets/svg/overview-renders.svg)
+
+*Three render modes - Phong (left), PBR (center), Monte Carlo (right) - applied to the same scene.*
 
 ![Original subject render](docs/assets/img/mandatory1.png)
 *Side-by-side comparison of the original 42 subject render (Phong, no shadows) vs. the current miniRT render (PBR with Fresnel, shadows, and textures) on the same scene.*
@@ -43,16 +36,7 @@ The renderer supports spheres (`sp`) defined by position and diameter; planes (`
 
 ### Materials (MTL)
 
-<table>
-  <tr>
-    <td><img src="docs/assets/img/mat1-1.png" alt="Material preview 1" width="100%"/></td>
-    <td><img src="docs/assets/img/mat1-2.png" alt="Material preview 2" width="100%"/></td>
-  </tr>
-  <tr>
-    <td><img src="docs/assets/img/mat1-3.png" alt="Material preview 3" width="100%"/></td>
-    <td><img src="docs/assets/img/mat1-4.png" alt="Material preview 4" width="100%"/></td>
-  </tr>
-</table>
+![](docs/assets/svg/overview-materials.svg)
 *Sample materials showing different PBR properties - metallic, dielectric, textured, and emissive surfaces.*
 
 The system includes a full MTL file parser supporting `newmtl`, `Ns` (specular exponent), `Ka` (ambient), `Kd` (diffuse), `Ks` (specular), `Ke` (emissive), `Ni` (index of refraction), `d` (opacity), `Pr` (roughness), and `Pm` (metalness). It supports **texture maps** for `map_Kd` (albedo), `map_bump` (normal map), `map_Pr` (roughness map), `map_Ka` (ambient occlusion), `map_d` (opacity map), and `map_Pm` (metalness map). Eight or more materials are included in the minirt-assets repository.

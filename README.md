@@ -40,7 +40,7 @@ with PBR texture maps, a complete in-engine UI with edit panels and
 selection, scene import/export, depth-of-field, exposure control, and
 progressive accumulation rendering.
 
-<table><tr><td rowspan="2" width="50%"><img src="docs/assets/img/showcase-render1.png" width="100%"></td><td width="50%"><img src="docs/assets/img/showcase-render2.png" width="100%"></td></tr><tr><td width="50%"><img src="docs/assets/img/showcase-render3.png" width="100%"></td></tr></table>
+![](docs/assets/svg/README-showcase.svg)
 
 ---
 
