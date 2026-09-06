@@ -6,7 +6,7 @@
 /*   By: pabellis <pabellis@student.forty2.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 19:52:28 by pabellis          #+#    #+#             */
-/*   Updated: 2025/10/14 06:42:35 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/20 17:29:48 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ int	sky(const char *line, int line_num, t_scene *scene)
 	texture = parse_texture(scene, texture_path);
 	if (!texture)
 	{
-		free(texture_path);
 		register_complex_err_msg(RT_E_MSG_NO_TEX, texture_path);
+		free(texture_path);
 		return (error(pack_err(RT_ID, RT_E_NO_TEX), FL, LN, FC));
 	}
 	texture->name = texture_path;

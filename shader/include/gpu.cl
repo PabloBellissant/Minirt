@@ -97,11 +97,96 @@ typedef struct s_light_gpu
 	float3	pos;
 }			t_light_gpu;
 
+typedef struct s_cuboid
+{
+	float3	min;
+	float3	max;
+}	t_cuboid;
+
+typedef struct s_bvh_sphere_gpu
+{
+	union
+	{
+		float3	pos;
+		float3	centroid;
+	};
+	union
+	{
+		float	r;
+		float	radius;
+	};
+}	t_bvh_sphere_gpu;
+
+typedef struct s_bvh_aabb_gpu
+{
+	union
+	{
+		struct
+		{
+			float3	min;
+			float3	max;
+		};
+		t_cuboid	cuboid;
+	};
+}					t_bvh_aabb_gpu;
+
+typedef struct s_bvh_obb_gpu
+{
+	float3	center;
+	float4	q;
+	float3	half_extents;
+	float4	axes[3];
+}	t_bvh_obb_gpu;
+
+typedef union u_bvh_bounds_gpu
+{
+	t_bvh_sphere_gpu	sphere;
+	t_bvh_aabb_gpu		aabb;
+	t_bvh_obb_gpu		obb;
+}	t_bvh_bounds_gpu;
+
+#define BVH_ARITY 2
+
+typedef struct s_bvh_node_gpu
+{
+	union
+	{
+		int				children[BVH_ARITY];
+		struct
+		{
+			int			_pad[BVH_ARITY - 1];
+			int			object_id;
+			int			type;
+		};
+	};
+	int					skip;
+	t_bvh_bounds_gpu	bounds;
+}	t_bvh_node_gpu;
+
+typedef struct s_bvh_header_gpu
+{
+	t_bvh_node_gpu	*nodes;
+	int				shape;
+}					t_bvh_header_gpu;
+
 typedef struct s_sphere_gpu
 {
-	float3	pos;
+	union
+	{
+		float3	pos;
+		float3	centroid;
+	};
+	union
+	{
+		float	radius;
+		float	r;
+	};
+	union
+	{
+		float	diameter;
+		float	d;
+	};
 	int		mat;
-	float	diameter;
 }			t_sphere_gpu;
 
 typedef struct s_vertex
@@ -121,6 +206,7 @@ typedef struct s_vertex
 
 typedef struct s_triangle_gpu
 {
+	float3		centroid;
 	t_vertex	p0;
 	t_vertex	p1;
 	t_vertex	p2;
@@ -143,51 +229,14 @@ typedef struct s_plane_gpu
 	float	texture_scaling;
 }			t_plane_gpu;
 
-typedef struct s_cuboid
-{
-	float3	min;
-	float3	max;
-}	t_cuboid;
-
-typedef enum e_bvh_ary_type
-{
-	BVH2 = 0,
-	BVH4,
-	BVH8
-}	t_bvh_ary_type;
-
-typedef struct s_bvh_gpu
-{
-	union
-	{
-		struct
-		{
-			float3	min;
-			float3	max;
-		};
-		t_cuboid	cuboid;
-	};
-	union
-	{
-		int	next;
-		int	object;
-		int	children[8];
-	};
-	int			depth;
-	int			skip;
-	int			child_count;
-	int			bvh_type;
-}	t_bvh_gpu;
-
 typedef struct s_objects
 {
 	__constant t_sphere_gpu		*spheres;
-	__constant t_bvh_gpu		*sphere_bvh;
 	__constant t_triangle_gpu	*triangles;
-	__constant t_bvh_gpu		*triangle_bvh;
 	__constant t_plane_gpu		*planes;
 	__constant t_light_gpu		*lights;
 	__constant t_mat_gpu		*mats;
+	__constant t_bvh_node_gpu	*bvh;
 	int							lights_count;
 	int							planes_count;
 }	t_objects;
@@ -197,15 +246,16 @@ typedef enum e_object_type
 	UNDEFINED,
 	AMBIENT,
 	CAMERA,
-	LIGHT,
 	SPHERE,
 	PLANE,
 	TRIANGLE,
 	SKYBOX,
 	MATERIAL,
+	MESH,
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
+//
 typedef struct e_emissive
 {
 	int				obj_id;
@@ -214,8 +264,10 @@ typedef struct e_emissive
 
 t_ray_gpu	calc_ray(__private t_camera_gpu *cam, int2 pos, uint *rng);
 float	randomf(uint *rng);
+//t_ray_gpu	calc_ray(__private t_camera_gpu *cam, int2 pos);
+//float	random01(uint seed);
 
-t_hit_gpu	hit_register_gpu(__private t_ray_gpu *ray, __private t_objects *objects);
+t_hit_gpu	hit_register_gpu(__private t_ray_gpu *ray, __private t_objects *objects, int type);
 
 void	fill_sphere_uv_normal(float3 hit_point, __constant t_sphere_gpu *sphere, __private float2 *uv, __private float3 *norm);
 void	fill_plane_uv_normal(float3 hit_point, __constant t_plane_gpu *plane, __private float2 *uv, __private float3 *norm);
@@ -228,7 +280,8 @@ t_hit_data	sample_refract(__private t_hit_gpu *hit, __constant uchar *tex, __con
 rgb3	sample_texture(__constant uchar *textures, float2 uv, __constant t_texture_data *data);
 float	sample_gray_level_texture(__constant uchar *textures, float2 uv, __constant t_texture_data *data);
 
-rgb3	phong_shading(__private t_hit_data *hit_data, __private t_hit_gpu *hit, __private t_ray_gpu *ray, __private t_objects *objects, rgb3 ambient);
+rgb3	phong_shading(__private t_hit_data *hit_data, __private t_hit_gpu *hit, __private t_ray_gpu *ray, __private t_objects *objects, rgb3 ambient, int bvh_type);
+//rgb3	phong_shading(__private t_hit_data *hit_data, __private t_hit_gpu *hit, __private t_ray_gpu *ray, __private t_objects *objects);
 
 
 #endif

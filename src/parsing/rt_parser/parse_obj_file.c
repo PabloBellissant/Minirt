@@ -12,11 +12,11 @@
 
 #include "minirt.h"
 
-int			parse_obj_type(const char *line, t_scene *scene,
-				t_obj_attribute *attr, t_obj_vectors *vec);
+int			parse_obj_type(const char *line, t_scene *scene, t_vec3 *scale,
+				t_obj_vectors *vec);
 static void	init_vectors(t_obj_vectors *vec, t_scene *scene);
 
-int	parse_obj_file(int fd, t_scene *scene, t_obj_attribute *attr)
+int	parse_obj_file(int fd, t_scene *scene, t_vec3 *scale)
 {
 	char			*line;
 	t_obj_vectors	vec;
@@ -27,7 +27,7 @@ int	parse_obj_file(int fd, t_scene *scene, t_obj_attribute *attr)
 	line = get_next_line(fd);
 	while (line != NULL)
 	{
-		if (parse_obj_type(line, scene, attr, &vec) == -1)
+		if (parse_obj_type(line, scene, scale, &vec) == -1)
 		{
 			free(vec.vertex.data);
 			free(vec.normal.data);

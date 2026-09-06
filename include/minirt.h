@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 01:18:56 by pabellis          #+#    #+#             */
-/*   Updated: 2026/01/19 15:57:32 by jaubry--         ###   ########.fr       */
+/*   Updated: 2026/02/20 16:39:12 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <stdint.h>
 # include "CL/cl.h"
+# include "CL/cl.h"
 # include "xcerrcal.h"
 # include "rt_xcerrcal.h"
 # include "mlx_int.h"
@@ -22,8 +23,9 @@
 # include "parsing.h"
 # include "vectors.h"
 # include "render.h"
-# include "font_renderer.h"
 # include "mlx_wrapper.h"
+# include "bvh.h"
+# include "ui.h"
 
 # define BOUNCE_MAX 2
 # define REFRACT_MAX 5
@@ -59,20 +61,19 @@ typedef struct s_mouse
 
 typedef struct s_params
 {
-	int		render_mode;
+	int		*render_mode;
 	int		bvh_depth;
-	int		bvh_color_offset;
+	int		color_offset;
 	bool	bvh_debug;
+	int		ui_mode;
+	float	exposure;
 }			t_params;
 
 typedef struct s_buffers
 {
-	t_ray			*rays;
-	t_hit			*hits;
-	int				hits_count;
 	unsigned int	*addr;
 	t_vec3			*accu;
-}			t_buffers;
+}					t_buffers;
 
 typedef struct s_kernel
 {
@@ -90,16 +91,17 @@ typedef struct s_gpu_buffers
 	cl_mem	img;
 }	t_gpu_buffers;
 
-typedef struct s_opencl {
-    cl_platform_id platform;
-    cl_device_id device;
-    cl_context context;
-    cl_command_queue queue;
-    cl_program program;
-	t_kernel	kernel;
-	t_gpu_buffers	bu;
-    unsigned char *host_buffer;
-}	t_opencl;
+typedef struct s_opencl
+{
+	cl_platform_id		platform;
+	cl_device_id		device;
+	cl_context			context;
+	cl_command_queue	queue;
+	cl_program			program;
+	t_kernel			kernel;
+	t_gpu_buffers		bu;
+	unsigned char		*host_buffer;
+}						t_opencl;
 
 typedef struct s_data
 {
@@ -111,13 +113,14 @@ typedef struct s_data
 	t_mlx		*mlx;
 	t_vec2i		screen;
 	t_scene		scene;
+	t_ui		ui;
 }				t_data;
 
 typedef struct s_kernel_def
 {
 	const char	*name;
 	cl_kernel	*kernel;
-}	t_kernel_def;
+}				t_kernel_def;
 
 typedef enum e_obj
 {
@@ -132,10 +135,15 @@ typedef enum e_obj
 
 int		init_graphics(t_data *data);
 int		init_opencl(t_opencl *state, cl_device_type id);
-void	 cleanup_opencl(t_opencl *state);
+void	cleanup_opencl(t_opencl *state);
 void	clear_scene(t_scene *scene);
 
-int		loop_hook(t_data *mlx);
+void	free_bvh(t_bvh_engine bvh);
+void	free_textures(t_vector *vec);
+void	free_mats(t_vector *vec);
+void	free_scene(t_scene *scene);
+void	free_data(t_data *data);
+
 int		loop(t_data *mlx);
 
 #endif//MINIRT_H

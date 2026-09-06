@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:33:07 by jaubry--          #+#    #+#             */
-/*   Updated: 2025/10/13 18:45:04 by jaubry--         ###   ########.fr       */
+/*   Updated: 2026/02/12 00:59:09 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,38 +17,17 @@
 
 void	register_rt_errors(void)
 {
-	const char	*err_msgs[] =
-	{
-		RT_E_MSG_ARGC,
-		RT_E_MSG_GRAPHICS,
-		RT_E_MSG_PARSING,
-		RT_E_MSG_ARGS,
-		RT_E_MSG_AMBIENT,
-		RT_E_MSG_CAMERA,
-		RT_E_MSG_LIGHT,
-		RT_E_MSG_OBJ,
-		RT_E_MSG_PLANE,
-		RT_E_MSG_SKY,
-		RT_E_MSG_SPHERE,
-		RT_E_MSG_TEX,
-		RT_E_MSG_OBJ_FAIL,
-		RT_E_MSG_OBJ_NO_MAT,
-		RT_E_MSG_NO_TEX,
-		RT_E_MSG_NO_PARSER,
-		RT_E_MSG_UNKNOW_MAT,
-		RT_E_MSG_UNKNOW_TEX,
-		RT_E_MSG_UNKNOW_NMAP,
-		RT_E_MSG_UNKNOW_ROUGHNESS,
-		RT_E_MSG_UNKNOW_AMBIENT,
-		RT_E_MSG_UNKNOW_OPACITY,
-		RT_E_MSG_FB_DOUBLE,
-		RT_E_MSG_FB_NO,
-		RT_E_MSG_UNDEFINED_TYPE,
-		RT_E_MSG_KERNEL,
-		RT_E_MSG_VERTEX,
-		RT_E_MSG_NORMAL,
-		RT_E_MSG_UV,
-		RT_E_FACE,
+	const char	*err_msgs[] = {
+		RT_E_MSG_ARGC, RT_E_MSG_GRAPHICS, RT_E_MSG_PARSING, RT_E_MSG_ARGS,
+		RT_E_MSG_AMBIENT, RT_E_MSG_CAMERA, RT_E_MSG_LIGHT, RT_E_MSG_OBJ,
+		RT_E_MSG_PLANE, RT_E_MSG_SKY, RT_E_MSG_SPHERE, RT_E_MSG_TEX,
+		RT_E_MSG_OBJ_FAIL, RT_E_MSG_OBJ_NO_MAT, RT_E_MSG_NO_TEX,
+		RT_E_MSG_NO_PARSER, RT_E_MSG_UNKNOW_MAT, RT_E_MSG_UNKNOW_TEX,
+		RT_E_MSG_UNKNOW_NMAP, RT_E_MSG_UNKNOW_ROUGHNESS,
+		RT_E_MSG_UNKNOW_AMBIENT, RT_E_MSG_UNKNOW_OPACITY, RT_E_MSG_FB_DOUBLE,
+		RT_E_MSG_FB_NO, RT_E_MSG_VERTEX, RT_E_MSG_NORMAL, RT_E_MSG_UV,
+		RT_E_MSG_FACE, RT_E_MSG_UNDEFINED_TYPE, RT_E_MSG_KERNEL
 	};
+
 	bulk_register_error(RT_ERRS_NUM - 1, RT_ID, (const char **)err_msgs);
 }

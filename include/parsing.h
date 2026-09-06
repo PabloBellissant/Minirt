@@ -6,7 +6,7 @@
 /*   By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 01:44:50 by pabellis          #+#    #+#             */
-/*   Updated: 2025/12/12 03:19:19 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/19 17:54:58 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef enum e_object_type
 	TRIANGLE,
 	SKYBOX,
 	MATERIAL,
+	MESH,
 	OBJ_ENUM_SIZE
 }	t_object_type;
 
@@ -42,14 +43,6 @@ typedef struct s_obj_vectors
 	t_vector	normal;
 	t_vector	uv;
 }	t_obj_vectors;
-
-typedef struct s_pos_attribute
-{
-	t_vec3	pos;
-	t_vec3	dir;
-	t_vec3	scale;
-	char	*path;
-}	t_obj_attribute;
 
 typedef struct s_img_data	t_texture;
 typedef union u_rgb_int		t_rgb_int;
@@ -105,12 +98,14 @@ int				pr(const char *line, t_scene *scene);
 int				ke(const char *line, t_scene *scene);
 int				pm(const char *line, t_scene *scene);
 
-int				parse_vertex(const char *line, t_vector *vertex, t_obj_attribute *attr);
+int				parse_vertex(const char *line, t_vector *vertex, t_vec3 *scale);
 int				parse_normal(const char *line, t_vector *normal_vec);
-int				parse_face(const char *line, t_obj_vectors *vec, t_scene *scene, int mat_id);
+int				parse_face(const char *line, t_obj_vectors *vec,
+					t_scene *scene, int mat_id);
 int				parse_uv(const char *line, t_vector *uv_vec);
 int				parse_mtllib(const char *line, t_scene *scene);
 
 int				fill_gpu_data(t_opencl *state, t_scene *scene);
+int				fill_texture(t_opencl *state, t_scene *scene);
 
 #endif

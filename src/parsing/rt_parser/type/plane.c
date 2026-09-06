@@ -14,6 +14,7 @@
 #include "object.h"
 #include "rt_xcerrcal.h"
 #include "parsing.h"
+#include "render.h"
 
 #define PLANE_FORMAT " *pl  *%f *, *%f *, *%f  *%f[-1,1] *, *%f[-1,1] *\
 , *%f[-1,1]  *%8[255] *, *%8[255] *, *%8[255](  *%s %f) *\n"
@@ -43,5 +44,6 @@ int	plane(const char *line, int line_num, t_scene *scene)
 	object->name = mat_name;
 	object->plane.tangent = get_tangent(*norm);
 	object->plane.bitangent = get_bitangent(*norm, object->plane.tangent);
-	return (object->mat_id);
+	scene->plane_count++;
+	return (object->mat_id == -1);
 }

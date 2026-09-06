@@ -16,15 +16,16 @@
 	path = lib/mlx_wrapper
 	url = git@github.com:dct-LuLu/mlx_wrapper.git
 	branch = library-stripped
-[submodule "lib/minilibx-linux"]
-	path = lib/minilibx-linux
-	url = git@github.com:42paris/minilibx-linux.git
 
 [submodule "lib/xcerrcal"]
 	path = lib/xcerrcal
 	url = git@github.com:dct-LuLu/xcerrcal.git
 	branch = library-stripped
+	
 [submodule "lib/mlxui"]
 	path = lib/mlxui
 	url = git@github.com:dct-LuLu/mlxui.git
 	branch = library-stripped
+[submodule "minirt-assets"]
+	path = minirt-assets
+	url = git@github.com:ketodin/minirt-assets.git

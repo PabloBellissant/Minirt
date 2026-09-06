@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_opencl.c                                      :+:      :+:    :+:   */
+/*   opencl.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabellis <mail@bellissantpablo.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 08:39:52 by pabellis          #+#    #+#             */
-/*   Updated: 2026/01/30 08:39:52 by pabellis         ###   ########.fr       */
+/*   Updated: 2026/02/20 17:03:32 by jaubry--         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,7 @@ static int	create_kernels(t_opencl *s)
 	{"monte_carlo", &s->kernel.monte_carlo},
 	{"normal_debug", &s->kernel.normal},
 	{"phong", &s->kernel.phong}, {"draw_accu", &s->kernel.draw_accu},
-	{"pbr", &s->kernel.pbr},
-	{"heat", &s->kernel.heat}};
+	{"pbr", &s->kernel.pbr}, {"heat", &s->kernel.heat}};
 
 	i = 0;
 	while (i < KERNEL_COUNT)
@@ -122,7 +121,6 @@ static int	build_program(t_opencl *state)
 					NULL, NULL);
 			if (err == CL_SUCCESS)
 				return (0);
-			clReleaseProgram(state->program);
 		}
 		clReleaseCommandQueue(state->queue);
 	}

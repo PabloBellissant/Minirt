@@ -29,7 +29,7 @@ rgb3	reflection(rgb3 normal, rgb3 light_dir)
 	return ((normal * r) - light_dir);
 }
 
-rgb3	get_color_through(float3 pos, float3 dir, __private t_objects *objects, float light_length2)
+rgb3	get_color_through(float3 pos, float3 dir, __private t_objects *objects, float light_length2, int type)
 {
 	t_ray_gpu	ray;
 	t_hit_gpu	hit;
@@ -37,13 +37,13 @@ rgb3	get_color_through(float3 pos, float3 dir, __private t_objects *objects, flo
 	ray.origin = pos;
 	ray.dir = dir;
 	ray.inv_dir = 1.0f / dir;
-	hit = hit_register_gpu(&ray, objects);
+	hit = hit_register_gpu(&ray, objects, type);
 	if (hit.hit_obj == -1 || dot(hit.hit_point - pos, hit.hit_point - pos) > light_length2)
 		return ((rgb3) (1, 1, 1));
 	return ((rgb3) (0, 0, 0));
 }
 
-rgb3	phong_shading(__private t_hit_data *hit_data, __private t_hit_gpu *hit, __private t_ray_gpu *ray, __private t_objects *objects, rgb3 ambient)
+rgb3	phong_shading(__private t_hit_data *hit_data, __private t_hit_gpu *hit, __private t_ray_gpu *ray, __private t_objects *objects, rgb3 ambient, int bvh_type)
 {
 	int		i;
 	float3	dir_to_light;
@@ -62,7 +62,7 @@ rgb3	phong_shading(__private t_hit_data *hit_data, __private t_hit_gpu *hit, __p
 	while (i < objects->lights_count)
 	{
 		dir_to_light = normalize(objects->lights[i].pos - hit_point);
-		receive_color = objects->lights[i].rgb * get_color_through(hit_point, dir_to_light, objects, dot(hit_point - objects->lights[i].pos, hit_point - objects->lights[i].pos));
+		receive_color = objects->lights[i].rgb * get_color_through(hit_point, dir_to_light, objects, dot(hit_point - objects->lights[i].pos, hit_point - objects->lights[i].pos), bvh_type);
 		diffuse = get_phong_diffuse(dir_to_light, receive_color, hit_data->normal, hit_data->kd); 
 		light_reflect = reflection(hit_data->normal, dir_to_light); 
 		specular = get_specular(light_reflect, dir_to_cam, hit_data->ks, hit_data->ns) * receive_color;
