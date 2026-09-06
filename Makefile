@@ -6,7 +6,7 @@
 #    By: jaubry-- <jaubry--@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/22 17:43:39 by jaubry--          #+#    #+#              #
-#    Updated: 2026/02/20 18:38:59 by jaubry--         ###   ########.fr        #
+#    Updated: 2026/09/06 21:41:34 by jaubry--         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -173,11 +173,6 @@ $(MLX):
 	@$(MAKE) -s -C $(MLXDIR) CC="$(MLX_GCC) $(if $(filter 1,$(FAST)),$(OFLAGS))" $(MUTE)
 	$(call mlx-finish-msg)
 
-buildmsg:
-ifneq ($(shell [ -f $(NAME) ] && echo exists),exists)
-	$(call bin-build-msg)
-endif
-
 help:
 	@echo "╔══════════════════════════════════════════════════════════╗"
 	@echo "║             miniRT — Build System Help                  ║"
@@ -330,8 +325,4 @@ fclean:
 	$(call rm-bin-msg)
 	@rm -f $(NAME)
 
-
--include $(DEPS)
-
-.PHONY: all bonus clean fclean
-.PHONY: help buildmsg
+.PHONY: bonus
