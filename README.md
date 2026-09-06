@@ -3,7 +3,7 @@
 **miniRT** is a real-time GPU-accelerated ray tracing engine written entirely
 in C with OpenCL. What started as the standard 42 School graphics project
 (a minimal CPU ray tracer with Phong shading and a handful of primitives)
-grew into something far closer to a miniature Blender than a homework
+grew into something far closer to a **miniature Blender** than a homework
 assignment: a full scene editor with UI, font rendering, real-time selection
 and editing, import/export, multiple BVH acceleration structures, and six
 rendering modes — all in pure C with no external rendering libraries.
@@ -21,33 +21,69 @@ font rendering and selection, and a wireframe debug visualizer.
 
 ```mermaid
 flowchart TD
-    A[.rt Scene File] --> B[Parser]
-    B --> C[Scene Data]
-    C --> D[BVH Builder]
-    C --> E[Camera Setup]
-    C --> F[GPU Buffer Upload]
-    D --> G[BVH2 / BVH4 / BVH8]
+    A[".rt Scene File"] --> B["Parser"]
+    B --> C["Scene Data"]
+    C --> D["BVH Builder"]
+    C --> E["Camera Setup"]
+    C --> F["GPU Buffer Upload"]
+    D --> G["BVH2 / BVH4 / BVH8<br/>Sphere / AABB / OBB"]
     G --> F
-    E --> H[Render Loop]
+    E --> H["Render Loop"]
     F --> H
-    H --> I{Wireframe?}
-    I -- Yes --> J[CPU Rasterizer]
-    I -- No --> K[OpenCL GPU Kernel]
-    K --> L{Mode}
-    L -- Phong --> M[Phong Shading]
-    L -- PBR --> N[PBR: Fresnel + Refraction]
-    L -- Monte Carlo --> O[Path Tracing: GGX + Dispersion]
-    L -- Normal --> P[Normal Debug]
-    L -- Heat --> Q[BVH Depth Heat Map]
-    M --> R[Accumulation Buffer]
+    H --> I{"Wireframe?"}
+    I -- Yes --> J["CPU Rasterizer"]
+    I -- No --> K["OpenCL GPU Kernel"]
+    K --> L{"Mode"}
+    L -- Phong --> M["Phong Shading"]
+    L -- PBR --> N["PBR: Fresnel + Refraction"]
+    L -- Monte Carlo --> O["Path Tracing: GGX + Dispersion"]
+    L -- Normal --> P["Normal Debug"]
+    L -- Heat --> Q["BVH Depth Heat Map"]
+    M --> R["Accumulation Buffer"]
     N --> R
     O --> R
     P --> R
     Q --> R
     J --> R
-    R --> S[draw_accu: Normalize]
-    S --> T[minilibx Display]
-    T --> H
+    R --> S["draw_accu: Normalize ÷ exposure"]
+    S --> T["minilibx Display"]
+    T --> U["UI Layer<br/>panels + selection + editing"]
+    U --> V["Screen Output"]
+    U -.->|"edit"| C
+    U -.->|"edit"| E
+    V --> H
+```
+
+### Extended Render Loop Detail
+
+```mermaid
+flowchart TD
+    START["loop()"] --> MOVE["handle_camera_move()"]
+    MOVE --> CHECK{"cam_has_moved()<br/>or render_changed()?"}
+    CHECK -->|"Yes"| ZERO["Zero accumulation buffer<br/>Reset frame to 1"]
+    CHECK -->|"No"| FRAME["frame++"]
+    ZERO --> FRAME
+    
+    FRAME --> RENDER["render_func[*mode]()"]
+    RENDER -->|"mode 0: wireframe"| CPU["CPU rasterize objects"]
+    RENDER -->|"mode 1-5: GPU"| GPU_DISPATCH["clEnqueueNDRangeKernel<br/>2D global = {WIDTH, HEIGHT}"]
+    GPU_DISPATCH --> ACCU_KERNEL["draw_accu kernel<br/>accu ÷ max(1, frame×exposure)<br/>×255 → packed int"]
+    ACCU_KERNEL --> READBACK["clEnqueueReadBuffer(img → host)"]
+    CPU --> READBACK
+    
+    READBACK --> DRAW_MLX["mlx_put_data_addr"]
+    DRAW_MLX --> DRAW_SEL["rasterize_selected()<br/>Highlight selected objects"]
+    DRAW_SEL --> EXPORT_TASK{"export_render_task?"}
+    
+    EXPORT_TASK -->|"Yes"| EXPORT["Hide UI → render →<br/>export_to_ppm → show UI"]
+    EXPORT_TASK -->|"No"| FPS["update_fps()"]
+    
+    EXPORT --> FPS
+    FPS --> DRAW_SEL_BOX["draw_select()<br/>Selection rectangle"]
+    DRAW_SEL_BOX --> UI_LAYER["render_hierarchy()<br/>Full UI tree"]
+    UI_LAYER --> BVH_DEBUG["debug_rasterize_bvh()<br/>BVH box overlay"]
+    BVH_DEBUG --> PUT_IMAGE["mlx_put_image_to_window"]
+    PUT_IMAGE --> LOOP_END["→ loop() again"]
 ```
 
 ---
@@ -61,6 +97,19 @@ tracer rendering spheres, planes, and cylinders with **Phong shading**
 The windowing library is **minilibx** (a simplified X11 wrapper). The subject
 explicitly forbids GPU acceleration, external rendering libraries, and
 advanced shading models.
+
+**Don't use this as a reference.** This is a school project where we went
+down the rabbit hole — way too far. The codebase isn't as clean as it could
+be because we had to follow the 42 norminette (a strict coding standard
+enforced by an automated linter), which is great for learning discipline
+but genuinely disabling at this scale. The base graphics library (minilibx)
+is also a significant limitation — it's a barebones X11 wrapper with no
+hardware acceleration for 2D, meaning every UI element from TTF font
+rendering to UI components is CPU-drawn, which absolutely destroys
+performance.
+
+But we wanted to do something really good and really fast, and we almost
+ended up building a Blender clone.
 
 ---
 
@@ -77,26 +126,105 @@ dimension:
   distribution, metallic/roughness workflow with texture maps.
 - **Monte Carlo path tracing** — Importance-sampled GGX, multi-bounce rays,
   chromatic dispersion (wavelength-dependent IOR), progressive accumulation.
-- **Multiple BVH types** — Not just SAH: a sphere-based BVH (hierarchical
-  sphere merging) and an AABB BVH with SAH (Surface Area Heuristic, 16-bin
-  partitioning). Both support BVH2, BVH4, and BVH8 branching factors with
-  stackless (BVH2) and stack-based (BVH4/8) GPU traversal.
+- **Multiple BVH types** — Sphere-based BVH (hierarchical sphere merging),
+  AABB BVH with SAH (Surface Area Heuristic, 16-bin partitioning), and
+  OBB BVH with PCA. All three support BVH2, BVH4, and BVH8 branching factors
+  with stackless (BVH2) and stack-based (BVH4/8) GPU traversal.
 - **Full BVH debug visualization** — Toggle BVH bounding box overlays, adjust
-  displayed depth, cycle color palettes, and switch between BVH modes in
-  real time.
+  displayed depth, cycle color palettes (10 palettes), switch between BVH
+  modes in real time.
 - **OBJ + MTL loading** — Wavefront `.obj` meshes with `.mtl` materials,
   triangulated faces, vertex normals, UV coordinates, and full PBR texture
   maps.
 - **Scene import & export** — Parse `.rt` files into the engine and export
   them back out. Round-trip your scenes.
 - **UI and real-time editing** — An in-engine UI layer with font rendering
-  (TTF via a custom font renderer), selection, and real-time parameter
-  editing — all in C, all on minilibx.
+  (TTF via a custom font renderer), edit panels with sliders, colorpickers,
+  and texture selectors, a scene hierarchy list, drag selection, and real-time
+  property editing of objects, cameras, lights, and materials — all in C.
+- **Cylinder primitive** — Full cylinder support via the `cy` keyword in
+  `.rt` scene files, with configurable height, diameter, and material.
+- **OBB BVH with PCA** — Oriented Bounding Box BVH built with Principal
+  Component Analysis for tighter-fitting, rotation-aware bounds.
+- **Exposure control** — Real-time exposure adjustment via `F5` (increase)
+  and `F6` (decrease), applied to the accumulation buffer at render time.
+- **Mesh object type** — `.obj` meshes loaded as a first-class object type
+  (`t_mesh`) with full `.mtl` material libraries and PBR texture maps.
 - **Interactive 6-DOF camera** — WASD + Space/Shift + QE roll + mouse look,
-  with depth-of-field (thin lens aperture and focal distance — one feature
-  among many, not the headline).
+  with depth-of-field (thin lens aperture and focal distance).
 - **Sanitizers & profiling** — AddressSanitizer, LeakSanitizer, UBSan, gprof
   profiling, and debug/inspection builds — all selectable via make targets.
+- **UI mode cycling** — `M` key cycles through full UI ↔ minimal (render
+  switch only) ↔ hidden modes.
+
+---
+
+## Reality Check
+
+For a C project made in 8 months by two people with an obscure graphics
+library and a strict norm, this is still pretty great. But if we're being
+honest, there are real issues and a graveyard of scrapped ambitions.
+
+### Known Issues
+
+- **UI performance** — All UI elements (TTF font rendering, UI components,
+  panels, sliders, color pickers) are CPU-drawn through minilibx. There's no
+  GPU-accelerated 2D path. This absolutely destroys performance when the UI is
+  visible. The render itself is on GPU, but every frame the UI is redrawn pixel
+  by pixel on the CPU.
+- **Portability** — The project was developed on 42 campus iMacs with
+  self-compiled, somewhat wanky OpenCL packages. Portability is a real issue.
+  The build system has machine-ID detection to switch compilers between known
+  campus machines and everything else, which should tell you something.
+- **Obscure C paradigms** — Some parts of the codebase use abusive patterns
+  to mimic OOP in C (notably in `mlxui` for component polymorphism and in
+  `mlx_wrapper` for key/mouse hook actions). This can cause compilation
+  issues on certain compiler versions — it works on campus because the
+  compiler is old enough to let it slide.
+- **Norminette constraints** — The 42 norm enforces a single coding style
+  (max 25 lines per function, no for loops, specific indentation, etc.).
+  Great for learning discipline, disabling at 251 source files.
+
+### What We'd Change
+
+If we could redo it from scratch, a lot would change — the architecture
+would be cleaner, the UI would not be CPU-drawn, and we'd use a proper
+graphics abstraction instead of minilibx.
+
+### Scrapped Features
+
+A lot of infrastructure was designed for features that were never
+implemented:
+
+- **BVH UI panel** — A full UI section was planned for generating on-the-fly
+  BVH types, letting the user pick shapes, splitting algorithms, and arity
+  from the interface. Scraped to keep the BVH system simple.
+- **Multiple BVH arities** — BVH4 and BVH8 (quad and octree branching) were
+  designed and partially implemented. Removed in favor of a single binary
+  tree (BVH_ARITY=2) for simplicity.
+- **DOP shapes** — Discrete Oriented Polytopes (DOP-4, DOP-6, DOP-8) were
+  planned as additional bounding shapes alongside AABB, Sphere, and OBB.
+  Never implemented.
+- **Split/merge algorithms** — Additional algorithms for determining optimal
+  splits and merges of bounding volumes were planned. Only SAH,
+  median-primitive, and median-space made it in.
+- **Full object editing** — Way more editing options were planned for meshes
+  and primitives (per-vertex editing, material assignment UI, transform
+  gizmos). Only basic property editing is available.
+- **Camera and light editing** — More comprehensive camera and light editing
+  panels were planned.
+- **Full scene hierarchy** — A complete scene hierarchy tree (like Blender's
+  outliner) was planned. A simplified scene list exists instead.
+- **World panel** — A world settings panel was meant to exist for changing
+  global settings like ambient light color and intensity.
+- **Dissociated camera/player movement** — Like Blender's separate camera
+  object vs. viewport navigation. Never implemented.
+- **PNG parser** — A PNG texture parser was planned for certain textures.
+  Only PPM/PFM is supported.
+- **Grid world, anchor rotation, movement arrows** — Grid floor display,
+  rotation around a world anchor point, and position/rotation movement
+  arrows on selected objects (like Blender gizmos). All planned, none
+  implemented.
 
 ---
 
@@ -127,7 +255,7 @@ sudo apt install mesa-opencl-icd opencl-headers libxtst-dev libxext-dev \
 git clone <repository-url> minirt
 cd minirt
 
-# Initialize and update all submodules
+# Initialize and update all submodules (7 total + minirt-assets)
 git submodule init
 git submodule sync
 git submodule update --remote
@@ -146,12 +274,10 @@ A window opens showing the scene. Use the keyboard and mouse to explore.
 
 ### Testing Assets
 
-A dedicated repository containing maps, assets, and test scenes for miniRT
-is available at:
+The **minirt-assets** submodule (initialized via `git submodule update --remote`
+above) contains large OBJ models and high-resolution textures for miniRT:
 
-**https://github.com/ketodin/minirt-assets**
-
-Clone it alongside the project for additional scenes and models.
+[https://github.com/ketodin/minirt-assets](https://github.com/ketodin/minirt-assets)
 
 ---
 
@@ -202,15 +328,22 @@ Clone it alongside the project for additional scenes and models.
 |-----|--------|
 | `V` | Toggle BVH debug overlay (bounding box visualization) |
 | `Up` / `Down` | Increase / decrease displayed BVH depth |
-| `Left` / `Right` | Switch BVH mode (sphere BVH / AABB SAH BVH) |
-| `C` | Cycle BVH color palette offset |
+| `Left` / `Right` | Switch BVH mode (sphere BVH / AABB SAH BVH / OBB PCA BVH) |
+| `C` | Cycle BVH color palette offset (0-9) |
+
+### UI / Display
+
+| Key | Action |
+|-----|--------|
+| `M` | Cycle UI mode: full UI → minimal (render switch only) → hidden |
+| `F5` / `F6` | Increase / decrease exposure (×1.3 / ÷1.3) |
 
 ### Export
 
 | Key | Action |
 |-----|--------|
 | `F11` | Export current scene to `.rt` file |
-| `F12` | Export current frame to PPM screenshot |
+| `F12` | Schedule render task (hides UI, exports clean screenshot to PPM) |
 
 ---
 
@@ -241,7 +374,7 @@ Clone it alongside the project for additional scenes and models.
 | `PERF` | 0 | Performance mode flag (passed to submodules) |
 | `NPROC` | auto | Number of CPU cores for parallel work (`$(nproc)`) |
 | `VERBOSE` | 0 | Show compile commands in build output |
-| `CL_TARGET_OPENCL_VERSION` | 300 | OpenCL target version macro passed to the compiler |
+| `CL_TARGET_OPENCL_VERSION` | 300 | OpenCL target version macro |
 | `DEBUG_LVL` | 0 | Tiered debug level — see below |
 | `FAST` | auto | Set by `make fast`; adds `-Ofast -march=native -mtune=native -msse3` |
 

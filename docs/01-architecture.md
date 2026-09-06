@@ -1,0 +1,400 @@
+# miniRT — System Architecture
+
+## Overview
+
+miniRT is organized into three layers: the **main binary** (`src/`), **library submodules** (`lib/`), and **assets** (`minirt-assets/`). The binary reads a `.rt` scene file, parses it into an in-memory scene graph, transfers data to the GPU, and runs a render loop that dispatches OpenCL compute kernels.
+
+## Data Hierarchy — `t_data`
+
+The central state object `t_data` (defined in `include/minirt.h`) holds every subsystem:
+
+```c
+typedef struct s_data
+{
+    t_opencl    cl;        // OpenCL state (platform, device, queue, kernels, GPU buffers)
+    t_buffers   buffers;   // CPU-side buffers: addr (uint*) + accu (t_vec3*)
+    t_params    params;    // Render mode ptr, BVH depth, color offset, exposure, UI mode
+    t_keys      keys;      // Keyboard state (forward/left/right/backward/upward/roll)
+    t_mouse     mouse;     // Mouse look (yaw/pitch target & current)
+    t_mlx       *mlx;      // minilibx instance (window, image, display)
+    t_vec2i     screen;    // Screen resolution
+    t_scene     scene;     // Full scene description
+    t_ui        ui;        // Complete UI state
+}               t_data;
+```
+
+### `t_scene` — Scene Description
+
+```c
+typedef struct s_scene
+{
+    t_rgb           ambient;       // Ambient light (float RGB × ratio)
+    t_camera        camera;        // Camera: pos, rot, forward/right/up, FOV, DOF params
+    char            *name;         // Scene file name
+    t_vector        objects;       // All scene objects (t_object union array)
+    t_vector        light;         // Point lights
+    int             plane_count;   // Number of planes (for GPU dispatch)
+    t_vector        texture;       // Loaded textures (t_texture / t_img_data)
+    t_vector        mat;           // Material definitions
+    t_vector        mtl_list;      // Loaded MTL file paths (strings)
+    t_vector        mesh;          // Loaded mesh instances (t_mesh: offset, count, transform)
+    t_bvh_engine    bvh;           // BVH acceleration structure
+    t_mlx           *mlx;          // Back-link to mlx
+    int             skybox_tex;    // Index of skybox texture (-1 if none)
+    // GPU buffers (cl_mem):
+    cl_mem          spheres;
+    cl_mem          triangles;
+    cl_mem          planes;
+    cl_mem          textures;
+    cl_mem          mats;
+    cl_mem          lights;
+    t_texture_data  skybox;        // Skybox texture descriptor for GPU
+}                   t_scene;
+```
+
+Key differences from earlier versions:
+- Has `t_vector mesh` — a list of loaded mesh instances (not in original subject)
+- No `planes_id` field — planes are handled via the general `objects` vector and `plane_count`
+- Uses `t_bvh_engine` (new unified BVH system) instead of separate AABB/Sphere BVH pointers
+
+### `t_bvh_engine` — Unified BVH System
+
+```c
+typedef struct s_bvh_engine
+{
+    t_bvh_header    *world_best_bvh;  // Best-performing BVH (after evaluation)
+    t_bvh_header    *world_bvh;       // Primary BVH
+    cl_mem          bvh_gpu;          // GPU copy of BVH nodes
+}                   t_bvh_engine;
+
+typedef struct s_bvh_header
+{
+    t_vector        nodes;          // Array of t_bvh_node (CPU)
+    int             max_depth;
+    t_bvh_shape     shape;          // BVH_SPHERE, BVH_AABB, or BVH_OBB
+    t_bvh_split     splitting_algo; // MED_PRIM, MED_SPACE, or SAH
+    size_t          build_time;     // Build time in µs
+}                   t_bvh_header;
+```
+
+### `t_params` — Render Parameters
+
+```c
+typedef struct s_params
+{
+    int     *render_mode;   // Pointer to current render mode (0-5)
+    int     bvh_depth;      // BVH debug depth
+    int     color_offset;   // Color palette offset for heat mode
+    bool    bvh_debug;      // Show BVH wireframe overlay
+    int     ui_mode;        // UI mode (0=hidden, 1=visible)
+    float   exposure;       // Exposure multiplier
+}           t_params;
+```
+
+Note: `render_mode` is an `int*` — it points to the render mode variable owned by the UI, allowing both the UI and the render loop to share the same value.
+
+### `t_buffers` — Frame Buffers
+
+```c
+typedef struct s_buffers
+{
+    unsigned int    *addr;   // RGBA pixel buffer (for display)
+    t_vec3          *accu;   // Accumulation buffer (HDR float3, for progressive rendering)
+}                   t_buffers;
+```
+
+### `t_opencl` — OpenCL State
+
+```c
+typedef struct s_opencl
+{
+    cl_platform_id      platform;
+    cl_device_id        device;
+    cl_context          context;
+    cl_command_queue    queue;
+    cl_program          program;        // Compiled OpenCL program (all kernels)
+    t_kernel            kernel;         // phong, draw_accu, pbr, monte_carlo, normal, heat
+    t_gpu_buffers       bu;             // GPU buffers: accu (cl_mem), img (cl_mem)
+    unsigned char       *host_buffer;   // Host-side pixel buffer for writes
+}                       t_opencl;
+```
+
+### `t_ui` — UI State
+
+```c
+typedef struct s_ui
+{
+    t_htree         htree;              // Hierarchy tree root for UI components
+    t_selection     selection;          // Current object selection
+    int             lpannel_width;      // Left panel width
+    int             scene_height;       // Scene list height
+    int             lpannel_switch_height;
+    int             lpannel_edit_height;
+    bool            export_render_task; // Pending export flag
+    t_hbranch       *edit_pannel;       // Root edit panel branch
+    union { t_hbranch *inner_edit, *obj_edit, *bvh_edit, *render_edit; };
+    int             *edit_mode;         // Current edit mode pointer
+    t_hbranch       *lpannel_switch;    // Left panel mode switch
+    t_hbranch       *render_switch;     // Render mode switch
+    char            *fps_buffer;        // FPS display buffer
+    char            *info_buffer;       // Info display buffer
+    t_scene_entry   scene_entries[MAX_SCENE_ENTRIES];
+    bool            *lpannel_toggle;
+    bool            *ui_toggle;
+}                   t_ui;
+```
+
+## Module Dependency Diagram
+
+```mermaid
+flowchart TB
+    subgraph BINARY["miniRT Binary (src/)"]
+        MAIN["main.c"]
+        LOOP["loop.c<br/>(render loop dispatch)"]
+        PARSING["parsing/<br/>rt_parser, fill_gpu_data"]
+        CALC["calc/<br/>BVH, kernels, renderers"]
+        INIT["init/<br/>UI setup, graphics init"]
+        EXPORT["export_scene/<br/>write .rt files"]
+        HOOKS["hooks/<br/>keyboard, mouse, params"]
+    end
+
+    subgraph LIBS["Library Submodules (lib/)"]
+        LIBFT["libft<br/>vectors, colors,<br/>matrices, utilities"]
+        MLX["minilibx-linux<br/>X11 window + image"]
+        MLXW["mlx_wrapper<br/>input abstraction,<br/>draw helpers"]
+        FONT["font_renderer<br/>TTF parsing +<br/>rasterization"]
+        MLXUI["mlxui<br/>GUI component toolkit"]
+        XCERRCAL["xcerrcal<br/>structured error<br/>handling"]
+    end
+
+    subgraph ASSETS["Assets (minirt-assets/)"]
+        SCENES["test .rt files"]
+        MESHES["OBJ meshes"]
+        MATERIALS["MTL materials"]
+        TEXTURES["PPM textures"]
+    end
+
+    MAIN --> PARSING
+    MAIN --> INIT
+    MAIN --> LOOP
+    MAIN --> HOOKS
+    LOOP --> CALC
+    PARSING --> CALC
+    CALC --> MLXW
+    INIT --> MLXUI
+    INIT --> MLXW
+    INIT --> FONT
+    LOOP --> MLXW
+
+    MLXW --> MLX
+    MLXW --> LIBFT
+    FONT --> MLXW
+    FONT --> MLX
+    FONT --> LIBFT
+    MLXUI --> FONT
+    MLXUI --> MLXW
+    MLXUI --> MLX
+    MLXUI --> LIBFT
+    PARSING --> XCERRCAL
+    CALC --> XCERRCAL
+    CALC --> LIBFT
+
+    PARSING --> ASSETS
+    CALC --> ASSETS
+
+    classDef binary fill:#1a1a2e,stroke:#e94560,color:#fff
+    classDef lib fill:#16213e,stroke:#0f3460,color:#fff
+    classDef asset fill:#0f3460,stroke:#533483,color:#fff
+
+    class MAIN,LOOP,PARSING,CALC,INIT,EXPORT,HOOKS binary
+    class LIBFT,MLX,MLXW,FONT,MLXUI,XCERRCAL lib
+    class SCENES,MESHES,MATERIALS,TEXTURES asset
+```
+
+## Render Pipeline Flowchart
+
+```mermaid
+flowchart TD
+    START(["loop() called"]) --> MOVE["handle_camera_move()"]
+    MOVE --> DISPATCH{"dispatch render_func[*render_mode]"}
+
+    DISPATCH -->|0| WIRE["wireframe_render<br/>CPU rasterization"]
+    DISPATCH -->|1| PHONG["phong_render<br/>OpenCL phong kernel"]
+    DISPATCH -->|2| PBR["pbr_render<br/>OpenCL PBR kernel<br/>Fresnel + GGX"]
+    DISPATCH -->|3| MC["monte_carlo_render<br/>OpenCL Monte Carlo kernel<br/>+ accu_kernel (accumulate)"]
+    DISPATCH -->|4| NORMAL["normal_render<br/>OpenCL normal debug"]
+    DISPATCH -->|5| HEAT["heat_render<br/>OpenCL BVH depth heat"]
+
+    WIRE --> SEL["rasterize_selected<br/>(outline highlight)"]
+    PHONG --> ACCU{"cam/render changed?"}
+    ACCU -->|yes| RESET["reset accumulation<br/>fill_camera()"]
+    ACCU -->|no| INC["++frame"]
+    RESET --> INC
+    INC --> MONTE_CARLO_KERNEL["monte_carlo_kernel"]
+    MONTE_CARLO_KERNEL --> ACCU_KERNEL["accu_kernel<br/>(normalize + tonemap)"]
+    ACCU_KERNEL --> SEL
+    PBR --> SEL
+    NORMAL --> SEL
+    HEAT --> SEL
+
+    SEL --> EXPORT_TASK["export_render_task<br/>(PPM if flag set)"]
+    EXPORT_TASK --> FPS["update_fps()"]
+    FPS --> DRAW_SEL["draw_select()<br/>(selection rectangle)"]
+    DRAW_SEL --> RENDER_HIER["render_hierarchy()<br/>(mlxui redraw)"]
+    RENDER_HIER --> BVH_DEBUG{"bvh_debug?"}
+    BVH_DEBUG -->|yes| DEBUG_BVH["debug_rasterize_bvh()"]
+    BVH_DEBUG -->|no| PUT_IMG["mlx_put_image_to_window()"]
+    DEBUG_BVH --> PUT_IMG
+    PUT_IMG --> PERF{"PERF?"}
+    PERF -->|yes| FPS_COUNTER["fps_counter()"]
+    PERF -->|no| END(["loop end"])
+    FPS_COUNTER --> END
+
+    classDef gpu fill:#1b4332,stroke:#2d6a4f,color:#fff
+    classDef cpu fill:#4a1942,stroke:#7b2d8b,color:#fff
+    classDef logic fill:#1a1a2e,stroke:#e94560,color:#fff
+
+    class MONTE_CARLO_KERNEL,ACCU_KERNEL,PHONG,PBR,NORMAL,HEAT gpu
+    class WIRE,SEL,DRAW_SEL,RENDER_HIER,DEBUG_BVH cpu
+    class DISPATCH,ACCU,BVH_DEBUG,PERF logic
+```
+
+## Data Flow — From `.rt` File to GPU
+
+```mermaid
+sequenceDiagram
+    participant File as .rt Scene File
+    participant Parser as rt_parser
+    participant Scene as t_scene (CPU)
+    participant Fill as fill_gpu_data
+    participant GPU as OpenCL Device
+    participant Kernels as Render Kernels
+
+    File->>Parser: parse_scene("scene.rt")
+    Note over Parser: Reads line by line
+
+    Parser->>Parser: get_type() → A, C, L, sp, pl, obj, sky, mtl
+    Parser->>Parser: parse_line() per identifier
+
+    alt mtl line
+        Parser->>Parser: parse_mtl_file(fd)
+        Parser->>Scene: create_mat(&mat, &texture)
+        Parser->>Scene: parse texture maps (PNG/PPM)
+    else obj line
+        Parser->>Parser: parse_obj_file(fd)
+        Parser->>Parser: parse faces → t_triangle objects
+        Parser->>Scene: vector_add(&objects, triangle)
+        Parser->>Scene: vector_add(&mesh, t_mesh)
+    else sp/pl/cy
+        Parser->>Scene: create_object(scene, type)
+        Parser->>Scene: get_mat(mat_name, &color)
+        Parser->>Scene: vector_add(&objects, object)
+    end
+
+    Parser->>Scene: fill_by_type()
+    Note over Scene: All objects, materials,<br/>textures, lights populated
+
+    Scene->>Fill: fill_gpu_data(state, scene)
+    Fill->>Fill: clCreateBuffer for spheres,<br/>triangles, planes,<br/>textures, mats, lights
+
+    Fill->>GPU: clEnqueueWriteBuffer<br/>(copy all GPU buffers)
+
+    Scene->>Fill: create_bvh(&bvh_header, shape, split, objects)
+    Fill->>Fill: Evaluate all shape/split combos<br/>(AABB/Sphere/OBB × SAH/MedPrim/MedSpace)
+    Fill->>Scene: world_best_bvh selected
+    Fill->>GPU: clCreateBuffer + write bvh nodes
+
+    loop Per frame
+        Kernels->>GPU: clSetKernelArg(bvh, spheres,<br/>triangles, planes, mats,<br/>lights, camera, textures)
+        Kernels->>GPU: clEnqueueNDRangeKernel<br/>(ray generation + traversal)
+        GPU->>GPU: hit_bvh_aabb/hit_bvh_obb/hit_bvh_sphere
+        GPU->>GPU: shade() ← Phong/PBR/Monte Carlo
+        GPU->>GPU: write to output buffer
+        GPU->>CPU: clEnqueueReadBuffer(img)
+        CPU->>Display: mlx_put_image_to_window()
+    end
+```
+
+## Submodule Descriptions
+
+### `libft` — Foundation Library
+
+The 42 School standard library, stripped for miniRT. Key components:
+
+| Module | Contents |
+|---|---|
+| **Vectors** | `t_vec2`, `t_vec3`, `t_vec4` — constructors, arithmetic, dot/cross product, normalization, reflection, rotation |
+| **Colors** | `t_rgb` (float), `t_rgb_int` (uint8), conversion routines, `get_real_ratio()` for light scaling |
+| **Matrices** | `t_mat3`, `t_mat4` — constructors, multiplication, identity, transpose, Jacobi helper ops |
+| **Utilities** | `t_vector` (dynamic array), `t_list`, string functions (`ft_scan` — typed scanf with range validation), memory operations, math helpers |
+| **File I/O** | `get_next_line`, file descriptor utilities, PPM loader (`mlx_ppm_to_image`) |
+
+### `minilibx-linux` — X11 Graphics
+
+The 42 School's minimal X11/OpenGL wrapper. Provides:
+- `t_mlx` — display connection, window management
+- `t_img_data` — XImage with pixel buffer access
+- Basic drawing primitives (pixel put, line, rectangle)
+- Keyboard and mouse event callbacks
+- Image creation from PPM files
+
+### `mlx_wrapper` — Input and Drawing Abstractions
+
+Sits on top of minilibx to provide:
+
+- **Input abstraction**: key mapping, key repeat handling, mouse button/position tracking, scroll wheel
+- **Draw helpers**: `mlx_draw_pixel()`, `mlx_draw_line()`, `mlx_draw_rect()`, filled shapes, circle drawing
+- **Image utilities**: image creation, PPM file loading, pixel buffer manipulation
+- **Event registration**: unified hook setup for keyboard, mouse, expose, and loop hooks
+
+### `font_renderer` — TrueType Rasterization
+
+Parses and rasterizes TrueType (.ttf) font files:
+- TTF table parsing (cmap, glyf, loca, head, hhea, hmtx)
+- Glyph outline rasterization (quadratic and cubic Bézier curves)
+- Advance width and kerning
+- Pre-rasterized glyph atlas for performance
+- Used by `mlxui` for all text rendering (labels, buttons, values, FPS display)
+
+### `mlxui` — GUI Component Toolkit
+
+A complete immediate-mode GUI toolkit built on `minilibx-linux` + `mlx_wrapper` + `font_renderer`. Uses a **hierarchy tree** (`t_htree` / `t_hbranch`) for component organization.
+
+**Component hierarchy:**
+
+```
+t_htree (root)
+├── t_hbranch (container — vertical/horizontal layout)
+│   ├── Box (spacer, divider)
+│   ├── Button (clickable)
+│   ├── ButtonGroup (mutually exclusive toggle group)
+│   ├── Checkbox (boolean toggle)
+│   ├── ColorPicker (RGB color selection with preview)
+│   ├── Form (label + value pair)
+│   ├── Image (texture display)
+│   ├── ScrollBox (scrollable container)
+│   ├── Select (dropdown list)
+│   ├── Slider (range input)
+│   └── TextBox (text label)
+```
+
+Used for: scene list, edit panels (geometry, material, camera), render mode switch, FPS overlay, info display.
+
+### `xcerrcal` — Structured Error Handling
+
+A lightweight error handling framework:
+
+- **Error codes**: module-specific error IDs
+- **Error packing**: `pack_err()` packs module ID + error ID into an integer
+- **Error reporting**: `error()` with file, line, and function context via macros (`FL`, `LN`, `FC`)
+- **Complex error messages**: `register_complex_err_msg()` for dynamic error context
+- **Cleanup hooks**: `setup_cleanup_hooks()` for resource cleanup on error
+
+### `minirt-assets` — Test Scenes and Meshes
+
+A separate repository (submodule at `minirt-assets/`) containing:
+
+- **`.rt` scene files**: template, cornell, refract, marble, chess, rgb
+- **`.obj` mesh files**: glass cube, monkey head, diffraction grating, chess set, bunny, BMW, Porsche, Jesko, AMG, casino, dragon, triangle, square, vinyl
+- **`.mtl` material files**: sand, gold, leather, tiles, foil, marble, onyx, wood, metal, fence, paving, ornament, checkerboard, plus utility materials (color, reflect, emissive, transparent, mat)
+- **`.ppm` textures**: skyboxes (nebula, studio), albedo maps, normal maps, roughness maps, ambient occlusion maps, opacity maps
