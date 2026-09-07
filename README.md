@@ -64,7 +64,7 @@ as static archives into a single binary.
 <div align="center">
   <img src="docs/assets/svg/minirt-stack.svg" alt="miniRT Library Stack" width="600">
 </div>
-    
+
 See [docs/01-architecture.md](docs/01-architecture.md) for full
 submodule descriptions with struct definitions and API details.
 

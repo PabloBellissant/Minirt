@@ -35,72 +35,21 @@ flowchart TD
 
 ## Core Structures
 
-### `t_bvh_engine`
+### Top-Level BVH Container
 
-The top-level BVH container in `t_scene`. Defined in `include/bvh/bvh.h`:
+The top-level BVH container in the scene holds the active world BVH header, an optional reference to a "best" BVH for comparison testing, and the OpenCL memory buffer that stores the GPU-compact array of nodes.
 
-```c
-typedef struct s_bvh_engine
-{
-    t_bvh_header    *world_best_bvh;  // best BVH from comparison
-    t_bvh_header    *world_bvh;       // primary world BVH
-    cl_mem          bvh_gpu;          // OpenCL buffer on GPU
-} t_bvh_engine;
-```
+### BVH Header
 
-`world_bvh` holds the active world BVH header. `world_best_bvh` is a reference to a "best" BVH used for comparison and testing. `bvh_gpu` is the OpenCL memory buffer holding the GPU-compact array of `t_bvh_node_gpu`.
+Each BVH tree is tracked by a header that stores the dynamic node array, the maximum tree depth, the chosen bounding volume shape (AABB, sphere, or OBB), the splitting algorithm (SAH, median-primitive, or median-space), and the build time in microseconds.
 
-### `t_bvh_header`
+### BVH Node
 
-Metadata for a single BVH tree:
+The BVH is a binary tree (arity 2). Interior nodes store child indices, while leaf nodes (identified by a non-positive first child index) store a primitive index and type (sphere or triangle). Every node has a skip pointer that enables the "roped BVH" pattern: after processing a node, traversal jumps directly to the skip target instead of returning to the parent, allowing flat-array iterative traversal without a stack.
 
-```c
-typedef struct s_bvh_header
-{
-    t_vector        nodes;           // dynamic array of t_bvh_node
-    int             max_depth;       // maximum tree depth
-    t_bvh_shape     shape;           // BVH_SPHERE, BVH_AABB, or BVH_OBB
-    t_bvh_split     splitting_algo;  // SAH, MED_PRIM, or MED_SPACE
-    size_t          build_time;      // construction time in microseconds
-} t_bvh_header;
-```
+### Bounding Volume
 
-### `t_bvh_node`
-
-A single node in the BVH tree (binary, arity = 2):
-
-```c
-typedef struct s_bvh_node
-{
-    union {
-        int children[2];           // indices of child nodes (interior node)
-        struct {
-            int _pad[1];           // BVH_ARITY - 1 padding
-            int object_id;         // primitives index (leaf node)
-            int type;              // SPHERE or TRIANGLE (leaf node)
-        };
-    };
-    int             skip;          // next node to visit after subtree
-    t_bvh_bounds    bounds;        // bounding volume
-} t_bvh_node;
-```
-
-**Interior nodes** use `children[0]` and `children[1]` as positive indices into the nodes array. **Leaf nodes** have `children[0] <= 0`, with `object_id` indexing the primitive and `type` identifying the primitive type. The **skip pointer** enables the "roped BVH" pattern - after processing a node, traversal jumps to `skip` instead of returning to parent, allowing a flat-array iterative approach without recursion.
-
-### `t_bvh_bounds`
-
-A **union** of the three bounding volume shapes:
-
-```c
-typedef union u_bvh_bounds
-{
-    t_bvh_sphere  sphere;
-    t_bvh_aabb    aabb;
-    t_bvh_obb     obb;
-} t_bvh_bounds;
-```
-
-Only one shape is active per BVH tree, determined by `bvh_header->shape`.
+The bounding volume is a union of the three shape types (AABB, sphere, and OBB). Only one shape is active per tree, determined by the header's shape field.
 
 ## Bounding Volume Shapes
 
@@ -108,47 +57,17 @@ Only one shape is active per BVH tree, determined by `bvh_header->shape`.
 
 ### 1. AABB - Axis-Aligned Bounding Box
 
-```c
-typedef struct s_bvh_aabb
-{
-    union {
-        struct { t_vec3 min; t_vec3 max; };
-        t_cuboid cuboid;
-    };
-} t_bvh_aabb;
-```
-
-The AABB is defined by `min` and `max` corners, evaluated by finding the extent of all primitive centroids and vertices in each axis. It offers the fastest GPU intersection test using the slab method (no rotation transform needed), making it ideal for axis-aligned scenes but wasteful for rotated geometry.
+The AABB is defined by min and max corners, evaluated by finding the extent of all primitive centroids and vertices in each axis. It offers the fastest GPU intersection test using the slab method (no rotation transform needed), making it ideal for axis-aligned scenes but wasteful for rotated geometry.
 
 ### 2. Sphere Bounding Volume
-
-```c
-typedef struct s_bvh_sphere
-{
-    union { t_vec3 pos; t_vec3 centroid; };
-    union { float r; float radius; };
-} t_bvh_sphere;
-```
 
 The sphere bound is defined by a center position and a radius, evaluated by computing the centroid of all primitives then finding the maximum distance. It has the simplest intersection test (point-in-sphere distance) but tends to produce more overlap between sibling nodes, reducing BVH efficiency.
 
 ### 3. OBB - Oriented Bounding Box
 
+The OBB is the tightest-fitting box for arbitrarily oriented geometry, defined by a center, a rotation quaternion, half-extents, and pre-computed basis axes derived via PCA.
+
 *Pipeline diagram showing the steps from PCA mean computation through to the final oriented bounding box.*
-
-```c
-typedef struct s_bvh_obb
-{
-    t_vec3  center;
-    t_vec4  q;              // rotation quaternion
-    t_vec3  half_extents;   // half-size along each axis
-    t_vec3  axes[3];        // pre-computed basis axes from quaternion
-} t_bvh_obb;
-```
-
-The OBB is the tightest-fitting box for arbitrarily oriented geometry. It uses **PCA (Principal Component Analysis)** to find the dominant orientation of the primitive vertices.
-
-#### OBB Construction Pipeline
 
 ```mermaid
 flowchart LR
@@ -187,16 +106,7 @@ flowchart LR
 
 ## Splitting Algorithms
 
-Three algorithms control how a parent node's primitives are partitioned into left and right children.
-
-```c
-typedef enum e_bvh_split
-{
-    MED_PRIM,      // median-split by primitive count
-    MED_SPACE,     // median-split by spatial extent
-    SAH            // surface area heuristic
-} t_bvh_split;
-```
+Three algorithms control how a parent node's primitives are partitioned into left and right children: median-split by primitive count (MED_PRIM), median-split by spatial extent (MED_SPACE), and the surface area heuristic (SAH).
 
 ### SAH - Surface Area Heuristic
 
@@ -216,11 +126,11 @@ The spatial extent along the split axis is divided in half. Primitives whose cen
 
 ## Axis Selection
 
-The split axis is selected by `get_axis_split()`, which evaluates the spread of primitive centroids along each axis. For AABB, the axis with the largest extent (max minus min) is chosen. For OBB, the axis along which primitives have the largest projected spread is used, computed via `get_obb_projected_spread()`. For Sphere, the axis with the largest variance is selected.
+The split axis is selected by evaluating the spread of primitive centroids along each axis. For AABB, the axis with the largest extent (max minus min) is chosen. For OBB, the axis along which primitives have the largest projected spread is used. For Sphere, the axis with the largest variance is selected.
 
 ## GPU Data Structures
 
-The CPU-side structures are transformed into compact GPU-friendly versions for OpenCL kernels. The GPU node struct mirrors its CPU counterpart but uses OpenCL `float3`/`float4` types and is stored in `__constant` memory for fast access. The bounds union on the GPU similarly mirrors the CPU version with `t_bvh_sphere_gpu`, `t_bvh_aabb_gpu`, and `t_bvh_obb_gpu` variants, each using OpenCL vector types for better memory alignment.
+The CPU-side structures are transformed into compact GPU-friendly versions for OpenCL kernels. The GPU node struct mirrors its CPU counterpart but uses OpenCL `float3`/`float4` types and is stored in `__constant` memory for fast access. The bounds union on the GPU similarly mirrors the CPU version with sphere, AABB, and OBB variants, each using OpenCL vector types for better memory alignment.
 
 ## GPU Traversal Functions
 
@@ -232,16 +142,16 @@ AABB intersection uses the **slab method**: the ray is tested against each pair 
 
 ### `hit_sphere` - Distance Test
 
-Sphere intersection checks if the ray comes within the sphere's radius using the standard ray-sphere quadratic equation: b = 2*(D.oc), c = oc.oc - r^2, with the discriminant determining whether an intersection exists.
+Sphere intersection checks if the ray comes within the sphere's radius using the standard ray-sphere quadratic equation with the discriminant determining whether an intersection exists.
 
 ### `hit_obb` - Local Space Slab Test
 
-OBB intersection transforms the ray into the OBB's local coordinate system using the **inverse quaternion rotation**, then performs a standard AABB slab test in that local space. The quaternion rotation on the GPU is computed via `quat_rotate()`: v' = v + qw * 2(qxyz x v) + 2(qxyz x (qxyz x v)).
+OBB intersection transforms the ray into the OBB's local coordinate system using the **inverse quaternion rotation**, then performs a standard AABB slab test in that local space.
 
 ### Full Traversal Loop
 
-The top-level traversal functions (`hit_bvh_aabb`, `hit_bvh_sphere`, `hit_bvh_obb` in `shader/intersect.cl`) implement the roped-BVH pattern using an iterative while loop over the flat node array. The loop starts at node 0 and uses the skip pointer to advance past finished subtrees. A dispatcher `hit_register_gpu()` selects the appropriate variant based on the `bvh_type` parameter (0 = sphere, 1 = AABB, 2 = OBB).
+The top-level traversal functions implement the roped-BVH pattern using an iterative while loop over the flat node array. The loop starts at node 0 and uses the skip pointer to advance past finished subtrees. A dispatcher selects the appropriate variant based on the shape type (sphere, AABB, or OBB).
 
 ## Indexing - Skip Pointer Computation
 
-After construction, `index_bvh()` (in `src/calc/bvh/index_bvh.c`) computes the **skip pointers** that enable the flat-array iterative traversal. For each node, the skip pointer is set to the next sibling of the nearest ancestor, or -1 if no such sibling exists. This transforms the recursive tree into a flat array where traversal can proceed linearly without a stack.
+After construction, the skip pointers that enable flat-array iterative traversal are computed. For each node, the skip pointer is set to the next sibling of the nearest ancestor, or -1 if no such sibling exists. This transforms the recursive tree into a flat array where traversal can proceed linearly without a stack.

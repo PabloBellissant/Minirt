@@ -6,28 +6,9 @@ miniRT supports a full PBR material system with 6 texture map types, a flat text
 
 ---
 
-## The `t_mat` Struct
+## Material Properties
 
-Materials are defined in `include/object.h` (lines 37-52) and mirrored on the GPU as `t_mat_gpu` in `shader/include/gpu.cl` (lines 77-92):
-
-```c
-typedef struct s_mat
-{
-    char            *name;      // Material name (matches MTL or .rt reference)
-    cl_float        ns;         // Shininess / specular exponent (Phong)
-    cl_float3       kd;         // Diffuse color (albedo)
-    cl_float3       ks;         // Specular color (reflectance at normal incidence, F0)
-    cl_float3       ke;         // Emissive color
-    cl_float        opacity;    // Opacity (d): 1.0 = opaque, 0.0 = fully transparent
-    t_texture_data  kd_id;      // Diffuse / albedo texture map
-    t_texture_data  normal_id;  // Normal map
-    t_texture_data  roughness_id; // Roughness map
-    t_texture_data  ambient_id;   // Ambient occlusion / ambient map
-    t_texture_data  opacity_id;   // Opacity texture map
-    t_texture_data  metalness_id; // Metalness map
-    cl_float        ni;         // Index of refraction
-}               t_mat;
-```
+Each material (`t_mat` in `object.h`, mirrored as `t_mat_gpu` on the GPU) holds a name, diffuse color (kd), specular color (ks), emissive color (ke), shininess exponent (ns), opacity, and index of refraction (ni). Up to 6 texture map IDs can be assigned: diffuse/albedo, normal, roughness, ambient occlusion, opacity, and metalness.
 
 ### PBR Properties
 

@@ -2,25 +2,7 @@
 
 ## Overview
 
-miniRT provides a full 6-degree-of-freedom camera with Euler-angle rotation, a configurable viewport, thin-lens depth of field, and real-time exposure control. The camera state is held in `t_camera` (`include/render.h`, lines 26-39):
-
-```c
-typedef struct s_camera
-{
-    cl_float3   pos;            // World-space position
-    cl_float3   rot;            // Euler angles: yaw (y), pitch (x), roll (z)
-    cl_float3   camera_forward; // Orthonormal basis: forward vector
-    cl_float3   camera_right;   // Orthonormal basis: right vector
-    cl_float3   camera_up;      // Orthonormal basis: up vector
-    cl_float3   pixel_delta_u;  // Viewport: horizontal pixel step
-    cl_float3   pixel_delta_v;  // Viewport: vertical pixel step
-    cl_float3   pixel00_loc;    // Viewport: top-left pixel world position
-    cl_int      fov;            // Field of view in degrees
-    cl_int      frame;          // Accumulation frame counter
-    cl_float    lens_radius;    // DOF: aperture radius (0 = pinhole)
-    cl_float    focus_dist;     // DOF: focal plane distance
-}               t_camera;
-```
+miniRT provides a full 6-degree-of-freedom camera with Euler-angle rotation, a configurable viewport, thin-lens depth of field, and real-time exposure control. The camera state (`t_camera` in `render.h`) tracks world-space position, Euler angles (yaw, pitch, roll), an orthonormal basis (forward, right, up vectors), viewport pixel steps, field of view, an accumulation frame counter, and depth-of-field parameters (lens radius and focus distance).
 
 *Diagram showing the camera position, viewport, forward/right/up basis vectors, and depth of field parameters.*
 

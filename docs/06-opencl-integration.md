@@ -2,23 +2,9 @@
 
 ## Overview
 
-miniRT uses OpenCL for all GPU-accelerated ray tracing. The host (C code) manages the OpenCL lifecycle - platform enumeration, device selection, kernel compilation, buffer management, and dispatch - while the device (OpenCL C kernels) executes the actual intersection and shading computations. The rendering pipeline is designed for progressive accumulation (see [Accumulation Buffer Architecture](#accumulation-buffer-architecture)).
+miniRT uses OpenCL for all GPU-accelerated ray tracing. The host (C code) manages the OpenCL lifecycle (platform enumeration, device selection, kernel compilation, buffer management, and dispatch) while the device (OpenCL C kernels) executes the actual intersection and shading computations. The rendering pipeline is designed for progressive accumulation (see [Accumulation Buffer Architecture](#accumulation-buffer-architecture)).
 
-The full OpenCL state is held in `t_opencl` (`include/minirt.h`, lines 94-104):
-
-```c
-typedef struct s_opencl
-{
-    cl_platform_id      platform;
-    cl_device_id        device;
-    cl_context          context;
-    cl_command_queue    queue;
-    cl_program          program;
-    t_kernel            kernel;     // 6 kernels
-    t_gpu_buffers       bu;         // accu (float3[]) + img (int[])
-    unsigned char       *host_buffer;
-}                       t_opencl;
-```
+The OpenCL state bundles a platform, device, context, command queue, program, six kernel objects, GPU buffers (accumulation and output image), and a host-side readback buffer for display output.
 
 *Diagram showing the relationship between the host (C code), OpenCL platform layer, and GPU device with kernels.*
 
@@ -51,25 +37,7 @@ The initialization proceeds through several stages. First, **platform enumeratio
 
 ## Kernel Source Embedding
 
-The entire OpenCL kernel source is compiled into the binary as a C string literal. All `.cl` files are `#include`d into a single program using the OpenCL `#include` mechanism (which resolves relative to the `-I` include path):
-
-```c
-#define KERNEL_SOURCE \
-"#include \"phong.cl\"\\n" \
-"#include \"calc_rays.cl\"\\n" \
-"#include \"draw_accu.cl\"\\n" \
-"#include \"intersect.cl\"\\n" \
-"#include \"phong_shading.cl\"\\n" \
-"#include \"sample_texture.cl\"\\n" \
-"#include \"pbr.cl\"\\n" \
-"#include \"sample_materials.cl\"\\n" \
-"#include \"random.cl\"\\n" \
-"#include \"monte_carlo.cl\"\\n" \
-"#include \"heat.cl\"\\n" \
-"#include \"normal_debug.cl\"\\n"
-```
-
-This approach eliminates file I/O at runtime and avoids the need to ship external `.cl` files with the binary, using a single compilation unit where cross-file function calls are resolved at compile time. The trade-off is that the kernel source becomes part of the binary, increasing its size. All `.cl` files reside in `shader/` and include `shader/include/gpu.cl` for shared type definitions (`t_camera_gpu`, `t_ray_gpu`, `t_objects`, `t_mat_gpu`, `t_hit_gpu`, `t_hit_data`, etc.).
+All OpenCL kernel source is compiled into the binary as a single C string literal. Each `.cl` file in the shader directory is included via the OpenCL `#include` mechanism (resolved relative to the `-I` include path), producing one compilation unit where cross-file function calls are resolved at compile time. This eliminates file I/O at runtime and avoids shipping external `.cl` files alongside the binary, at the cost of increased binary size. Shared type definitions (`t_camera_gpu`, `t_ray_gpu`, `t_objects`, `t_mat_gpu`, `t_hit_gpu`, `t_hit_data`, etc.) live in a common header included by all kernel files.
 
 ---
 
@@ -77,37 +45,25 @@ This approach eliminates file I/O at runtime and avoids the need to ship externa
 
 ### 1. `phong` - Phong Shading
 
-**Source:** `shader/phong.cl` | **Dispatch:** `phong_kernel.c`
-
 For each pixel, casts one ray, finds the nearest hit via BVH, samples materials (textures + normal maps), and computes Phong shading (ambient + diffuse + specular + emissive) against all lights. Single-bounce shading.
 
 ### 2. `pbr` - Physically Based Rendering
 
-**Source:** `shader/pbr.cl` | **Dispatch:** `pbr_kernel.c`
-
-Multi-bounce ray tracing (up to `MAX_BOUNCE` = 4) with Fresnel reflection/refraction via `sample_refract()`, Schlick approximation, roughness-based Cook-Torrance glossy factor. Accumulates color through reflected rays with `through_power` attenuation. Supports refractive materials with Snell's law.
+Multi-bounce ray tracing (up to `MAX_BOUNCE` = 4) with Fresnel reflection/refraction via `sample_refract()`, Schlick approximation, and roughness-based Cook-Torrance glossy factor. Accumulates color through reflected rays with `through_power` attenuation. Supports refractive materials with Snell's law.
 
 ### 3. `monte_carlo` - Monte Carlo Path Tracing
-
-**Source:** `shader/monte_carlo.cl` | **Dispatch:** `monte_carlo_kernel.c`
 
 Full path tracing with GGX/Trowbridge-Reitz microfacet importance sampling (`sample_ggx_gpu`), chromatic dispersion (wavelength-dependent IOR via `get_ni_by_color`), emissive surfaces, and rainbow-colored refractions (`rainbow_color`). Each frame accumulates into the buffer for progressive denoising, up to `MAX_BOUNCE` (4) bounces.
 
 ### 4. `normal_debug` - Normal Visualization
 
-**Source:** `shader/normal_debug.cl` | **Dispatch:** `normal_kernel.c`
-
 Maps the shading normal to RGB: `img[pixel] = hit_data.normal * 0.5 + 0.5`. Normal maps are applied before visualization, so perturbed normals are visible.
 
 ### 5. `heat` - BVH Traversal Depth Heat Map
 
-**Source:** `shader/heat.cl` | **Dispatch:** `heat_kernel.c`
-
 Traverses the BVH counting the number of inner nodes intersected (stackless traversal with skip pointers). Maps the count to a color from one of 10 built-in palettes (2-4 gradient stops). The palette is cycled via the `C` key (which increments `color_offset`).
 
 ### 6. `draw_accu` - Accumulation Buffer to Image
-
-**Source:** `shader/draw_accu.cl` | **Dispatch:** `accu_kernel.c`
 
 Divides each pixel's accumulated `float3` color by `max(1.0f, sample_count)`, multiplies by 255, clamps to [0, 255], and packs into a 32-bit integer for minilibx display.
 
@@ -137,13 +93,13 @@ The result is progressive rendering with exposure control. After N frames, each 
 
 Scene data is transferred to the GPU during scene loading via `clCreateBuffer` with `CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR`, which allocates GPU memory and copies the host data in a single call. The data categories transferred include BVH nodes (once on BVH build), sphere/triangle/plane arrays (once on scene load), the texture atlas (once on scene load), material arrays (once on scene load), and light arrays (once on scene load). All buffers use `CL_MEM_READ_ONLY` except the accumulation and image buffers which use `CL_MEM_READ_WRITE`.
 
-The texture atlas (a flat byte array of all concatenated textures) is documented in [08-materials-and-textures.md](08-materials-and-textures.md) with the t_texture_data struct and per-pixel sampling details.
+The texture atlas (a flat byte array of all concatenated textures) is documented in [08-materials-and-textures.md](08-materials-and-textures.md) with per-pixel sampling details.
 
 ---
 
 ## Render Frame Sequence
 
-The main loop in `loop()` executes the following sequence every frame:
+The main loop executes the following sequence every frame:
 
 ```mermaid
 sequenceDiagram
