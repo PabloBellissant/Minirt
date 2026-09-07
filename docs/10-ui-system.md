@@ -218,14 +218,14 @@ sequenceDiagram
     participant Loop as "Main Loop"
     participant Rebuild as "rebuild_inner_edit()"
 
-    Init->>Init: "init_htree() -> style + font"
+    Init->>Init: "init_htree() then style + font"
     Init->>Body: "t_htree.body (full-screen BOX)"
     Init->>Init: "init_ttf(JetBrainsMono)"
-    Init->>Init: "init_ui_misc() -> sizes"
+    Init->>Init: "init_ui_misc() then sizes"
     Init->>Pop: "populate_ui(body)"
 
-    Pop->>Pop: "init_ondisplay() -> FPS + render_switch + info"
-    Pop->>Pop: "init_lpannel() -> scene_list + edit_pannel + switch"
+    Pop->>Pop: "init_ondisplay() then FPS + render_switch + info"
+    Pop->>Pop: "init_lpannel() then scene_list + edit_pannel + switch"
 
     Init->>Precomp: "precompute_hierarchy()"
 
@@ -242,6 +242,6 @@ sequenceDiagram
     end
 
     alt F12 pressed
-        Loop->>Loop: "export_render_task() - hide UI - render - PPM - show UI"
+        Loop->>Loop: "export_render_task() hide UI, render, PPM, show UI"
     end
 ```

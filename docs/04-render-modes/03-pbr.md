@@ -15,7 +15,7 @@ The `sample_refract()` function determines whether the ray **reflects** or **ref
 
 ## Bounce Loop
 
-The PBR kernel fires up to `MAX_BOUNCE` (4) bounces per primary ray. Starting with $\text{through\_power} = (1, 1, 1)$, each bounce computes Phong shading at the hit point, multiplies by $(1 - \text{reflectivity}) \times \text{through\_power}$, and accumulates into the pixel color. $\text{through\_power}$ is then multiplied by $\text{reflectivity}$ so that after $n$ bounces, the effective contribution is $\text{through\_power} = \prod_{i=1}^{n} \text{reflectivity}_i$, which naturally dims deeper reflections. The ray is updated (origin at hit point, direction reflected or refracted) and the loop continues. When a ray misses all geometry and hits the skybox, $\text{accumulated\_color} \mathrel{+}= \text{draw\_skybox}(\ldots) \times \text{through\_power}$ and the loop breaks.
+The PBR kernel fires up to `MAX_BOUNCE` (4) bounces per primary ray. Starting with `through_power = (1, 1, 1)`, each bounce computes Phong shading at the hit point, multiplies by $(1 - r) \cdot P$, and accumulates into the pixel color. `through_power` is then multiplied by `reflectivity` so that after $n$ bounces, the effective contribution is $P = \prod_{i} r_i$, which naturally dims deeper reflections. The ray is updated (origin at hit point, direction reflected or refracted) and the loop continues. When a ray misses all geometry and hits the skybox, `accumulated_color += draw_skybox(...) * through_power` and the loop breaks.
 
 ## Material Properties
 
