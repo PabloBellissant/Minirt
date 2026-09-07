@@ -2,6 +2,10 @@
 
 Monte Carlo path tracing samples the light transport using **importance-sampled GGX microfacets** with **chromatic dispersion** (wavelength-dependent refraction), producing physically accurate caustics, rainbows, and glossy reflections. Each ray scatters stochastically through the scene, accumulating energy across bounces until it exits to the skybox or hits an emissive surface.
 
+
+![PBR rendering screenshot](../assets/img/marble_pos_1/Monte_carlo.png)
+*Screenshot of Monte Carlo mode.*
+
 ## GGX Importance Sampling
 
 The **GGX microfacet distribution** is used to importance-sample reflection and refraction directions. Instead of always reflecting in the specular direction, GGX samples a random microfacet normal $\mathbf{h}$ proportional to the roughness:
