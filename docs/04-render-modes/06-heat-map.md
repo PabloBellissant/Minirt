@@ -2,11 +2,8 @@
 
 Heat map mode visualizes the **BVH traversal depth** per pixel as a color-coded heat map, exposing how deeply the BVH is traversed for each ray. This is a debugging tool for BVH performance and balance. Pixels with hit_depth <= 1 (no or trivial traversal) are left black. The `C` key cycles through color palettes interactively. Three BVH type variants dispatch to sphere, AABB, or OBB depth counting, adapting the heat map to whatever BVH shape is active.
 
-<table cellpadding="0" cellspacing="0" border="0" style="border:none;">
-<tr><td><img src="../assets/img/bvh-volume-theme3.png" width="100%"></td><td><img src="../assets/img/bvh-volume-theme4.png" width="100%"></td></tr>
-</table>
-
-*Heat map visualization of BVH traversal depth - BVH themes showing traversal depth color-coded across different palette mappings.*
+![BVH volume AABB](../assets/img/bvh-volume-aabb.png)
+*BVH heatmap in chess.rt with AABB and SAH*
 
 ## Normalization
 
@@ -28,3 +25,16 @@ Ten predefined palettes are available, selected by `color_offset % 10`. Each pal
 | 7 | Black -> Red -> Orange -> White | 4 | Black -> deep red -> orange -> white |
 | 8 | Black -> Green -> Lime | 3 | Black -> dark green -> bright green |
 | 9 | Dark Gray -> Light Gray | 2 | Subtle grayscale |
+
+<table cellpadding="0" cellspacing="0" border="0" style="border:none;">
+<tr>
+  <td><img src="../assets/img/bvh-volume-theme1.png" width="100%"></td>
+  <td><img src="../assets/img/bvh-volume-theme2.png" width="100%"></td>
+</tr>
+<tr>
+  <td><img src="../assets/img/bvh-volume-theme3.png" width="100%"></td>
+  <td><img src="../assets/img/bvh-volume-theme4.png" width="100%"></td>
+</tr>
+</table>
+
+*Heat map visualization of BVH traversal depth - BVH themes showing traversal depth color-coded across a sample of 4 different palette mappings.*
