@@ -167,54 +167,7 @@ flowchart TB
 
 ## Render Pipeline Flowchart
 
-![Render pipeline screenshot](assets/img/ui-selection.png)
-*Screenshot capturing the render loop in action, showing the viewport with object selection.*
-
-```mermaid
-flowchart TD
-    START(["loop() called"]) --> MOVE["handle_camera_move()"]
-    MOVE --> DISPATCH{"dispatch render_func[*render_mode]"}
-
-    DISPATCH -->|0| WIRE["wireframe_render<br/>CPU rasterization"]
-    DISPATCH -->|1| PHONG["phong_render<br/>OpenCL phong kernel"]
-    DISPATCH -->|2| PBR["pbr_render<br/>OpenCL PBR kernel<br/>Fresnel + GGX"]
-    DISPATCH -->|3| MC["monte_carlo_render<br/>OpenCL Monte Carlo kernel<br/>+ accu_kernel (accumulate)"]
-    DISPATCH -->|4| NORMAL["normal_render<br/>OpenCL normal debug"]
-    DISPATCH -->|5| HEAT["heat_render<br/>OpenCL BVH depth heat"]
-
-    WIRE --> SEL["rasterize_selected<br/>(outline highlight)"]
-    PHONG --> ACCU{"cam/render changed?"}
-    ACCU -->|yes| RESET["reset accumulation<br/>fill_camera()"]
-    ACCU -->|no| INC["++frame"]
-    RESET --> INC
-    INC --> MONTE_CARLO_KERNEL["monte_carlo_kernel"]
-    MONTE_CARLO_KERNEL --> ACCU_KERNEL["accu_kernel<br/>(normalize + tonemap)"]
-    ACCU_KERNEL --> SEL
-    PBR --> SEL
-    NORMAL --> SEL
-    HEAT --> SEL
-
-    SEL --> EXPORT_TASK["export_render_task<br/>(PPM if flag set)"]
-    EXPORT_TASK --> FPS["update_fps()"]
-    FPS --> DRAW_SEL["draw_select()<br/>(selection rectangle)"]
-    DRAW_SEL --> RENDER_HIER["render_hierarchy()<br/>(mlxui redraw)"]
-    RENDER_HIER --> BVH_DEBUG{"bvh_debug?"}
-    BVH_DEBUG -->|yes| DEBUG_BVH["debug_rasterize_bvh()"]
-    BVH_DEBUG -->|no| PUT_IMG["mlx_put_image_to_window()"]
-    DEBUG_BVH --> PUT_IMG
-    PUT_IMG --> PERF{"PERF?"}
-    PERF -->|yes| FPS_COUNTER["fps_counter()"]
-    PERF -->|no| END(["loop end"])
-    FPS_COUNTER --> END
-
-    classDef gpu fill:#1b4332,stroke:#2d6a4f,color:#fff
-    classDef cpu fill:#4a1942,stroke:#7b2d8b,color:#fff
-    classDef logic fill:#1a1a2e,stroke:#e94560,color:#fff
-
-    class MONTE_CARLO_KERNEL,ACCU_KERNEL,PHONG,PBR,NORMAL,HEAT gpu
-    class WIRE,SEL,DRAW_SEL,RENDER_HIER,DEBUG_BVH cpu
-    class DISPATCH,ACCU,BVH_DEBUG,PERF logic
-```
+The render loop dispatch is documented in [06-opencl-integration.md](06-opencl-integration.md) with a detailed frame-by-frame sequence diagram covering kernel dispatch, accumulation, display, UI rendering, and export.
 
 ## Data Flow - From `.rt` File to GPU
 
@@ -300,4 +253,4 @@ A lightweight error handling framework providing **error codes** (module-specifi
 
 ### `minirt-assets` - Test Scenes and Meshes
 
-A separate repository (submodule at `minirt-assets/`) containing `.rt` scene files (template, cornell, refract, marble, chess, rgb), `.obj` mesh files (glass cube, monkey head, diffraction grating, chess set, bunny, BMW, Porsche, Jesko, AMG, casino, dragon, triangle, square, vinyl), `.mtl` material files (sand, gold, leather, tiles, foil, marble, onyx, wood, metal, fence, paving, ornament, checkerboard, plus utility materials like color, reflect, emissive, transparent, mat), and `.ppm` textures including skyboxes (nebula, studio), albedo maps, normal maps, roughness maps, ambient occlusion maps, and opacity maps.
+A separate repository (submodule at `minirt-assets/`) containing test scenes (`.rt`), OBJ meshes, MTL materials, and PPM textures. See [09-asset-catalog.md](09-asset-catalog.md) for the full asset listing.

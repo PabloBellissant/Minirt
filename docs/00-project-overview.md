@@ -6,7 +6,7 @@ miniRT is a **GPU-accelerated ray tracer** written in C with OpenCL - a fully in
 
 ## Conventions
 
-miniRT parses `.rt` scene files supporting ambient (`A`), camera (`C`), light (`L`), sphere (`sp`), plane (`pl`), cylinder (`cy`), mesh (`obj`), and skybox (`sky`) entries. The rendering engine uses C language with the **minilibx** graphics library (X11-based) and provides **6 render modes**: wireframe, Phong, PBR, Monte Carlo path tracing, normal debug, and heat map. Acceleration is handled by a **BVH** (Bounding Volume Hierarchy) with AABB, Sphere, and OBB bounding shapes and SAH/median splitting.
+miniRT parses `.rt` scene files (see [03-scene-format.md](03-scene-format.md) for the full identifier reference) and renders via OpenCL using the **minilibx** graphics library (X11-based). The rendering engine provides 6 render modes and BVH acceleration with AABB, Sphere, and OBB bounding shapes.
 
 ## Project Scope
 

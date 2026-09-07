@@ -2,7 +2,7 @@
 
 ## Overview
 
-miniRT uses OpenCL for all GPU-accelerated ray tracing. The host (C code) manages the OpenCL lifecycle - platform enumeration, device selection, kernel compilation, buffer management, and dispatch - while the device (OpenCL C kernels) executes the actual intersection and shading computations. The rendering pipeline is designed for progressive accumulation: each frame adds one sample per pixel to an accumulation buffer, which is then averaged and displayed.
+miniRT uses OpenCL for all GPU-accelerated ray tracing. The host (C code) manages the OpenCL lifecycle - platform enumeration, device selection, kernel compilation, buffer management, and dispatch - while the device (OpenCL C kernels) executes the actual intersection and shading computations. The rendering pipeline is designed for progressive accumulation (see [Accumulation Buffer Architecture](#accumulation-buffer-architecture)).
 
 The full OpenCL state is held in `t_opencl` (`include/minirt.h`, lines 94-104):
 
@@ -129,7 +129,7 @@ The project uses a two-buffer progressive accumulation scheme on the GPU. The **
 
 If the camera position, rotation, FOV, lens radius, or focus distance changed (`cam_has_moved()`), or if render parameters changed (`render_changed()`), the accumulation buffer is **zeroed out** (via `clEnqueueWriteBuffer` with zeros) and `camera.frame` is reset to 1. Then `camera.frame` increments and one of 5 GPU kernels runs, writing `float3` values into the accumulation buffer. The `draw_accu` kernel divides each pixel's accumulated value by `max(1.0f, frame x exposure)`, multiplies by 255, clamps, and writes to `img`. The `img` buffer is read back to the host via `clEnqueueReadBuffer`. The host buffer is copied into the minilibx image and displayed via `mlx_put_data_addr` and `mlx_put_image_to_window`.
 
-The result is progressive rendering with exposure control. After N frames, each pixel has N samples and noise is reduced by $\sqrt{N}$. **Exposure** (controlled via F5/F6) acts as a multiplier on the final accumulated color through `sample_count = frame x exposure`, allowing brightening or darkening of the result without re-rendering.
+The result is progressive rendering with exposure control. After N frames, each pixel has N samples and noise is reduced by $\sqrt{N}$. **Exposure** (adjusted via F5/F6, see [07-camera-and-interaction.md](07-camera-and-interaction.md)) acts as a multiplier on the sample count divisor.
 
 ---
 
@@ -137,7 +137,7 @@ The result is progressive rendering with exposure control. After N frames, each 
 
 Scene data is transferred to the GPU during scene loading via `clCreateBuffer` with `CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR`, which allocates GPU memory and copies the host data in a single call. The data categories transferred include BVH nodes (once on BVH build), sphere/triangle/plane arrays (once on scene load), the texture atlas (once on scene load), material arrays (once on scene load), and light arrays (once on scene load). All buffers use `CL_MEM_READ_ONLY` except the accumulation and image buffers which use `CL_MEM_READ_WRITE`.
 
-The texture atlas is a single flat byte array containing all loaded texture pixels concatenated. Each `t_texture_data` struct (embedded in `t_mat_gpu`) contains an `offset` field pointing into this atlas, plus `width`, `height`, and `channels` for sampling.
+The texture atlas (a flat byte array of all concatenated textures) is documented in [08-materials-and-textures.md](08-materials-and-textures.md) with the t_texture_data struct and per-pixel sampling details.
 
 ---
 
@@ -203,4 +203,4 @@ sequenceDiagram
 
 ### Cumulative Rendering
 
-The accumulation buffer is never cleared unless camera or render state changes. Frame 1 has 1 sample per pixel (noisy), frame 10 has 10 samples per pixel (reduced noise), and frame 100 has 100 samples per pixel (clean). When the camera moves, the buffer is cleared and accumulation restarts from 1 sample per pixel. This gives instant feedback when moving the camera while gradually converging to a noise-free image when stationary.
+The accumulation buffer is never cleared unless camera or render state changes, providing instant feedback on camera movement while gradually converging to a noise-free image when stationary.

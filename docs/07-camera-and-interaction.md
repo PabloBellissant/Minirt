@@ -108,16 +108,7 @@ Movement speed in `camera_move.c` uses a base speed of 5 units/second. Holding *
 | `Y` | Increase lens radius / aperture (x1.05) |
 | `H` | Decrease lens radius / aperture (/1.05) |
 
-### Render Mode
 
-| Key | Mode |
-|---|---|
-| `1` | Wireframe (CPU rasterized debug view) |
-| `2` | Phong (GPU: ambient + diffuse + specular + emissive) |
-| `3` | PBR (GPU: Fresnel, reflection, refraction, bounces) |
-| `4` | Monte Carlo (GPU: path tracing, GGX, dispersion) |
-| `-` | Normal Debug (GPU: surface normals -> RGB) |
-| `=` | Heat Map (GPU: BVH traversal depth heat map) |
 
 ### BVH Debug
 
@@ -141,44 +132,7 @@ Movement speed in `camera_move.c` uses a base speed of 5 units/second. Holding *
 | `F11` | Export current scene to `.rt` file |
 | `F12` | Schedule render task (hides UI, renders clean frame, exports PPM) |
 
-### Summary Table (all 27+ keys)
 
-| Key | Category | Action |
-|---|---|---|
-| `W` | Movement | Forward |
-| `S` | Movement | Backward |
-| `A` | Movement | Left strafe |
-| `D` | Movement | Right strafe |
-| `Space` | Movement | Up (world Y) |
-| `Shift` | Movement | Down (world Y) |
-| `Ctrl` | Movement | Speed boost (x6) |
-| `Q` | Movement | Roll left |
-| `E` | Movement | Roll right |
-| `Mouse` | Look | Yaw/pitch |
-| `T` | DOF | Up focus distance |
-| `G` | DOF | Down focus distance |
-| `Y` | DOF | Up lens radius |
-| `H` | DOF | Down lens radius |
-| `1` | Render | Wireframe |
-| `2` | Render | Phong |
-| `3` | Render | PBR |
-| `4` | Render | Monte Carlo |
-| `-` | Render | Normal Debug |
-| `=` | Render | Heat Map |
-| `V` | BVH Debug | Toggle overlay |
-| `Up` | BVH Debug | Up Depth |
-| `Down` | BVH Debug | Down Depth |
-| `Left` | BVH Debug | Prev mode |
-| `Right` | BVH Debug | Next mode |
-| `C` | BVH Debug | Cycle palette |
-| `M` | UI | Cycle UI mode |
-| `K` | UI | Toggle mouse focus |
-| `F5` | Exposure | Increase |
-| `F6` | Exposure | Decrease |
-| `F11` | Export | Scene to `.rt` |
-| `F12` | Export | Render task (PPM screenshot) |
-
----
 
 ## Mouse Look
 
@@ -188,7 +142,7 @@ Mouse look is implemented in `mouse_hooks.c`. `cam_move()` is called on every mo
 
 ## BVH Debug Controls
 
-The BVH debug system (`params_hooks1.c`, `params_hooks3.c`) provides real-time visualization of the acceleration structure. Pressing `V` toggles the debug overlay on and off. When enabled, the Up/Down keys adjust `params.bvh_depth` (-1 = max depth, 0..max_depth = specific depth). The Left/Right keys switch between BVH shapes (0: Sphere BVH, 1: AABB BVH with SAH, 2: OBB BVH with PCA). The `C` key cycles the heat map color palette offset through indices 0-9. The CPU-side `debug_rasterize_bvh()` rasterizes bounding boxes at the currently selected depth level using the camera projection (`project_point()`). Colors are either the heat map palette or a simple white outline depending on configuration.
+The BVH debug system is implemented in `params_hooks1.c` and `params_hooks3.c`. When enabled (toggled via `V`), the CPU-side `debug_rasterize_bvh()` rasterizes bounding boxes at the currently selected depth level using the camera projection (`project_point()`). Colors are either the heat map palette or a simple white outline depending on configuration.
 
 *Animated GIF showing the BVH debug overlay cycling through different depth levels and bounding box shapes.*
 

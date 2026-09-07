@@ -30,8 +30,7 @@ point lights, and primitives.
 
 ## Where We Went
 
-We went a bit too far down the rabbit hole. The result is closer to a
-miniature Blender than a basic ray tracer: six render modes (five GPU:
+We went a bit too far down the rabbit hole. The result went well beyond a basic ray tracer: six render modes (five GPU:
 Phong, PBR with Fresnel and GGX, Monte Carlo path tracing with chromatic
 dispersion, normal debug, and BVH heat map; plus a CPU wireframe view),
 three BVH bounding shapes (AABB, Sphere, OBB with PCA), three splitting
@@ -183,9 +182,8 @@ The project focuses on a streamlined set of features.
 | gcc (12 or 14) | Or compatible C compiler |
 | GNU Make | Build system |
 
-libXtst is bundled inside `lib/minilibx-linux/local_xtst/` and does not
-need to be installed separately. It is used to work around mouse
-confinement issues on certain campus architectures.
+|libXtst is bundled inside `lib/minilibx-linux/local_xtst/` and does not
+|need to be installed separately. See [docs/02-build-system.md](docs/02-build-system.md) for details on the XTEST build flag.
 
 On Debian/Ubuntu:
 

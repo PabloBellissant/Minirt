@@ -65,7 +65,7 @@ The initial `through_power` is `(0.33, 0.33, 0.33)` - one-third per channel, mat
 
 ## Emissive Materials
 
-When a ray hits an emissive surface ($k_e > 0$), the path terminates immediately. The accumulation includes all previous bounces plus the emissive contribution, multiplied by another 3x factor.
+When a ray hits an emissive surface ($k_e > 0$), the path terminates immediately. The accumulation includes all previous bounces plus the emissive contribution, multiplied by the same 3x energy boost.
 
 ## Skybox
 
@@ -146,4 +146,4 @@ flowchart TD
 
 ## Performance Notes
 
-The Monte Carlo kernel uses a **separate RNG per pixel** (seeded by pixel index + random offset). The `randomf()` function uses a linear congruential generator. Unlike Phong and PBR, the Monte Carlo kernel does not pass `ambient` or `lights` directly - it relies entirely on path sampling for illumination. The 3x boost factors (in both dispersion and emissive/skybox final accumulation) are heuristic energy compensation factors tuned for visual convergence.
+The Monte Carlo kernel uses a **separate RNG per pixel** (seeded by pixel index + random offset). The `randomf()` function uses a linear congruential generator. Unlike Phong and PBR, the Monte Carlo kernel does not pass `ambient` or `lights` directly - it relies entirely on path sampling for illumination. The 3x boost factors and separate RNG per pixel are heuristic choices tuned for visual convergence.
