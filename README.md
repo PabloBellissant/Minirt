@@ -61,8 +61,10 @@ Six libraries built from scratch specifically for miniRT, plus
 **minilibx-linux** (the standard 42 X11 wrapper). Everything is linked
 as static archives into a single binary.
 
-![miniRT Library Stack](docs/assets/svg/minirt-stack.svg)
-
+<div align="center">
+  <img src="docs/assets/svg/minirt-stack.svg" alt="miniRT Library Stack" width="600">
+</div>
+    
 See [docs/01-architecture.md](docs/01-architecture.md) for full
 submodule descriptions with struct definitions and API details.
 
