@@ -325,5 +325,5 @@ Documentation assets (diagrams, screenshots, GIFs) go in
 
 ## Authors
 
-**Aubry Richard Jaurel** ([jaubry--](https://github.com/jaubry--)) and
-**Bellissant Pablo** ([pabellis](https://github.com/pabellis)), 42 Lyon.
+**Aubry Richard Jaurel** ([jaubry--](https://github.com/ketodin)) and
+**Bellissant Pablo** ([pabellis](https://github.com/PabloBellissant)), 42 Lyon.
