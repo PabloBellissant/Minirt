@@ -231,44 +231,14 @@ See [docs/04-render-modes/](docs/04-render-modes/) for detailed descriptions of 
 
 ## Key Bindings
 
-### Camera
-
 | Key | Action |
 |-----|--------|
-| `W` / `S` | Move forward / backward |
-| `A` / `D` | Move left / right |
+| `W` / `A` / `S` / `D` | Movement (forward / left / backward / right) |
 | `Space` / `Shift` | Move up / down |
-| `Q` / `E` | Roll left / right |
-| `Ctrl` (held) | Double movement speed |
-| Mouse | Yaw / pitch look |
-| `K` | Toggle mouse focus (confine pointer) |
-| `T` / `G` | Increase / decrease focus distance (DOF) |
-| `Y` / `H` | Increase / decrease lens radius / aperture (DOF) |
-
-### Render Mode and Display
-
-| Key | Action |
-|-----|--------|
-| `1` through `4` | Switch render mode (wireframe, Phong, PBR, Monte Carlo) |
-| `-` / `=` | Switch to normal debug / heat map mode |
-| `M` | Cycle UI mode: full UI, minimal (render switch only), hidden |
-| `F5` / `F6` | Increase / decrease exposure |
-
-### BVH Debug
-
-| Key | Action |
-|-----|--------|
-| `V` | Toggle BVH debug overlay (bounding box visualization) |
-| `Up` / `Down` | Increase / decrease displayed BVH depth |
-| `Left` / `Right` | Switch BVH mode |
-| `C` | Cycle BVH color palette (0 through 9) |
-
-### Export
-
-| Key | Action |
-|-----|--------|
-| `F11` | Export current scene to `.rt` file |
-| `F12` | Schedule render task (hides UI, exports clean screenshot to PPM) |
+| `1`-`4` / `-` / `=` | Switch render mode (wireframe / Phong / PBR / Monte Carlo / normal debug / heat map) |
+| `M` | Cycle UI mode (full, minimal, hidden) |
+| `V` | Toggle BVH debug overlay |
+| `F11` / `F12` | Export scene to `.rt` / schedule render to PPM |
 
 See [docs/07-camera-and-interaction.md](docs/07-camera-and-interaction.md) for the full key binding table, camera model details, and depth of field mechanics.
 
@@ -281,33 +251,10 @@ See [docs/07-camera-and-interaction.md](docs/07-camera-and-interaction.md) for t
 | `WIDTH` | 1920 | Window width (or `MAX_WIDTH` if `FULLSCREEN=1`) |
 | `HEIGHT` | 1080 | Window height (or `MAX_HEIGHT` if `FULLSCREEN=1`) |
 | `FULLSCREEN` | 0 | Use full screen resolution (detected via `xrandr`) |
-| `RESIZEABLE` | 0 | Allow window resize |
-| `WINDOWLESS` | 0 | Headless (no window) mode |
-| `PERF` | 0 | Performance mode flag (passed to submodules) |
-| `NPROC` | auto | Number of CPU cores for parallel work |
-| `VERBOSE` | 0 | Show compile commands in build output |
-| `CL_TARGET_OPENCL_VERSION` | 300 | OpenCL target version macro |
-| `DEBUG_LVL` | 0 | Tiered debug level (see below) |
 | `FAST` | auto | Set by `make fast`; adds `-Ofast -march=native -mtune=native -msse3` |
+| `DEBUG_LVL` | 0 | Tiered debug level (0 = release, 1-5 = increasing subsystem debug) |
 
-### Debug Levels
-
-The build system uses a tiered debug level (`DEBUG_LVL=0..5`) that controls
-which submodules compile with debug symbols. Each level adds more subsystems:
-
-| `DEBUG_LVL` | Effect |
-|-------------|--------|
-| `0` | No debug (release build) |
-| `1` | All submodules debug info (set by `make debug`) |
-| `2` | + mlx_wrapper |
-| `3` | + font_renderer |
-| `4` | + mlxui |
-| `5` | + miniRT binary itself (maximum verbosity) |
-
-The `DEBUG` macro is passed as `-D DEBUG=0` or `-D DEBUG=1` to the C
-compiler when `1 >= DEBUG_LVL <= 5`, so source code can use `#if DEBUG` guards.
-See [docs/02-build-system.md](docs/02-build-system.md) for details on sanitizer targets,
-compiler flags, and environment variables.
+See [docs/02-build-system.md](docs/02-build-system.md) for the full build flags reference, sanitizer targets, and environment variables.
 
 ---
 
@@ -325,5 +272,5 @@ Documentation assets (diagrams, screenshots, GIFs) go in
 
 ## Authors
 
-**Aubry Richard Jaurel** ([jaubry--](https://github.com/ketodin)) and
-**Bellissant Pablo** ([pabellis](https://github.com/PabloBellissant)), 42 Lyon.
+**Aubry Richard Jaurel** ([jaubry--](https://github.com/jaubry--)) and
+**Bellissant Pablo** ([pabellis](https://github.com/pabellis)), 42 Lyon.

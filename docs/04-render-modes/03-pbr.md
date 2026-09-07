@@ -31,17 +31,9 @@ pbr() kernel (per pixel)
 ![PBR rendering screenshot](../assets/img/bvh-volume-theme2.png)
 *Screenshot of PBR mode showing Fresnel reflections, glossy reflections, and skybox environment mapping.*
 
-## Fresnel Reflectance - F0
+## Fresnel and Reflectivity
 
-The **base reflectivity at normal incidence** ($F_0$) combines metalness and IOR. For dielectric materials ($\text{metalness} \approx 0$), $F_0 = \left(\frac{\eta - 1}{\eta + 1}\right)^2$. For metallic materials ($\text{metalness} \approx 1$), $F_0$ blends toward the specular color $k_s$.
-
-## Schlick Fresnel
-
-The Fresnel term at grazing angles uses the **Schlick approximation**: $F(\theta) = F_0 + (1 - F_0)(1 - \cos\theta)^5$, where $\cos\theta = |\hat{R} \cdot \hat{N}|$ (absolute dot of incident ray and normal).
-
-## Glossy Factor
-
-The glossy (specular) factor incorporates the material's roughness: `glossy_factor = 1.0f - (roughness * roughness)`, then `specular = fresnel * glossy_factor`. The final **reflectivity** output to `hit_data.reflectivity` combines Fresnel and roughness into a single scalar clamped to $[0, 1]$. A reflectivity of 1 means fully reflective (mirror), 0 means fully diffuse/transmissive, and intermediate values represent a weighted combination.
+The PBR kernel uses Fresnel reflectance (Schlick approximation with F0 computed from IOR and metalness) and a glossy factor modulated by roughness. The full F0 calculation, Schlick formula, and glossy factor derivation are documented in [08-materials-and-textures.md](../08-materials-and-textures.md).
 
 ## Reflection vs. Refraction
 

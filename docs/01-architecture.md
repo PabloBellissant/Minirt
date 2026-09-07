@@ -62,23 +62,7 @@ The `t_scene` struct includes a `t_vector mesh` for loaded mesh instances, handl
 
 ### `t_bvh_engine` - Unified BVH System
 
-```c
-typedef struct s_bvh_engine
-{
-    t_bvh_header    *world_best_bvh;  // Best-performing BVH (after evaluation)
-    t_bvh_header    *world_bvh;       // Primary BVH
-    cl_mem          bvh_gpu;          // GPU copy of BVH nodes
-}                   t_bvh_engine;
-
-typedef struct s_bvh_header
-{
-    t_vector        nodes;          // Array of t_bvh_node (CPU)
-    int             max_depth;
-    t_bvh_shape     shape;          // BVH_SPHERE, BVH_AABB, or BVH_OBB
-    t_bvh_split     splitting_algo; // MED_PRIM, MED_SPACE, or SAH
-    size_t          build_time;     // Build time in us
-}                   t_bvh_header;
-```
+The BVH system state (`t_bvh_engine` and `t_bvh_header`) is documented in [05-bvh.md](05-bvh.md) with full struct definitions, bounding volume shapes, and splitting algorithms.
 
 ### `t_params` - Render Parameters
 
@@ -108,44 +92,11 @@ typedef struct s_buffers
 
 ### `t_opencl` - OpenCL State
 
-```c
-typedef struct s_opencl
-{
-    cl_platform_id      platform;
-    cl_device_id        device;
-    cl_context          context;
-    cl_command_queue    queue;
-    cl_program          program;        // Compiled OpenCL program (all kernels)
-    t_kernel            kernel;         // phong, draw_accu, pbr, monte_carlo, normal, heat
-    t_gpu_buffers       bu;             // GPU buffers: accu (cl_mem), img (cl_mem)
-    unsigned char       *host_buffer;   // Host-side pixel buffer for writes
-}                       t_opencl;
-```
+The OpenCL state (`t_opencl`) is documented in [06-opencl-integration.md](06-opencl-integration.md) with the full struct definition, initialization flow, and kernel details.
 
 ### `t_ui` - UI State
 
-```c
-typedef struct s_ui
-{
-    t_htree         htree;              // Hierarchy tree root for UI components
-    t_selection     selection;          // Current object selection
-    int             lpannel_width;      // Left panel width
-    int             scene_height;       // Scene list height
-    int             lpannel_switch_height;
-    int             lpannel_edit_height;
-    bool            export_render_task; // Pending export flag
-    t_hbranch       *edit_pannel;       // Root edit panel branch
-    union { t_hbranch *inner_edit, *obj_edit, *bvh_edit, *render_edit; };
-    int             *edit_mode;         // Current edit mode pointer
-    t_hbranch       *lpannel_switch;    // Left panel mode switch
-    t_hbranch       *render_switch;     // Render mode switch
-    char            *fps_buffer;        // FPS display buffer
-    char            *info_buffer;       // Info display buffer
-    t_scene_entry   scene_entries[MAX_SCENE_ENTRIES];
-    bool            *lpannel_toggle;
-    bool            *ui_toggle;
-}                   t_ui;
-```
+The UI state (`t_ui`) is documented in [10-ui-system.md](10-ui-system.md) with the full struct definition, hierarchy tree, and edit panel architecture.
 
 ## Module Dependency Diagram
 

@@ -15,26 +15,6 @@ two locations:
    Contains large OBJ meshes (high-poly models) and high-resolution texture
    maps that are too large for the main repository.
 
-### Submodule Setup
-
-The `minirt-assets` submodule is declared in `.gitmodules`:
-
-```
-[submodule "minirt-assets"]
-    path = minirt-assets
-    url = git@github.com:ketodin/minirt-assets.git
-```
-
-To fetch all assets:
-
-```bash
-git submodule init && git submodule sync && git submodule update --remote
-```
-
-The `minirt-assets` repository mirrors the internal directory structure of
-`asset/`: mesh files in `asset/`, textures in `asset/texture/`, materials in
-`asset/materials/`, and OBJ files in `asset/<model_name>/`.
-
 ---
 
 ## assets/ Directory (UI Assets)
@@ -63,22 +43,6 @@ These small assets are kept in the main repository under `assets/`.
 | `asset/scenes/rgb.rt` | RGB test | Glass spheres with emissive RGB centers, sand plane |
 | `asset/scenes/refract.rt` | Refraction test | Emissive light, prism OBJ, checkerboard plane, glass material |
 | `asset/42.rt` | 42 logo scene | Large number of small colored spheres forming 42 pattern |
-
-### Scene File Format
-
-Each `.rt` file uses a line-based text format:
-
-```
-C x,y,z dx,dy,dz FOV        # Camera
-A intensity R,G,B           # Ambient light
-L x,y,z brightness R,G,B    # Point light
-sp x,y,z diameter R,G,B [material]  # Sphere
-pl x,y,z nx,ny,nz R,G,B [material] [scaling]  # Plane
-cy x,y,z nx,ny,nz diameter height R,G,B [material]  # Cylinder
-mtl path_to_mtl.mtl         # Load MTL library
-obj path_to.obj x,y,z rx,ry,rz sx,sy,sz  # Load OBJ mesh
-sky path_to_texture.ppm     # Skybox
-```
 
 ---
 

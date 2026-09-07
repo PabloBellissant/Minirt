@@ -223,26 +223,9 @@ MTL files follow the Wavefront OBJ material specification with miniRT-specific e
 | `map_d` | `" *map_d  *%s *\\n"` | Opacity texture map (PPM path) |
 | `map_Pm` | `" *map_Pm  *%s *\\n"` | Metalness texture map (PPM path); scaled by `Pm` value |
 
-### Material Struct (What Goes to GPU)
+### Material Struct (GPU-Side)
 
-```c
-typedef struct s_mat
-{
-    char            *name;          // Material name (newmtl)
-    cl_float        ns;             // Specular exponent (Ns, clamped ≥ 50)
-    cl_float3       kd;             // Diffuse color (Kd)
-    cl_float3       ks;             // Specular color (Ks)
-    cl_float3       ke;             // Emissive color (Ke, HDR up to 1000)
-    cl_float        opacity;        // Opacity (d)
-    t_texture_data  kd_id;          // Diffuse texture index
-    t_texture_data  normal_id;      // Normal map index
-    t_texture_data  roughness_id;   // Roughness texture index (Pr/map_Pr)
-    t_texture_data  ambient_id;     // Ambient/AO texture index (Ka/map_Ka)
-    t_texture_data  opacity_id;     // Opacity texture index (d/map_d)
-    t_texture_data  metalness_id;   // Metalness texture index (Pm/map_Pm)
-    cl_float        ni;             // Index of refraction (Ni)
-}                   t_mat;
-```
+The `t_mat` struct definition and GPU-side material sampling are documented in [08-materials-and-textures.md](08-materials-and-textures.md), which covers the full struct, PBR properties, and texture map sampling.
 
 ### MTL Example
 

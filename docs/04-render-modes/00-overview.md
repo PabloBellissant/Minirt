@@ -33,9 +33,7 @@ The user switches render modes via keyboard input. Modes 0 through 5 are cycled 
 
 ## Progressive Accumulation
 
-All GPU modes (Phong, PBR, Monte Carlo, Normal, Heat) use **progressive accumulation**. A `float3 *accu` buffer accumulates samples per pixel across frames, while a `frame` counter in the camera struct increments each frame. On each frame the kernel is dispatched with `cam.frame` as a seed component. After the kernel, `draw_accu` divides the accumulated buffer by the sample count and writes to the display image. The **reset condition** occurs when `cam_has_moved()` or `render_changed()` returns true: the accumulation buffer is cleared and `cam.frame` is reset to 1.
-
-The accumulation kernel (`shader/draw_accu.cl`) divides each pixel's accumulated value by `max(1.0f, sample_count)`, multiplies by 255, clamps to [0, 255], and packs into a 32-bit integer for minilibx display.
+All GPU modes use progressive accumulation: a `float3` buffer accumulates samples across frames, reset when the camera or render parameters change. See [06-opencl-integration.md](../06-opencl-integration.md) for the accumulation buffer architecture and frame loop details.
 
 ### Per-Mode Accumulation Pattern
 
