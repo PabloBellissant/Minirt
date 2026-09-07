@@ -114,7 +114,7 @@ The most sophisticated splitter evaluates candidate split planes via binning. Fo
 
 $$ \text{Cost}(S) = C_t + \frac{A_L}{A_P} \cdot N_L \cdot C_i + \frac{A_R}{A_P} \cdot N_R \cdot C_i $$
 
-Where $C_t$ is traversal cost, $C_i$ is intersection cost, $A_L$ and $A_R$ are surface areas of left and right child bounds, $A_P$ is the surface area of the parent bound, and $N_L$ and $N_R$ are primitive counts in each child.
+Where $C_t$ is traversal cost, $C_i$ is intersection cost, $A_L$ and $A_R$ are surface areas of left and right child bounds, $A_P$ is the surface area of the parent bound, and $N_L$ and $N_R$ are primitive counts in each child. The split with minimum cost is selected; if no split reduces cost, the node becomes a leaf. The binned SAH approach uses fixed bins (typically 8-32) along the chosen axis to approximate the optimal split point efficiently.
 
 ### Median Primitive (MED_PRIM)
 

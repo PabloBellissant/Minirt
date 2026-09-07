@@ -101,9 +101,9 @@ sp  x,y,z  diameter  R,G,B  [mat_name]
 
 | Field | Type | Range | Description |
 |---|---|---|---|
-|| `x,y,z` | float | unlimited | Center position |
-|| `diameter` | float | unlimited | Sphere diameter ($\text{radius} = \text{diameter} / 2$) |
-|| `R,G,B` | int | `[0, 255]` | Diffuse color (used if no material name given) |
+| `x,y,z` | float | unlimited | Center position |
+| `diameter` | float | unlimited | Sphere diameter ($\text{radius} = \text{diameter} / 2$) |
+| `R,G,B` | int | `[0, 255]` | Diffuse color (used if no material name given) |
 | `mat_name` | string | - | Optional material name (must be loaded via `mtl` first) |
 
 **Examples:**
