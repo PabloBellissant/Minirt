@@ -12,5 +12,5 @@ Wireframe mode performs **CPU-side rasterization** of the scene geometry. It doe
 
 When `data->params.bvh_debug` is `true` (toggled via the V key), `debug_rasterize_bvh()` draws the BVH hierarchy as an overlay on top of the wireframe. Each BVH node is rasterized in a **rainbow color** based on its depth, computed via `depth_to_rgb_int()`. The `bvh_depth` parameter controls which depths are visible (`-1` = all depths).
 
-![BVH debug overlay](../assets/img/bvh-volume-aabb.png)
+![BVH debug overlay](../assets/img/wireframe-42-bvh.png)
 *BVH debug overlay showing AABB bounding volumes in wireframe mode.*
