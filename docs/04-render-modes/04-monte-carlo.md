@@ -4,11 +4,11 @@ Monte Carlo path tracing samples the light transport using **importance-sampled 
 
 ## GGX Importance Sampling
 
-The **GGX microfacet distribution** is used to importance-sample reflection and refraction directions. Instead of always reflecting in the specular direction, GGX samples a random microfacet normal **h** proportional to the roughness:
+The **GGX microfacet distribution** is used to importance-sample reflection and refraction directions. Instead of always reflecting in the specular direction, GGX samples a random microfacet normal $\mathbf{h}$ proportional to the roughness:
 
-theta = arccos(sqrt((1 - u2) / (1 + (alpha^2 - 1) * u2))),  phi = 2*pi*u1
+$$\theta = \arccos\left(\sqrt{\frac{1 - u_2}{1 + (\alpha^2 - 1) u_2}}\right), \quad \phi = 2\pi u_1$$
 
-Where `alpha = roughness^2`, and `u1`, `u2` are uniform random numbers. The sampled half-vector **h** is used to compute the scattered direction for glossy reflection or refraction.
+Where $\alpha = \text{roughness}^2$, and $u_1$, $u_2$ are uniform random numbers. The sampled half-vector $\mathbf{h}$ is used to compute the scattered direction for glossy reflection or refraction.
 
 ## Chromatic Dispersion
 
@@ -18,9 +18,9 @@ Where `alpha = roughness^2`, and `u1`, `u2` are uniform random numbers. The samp
 
 *Chromatic dispersion in Monte Carlo mode: wavelength-dependent IOR produces physically accurate rainbow caustics and colored refractions.*
 
-Dispersion models the **wavelength-dependent refractive index** of real materials. The ray's current `through_power` color is converted to a **spectral hue index** (0-360 degrees) via `rgb_to_spectrum_index()`. This hue is mapped to a wavelength factor in [-1, 1], and the effective IOR becomes:
+Dispersion models the **wavelength-dependent refractive index** of real materials. The ray's current `through_power` color is converted to a **spectral hue index** (0-360 degrees) via `rgb_to_spectrum_index()`. This hue is mapped to a wavelength factor in $[-1, 1]$, and the effective IOR becomes:
 
-eta_effective = eta_base + wavelength_factor * dispersion * (eta_base - 1)
+$$\eta_{\text{effective}} = \eta_{\text{base}} + \text{wavelength\_factor} \cdot \text{dispersion} \cdot (\eta_{\text{base}} - 1)$$
 
 This is implemented in `get_ni_by_color()`. When dispersion activates (first refraction on a diffracting path), the ray is assigned a **random RGB color** via `rainbow_color()`, which becomes the new `through_power` for subsequent bounces, multiplied by a **3x energy boost** to compensate for the splitting of white light into spectral components.
 
@@ -79,7 +79,7 @@ flowchart TD
     SET_DISPERSION --> REFRACT_WITH_DISP[Refract with chromatic IOR\nget_ni_by_color]
     SKIP_DISPERSION --> REFRACT_WITH_DISP
 
-    REFRACT_WITH_DISP --> BOUNCE_ACCUM[accu += kd x (1-reflectivity) x through_power\nthrough_power x= reflectivity]
+    REFRACT_WITH_DISP --> BOUNCE_ACCUM["accu += kd x (1-reflectivity) x through_power\nthrough_power x= reflectivity"]
     GGX_REFLECT --> BOUNCE_ACCUM
 
     BOUNCE_ACCUM --> ADVANCE_RAY[Advance ray origin\noffset by epsilon]

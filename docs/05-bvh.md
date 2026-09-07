@@ -3,7 +3,7 @@
 ![BVH tree structure diagram](assets/svg/bvh-tree.svg)
 *Visualization of the BVH tree structure showing the root node splitting into child subtrees with different bounding volume shapes (AABB, Sphere, OBB) and leaf nodes containing primitives.*
 
-The **Bounding Volume Hierarchy (BVH)** accelerates ray-scene intersection by organizing primitives in a spatial tree. Each node stores a bounding volume that encloses all primitives in its subtree. During traversal, nodes whose bounding volume is missed by the ray are skipped, yielding O(log n) average intersection time.
+The **Bounding Volume Hierarchy (BVH)** accelerates ray-scene intersection by organizing primitives in a spatial tree. Each node stores a bounding volume that encloses all primitives in its subtree. During traversal, nodes whose bounding volume is missed by the ray are skipped, yielding $O(\log n)$ average intersection time.
 
 ## Architecture Overview
 
@@ -23,11 +23,11 @@ flowchart TD
         RAY[Primary Ray] --> TRAVERSE["BVH Traversal\nhit_bvh_sphere/aabb/obb"]
         TRAVERSE --> HIT{Node hit?}
         HIT -->|Yes| IS_LEAF{Is leaf?}
-        IS_LEAF -->|Yes| INTERSECT[Intersect primitive\n triangle / sphere]
-        IS_LEAF -->|No| GO_CHILD[++node -> first child]
-        HIT -->|No| SKIP[node = skip]
+        IS_LEAF -->|Yes| INTERSECT["Intersect primitive\ntriangle / sphere"]
+        IS_LEAF -->|No| GO_CHILD["++node -> first child"]
+        HIT -->|No| SKIP["node = skip"]
         SKIP --> TRAVERSE
-        INTERSECT --> NEXT[nearest = min(t)\n node = skip]
+        INTERSECT --> NEXT["nearest = min(t)\nnode = skip"]
         NEXT --> TRAVERSE
         GO_CHILD --> TRAVERSE
     end
@@ -92,7 +92,7 @@ flowchart LR
     end
 ```
 
-**Step 1: PCA Mean** (`get_pca_mean`) computes the mean position of all primitive vertices, where for triangles each of the three vertices contributes 1/(3N) to the sum.
+**Step 1: PCA Mean** (`get_pca_mean`) computes the mean position of all primitive vertices, where for triangles each of the three vertices contributes $1/(3N)$ to the sum.
 
 **Step 2: PCA Covariance** (`get_pca_covariance`) computes the 3x3 covariance matrix from the centered data, resulting in a symmetric matrix.
 
@@ -112,9 +112,9 @@ Three algorithms control how a parent node's primitives are partitioned into lef
 
 The most sophisticated splitter evaluates candidate split planes via binning. For each candidate, the cost is:
 
-Cost(S) = Ct + (AL/AP) * NL * Ci + (AR/AP) * NR * Ci
+$$ \text{Cost}(S) = C_t + \frac{A_L}{A_P} \cdot N_L \cdot C_i + \frac{A_R}{A_P} \cdot N_R \cdot C_i $$
 
-Where Ct is traversal cost, Ci is intersection cost, AL and AR are surface areas of left and right child bounds, AP is the surface area of the parent bound, and NL and NR are primitive counts in each child. The split with minimum cost is selected; if no split reduces cost, the node becomes a leaf. The binned SAH approach uses fixed bins (typically 8-32) along the chosen axis to approximate the optimal split point efficiently.
+Where $C_t$ is traversal cost, $C_i$ is intersection cost, $A_L$ and $A_R$ are surface areas of left and right child bounds, $A_P$ is the surface area of the parent bound, and $N_L$ and $N_R$ are primitive counts in each child.
 
 ### Median Primitive (MED_PRIM)
 

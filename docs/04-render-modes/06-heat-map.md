@@ -10,7 +10,7 @@ Heat map mode visualizes the **BVH traversal depth** per pixel as a color-coded 
 
 ## Normalization
 
-The raw hit depth is normalized by `max_depth^2`: `float v = (float)hit_depth / (max_depth * max_depth)`. The `max_depth` is passed from the CPU side (`data->scene.bvh.world_bvh->max_depth`). Squaring the max depth compresses the heat range, making shallow traversals appear cooler.
+The raw hit depth is normalized by $\text{max\_depth}^2$: $v = \frac{\text{hit\_depth}}{\text{max\_depth}^2}$. The `max_depth` is passed from the CPU side (`data->scene.bvh.world_bvh->max_depth`). Squaring the max depth compresses the heat range, making shallow traversals appear cooler.
 
 ## Color Palettes
 

@@ -48,7 +48,7 @@ sequenceDiagram
     Main->>Main: allocate accumulation buffer
     Main->>Hooks: setup_hooks(data) - register callbacks
     Hooks->>Graphics: mlx hooks bound
-    Main->>Loop: mlx_loop calls loop() each frame
+    Main->>Loop: "mlx_loop calls loop() each frame"
 ```
 
 ## Render Loop

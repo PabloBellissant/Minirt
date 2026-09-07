@@ -47,7 +47,7 @@ A  ratio  R,G,B
 | `ratio` | float | `[0, 1]` | Ambient intensity multiplier |
 | `R,G,B` | int | `[0, 255]` | Ambient color (RGB) |
 
-The final ambient color is computed as `ratio × (R/255, G/255, B/255)`.
+The final ambient color is computed as $\text{ratio} \times (R/255, G/255, B/255)$.
 
 **Example:**
 ```
@@ -85,7 +85,7 @@ L  x,y,z  brightness  R,G,B
 | `brightness` | float | `[0, 1]` | Brightness multiplier |
 | `R,G,B` | int | `[0, 255]` | Light color |
 
-The final light color is `brightness × (R/255, G/255, B/255)`.
+The final light color is $\text{brightness} \times (R/255, G/255, B/255)$.
 
 **Example:**
 ```
@@ -101,9 +101,9 @@ sp  x,y,z  diameter  R,G,B  [mat_name]
 
 | Field | Type | Range | Description |
 |---|---|---|---|
-| `x,y,z` | float | unlimited | Center position |
-| `diameter` | float | unlimited | Sphere diameter (radius = diameter / 2) |
-| `R,G,B` | int | `[0, 255]` | Diffuse color (used if no material name given) |
+|| `x,y,z` | float | unlimited | Center position |
+|| `diameter` | float | unlimited | Sphere diameter ($\text{radius} = \text{diameter} / 2$) |
+|| `R,G,B` | int | `[0, 255]` | Diffuse color (used if no material name given) |
 | `mat_name` | string | - | Optional material name (must be loaded via `mtl` first) |
 
 **Examples:**

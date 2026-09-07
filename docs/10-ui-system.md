@@ -242,6 +242,6 @@ sequenceDiagram
     end
 
     alt F12 pressed
-        Loop->>Loop: export_render_task() - hide UI - render - PPM - show UI
+        Loop->>Loop: "export_render_task() - hide UI - render - PPM - show UI"
     end
 ```

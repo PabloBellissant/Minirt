@@ -9,17 +9,17 @@ Phong shading computes per-pixel color using the **Phong reflection model** with
 
 The final color at a surface point is:
 
-I = I_ambient + sum(I_diffuse_i + I_specular_i) + I_emissive
+$$I = I_{\text{ambient}} + \sum_{i}(I_{\text{diffuse},i} + I_{\text{specular},i}) + I_{\text{emissive}}$$
 
-Each term is computed per light source. The ambient component is a constant `ambient * hit_data->kd` applied before the light loop, where `ambient` is the scene ambient light and `kd` is the sampled diffuse albedo.
+Each term is computed per light source. The ambient component is a constant $k_d \cdot \text{ambient}$ applied before the light loop, where `ambient` is the scene ambient light and $k_d$ is the sampled diffuse albedo.
 
 ### Diffuse Term (Lambertian)
 
-For each light i, the diffuse contribution uses **Lambert's cosine law**: `I_diffuse = kd * I_light * max(0, L.N)`, where `kd` is the diffuse albedo (from material texture), `I_light` is the received light color (light rgb times shadow test), `L` is the normalized direction to light i, and `N` is the surface normal (from normal map if present). This is implemented in `get_phong_diffuse()`.
+For each light $i$, the diffuse contribution uses **Lambert's cosine law**: $I_{\text{diffuse}} = k_d \cdot I_{\text{light}} \cdot \max(0, \mathbf{L} \cdot \mathbf{N})$, where $k_d$ is the diffuse albedo (from material texture), $I_{\text{light}}$ is the received light color (light rgb times shadow test), $\mathbf{L}$ is the normalized direction to light $i$, and $\mathbf{N}$ is the surface normal (from normal map if present). This is implemented in `get_phong_diffuse()`.
 
 ### Specular Term (Blinn-Phong)
 
-The specular highlight is computed from the **reflected light direction**: `R = 2*(L.N)*N - L`, with `I_specular = ks * (R.V)^ns * I_light`. Here `ks` is the specular intensity, `ns` is the shininess exponent, `V` is the direction to camera (view vector), and `R` is the reflection of the incident light direction. This is implemented in `get_specular()`.
+The specular highlight is computed from the **reflected light direction**: $\mathbf{R} = 2(\mathbf{L} \cdot \mathbf{N})\mathbf{N} - \mathbf{L}$, with $I_{\text{specular}} = k_s \cdot (\mathbf{R} \cdot \mathbf{V})^{n_s} \cdot I_{\text{light}}$. Here $k_s$ is the specular intensity, $n_s$ is the shininess exponent, $\mathbf{V}$ is the direction to camera (view vector), and $\mathbf{R}$ is the reflection of the incident light direction. This is implemented in `get_specular()`.
 
 ### Shadow Rays
 

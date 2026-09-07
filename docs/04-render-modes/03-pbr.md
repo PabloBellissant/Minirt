@@ -11,11 +11,11 @@ The PBR kernel uses Fresnel reflectance (Schlick approximation with F0 computed 
 
 ## Reflection vs. Refraction
 
-The `sample_refract()` function determines whether the ray **reflects** or **refracts** based on `hit_data.opacity`. When `random <= opacity`, the ray bounces off the surface using the law of reflection: `R = D - 2*(D.N)*N`. When `random > opacity`, the ray passes through the material using **Snell's law** via `vec3_refract()`, where `eta = eta1/eta2` (ratio of refractive indices). Total internal reflection is detected when the squared cosine term becomes negative.
+The `sample_refract()` function determines whether the ray **reflects** or **refracts** based on `hit_data.opacity`. When `random <= opacity`, the ray bounces off the surface using the law of reflection: $\mathbf{R} = \mathbf{D} - 2(\mathbf{D}\cdot\mathbf{N})\mathbf{N}$. When `random > opacity`, the ray passes through the material using **Snell's law** via `vec3_refract()`, where $\eta = \eta_1 / \eta_2$ (ratio of refractive indices). Total internal reflection is detected when the squared cosine term becomes negative.
 
 ## Bounce Loop
 
-The PBR kernel fires up to `MAX_BOUNCE` (4) bounces per primary ray. Starting with `through_power = (1, 1, 1)`, each bounce computes Phong shading at the hit point, multiplies by `(1 - reflectivity) * through_power`, and accumulates into the pixel color. `through_power` is then multiplied by `reflectivity` so that after n bounces, the effective contribution is `through_power = product(reflectivity_i)`, which naturally dims deeper reflections. The ray is updated (origin at hit point, direction reflected or refracted) and the loop continues. When a ray misses all geometry and hits the skybox, `accumulated_color += draw_skybox(...) * through_power` and the loop breaks.
+The PBR kernel fires up to `MAX_BOUNCE` (4) bounces per primary ray. Starting with $\text{through\_power} = (1, 1, 1)$, each bounce computes Phong shading at the hit point, multiplies by $(1 - \text{reflectivity}) \times \text{through\_power}$, and accumulates into the pixel color. $\text{through\_power}$ is then multiplied by $\text{reflectivity}$ so that after $n$ bounces, the effective contribution is $\text{through\_power} = \prod_{i=1}^{n} \text{reflectivity}_i$, which naturally dims deeper reflections. The ray is updated (origin at hit point, direction reflected or refracted) and the loop continues. When a ray misses all geometry and hits the skybox, $\text{accumulated\_color} \mathrel{+}= \text{draw\_skybox}(\ldots) \times \text{through\_power}$ and the loop breaks.
 
 ## Material Properties
 

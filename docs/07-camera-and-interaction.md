@@ -30,10 +30,9 @@ The **right** and **up** vectors are derived from yaw-only for the horizontal ba
 
 `fill_camera()` recomputes the viewport whenever the camera or image dimensions change:
 
-```
-viewport_height = 2.0 x tan(FOV x pi / 180 / 2.0)
-viewport_width = viewport_height x (width / height)
-```
+$$ \text{viewport\_height} = 2.0 \times \tan\left(\frac{\text{FOV} \times \pi}{180 \times 2.0}\right) $$
+
+$$ \text{viewport\_width} = \text{viewport\_height} \times \frac{\text{width}}{\text{height}} $$
 
 The viewport is centered on the forward axis at unit distance from the camera position. `pixel00_loc` is the world-space coordinate of the top-left pixel (accounting for half-pixel offset).
 
@@ -60,7 +59,7 @@ The GPU ray generation in `calc_rays.cl` implements a thin-lens DOF model. Sub-p
 
 ## Movement Speed
 
-Movement speed in `camera_move.c` uses a base speed of 5 units/second. Holding **Ctrl** doubles the speed via `const float step = MOVE_SPEED * (1 + RUN_SPEED * ctrl) * delta_time` where `RUN_SPEED=5`, making the multiplier `1 + 5 = 6` when Ctrl is held. Roll sensitivity is `0.03` radians per frame and mouse look sensitivity is `0.003` radians per pixel movement.
+Movement speed in `camera_move.c` uses a base speed of 5 units/second. Holding **Ctrl** doubles the speed via `const float step = MOVE_SPEED * (1 + RUN_SPEED * ctrl) * delta_time` where `RUN_SPEED=5`, making the multiplier $1 + 5 = 6$ when Ctrl is held. Roll sensitivity is $0.03$ radians per frame and mouse look sensitivity is $0.003$ radians per pixel movement.
 
 ---
 
