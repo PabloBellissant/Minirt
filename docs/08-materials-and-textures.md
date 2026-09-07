@@ -33,7 +33,7 @@ typedef struct s_mat
 
 | Field | MTL Equivalent | Description |
 |---|---|---|
-| `Ns` | `Ns` | Specular exponent (shininess). Range [0, $\infty$). Higher = sharper highlights. |
+| `Ns` | `Ns` | Specular exponent (shininess). Range [0, infinity). Higher = sharper highlights. |
 | `Kd` | `Kd` | Diffuse albedo (base color). Used as the diffuse reflectance. |
 | `Ks` | `Ks` | Specular color / F0. For metals, this is the reflectance color. |
 | `Ke` | `Ke` | Emissive color. Non-zero means the surface acts as a light source. |
@@ -167,16 +167,16 @@ flowchart TD
 
 ## Fresnel (F0) Calculation
 
-The `get_f0()` function computes the Fresnel reflectance at normal incidence (F0), blending between dielectric and metallic behavior. For dielectrics (metalness = 0), F0 is a scalar computed from IOR: $F_0 = \left(\frac{\eta - 1}{\eta + 1}\right)^2$ (for glass with IOR ~ 1.5, F0 ~ 0.04). For metals (metalness = 1), F0 is the specular color (`ks`), which is the actual reflectance color of the metal (e.g., gold gives a yellowish tint). For mixed materials, linear interpolation is used between the two.
+The `get_f0()` function computes the Fresnel reflectance at normal incidence (F0), blending between dielectric and metallic behavior. For dielectrics (metalness = 0), F0 is a scalar computed from IOR: F0 = ((eta - 1) / (eta + 1))^2 (for glass with IOR ~ 1.5, F0 ~ 0.04). For metals (metalness = 1), F0 is the specular color (`ks`), which is the actual reflectance color of the metal (e.g., gold gives a yellowish tint). For mixed materials, linear interpolation is used between the two.
 
 ---
 
 ## Reflectivity (Glossy Factor)
 
-The Schlick approximation computes Fresnel reflectance as a function of viewing angle: $F(\theta) = F_0 + (1 - F_0)(1 - \cos\theta)^5$, with $\cos\theta = |\hat{D} \cdot \hat{N}|$. The result is modulated by roughness (smoother surfaces are more reflective) via `glossy_factor = 1.0f - (roughness * roughness)`. The final reflectivity is `fresnel * glossy_factor`, clamped to [0, 1].
+The Schlick approximation computes Fresnel reflectance as a function of viewing angle: F(theta) = F0 + (1 - F0) * (1 - cos(theta))^5, with cos(theta) = |D.N|. The result is modulated by roughness (smoother surfaces are more reflective) via `glossy_factor = 1.0f - (roughness * roughness)`. The final reflectivity is `fresnel * glossy_factor`, clamped to [0, 1].
 
 ---
 
 ## Refraction (Snell's Law)
 
-The `refract()` function in `sample_materials.cl` handles refraction using the vector form of Snell's law. It computes the refracted direction from the incident ray direction, surface normal, and IOR ratio $\eta = \eta_1 / \eta_2$. The function handles both entering (IOR ratio = 1/ni) and exiting (IOR ratio = ni) a refractive material. Total internal reflection is detected when $1 - \eta^2(1 - \cos^2\theta_i) < 0$. In Monte Carlo mode, chromatic dispersion is added via `get_ni_by_color()`, which perturbs the IOR based on the hue of the accumulated light, producing rainbow-like caustics.
+The `refract()` function in `sample_materials.cl` handles refraction using the vector form of Snell's law. It computes the refracted direction from the incident ray direction, surface normal, and IOR ratio eta = eta1 / eta2. The function handles both entering (IOR ratio = 1/ni) and exiting (IOR ratio = ni) a refractive material. Total internal reflection is detected when 1 - eta^2 * (1 - cos^2(theta_i)) < 0. In Monte Carlo mode, chromatic dispersion is added via `get_ni_by_color()`, which perturbs the IOR based on the hue of the accumulated light, producing rainbow-like caustics.

@@ -63,10 +63,10 @@ C  x,y,z  rx,ry,rz  fov
 | Field | Type | Range | Description |
 |---|---|---|---|
 | `x,y,z` | float | unlimited | Camera position in world space |
-| `rx,ry,rz` | float | `[-1, 1]` | Normalized rotation vector (multiplied by $\pi$ internally) |
+| `rx,ry,rz` | float | `[-1, 1]` | Normalized rotation vector (multiplied by pi internally) |
 | `fov` | int | `[0, 180]` | Vertical field of view in degrees |
 
-The rotation vector is normalized and scaled by $\pi$ to produce Euler-like orientation angles. The camera also has **depth of field** parameters (`lens_radius = 0.001f`, `focus_dist = 1`) that can be adjusted via the UI edit panel.
+The rotation vector is normalized and scaled by pi to produce Euler-like orientation angles. The camera also has **depth of field** parameters (`lens_radius = 0.001f`, `focus_dist = 1`) that can be adjusted via the UI edit panel.
 
 **Example:**
 ```

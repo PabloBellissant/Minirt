@@ -129,7 +129,7 @@ The project uses a two-buffer progressive accumulation scheme on the GPU. The **
 
 If the camera position, rotation, FOV, lens radius, or focus distance changed (`cam_has_moved()`), or if render parameters changed (`render_changed()`), the accumulation buffer is **zeroed out** (via `clEnqueueWriteBuffer` with zeros) and `camera.frame` is reset to 1. Then `camera.frame` increments and one of 5 GPU kernels runs, writing `float3` values into the accumulation buffer. The `draw_accu` kernel divides each pixel's accumulated value by `max(1.0f, frame x exposure)`, multiplies by 255, clamps, and writes to `img`. The `img` buffer is read back to the host via `clEnqueueReadBuffer`. The host buffer is copied into the minilibx image and displayed via `mlx_put_data_addr` and `mlx_put_image_to_window`.
 
-The result is progressive rendering with exposure control. After N frames, each pixel has N samples and noise is reduced by $\sqrt{N}$. **Exposure** (adjusted via F5/F6, see [07-camera-and-interaction.md](07-camera-and-interaction.md)) acts as a multiplier on the sample count divisor.
+The result is progressive rendering with exposure control. After N frames, each pixel has N samples and noise is reduced by sqrt(N). **Exposure** (adjusted via F5/F6, see [07-camera-and-interaction.md](07-camera-and-interaction.md)) acts as a multiplier on the sample count divisor.
 
 ---
 

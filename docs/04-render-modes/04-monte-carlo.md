@@ -66,9 +66,9 @@ flowchart TD
 
     IS_EMISSIVE -->|No| DECIDE_REFLECT{random < opacity?}
 
-    DECIDE_REFLECT -->|Reflect| GGX_REFLECT[GGX sample reflection\nray.dir = reflect(ray.dir, sample_ggx_gpu(normal))]
+    DECIDE_REFLECT -->|Reflect| GGX_REFLECT["GGX sample reflection\nray.dir = reflect(ray.dir, sample_ggx_gpu(normal))"]
 
-    DECIDE_REFLECT -->|Refract| GGX_REFRACT[GGX sample from incident\nray.dir = sample_ggx_gpu(ray.dir)]
+    DECIDE_REFLECT -->|Refract| GGX_REFRACT["GGX sample from incident\nray.dir = sample_ggx_gpu(ray.dir)"]
 
     GGX_REFRACT --> IS_DIFFRACT{is_diffract == 0?}
 

@@ -3,7 +3,7 @@
 ![BVH tree structure diagram](assets/svg/bvh-tree.svg)
 *Visualization of the BVH tree structure showing the root node splitting into child subtrees with different bounding volume shapes (AABB, Sphere, OBB) and leaf nodes containing primitives.*
 
-The **Bounding Volume Hierarchy (BVH)** accelerates ray-scene intersection by organizing primitives in a spatial tree. Each node stores a bounding volume that encloses all primitives in its subtree. During traversal, nodes whose bounding volume is missed by the ray are skipped, yielding $O(\log n)$ average intersection time.
+The **Bounding Volume Hierarchy (BVH)** accelerates ray-scene intersection by organizing primitives in a spatial tree. Each node stores a bounding volume that encloses all primitives in its subtree. During traversal, nodes whose bounding volume is missed by the ray are skipped, yielding O(log n) average intersection time.
 
 ## Architecture Overview
 
@@ -20,7 +20,7 @@ flowchart TD
     end
 
     subgraph GPU ["GPU - Ray Tracing"]
-        RAY[Primary Ray] --> TRAVERSE[BVH Traversal\n hit_bvh_{sphere,aabb,obb}]
+        RAY[Primary Ray] --> TRAVERSE["BVH Traversal\nhit_bvh_sphere/aabb/obb"]
         TRAVERSE --> HIT{Node hit?}
         HIT -->|Yes| IS_LEAF{Is leaf?}
         IS_LEAF -->|Yes| INTERSECT[Intersect primitive\n triangle / sphere]
@@ -164,7 +164,7 @@ flowchart LR
 
     subgraph Quaternion ["Quaternion Encoding"]
         BASIS --> QUAT[quat_from_mat3_cols\n convert rotation matrix -> quaternion]
-        QUAT --> AXES[obb_axes_from_quat\n compute axes[0..2] from quaternion]
+        QUAT --> AXES["obb_axes_from_quat\ncompute axes 0-2 from quaternion"]
     end
 
     subgraph Extents ["Extent Computation"]
@@ -173,15 +173,15 @@ flowchart LR
     end
 ```
 
-**Step 1: PCA Mean** (`get_pca_mean`) computes the mean position of all primitive vertices, where for triangles each of the three vertices contributes $\frac{1}{3N}$ to the sum.
+**Step 1: PCA Mean** (`get_pca_mean`) computes the mean position of all primitive vertices, where for triangles each of the three vertices contributes 1/(3N) to the sum.
 
-**Step 2: PCA Covariance** (`get_pca_covariance`) computes the $3 \times 3$ covariance matrix from the centered data, resulting in a symmetric matrix.
+**Step 2: PCA Covariance** (`get_pca_covariance`) computes the 3x3 covariance matrix from the centered data, resulting in a symmetric matrix.
 
-**Step 3: Jacobi Eigenvalue Decomposition** (`mat3_eigh_jacobi`) diagonalizes the covariance matrix via successive Givens rotations (up to 45 iterations with tolerance $1.0 \times 10^{-9}$). The diagonalized matrix's diagonal entries are the eigenvalues, and the accumulated rotation matrix is the eigenvector matrix.
+**Step 3: Jacobi Eigenvalue Decomposition** (`mat3_eigh_jacobi`) diagonalizes the covariance matrix via successive Givens rotations (up to 45 iterations with tolerance 1.0e-9). The diagonalized matrix's diagonal entries are the eigenvalues, and the accumulated rotation matrix is the eigenvector matrix.
 
 **Step 4: Basis Sorting** (`basis3_from_eigh`) sorts eigenvalues descending and takes corresponding eigenvectors as the new basis axes. A Gram-Schmidt-like orthogonalization via cross products ensures a right-handed orthonormal basis.
 
-**Step 5: Quaternion Encoding** (`quat_from_mat3_cols`) converts the $3 \times 3$ rotation matrix to a unit quaternion for compact GPU storage, using the standard matrix-to-quaternion algorithm with trace case vs. diagonal case branching.
+**Step 5: Quaternion Encoding** (`quat_from_mat3_cols`) converts the 3x3 rotation matrix to a unit quaternion for compact GPU storage, using the standard matrix-to-quaternion algorithm with trace case vs. diagonal case branching.
 
 **Step 6: Projection and Extents** (`mat3_project_objects`) projects all primitive vertices onto the OBB basis axes, computing half-extents from the min/max along each axis.
 
@@ -202,9 +202,9 @@ typedef enum e_bvh_split
 
 The most sophisticated splitter evaluates candidate split planes via binning. For each candidate, the cost is:
 
-$$\text{Cost}(S) = C_t + \frac{A_L}{A_P} \cdot N_L \cdot C_i + \frac{A_R}{A_P} \cdot N_R \cdot C_i$$
+Cost(S) = Ct + (AL/AP) * NL * Ci + (AR/AP) * NR * Ci
 
-Where $C_t$ is traversal cost, $C_i$ is intersection cost, $A_L$ and $A_R$ are surface areas of left and right child bounds, $A_P$ is the surface area of the parent bound, and $N_L$ and $N_R$ are primitive counts in each child. The split with minimum cost is selected; if no split reduces cost, the node becomes a leaf. The binned SAH approach uses fixed bins (typically 8-32) along the chosen axis to approximate the optimal split point efficiently.
+Where Ct is traversal cost, Ci is intersection cost, AL and AR are surface areas of left and right child bounds, AP is the surface area of the parent bound, and NL and NR are primitive counts in each child. The split with minimum cost is selected; if no split reduces cost, the node becomes a leaf. The binned SAH approach uses fixed bins (typically 8-32) along the chosen axis to approximate the optimal split point efficiently.
 
 ### Median Primitive (MED_PRIM)
 
@@ -228,15 +228,15 @@ The CPU-side structures are transformed into compact GPU-friendly versions for O
 
 ### `hit_aabb` - Slab Method
 
-AABB intersection uses the **slab method**: the ray is tested against each pair of parallel planes, computing $t_{\min}$ and $t_{\max}$ per axis using the precomputed inverse ray direction.
+AABB intersection uses the **slab method**: the ray is tested against each pair of parallel planes, computing t_min and t_max per axis using the precomputed inverse ray direction.
 
 ### `hit_sphere` - Distance Test
 
-Sphere intersection checks if the ray comes within the sphere's radius using the standard ray-sphere quadratic equation: $b = 2(\hat{D} \cdot \text{oc})$, $c = \text{oc} \cdot \text{oc} - r^2$, with the discriminant determining whether an intersection exists.
+Sphere intersection checks if the ray comes within the sphere's radius using the standard ray-sphere quadratic equation: b = 2*(D.oc), c = oc.oc - r^2, with the discriminant determining whether an intersection exists.
 
 ### `hit_obb` - Local Space Slab Test
 
-OBB intersection transforms the ray into the OBB's local coordinate system using the **inverse quaternion rotation**, then performs a standard AABB slab test in that local space. The quaternion rotation on the GPU is computed via `quat_rotate()`: $\mathbf{v}' = \mathbf{v} + q_w \cdot 2(\mathbf{q}_{xyz} \times \mathbf{v}) + 2(\mathbf{q}_{xyz} \times (\mathbf{q}_{xyz} \times \mathbf{v}))$.
+OBB intersection transforms the ray into the OBB's local coordinate system using the **inverse quaternion rotation**, then performs a standard AABB slab test in that local space. The quaternion rotation on the GPU is computed via `quat_rotate()`: v' = v + qw * 2(qxyz x v) + 2(qxyz x (qxyz x v)).
 
 ### Full Traversal Loop
 

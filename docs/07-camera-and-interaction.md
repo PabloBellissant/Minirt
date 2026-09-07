@@ -136,7 +136,7 @@ Movement speed in `camera_move.c` uses a base speed of 5 units/second. Holding *
 
 ## Mouse Look
 
-Mouse look is implemented in `mouse_hooks.c`. `cam_move()` is called on every mouse move event, computing `delta_pos = current_pos - last_pos`. If `mouse_input.focus` is `true`, `handle_camera_rotation()` is called, which applies yaw (`cam->rot.y -= delta_x * SENSITIVITY`) and pitch (`cam->rot.x += delta_y * SENSITIVITY`). Yaw wraps to $[-\pi, \pi]$ and pitch is clamped to $\pm\text{MAX_PITCH} \approx 88.2^\circ$ to prevent gimbal lock at zenith. Sensitivity is `0.003` and roll via Q/E is applied in the rotation handler, not from mouse. Mouse focus is toggled via `K`. When focused, the pointer is confined to the window using the XTEST extension (see build system notes on `local_xtst` for campus machines).
+Mouse look is implemented in `mouse_hooks.c`. `cam_move()` is called on every mouse move event, computing `delta_pos = current_pos - last_pos`. If `mouse_input.focus` is `true`, `handle_camera_rotation()` is called, which applies yaw (`cam->rot.y -= delta_x * SENSITIVITY`) and pitch (`cam->rot.x += delta_y * SENSITIVITY`). Yaw wraps to [-pi, pi] and pitch is clamped to +/-MAX_PITCH (approximately 88.2 degrees) to prevent gimbal lock at zenith. Sensitivity is `0.003` and roll via Q/E is applied in the rotation handler, not from mouse. Mouse focus is toggled via `K`. When focused, the pointer is confined to the window using the XTEST extension (see build system notes on `local_xtst` for campus machines).
 
 ---
 
