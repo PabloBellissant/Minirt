@@ -34,13 +34,3 @@ The user switches render modes via keyboard input. Modes 0 through 5 are cycled 
 ## Progressive Accumulation
 
 All GPU modes use progressive accumulation: a `float3` buffer accumulates samples across frames, reset when the camera or render parameters change. See [06-opencl-integration.md](../06-opencl-integration.md) for the accumulation buffer architecture and frame loop details.
-
-### Per-Mode Accumulation Pattern
-
-| Mode | Accumulates | Frame Reset Triggers |
-|---|---|---|
-| Phong | `img[pixel] += hit_data.kd` | Camera move, param change |
-| PBR | `img[pixel] += accumulated_color` | Camera move, param change |
-| Monte Carlo | `img[pixel] += final_color / ...` | Camera move, param change |
-| Normal | `img[pixel] += hit_data.normal * 0.5f + 0.5f` | Camera move, param change |
-| Heat | `img[pixel] += heatmap(...)` | Camera move, param change |

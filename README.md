@@ -48,67 +48,20 @@ progressive accumulation rendering.
 
 ## Architecture
 
-The render pipeline goes from scene file through parsing, BVH construction,
-GPU kernel dispatch, accumulation, and finally display through minilibx.
-The UI layer is drawn on top of the rendered image and feeds edits back
-into the scene data and camera.
+The render pipeline goes from `.rt` scene file through parsing, BVH
+construction, GPU kernel dispatch, accumulation, and finally display
+through minilibx. The UI layer is drawn on top of the rendered image
+and feeds edits back into the scene data and camera. See
+[docs/01-architecture.md](docs/01-architecture.md) for the full system
+architecture, data hierarchy, and module dependency diagram.
 
-```mermaid
----
-config:
-  layout: dagre
----
-flowchart TD
-    A[".rt Scene File"] --> B["Parser"]
-    B --> C["Scene Data"]
-    C --> D["BVH Builder"]
-    C --> E["Camera Setup"]
-    C --> F["GPU Buffer Upload"]
-    D --> G["BVH Engine<br/>AABB / Sphere / OBB"]
-    G --> F
-    E --> H["Render Loop"]
-    F --> H
+### Custom Libraries
 
-    H --> I{"Wireframe?"}
-    I -- Yes --> J["CPU Rasterizer<br/>(outlines, BVH boxes, lights)"]
-    I -- No --> K["OpenCL GPU Kernel"]
-    K --> L{"Mode"}
-    L -- Phong --> M["Phong Shading"]
-    L -- PBR --> N["PBR: Fresnel + Refraction"]
-    L -- Monte Carlo --> O["Path Tracing: GGX + Dispersion"]
-    L -- Normal --> P["Normal Debug"]
-    L -- Heat --> Q["BVH Depth Heat Map"]
+Six libraries built from scratch specifically for miniRT, plus
+**minilibx-linux** (the standard 42 X11 wrapper). Everything is linked
+as static archives into a single binary.
 
-    M --> R["Accumulation Buffer"]
-    N --> R
-    O --> R
-    P --> R
-    Q --> R
-    J --> R
-
-    R --> S["draw_accu: normalize + exposure"]
-    S --> T["Framebuffer (minilibx)"]
-    T --> U["Screen Output"]
-    U -.->|"UI overlay"| UI["UI Layer<br/>panels, selection, editing"]
-    UI -.->|"edit"| C
-    UI -.->|"edit"| E
-    U --> H
-```
-
-### Custom Submodules
-
-The project relies on seven submodules, six of which we wrote ourselves
-specifically for miniRT. They are built as static libraries and linked
-into the final binary.
-
-![miniRT Submodule Architecture](docs/assets/svg/submodule-stack.svg)
-
-Our custom libraries are **libft** (vector math, colors, utilities),
-**mlx_wrapper** (input abstraction over minilibx), **font_renderer**
-(TTF parser and rasterizer), **mlxui** (GUI component toolkit),
-**xcerrcal** (structured error handling), and **minirt-assets**
-(data submodule with meshes, textures, and test scenes). The seventh
-dependency is **minilibx-linux**, the standard 42 X11 wrapper.
+![miniRT Library Stack](docs/assets/svg/minirt-stack.svg)
 
 See [docs/01-architecture.md](docs/01-architecture.md) for full
 submodule descriptions with struct definitions and API details.
@@ -258,13 +211,19 @@ See [docs/02-build-system.md](docs/02-build-system.md) for the full build flags 
 
 ## Documentation
 
-Full documentation covering architecture, data structures, mathematical
-formulas (LaTeX), build system reference, render mode deep dives, BVH
-construction, OpenCL integration, camera model, material system, UI
-system, and asset catalog is in the [`docs/`](docs/) folder.
-
-Documentation assets (diagrams, screenshots, GIFs) go in
-[`docs/assets/`](docs/assets/).
+| File | Description |
+|------|-------------|
+| [docs/00-project-overview.md](docs/00-project-overview.md) | Project overview, feature comparison with the 42 subject |
+| [docs/01-architecture.md](docs/01-architecture.md) | System architecture, data hierarchy (`t_data`, `t_scene`), module dependency diagram |
+| [docs/02-build-system.md](docs/02-build-system.md) | Build system, Makefile targets, flags, sanitizers, compiler selection |
+| [docs/03-scene-format.md](docs/03-scene-format.md) | `.rt` scene format, MTL material format, OBJ mesh format, parser architecture |
+| [docs/04-render-modes/](docs/04-render-modes/) | Render mode deep dives: wireframe, Phong, PBR, Monte Carlo, normal debug, heat map |
+| [docs/05-bvh.md](docs/05-bvh.md) | BVH construction, bounding volumes (AABB/Sphere/OBB), splitting algorithms, GPU traversal |
+| [docs/06-opencl-integration.md](docs/06-opencl-integration.md) | OpenCL lifecycle, kernel embedding, buffer architecture, frame loop sequence |
+| [docs/07-camera-and-interaction.md](docs/07-camera-and-interaction.md) | Camera model, depth of field, exposure, key bindings, BVH debug controls |
+| [docs/08-materials-and-textures.md](docs/08-materials-and-textures.md) | Material system, texture atlas, normal mapping, Fresnel/Schlick, refraction |
+| [docs/09-asset-catalog.md](docs/09-asset-catalog.md) | Scene files, OBJ meshes, MTL materials, textures, skyboxes |
+| [docs/10-ui-system.md](docs/10-ui-system.md) | UI hierarchy tree, edit panels, selection system, color theme, font rendering |
 
 ---
 

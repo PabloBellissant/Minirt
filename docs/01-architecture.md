@@ -2,14 +2,14 @@
 
 ## Overview
 
-![Architecture overview diagram](assets/svg/render-pipeline.svg)
-*High-level system architecture showing the three layers: main binary, library submodules, and assets. The data flow moves from scene parsing through BVH construction to GPU rendering and display.*
+![Architecture overview diagram](assets/svg/architecture-overview.svg)
+*High-level system architecture showing the three layers: main binary, library submodules, and assets. The binary depends on library submodules for math, graphics, UI, and error handling, and reads assets at runtime for scenes, meshes, materials, and textures.*
 
-miniRT is organized into three layers: the **main binary** (`src/`), **library submodules** (`lib/`), and **assets** (`minirt-assets/`). The binary reads a `.rt` scene file, parses it into an in-memory scene graph, transfers data to the GPU, and runs a render loop that dispatches OpenCL compute kernels.
+miniRT is organized into three layers: the **main binary** (`src/`), **library submodules** (`lib/`), and **assets** (`minirt-assets/`). The binary reads `.rt` scene files from the assets directory, parses them into an in-memory scene graph, transfers data to the GPU via OpenCL, and runs a render loop that dispatches compute kernels. Library submodules provide foundational utilities (math, graphics, UI, font rendering, error handling) that the binary composes together, while assets supply the scene descriptions, meshes, materials, and textures consumed at load time.
 
 ## Data Hierarchy - `t_data`
 
-The central state object `t_data` (defined in `include/minirt.h`) holds every subsystem:
+`t_data` is the top-level state object that owns every subsystem in the application. It is instantiated once in `main()` and passed by pointer to all initialization, parsing, rendering, and event-handling functions. This single-owner design avoids global variables and makes the entire program state explicit and testable.
 
 ```c
 typedef struct s_data
@@ -28,8 +28,7 @@ typedef struct s_data
 
 ### `t_scene` - Scene Description
 
-![Scene data flow diagram](assets/img/showcase-render5.png)
-*Data flow from .rt file parsing into the in-memory t_scene structure, then uploaded to the GPU for rendering.*
+The `t_scene` struct is the complete in-memory representation of a parsed `.rt` file. It holds all scene geometry (spheres, triangles, planes via a unified `t_object` union array), material definitions, loaded textures, point lights, camera state, and the BVH acceleration structure. GPU buffer handles (`cl_mem` fields) are stored directly in the struct so the render loop can dispatch kernels without additional lookups.
 
 ```c
 typedef struct s_scene
@@ -66,6 +65,8 @@ The BVH system state (`t_bvh_engine` and `t_bvh_header`) is documented in [05-bv
 
 ### `t_params` - Render Parameters
 
+The `t_params` struct holds runtime configuration that controls how the render loop behaves. These values are toggled interactively via keyboard shortcuts and the UI, making them the primary interface between user input and render output.
+
 ```c
 typedef struct s_params
 {
@@ -81,6 +82,8 @@ typedef struct s_params
 Note that `render_mode` is an `int*` - it points to the render mode variable owned by the UI, allowing both the UI and the render loop to share the same value.
 
 ### `t_buffers` - Frame Buffers
+
+The frame buffers store both the display-ready pixels and the progressive accumulation data. The `addr` buffer is an RGBA `uint*` that `mlx_put_image_to_window` reads directly, while `accu` is a `t_vec3*` HDR accumulation buffer that averages samples over multiple frames for anti-aliasing and motion blur.
 
 ```c
 typedef struct s_buffers
@@ -103,42 +106,34 @@ The UI state (`t_ui`) is documented in [10-ui-system.md](10-ui-system.md) with t
 ```mermaid
 flowchart TB
     subgraph BINARY["miniRT Binary (src/)"]
-        MAIN["main.c"]
-        LOOP["loop.c<br/>(render loop dispatch)"]
-        PARSING["parsing/<br/>rt_parser, fill_gpu_data"]
-        CALC["calc/<br/>BVH, kernels, renderers"]
-        INIT["init/<br/>UI setup, graphics init"]
-        EXPORT["export_scene/<br/>write .rt files"]
-        HOOKS["hooks/<br/>keyboard, mouse, params"]
+        MAIN["main/init"]
+        PARSING["parsing"]
+        CALC["calc (BVH + render)"]
+        HOOKS["hooks"]
     end
 
     subgraph LIBS["Library Submodules (lib/)"]
-        LIBFT["libft<br/>vectors, colors,<br/>matrices, utilities"]
-        MLX["minilibx-linux<br/>X11 window + image"]
-        MLXW["mlx_wrapper<br/>input abstraction,<br/>draw helpers"]
-        FONT["font_renderer<br/>TTF parsing +<br/>rasterization"]
-        MLXUI["mlxui<br/>GUI component toolkit"]
-        XCERRCAL["xcerrcal<br/>structured error<br/>handling"]
+        LIBFT["libft"]
+        MLX["minilibx-linux"]
+        MLXW["mlx_wrapper"]
+        FONT["font_renderer"]
+        MLXUI["mlxui"]
+        XCERRCAL["xcerrcal"]
     end
 
-    subgraph ASSETS["Assets (minirt-assets/)"]
-        SCENES["test .rt files"]
-        MESHES["OBJ meshes"]
-        MATERIALS["MTL materials"]
-        TEXTURES["PPM textures"]
-    end
+    ASSETS["Assets (minirt-assets/)"]
 
     MAIN --> PARSING
-    MAIN --> INIT
-    MAIN --> LOOP
+    MAIN --> CALC
     MAIN --> HOOKS
-    LOOP --> CALC
     PARSING --> CALC
     CALC --> MLXW
-    INIT --> MLXUI
-    INIT --> MLXW
-    INIT --> FONT
-    LOOP --> MLXW
+    CALC --> LIBFT
+    CALC --> XCERRCAL
+    PARSING --> XCERRCAL
+    MAIN --> MLXUI
+    MAIN --> MLXW
+    MAIN --> FONT
 
     MLXW --> MLX
     MLXW --> LIBFT
@@ -149,9 +144,6 @@ flowchart TB
     MLXUI --> MLXW
     MLXUI --> MLX
     MLXUI --> LIBFT
-    PARSING --> XCERRCAL
-    CALC --> XCERRCAL
-    CALC --> LIBFT
 
     PARSING --> ASSETS
     CALC --> ASSETS
@@ -160,9 +152,9 @@ flowchart TB
     classDef lib fill:#16213e,stroke:#0f3460,color:#fff
     classDef asset fill:#0f3460,stroke:#533483,color:#fff
 
-    class MAIN,LOOP,PARSING,CALC,INIT,EXPORT,HOOKS binary
+    class MAIN,PARSING,CALC,HOOKS binary
     class LIBFT,MLX,MLXW,FONT,MLXUI,XCERRCAL lib
-    class SCENES,MESHES,MATERIALS,TEXTURES asset
+    class ASSETS asset
 ```
 
 ## Render Pipeline Flowchart
@@ -176,52 +168,22 @@ sequenceDiagram
     participant File as .rt Scene File
     participant Parser as rt_parser
     participant Scene as t_scene (CPU)
-    participant Fill as fill_gpu_data
     participant GPU as OpenCL Device
-    participant Kernels as Render Kernels
+    participant Display as Window (X11)
 
     File->>Parser: parse_scene("scene.rt")
-    Note over Parser: Reads line by line
+    Parser->>Scene: populate objects, materials, textures, lights
 
-    Parser->>Parser: get_type() -> A, C, L, sp, pl, obj, sky, mtl
-    Parser->>Parser: parse_line() per identifier
+    Scene->>GPU: fill_gpu_data: clCreateBuffer + clEnqueueWriteBuffer<br/>(spheres, triangles, planes, mats, lights, textures)
 
-    alt mtl line
-        Parser->>Parser: parse_mtl_file(fd)
-        Parser->>Scene: create_mat(&mat, &texture)
-        Parser->>Scene: parse texture maps (PPM/PFM)
-    else obj line
-        Parser->>Parser: parse_obj_file(fd)
-        Parser->>Parser: parse faces -> t_triangle objects
-        Parser->>Scene: vector_add(&objects, triangle)
-        Parser->>Scene: vector_add(&mesh, t_mesh)
-    else sp/pl/cy
-        Parser->>Scene: create_object(scene, type)
-        Parser->>Scene: get_mat(mat_name, &color)
-        Parser->>Scene: vector_add(&objects, object)
-    end
-
-    Parser->>Scene: fill_by_type()
-    Note over Scene: All objects, materials,<br/>textures, lights populated
-
-    Scene->>Fill: fill_gpu_data(state, scene)
-    Fill->>Fill: clCreateBuffer for spheres,<br/>triangles, planes,<br/>textures, mats, lights
-
-    Fill->>GPU: clEnqueueWriteBuffer<br/>(copy all GPU buffers)
-
-    Scene->>Fill: create_bvh(&bvh_header, shape, split, objects)
-    Fill->>Fill: Evaluate all shape/split combos<br/>(AABB/Sphere/OBB x SAH/MedPrim/MedSpace)
-    Fill->>Scene: world_best_bvh selected
-    Fill->>GPU: clCreateBuffer + write bvh nodes
+    Scene->>Scene: create_bvh: evaluate shape/split combos
+    Scene->>GPU: clCreateBuffer + write BVH nodes
 
     loop Per frame
-        Kernels->>GPU: clSetKernelArg(bvh, spheres,<br/>triangles, planes, mats,<br/>lights, camera, textures)
-        Kernels->>GPU: clEnqueueNDRangeKernel<br/>(ray generation + traversal)
-        GPU->>GPU: hit_bvh_aabb/hit_bvh_obb/hit_bvh_sphere
-        GPU->>GPU: shade() <- Phong/PBR/Monte Carlo
-        GPU->>GPU: write to output buffer
-        GPU->>CPU: clEnqueueReadBuffer(img)
-        CPU->>Display: mlx_put_image_to_window()
+        GPU->>GPU: render kernel: ray gen + traversal + shading
+        GPU->>GPU: draw_accu: accumulate samples
+        GPU->>Scene: clEnqueueReadBuffer(pixel buffer)
+        Scene->>Display: mlx_put_image_to_window()
     end
 ```
 

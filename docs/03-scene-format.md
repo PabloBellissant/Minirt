@@ -4,7 +4,23 @@
 
 miniRT scene files use the `.rt` extension. They are plain-text files with one directive per line. Lines starting with `#` or `//` are comments. Values are comma- or whitespace-separated. The parser uses `ft_scan()` - a typed scanf with range validation - defined in the format macros below.
 
-*Screenshot showing a sample .rt scene file open in a text editor, with highlighted syntax for each identifier type (A, C, L, sp, pl, cy, obj, sky, mtl).*
+```rt
+# Ambient light
+A 0.2 255,255,255
+
+# Camera
+C 0,5,-10 0.5,-0.7,0 70
+
+# Light
+L 0,10,0 1 255,255,255
+
+# Sphere with material
+mtl asset/materials/gold.mtl
+sp 3,2,0 2 0,0,0 gold
+
+# Plane
+pl 0,-1,0 0,1,0 0,0,0 checkerboard 1
+```
 
 ## Identifiers
 
@@ -15,7 +31,7 @@ miniRT scene files use the `.rt` extension. They are plain-text files with one d
 | `L` | Light | Point light source |
 | `sp` | Sphere | Sphere primitive |
 | `pl` | Plane | Infinite plane primitive |
-| `cy` | Cylinder | Finite cylinder (WIP render, parser complete) |
+| `cy` | Cylinder | Finite cylinder |
 | `obj` | Mesh | Wavefront OBJ mesh file |
 | `sky` | Skybox | Equirectangular environment map |
 | `mtl` | Material | MTL material library file |
@@ -119,7 +135,7 @@ pl 0,0,0 0,1,0 0,0,0 checkerboard 1
 pl -5,0,0 1,0,0 0,0,0 gold 0.1
 ```
 
-### Cylinder - `cy` (WIP)
+### Cylinder - `cy`
 
 ```
 cy  x,y,z  rx,ry,rz  diameter  height  R,G,B  [mat_name]
@@ -133,8 +149,6 @@ cy  x,y,z  rx,ry,rz  diameter  height  R,G,B  [mat_name]
 | `height` | float | unlimited | Cylinder height |
 | `R,G,B` | int | `[0, 255]` | Diffuse color |
 | `mat_name` | string | - | Optional material name |
-
-**Note:** The cylinder parser is complete and creates objects in the scene, but the GPU render path for cylinders is a work-in-progress. Cylinders appear in the scene list and can be edited in the UI, but ray intersection on the GPU is not yet implemented.
 
 **Example:**
 ```
