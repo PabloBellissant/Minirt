@@ -2,6 +2,24 @@
 
 miniRT supports **6 render modes**, selected at runtime and switched interactively via keyboard. Each mode produces a different visual output depending on the rendering technique used.
 
+![Wireframe mode of chess](../assets/img/chess_pos_1/Wireframe.png)
+*Wireframe mode of chess.rt*
+
+![Phong mode of chess](../assets/img/chess_pos_1/Phong.png)
+*Phong mode of chess.rt*
+
+![PBR mode of chess](../assets/img/chess_pos_1/PBR.png)
+*PBR mode of chess.rt*
+
+![Monte Carlo mode of chess](../assets/img/chess_pos_1/Monte_carlo.png)
+*Monte Carlo mode of chess.rt*
+
+![Debug normal mode of chess](../assets/img/chess_pos_1/normal_view.png)
+*Debug normal mode of chess.rt*
+
+![Debug BVH heatmap mode of chess](../assets/img/chess_pos_1/Heat_map_var_3.png)
+*Debug BVH heatmap mode of chess.rt*
+
 ## Mode Dispatch
 
 The render loop in `src/loop.c` maintains a static function pointer table:
