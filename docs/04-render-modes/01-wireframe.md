@@ -2,11 +2,11 @@
 
 Wireframe mode performs **CPU-side rasterization** of the scene geometry. It does not use OpenCL kernels -- instead, it projects 3D points onto the 2D screen using the camera frustum and draws outlines directly into the pixel buffer.
 
-![Wireframe render showing primitives and lights](../assets/img/mandatory2.png)
+![Wireframe render showing primitives and lights](../assets/img/wireframe_primitives.png)
 *Wireframe mode showing all primitives plus lights.*
 
-![42.rt wireframe](../assets/img/mandatory1.png)
-*Wireframe mode on the 42.rt scene with spheres (to be added).*
+![Phong render showing primitives and lights](../assets/img/phong_primitives.png)
+*And the phong version of the map*
 
 ### BVH Debug Overlay
 
