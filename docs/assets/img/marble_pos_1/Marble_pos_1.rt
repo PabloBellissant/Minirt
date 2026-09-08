@@ -1,0 +1,46 @@
+# Minirt '.rt' file.
+
+# Camera #
+# Format : 'C posX,Y,Z dirX,Y,Z fov'
+C -6.96,2.39,3.94 0.05,-0.27,0.00 70
+
+# Ambient #
+# Format : 'A intensity R,G,B'
+A 1 51,51,51
+
+
+
+# Materials #
+# Format : 'mtl [path.mtl]'
+mtl minirt-assets/materials/marble.mtl
+mtl minirt-assets/materials/onyx.mtl
+mtl minirt-assets/materials/tiles.mtl
+mtl minirt-assets/materials/gold.mtl
+mtl minirt-assets/materials/uni/emissive.mtl
+mtl minirt-assets/materials/uni/transparent.mtl
+
+# Light #
+# Format : 'L posX,Y,Z intensity R,G,B'
+L -9.00,9.50,0.00 1 255,255,255
+L 0.00,0.00,0.00 1 0,0,0
+
+# Primitive #
+#  - Sphere format : 'sp posX,Y,Z diameter material_name'
+#  - Plane format : 'pl posX,Y,Z normX,Y,Z material_name scaling'
+sp 4.50,1.00,0.00 2.00 0,0,0 marble1
+sp 1.50,1.00,0.00 2.00 0,0,0 glass
+sp -1.50,1.00,0.00 2.00 0,0,0 onyx
+sp -4.50,1.00,0.00 2.00 0,0,0 gold
+pl 0.00,0.00,0.00 0.00,1.00,0.00 0,0,0 tiles2 0.10
+pl 0.00,10.00,0.00 0.00,-1.00,0.00 0,0,0 tiles1 0.10
+pl 0.00,0.00,-10.00 0.00,0.00,1.00 0,0,0 tiles1 0.10
+pl 0.00,0.00,20.00 0.00,0.00,-1.00 0,0,0 tiles1 0.10
+pl -10.00,0.00,0.00 1.00,0.00,0.00 0,0,0 tiles1 0.10
+pl 10.00,0.00,0.00 -1.00,0.00,0.00 0,0,0 tiles1 0.10
+
+# Custom .obj #
+# Format :'obj [path.obj] posX,Y,Z dirX,Y,Z scaleX,Y,Z'
+obj minirt-assets/prism/prism.obj -2.00,9.90,-2.00 0.00,0.00,1.00 1.00,1.00,1.00
+obj minirt-assets/prism/prism.obj -2.00,9.90,2.00 0.00,0.00,1.00 1.00,1.00,1.00
+obj minirt-assets/prism/prism.obj 2.00,9.90,2.00 0.00,0.00,1.00 1.00,1.00,1.00
+obj minirt-assets/prism/prism.obj 2.00,9.90,-2.00 0.00,0.00,1.00 1.00,1.00,1.00

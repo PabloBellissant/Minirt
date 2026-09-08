@@ -1,0 +1,34 @@
+# Minirt '.rt' file.
+
+# Camera #
+# Format : 'C posX,Y,Z dirX,Y,Z fov'
+C -0.52,1.28,2.78 0.06,-0.04,0.00 70
+
+# Ambient #
+# Format : 'A intensity R,G,B'
+A 0.5 255,255,255
+
+
+# Skybox #
+# Format : 'sky [path.ppm]'
+sky minirt-assets/texture/skybox/indor.ppm
+
+# Materials #
+# Format : 'mtl [path.mtl]'
+mtl minirt-assets/materials/uni/emissive.mtl
+mtl minirt-assets/materials/wood.mtl
+
+# Light #
+# Format : 'L posX,Y,Z intensity R,G,B'
+L 300,300,0 1 255,255,255
+
+# Primitive #
+#  - Sphere format : 'sp posX,Y,Z diameter material_name'
+#  - Plane format : 'pl posX,Y,Z normX,Y,Z material_name scaling'
+sp 3000.00,3000.00,0.00 1700.00 0,0,0 emissive_white_10
+pl 0.00,0.00,0.00 0.00,1.00,0.00 0,0,0 wood 1.00
+
+# Custom .obj #
+# Format :'obj [path.obj] posX,Y,Z dirX,Y,Z scaleX,Y,Z'
+obj minirt-assets/chess/room.obj 0.00,-0.01,0.00 0.00,0.00,1.00 1.00,1.00,1.00
+obj minirt-assets/chess/chess.obj 0.30,0.93,2.20 0.20,0.00,1.00 0.10,0.10,0.10
