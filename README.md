@@ -40,8 +40,14 @@ selection, scene import/export, depth-of-field, exposure control, and
 progressive accumulation rendering.
 
 <table cellpadding="0" cellspacing="0" border="0" style="border:none;">
-<tr><td rowspan="2"><img src="docs/assets/img/showcase-render6-cornell.png" width="100%"></td><td><img src="docs/assets/img/showcase-render2.png" width="100%"></td></tr>
-<tr><td><img src="docs/assets/img/showcase-render3.png" width="100%"></td></tr>
+<tr>
+    <td><img src="docs/assets/img/showcase-render6-cornell.png" width="100%"></td>
+    <td><img src="docs/assets/img/showcase-render2.png" width="100%"></td>
+</tr>
+<tr>
+    <td><img src="docs/assets/img/marble_pos_1/Monte_carlo.png" width="100%"></td>
+    <td><img src="docs/assets/img/chess_pos_1/Monte_carlo.png" width="100%"></td>
+</tr>
 </table>
 
 ---
