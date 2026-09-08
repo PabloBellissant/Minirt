@@ -1,5 +1,8 @@
 # BVH System
 
+![BVH debug profiling](./assets/img/bvh_debug_lvl_profiling.png)
+*Terminal information and profiling of OBB SAH BVH on marble.rt with DEBUG_LVL=1 (MiniRT debug level).*
+
 The **Bounding Volume Hierarchy (BVH)** accelerates ray-scene intersection by organizing primitives in a spatial tree. Each node stores a bounding volume that encloses all primitives in its subtree. During traversal, nodes whose bounding volume is missed by the ray are skipped, yielding $O(\log n)$ average intersection time.
 
 ## Architecture Overview
