@@ -53,23 +53,26 @@ The bounding volume is a union of the three shape types (AABB, sphere, and OBB).
 
 ## Bounding Volume Shapes
 
-*Visual comparison of sphere, axis-aligned (AABB), and oriented (OBB) bounding volumes around the same geometry.*
+![BVH heatmap sphere](./assets/img/heat_map_preview_1.png)
+![BVH heatmap AABB](./assets/img/heat_map_preview_2.png)
+![BVH heatmap OOB](./assets/img/heat_map_preview_3.png)
+*Visual comparison of sphere, axis-aligned (AABB), and oriented (OBB) BVH heatmap of bounding volumes around the same geometry.*
 
 ### 1. Sphere Bounding Volume
 
-![BVH heatmap sphere](./assets/img/heat_map_preview_1.png)
+![BVH heatmap sphere](./assets/gif/bvh-outline-sphere.gif)
 
 The sphere bound is defined by a center position and a radius, evaluated by computing the centroid of all primitives then finding the maximum distance. It has the simplest intersection test (point-in-sphere distance) but tends to produce more overlap between sibling nodes, reducing BVH efficiency.
 
 ### 2. AABB - Axis-Aligned Bounding Box
 
-![BVH heatmap AABB](./assets/img/heat_map_preview_2.png)
+![BVH heatmap AABB](./assets/gif/bvh-outline-aabb-sah.gif)
 
 The AABB is defined by min and max corners, evaluated by finding the extent of all primitive centroids and vertices in each axis. It offers the fastest GPU intersection test using the slab method (no rotation transform needed), making it ideal for axis-aligned scenes but wasteful for rotated geometry.
 
 ### 3. OBB - Oriented Bounding Box
 
-![BVH heatmap OOB](./assets/img/heat_map_preview_3.png)
+![BVH heatmap OOB](./assets/gif/bvh-outline-obb.gif)
 
 The OBB is the tightest-fitting box for arbitrarily oriented geometry, defined by a center, a rotation quaternion, half-extents, and pre-computed basis axes derived via PCA.
 
@@ -116,6 +119,8 @@ Three algorithms control how a parent node's primitives are partitioned into lef
 
 ### SAH - Surface Area Heuristic
 
+![BVH heatmap SAH](./assets/gif/bvh-outline-aabb-sah.gif)
+
 The most sophisticated splitter evaluates candidate split planes via binning. For each candidate, the cost is:
 
 $$ \text{Cost}(S) = C_t + \frac{A_L}{A_P} \cdot N_L \cdot C_i + \frac{A_R}{A_P} \cdot N_R \cdot C_i $$
@@ -124,9 +129,13 @@ Where $C_t$ is traversal cost, $C_i$ is intersection cost, $A_L$ and $A_R$ are s
 
 ### Median Primitive (MED_PRIM)
 
+![BVH heatmap median primitive](./assets/gif/bvh-outline-aabb-med-prim.gif)
+
 Primitives are sorted by centroid along the split axis and the median index is used as the split point. Both children get roughly equal primitive counts, producing a balanced tree but potentially poor spatial separation.
 
 ### Median Space (MED_SPACE)
+
+![BVH heatmap median space](./assets/gif/bvh-outline-aabb-med-space.gif)
 
 The spatial extent along the split axis is divided in half. Primitives whose centroids fall on the left side go to the left child; those on the right go to the right child. This can produce unbalanced primitive counts but better spatial separation.
 
