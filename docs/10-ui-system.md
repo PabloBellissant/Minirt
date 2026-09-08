@@ -250,5 +250,5 @@ sequenceDiagram
     end
 ```
 
-![UI debug mode](assets/img/ui-debug.png)
+![UI debug mode](assets/img/ui_debug.png)
 *Screenshot of the miniRT UI compiled with full debug, displaying inner working of font and UI rasterization*
