@@ -57,19 +57,19 @@ The bounding volume is a union of the three shape types (AABB, sphere, and OBB).
 
 ### 1. Sphere Bounding Volume
 
-![BVH heatmap sphere](../assets/img/heat_map_preview_1.png)
+![BVH heatmap sphere](./assets/img/heat_map_preview_1.png)
 
 The sphere bound is defined by a center position and a radius, evaluated by computing the centroid of all primitives then finding the maximum distance. It has the simplest intersection test (point-in-sphere distance) but tends to produce more overlap between sibling nodes, reducing BVH efficiency.
 
 ### 2. AABB - Axis-Aligned Bounding Box
 
-![BVH heatmap AABB](../assets/img/heat_map_preview_2.png)
+![BVH heatmap AABB](./assets/img/heat_map_preview_2.png)
 
 The AABB is defined by min and max corners, evaluated by finding the extent of all primitive centroids and vertices in each axis. It offers the fastest GPU intersection test using the slab method (no rotation transform needed), making it ideal for axis-aligned scenes but wasteful for rotated geometry.
 
 ### 3. OBB - Oriented Bounding Box
 
-![BVH heatmap OOB](../assets/img/heat_map_preview_3.png)
+![BVH heatmap OOB](./assets/img/heat_map_preview_3.png)
 
 The OBB is the tightest-fitting box for arbitrarily oriented geometry, defined by a center, a rotation quaternion, half-extents, and pre-computed basis axes derived via PCA.
 
