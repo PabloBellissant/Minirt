@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="504" height="578" viewBox="0 0 504 578">
-  <rect width="504" height="578" fill="#0d1117"/>
-  <!-- Top row -->
-  <image href="../img/mat1-1.png" width="252" height="289" x="0" y="0" preserveAspectRatio="xMidYMid slice"/>
-  <image href="../img/mat1-2.png" width="252" height="289" x="252" y="0" preserveAspectRatio="xMidYMid slice"/>
-  <!-- Bottom row -->
-  <image href="../img/mat1-3.png" width="252" height="289" x="0" y="289" preserveAspectRatio="xMidYMid slice"/>
-  <image href="../img/mat1-4.png" width="252" height="289" x="252" y="289" preserveAspectRatio="xMidYMid slice"/>
-</svg>

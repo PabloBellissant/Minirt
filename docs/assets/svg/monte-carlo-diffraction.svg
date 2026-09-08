@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="270" viewBox="0 0 960 270">
-  <rect width="960" height="270" fill="#0d1117"/>
-  <!-- diffraction -->
-  <image href="../img/diffraction.png" width="480" height="270" x="0" y="0" preserveAspectRatio="xMidYMid slice"/>
-  <!-- diffraction2 -->
-  <image href="../img/diffraction2.png" width="480" height="270" x="480" y="0" preserveAspectRatio="xMidYMid slice"/>
-</svg>

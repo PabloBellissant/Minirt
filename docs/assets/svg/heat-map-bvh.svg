@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="353" viewBox="0 0 800 353">
-  <rect width="800" height="353" fill="#0d1117"/>
-  <!-- bvh-volume-theme3 -->
-  <image href="../img/bvh-volume-theme3.png" width="400" height="353" x="0" y="0" preserveAspectRatio="xMidYMid slice"/>
-  <!-- bvh-volume-theme4 -->
-  <image href="../img/bvh-volume-theme4.png" width="400" height="353" x="400" y="0" preserveAspectRatio="xMidYMid slice"/>
-</svg>
