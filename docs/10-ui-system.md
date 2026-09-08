@@ -2,6 +2,10 @@
 
 ## Overview
 
+https://github.com/user-attachments/assets/c2333235-cde5-4fd0-bde1-28e0198e39f3
+
+https://github.com/user-attachments/assets/ff51892f-8711-4bb3-8d86-a05dc31ad143
+
 ![UI Selection](assets/img/ui-selection.png)
 *Screenshot of the miniRT UI showing the left panel with scene hierarchy list, object selection in the viewport, and edit panels.*
 
@@ -245,3 +249,6 @@ sequenceDiagram
         RLoop->>RLoop: "export_render_task() hide UI + render + PPM + show UI"
     end
 ```
+
+![UI debug mode](assets/img/ui-debug.png)
+*Screenshot of the miniRT UI compiled with full debug, displaying inner working of font and UI rasterization*
