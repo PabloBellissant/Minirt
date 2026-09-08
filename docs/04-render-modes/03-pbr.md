@@ -3,7 +3,7 @@
 Physically-Based Rendering (PBR) extends the Phong model with **Fresnel reflectance**, **microfacet glossy factor**, **multi-bounce reflection/refraction**, and **through-power attenuation**. It uses a recursion loop with a fixed maximum bounce count.
 
 ![PBR rendering screenshot](../assets/img/marble_pos_1/PBR.png)
-*Screenshot of PBR mode showing Fresnel reflections, glossy reflections, and skybox environment mapping.*
+*Screenshot of PBR mode showing Fresnel reflections, glossy reflections, and fancy textures.*
 
 ## Fresnel and Reflectivity
 

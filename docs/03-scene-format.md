@@ -31,7 +31,6 @@ pl 0,-1,0 0,1,0 0,0,0 checkerboard 1
 | `L` | Light | Point light source |
 | `sp` | Sphere | Sphere primitive |
 | `pl` | Plane | Infinite plane primitive |
-| `cy` | Cylinder | Finite cylinder |
 | `obj` | Mesh | Wavefront OBJ mesh file |
 | `sky` | Skybox | Equirectangular environment map |
 | `mtl` | Material | MTL material library file |
@@ -133,26 +132,6 @@ Tangent and bitangent vectors are automatically computed from the normal for nor
 ```
 pl 0,0,0 0,1,0 0,0,0 checkerboard 1
 pl -5,0,0 1,0,0 0,0,0 gold 0.1
-```
-
-### Cylinder - `cy`
-
-```
-cy  x,y,z  rx,ry,rz  diameter  height  R,G,B  [mat_name]
-```
-
-| Field | Type | Range | Description |
-|---|---|---|---|
-| `x,y,z` | float | unlimited | Base center position |
-| `rx,ry,rz` | float | `[-1, 1]` | Normalized axis direction |
-| `diameter` | float | unlimited | Cylinder diameter |
-| `height` | float | unlimited | Cylinder height |
-| `R,G,B` | int | `[0, 255]` | Diffuse color |
-| `mat_name` | string | - | Optional material name |
-
-**Example:**
-```
-cy 0,0,0 0,1,0 2 5 255,0,0
 ```
 
 ### Mesh (OBJ) - `obj`

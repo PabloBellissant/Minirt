@@ -1,6 +1,6 @@
 # Phong Shading (Index 1)
 
-Phong shading computes per-pixel color using the **Phong reflection model** with ambient, diffuse, specular, emissive, and shadow-ray components. It runs as a GPU (OpenCL) kernel using progressive accumulation.
+Phong shading computes per-pixel color using the **Phong reflection model** with ambient, diffuse, specular, emissive, and shadow-ray components. It runs as a GPU (OpenCL) kernel.
 
 ![Phong shading screenshot](../assets/img/phong-42.png)
 *Screenshot of Phong mode showing ambient, diffuse, and specular lighting on a scene.*
