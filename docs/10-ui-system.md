@@ -215,7 +215,7 @@ sequenceDiagram
     participant Body as "create_body()"
     participant Pop as "populate_ui()"
     participant Precomp as "precompute"
-    participant Loop as "Main Loop"
+    participant RLoop as "Main Loop"
     participant Rebuild as "rebuild_inner_edit()"
 
     Init->>Init: "init_htree() then style + font"
@@ -229,12 +229,12 @@ sequenceDiagram
 
     Init->>Precomp: "precompute_hierarchy()"
 
-    Loop->>Loop: "render_hierarchy() each frame"
-    Loop->>Loop: "update_fps()"
-    Loop->>Loop: "update_info_display()"
+    RLoop->>RLoop: "render_hierarchy() each frame"
+    RLoop->>RLoop: "update_fps()"
+    RLoop->>RLoop: "update_info_display()"
 
     alt selection changed
-        Loop->>Rebuild: "rebuild_obj_edit()"
+        RLoop->>Rebuild: "rebuild_obj_edit()"
     end
 
     alt lpannel switch tab clicked
@@ -242,6 +242,6 @@ sequenceDiagram
     end
 
     alt F12 pressed
-        Loop->>Loop: "export_render_task() hide UI, render, PPM, show UI"
+        RLoop->>RLoop: "export_render_task() hide UI + render + PPM + show UI"
     end
 ```
